@@ -1,0 +1,535 @@
+# DOSTO Train L2 Network Health Check Playbook
+
+This is the project guide for running consistent L2 network health checks on Stadler DOSTO trainsets equipped with VDS Rail Consist Switches and a Nomad Digital CCU. It's based on the methodology validated against Fzg. 146 (6-car) on 2026-05-02.
+
+## When you log into a train — read these three files first
+
+The v8 rollout is a stateful, multi-train workflow. Trains get powered off mid-update, Stadler cable fixes take days, and engineers must be able to pick up where the last person left off.
+
+1. **[fleet-status.md](fleet-status.md)** — single source of truth for "where did we leave off" on every train in the fleet. **Read the row for the train you're working on before doing anything else.** Update the row at the end of every session (Step 11 of the checklist below). Holds **current state only** — at-a-glance table + per-train diagnostic-state bullet lists.
+2. **[fleet-journal.md](fleet-journal.md)** — narrative companion to fleet-status. Per-train append-only history: recovery sequences, discovered lessons, session context, Stadler investigation notes. Where fleet-status answers *"what is the current state"*, the journal answers *"what happened, in what order, and why."* Entries graduate to this file's "Pitfalls" section once observed on a second train.
+3. **[train-login-checklist.md](train-login-checklist.md)** — the canonical 11-step procedure for any train session. Even on a fully-known train, follow it; the steps in order prevent the patches/cabling/AP-config issues that have caused real outages in this rollout.
+
+The rest of this file is the *methodology* (how to read schemas, what counters mean, what "healthy" looks like). The checklist is the *workflow* (what to do, in what order). fleet-status is the *current state* (which trains are where). fleet-journal is the *history* (how each train got there).
+
+## Orchestration architecture (multi-train days)
+
+For a multi-train commissioning day, the engineer doesn't drive each train manually. Instead they invoke `/dosto-orchestrate` with a list of Fzg IDs. The skill runs **inline in the engineer's top-level Claude session** — that session IS the orchestrator. It spawns N parallel `dosto-train-worker` subagents, one per train, and drives the cycle loop (gate prompts, fleet-status writes, Confluence pushes) until convergence.
+
+```
+Engineer types: /dosto-orchestrate fzg=130,132,148
+       │
+       ▼
+[Engineer's top-level Claude session — running /dosto-orchestrate inline]
+   • Validates train list against fleet-status.md and per-series Fzg formulas
+   • Reconciles per-train (Fzg, CCU IP) pairs; updates fleet-status row IDs if needed
+   • Emits MANDATORY PRE-FLIGHT BLOCK for engineer approval
+   • Spawns N workers in a single Agent multi-tool-use message
+   • Drives cycle loop: notifications → gate prompts → SendMessage responses
+   • Writes fleet-status.md per cycle (sole writer during runtime)
+   • Pushes Confluence on gates + terminal states + cycle digests
+       │
+       ├─► Agent({subagent_type: "dosto-train-worker", name: "train-fzg-130"})
+       │      └─► /dosto-commission-train --ccu-ip 10.179.47.1 --fzg 130 ...
+       │            └─► dosto-device-discovery, dosto-obn-patches, dosto-fzg-id-check,
+       │                dosto-vlan7-config, dosto-tftp-helper-check, dosto-ap-config-update,
+       │                dosto-ap-firmware-update, dosto-sw-config-update, dosto-sw-firmware-update,
+       │                dosto-l2-health, dosto-l2-report
+       │
+       ├─► Agent({subagent_type: "dosto-train-worker", name: "train-fzg-132"})
+       │      └─► /dosto-commission-train ...
+       │
+       ├─► Agent({subagent_type: "dosto-train-worker", name: "train-fzg-148"})
+       │      └─► /dosto-commission-train ...
+       │
+       ├─► Skill: dosto-confluence-sync --push  (on gates + terminals + cycle digests)
+       │
+       └─► writes fleet-status.md  (orchestrator-as-sole-writer during runtime)
+```
+
+**Roles, top to bottom:**
+
+| Role | Purpose | Talks to |
+|---|---|---|
+| Engineer | Provides train list, answers approval gate prompts | Their top-level Claude session |
+| Engineer's top-level Claude session (running `/dosto-orchestrate`) | Validates the train list, spawns workers in parallel, drives cycle loop, surfaces gates, writes fleet-status, pushes Confluence | Engineer + N workers |
+| `dosto-train-worker` subagent (one per train) | Drives one train through the 19-stage pipeline by invoking `dosto-commission-train` | The engineer's session (parent) |
+| `dosto-commission-train` skill | The 19-stage pipeline; sequences per-device skills | The worker that invokes it |
+| Per-device skills (`dosto-obn-patches`, `dosto-ap-firmware-update`, etc.) | Single-purpose CCU operations | `dosto-commission-train` |
+| `dosto-confluence-sync` skill | Pushes fleet-status.md → Confluence page 5410684933 | The engineer's session |
+
+**Why inline rather than agent-as-orchestrator** (audit finding F5, 2026-05-11): the Claude Code platform rule "subagents cannot spawn further subagents" means a `dosto-orchestrator` agent spawned via `Agent` cannot itself call `Agent` to spawn workers — verified by the 2026-05-11 first-run test. The orchestration logic therefore lives in the skill, executed by the engineer's top-level session (which DOES have `Agent` + `SendMessage`). The previous `.claude/agents/dosto-orchestrator.md` was retired. See [`handoff-bootstrap-audit-2026-05-11.md`](handoff-bootstrap-audit-2026-05-11.md) §F5.
+
+**The four contracts** that pin this stack down:
+
+| Contract | What it specifies |
+|---|---|
+| [`.claude/contracts/subagent-report.md`](.claude/contracts/subagent-report.md) | JSON shape every subagent emits (statuses, stages, fields, approval_needed) |
+| [`.claude/contracts/autonomy-boundary.md`](.claude/contracts/autonomy-boundary.md) | Five approval gates and what subagents may do without asking |
+| [`.claude/contracts/approval-gates.md`](.claude/contracts/approval-gates.md) | Engineer-facing prompt format and response protocol |
+| [`.claude/contracts/confluence-sync.md`](.claude/contracts/confluence-sync.md) | One-way local → Confluence push policy + drift detection |
+
+**Single-train debug runs** skip the orchestrator skill entirely: invoke `/dosto-commission-train --ccu-ip ... --fzg ...` directly, no worker subagent, no fleet-day wrapper.
+
+## Universal Principles (constitutional)
+
+These four principles sit alongside the per-train safety rules and apply to every agent, every skill, every change. Derived from Andrej Karpathy's observations on where LLM coding agents go wrong: silent assumptions, overcomplication, drive-by refactoring, and weak success criteria. Source: https://github.com/forrestchang/andrej-karpathy-skills/blob/main/CLAUDE.md.
+
+**Tradeoff:** these principles bias toward caution over speed. For trivial fixes (typo, comment update, log-line tweak) apply with judgment. For anything touching a contract, an approval gate, or a per-device skill that runs against a CCU, apply in full.
+
+### Principle 1 — Think Before Coding
+
+**Don't assume. Don't hide confusion. Surface tradeoffs.**
+
+Before any stateful action (spawning a subagent, calling a destructive skill, writing fleet-status, pushing Confluence):
+- State your assumptions explicitly. If uncertain, ask — do not guess.
+- If multiple interpretations exist, present them. Do not pick silently.
+- If a simpler approach exists than the one requested, say so. Push back when warranted.
+- If something is unclear, stop. Name what is confusing. Ask.
+
+Operationalised as the **MANDATORY PRE-FLIGHT BLOCK** every agent must emit before its first stateful action — see [`.claude/agents/dosto-orchestrator.md`](.claude/agents/dosto-orchestrator.md) and [`.claude/agents/dosto-train-worker.md`](.claude/agents/dosto-train-worker.md).
+
+The five approval gates ([`.claude/contracts/autonomy-boundary.md`](.claude/contracts/autonomy-boundary.md)) are this principle in concrete form for destructive ops: stop, surface, ask the human.
+
+### Principle 2 — Simplicity First
+
+**Minimum code that solves the problem. Nothing speculative.**
+
+- No skill options that aren't currently used by any caller.
+- No abstractions for single-use code.
+- No "flexibility" or "configurability" that wasn't requested by a real failure mode.
+- No error handling for impossible scenarios.
+
+The senior-engineer test: "would a principal engineer say this is overcomplicated?" If yes, simplify before shipping.
+
+Special-case for our stack: **single-AP / single-switch serial pushes** (handoff lesson 11) are the canonical Simplicity First constraint at the per-device layer — never re-introduce parallel batches for `obn update f` without evidence that the underlying CCU firewall TFTP-helper gap has been fixed in Puppet.
+
+### Principle 3 — Surgical Changes
+
+**Touch only what you must. Clean up only your own mess.**
+
+When editing existing code or files:
+- Don't "improve" adjacent skills, contracts, or agent definitions while editing one of them.
+- Don't refactor things that aren't broken.
+- Match existing style, even if you'd do it differently.
+- If you notice unrelated dead code or stale notes, mention it — don't delete it.
+
+When the orchestrator writes `fleet-status.md`, it edits **only the columns it owns** (the `fields` block from subagent reports — per the Surgical-Changes contract in `dosto-orchestrator.md`). Engineer hand-edits to other columns (`Customer report`, `Health check date`) survive every cycle.
+
+When `dosto-confluence-sync` detects drift on the Confluence page, it **halts** rather than auto-merging. Surgical: don't auto-resolve what wasn't the skill's mess to begin with.
+
+The test: every changed line in a diff must trace directly to the user's request, the active stage, or the active skill's stated scope.
+
+### Principle 4 — Goal-Driven Execution
+
+**Define success criteria. Loop until verified.**
+
+Transform imperative tasks into verifiable goals:
+
+| Instead of...                  | Transform to...                                                          |
+|---|---|
+| "Push firmware to AP"          | "Confirm AP at target firmware via fresh `obn discover`, not OBN's 'Successful' string" |
+| "Apply OBN patches"            | "Confirm 8/8 markers present in `/usr/share/obn/*.py` via grep, including post-reboot for persisted variants" |
+| "Update Confluence"            | "Push, then read back the new version number; log it for next cycle's drift check" |
+| "Train commissioning DONE"     | "All success criteria for this train are ticked: 8/8 OBN persisted, switches at target firmware+config, all visible APs at target firmware, vlan7 reachable to Stadler, customer report on disk" |
+
+The orchestrator's end-of-day digest enumerates per-train success criteria as checkboxes. Don't claim DONE without ticking them.
+
+For multi-step skill flows: state the brief plan (per-stage `expected_duration_seconds` in the contract), report `current_step / total_steps` as you go, and surface any step that exceeds its budget.
+
+### Principle 5 — Parallelize When Independent
+
+**Run independent operations in parallel; serialise only when there's a real dependency.**
+
+This is a workflow extension, not part of the original four. Applied to our stack:
+
+- The orchestrator spawns N per-train subagents in parallel (one per Fzg in the day's plan).
+- Subagents in `initial_diagnostics` should batch the 5 `--check` skills into one SSH heredoc (already done partially by `dosto-commission-train` stage 1).
+- Independent tool calls in the same agent message — fan out, don't sequentially `await` each.
+
+**Counter-cases (where serial is correct):**
+- AP firmware push — single-AP serial only (handoff lesson 11). Principle 1 (think before doing) wins over Principle 5 (parallelize) when there's evidence of unreliability under concurrency.
+- Switch firmware/config push — leaf-first OBNTree order. Same principle: a parent reboot would isolate its children.
+
+When in doubt, prefer serial — but document the reason. Default-parallel should be the goal once evidence supports it.
+
+## Architecture cheat-sheet
+
+A typical DOSTO consist has:
+
+- **VDS Rail Consist Switches** — one per FIS unit (typically 3 per car: A1/A2/A3, B1/B2/B3, etc.). MAC OUI `a0:59:3a`. SSH on TCP/22 with legacy KEX/host-key algorithms. Custom CLI (not bash — commands cannot be `;`-chained over SSH). DHCP lease lifetime is 2 minutes — always run `sudo dhcp-lease-list` on the CCU for current IPs and hostnames rather than relying on stale ARP.
+- **Westermo industrial radios/APs** — MAC OUI `00:14:5a`. Also on the management VLAN. Also on 2-minute DHCP leases; use `sudo dhcp-lease-list` for current state.
+- **Nomad CCU (`box1-tNN`)** — Debian Linux jump box. Aggregates cellular modems on `bond0` (10.179.X.1/25) and the management VLAN on `vlan100` (10.179.X.129/25). Other interfaces are PWLAN client VLANs (10/30), ÖBB internal services (46/47/48), and Stadler interconnect (vlan7, 172.19.196.0/17).
+- **Stadler firewall/gateway** — peer endpoint on vlan7, host octet `.1` (MAC `00:90:e8:...` Westermo). Performs inter-VLAN routing for all Stadler-side device VLANs (cameras VLAN 5, displays VLAN 3, AFZ VLAN 8, intercom VLAN 9, OBS VLAN 7, RDC VLAN 200/202, energy meter VLAN 12, etc.). The CCU does NOT see those device VLANs directly — only the vlan7 transit link. The vlan7 IP is **per-train** and follows a bit-packed addressing scheme — see "vlan7 IP formula" below.
+- **Inter-coach trunks** are typically `e0-0` and `e0-1` on each consist switch. On modern consists these are 10 Gbps; older consists may run 1 Gbps.
+
+Schema PDFs (one per Fzg. ID) live in `docs/`. Always read the schema for the specific train before running a check — VLAN ranges and per-port assignments change between consists.
+
+## vlan7 IP formula
+
+DOSTO NEU IPs use a bit-packed addressing scheme:
+
+```
+bits  1-12 : 172.19         (static prefix, always 172.19.x.x/17 for DOSTO NEU)
+bits 13-17 : VLAN ID        (5 bits, 1-31; vlan7 = 0b00111)
+bits 18-25 : Fzg ID         (8 bits, 1-255; from the IP-Port-Allocation PDF header)
+bits 26-32 : Device          (7 bits, 1-127; CCU on vlan7 is always device 2; firewall is .1)
+```
+
+For the CCU's vlan7 IP, this packs to:
+
+```
+octet 3 = 128 + (Fzg // 2)
+octet 4 = (128 if Fzg is odd else 0) + 2
+IP      = 172.19.<octet3>.<octet4>/17
+```
+
+Even Fzg → host `.2`. Odd Fzg → host `.130`. The Stadler firewall is always `.1` on the same `/17` (e.g. Fzg 133 vlan7 = `172.19.194.130/17`, Stadler FW = `172.19.194.1`).
+
+**Important:** the formula in `/etc/nd-redundancy/networks.yaml` on production CCUs is wrong (it computes from OBN's `train_id` instead of Fzg ID). The active vlan7 IP comes from `/etc/NetworkManager/system-connections/ndrd-vlan-vlan7.nmconnection`, which is set per-train via `nd-systemupdate.sh shell`. Verify with [.claude/skills/dosto-vlan7-config/SKILL.md](.claude/skills/dosto-vlan7-config/SKILL.md) before any L2 health check — Stadler-side reachability depends on this being correct.
+
+**Series → Fzg mapping shorthand** (PDF header is source of truth):
+- `4734-NNN → Fzg = NNN - 100`
+- `4736-NNN → Fzg = NNN + 28`
+
+## Required access
+
+- **CCU SSH key**: `openssh` (OpenSSH RSA, no passphrase) in this folder. Originally converted from `pvt_key.ppk` via PuTTYgen. To SSH: `ssh -i "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh" developer@<ccu-ip>`.
+- **Switch admin password**: `Nom@dCome1n` (use with `sshpass`). Switches require legacy SSH algorithms — see the connect snippet below.
+- **Tools on CCU**: `sshpass`, `fping`, `ip`, standard ping, `nc`. iperf3 may or may not be installed — check with `command -v iperf3`.
+
+## Standard SSH-into-switch snippet
+
+The VDS Consist Switch SSH server requires legacy algorithms. Use this from the CCU:
+
+```bash
+SSH_OPTS="-o StrictHostKeyChecking=no -o ConnectTimeout=8 \
+  -o KexAlgorithms=+diffie-hellman-group14-sha1,diffie-hellman-group1-sha1 \
+  -o HostKeyAlgorithms=+ssh-rsa,ssh-dss \
+  -o PubkeyAuthentication=no"
+sshpass -p "Nom@dCome1n" ssh $SSH_OPTS admin@<switch-ip> "show interface summary"
+```
+
+The CLI takes ONE command per session. To run multiple commands, loop: do not use `;` chaining — that errors with `Error in command, param is "..." [wrong]`.
+
+## Phase 1 — Discovery
+
+```bash
+# From your local machine, connect to the CCU:
+ssh -i "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh" developer@<ccu-ip>
+
+# On the CCU, sweep vlan100 to find consist switches and Westermo radios:
+fping -a -q -g 10.179.X.128 10.179.X.255
+
+# Then list ARP with vendor groups:
+ip neigh show dev vlan100 | grep "lladdr a0:59:3a" | sort -t. -k4 -n   # VDS switches
+ip neigh show dev vlan100 | grep "lladdr 00:14:5a" | sort -t. -k4 -n   # Westermo
+```
+
+Sanity-check: a 6-car DOSTO usually has 18 VDS switches (3 per car × 6 cars); a 4-car has 12.
+
+## Phase 2 — Map switch IPs to schema positions
+
+The schema labels switches A1/A2/A3, B1/B2/B3, ... — but the live IPs are just sequential. Match them by config fingerprint, NOT by trying to SSH-discover hostname (the switches return blank hostnames in `show system`).
+
+Fingerprints to identify special switches:
+
+| Schema role | Identifier (look at `show interface trunks` and `show vlans`) |
+|-------------|----------------------------------------------------------------|
+| **A3** (Stadler firewall switch) | `e1-4` is configured as a multi-VLAN trunk |
+| **B1** / **B3** (ZFR-connected) | `e1-11` is access on VLAN 2 |
+| **D1** / **D3** (OBS + RDC) | `e0-3` is configured as a trunk (RDC); `e0-2` carries OBS VLAN 7 trunk |
+| End-of-train (last car each end) | `e0-1` is admin-enabled but link DOWN — this is normal |
+
+Once you've identified A3/B1/B3/D1/D3, you have the critical Stadler-facing trunks for the rest of the check.
+
+## Phase 3 — The L2 health sweep
+
+These are the four canonical commands. Run on every switch.
+
+```text
+show interface summary                # all ports up/down/speed/duplex at a glance
+show interface <port> details         # per-port: RX/TX errors, CRC, carrier-false, drops, collisions
+show interface trunks                 # which ports are trunks, which VLANs they carry
+show spanning-tree                    # RSTP root, port roles, port states (FWD/BLK/LEARN)
+show vlans                            # VLAN-to-port mapping, identify access vs trunk
+```
+
+Useful supporting commands:
+
+```text
+show counters protocol lldp           # LLDP TX/RX per port, errors
+show counters protocol ttcmp          # train discovery protocol
+show system temperature               # ambient/internal temp (max 100°C)
+show system memory                    # RAM usage
+show version                          # firmware version
+show log                              # event log (link flaps, STP TCNs, etc.)
+```
+
+### What to look for
+
+| Field in `show interface <port> details` | Meaning | Threshold |
+|-------------------------------------------|---------|-----------|
+| `RX errors` / `runts` / `giants` / `frag` / `jabber` | Frame-level RX errors | Should be 0 — one or two over millions of packets is noise |
+| `RX crc errors` | CRC mismatch on receive | Must be 0 — non-zero = bad cable / dirty connector / EMI |
+| `TX crc errors` | TX side CRC | Must be 0 |
+| `carrier false` | Link-layer instability events / surge protection trips | Should be 0 — non-zero = physical-layer problem (cable, SFP, vibration) |
+| `Excessive collisions` / `Late collisions` | Half-duplex contention | Must be 0 on full-duplex links |
+| `pause frames received` / `sent` | Flow-control pressure | Non-zero = queue overflow somewhere |
+
+### What "healthy" looks like (for context)
+
+In the Fzg. 146 baseline, every one of ~500 enabled ports across 18 switches showed 0/0/0/0 across all of the above. One port (`.182 e1-8`) had a single RX error against millions of packets — that's noise.
+
+If you see a port with non-zero counters in the hundreds or higher, that port (or its physical link) is the suspect. Cross-check the port at the OTHER end of the same link too — RX errors on side A often pair with TX problems on side B.
+
+## Phase 4 — Critical Stadler-facing trunks
+
+Beyond the inter-coach uplinks, these are the trunks that matter for Stadler-side health:
+
+| Schema port | Carries | What to verify |
+|-------------|---------|----------------|
+| **A3 e1-4** | Stadler firewall trunk (multi-VLAN: 1, 2, 3, 5, 6, 7, 8, 9, 12) | Up at 1G full, error counters 0, utilization sane |
+| **D1 e0-2 / D3 e0-2** | OBS D1 trunk (huge VLAN list incl. 7, 200, 202) | Up at 10G full, error counters 0 |
+| **D1 e0-3 / D3 e0-3** | RDC D1 trunk (VLANs 200, 202) | Up at 10G full, error counters 0 (often idle if RDC powered off) |
+| **B1 e1-11 / B3 e1-11** | ZFR access port (VLAN 2 only) | Up at 1G full, error counters 0. ZFR R/ZFR are redundant pair sharing one IP — often only one is actively transmitting |
+| **A1/A3/B1/B3 e0-2** | Front coupler trunks | Down when consist is solo (expected); zero error counters historically |
+| **All e0-4** | Wi-Fi access point trunks | Up at 1G, zero errors expected |
+
+Run `show interface <port> details` on each. Speed/duplex must match the schema's expected.
+
+## Phase 5 — Throughput / utilization sampling
+
+To compute live rate on any port, take two `show interface <port> details` snapshots N seconds apart and diff the byte/packet counters. Useful for the firewall trunk to confirm it's not saturated.
+
+```bash
+# Pseudo-code: sample twice with timestamps, then
+rate_mbps = (rx_bytes_2 - rx_bytes_1) * 8 / (ts2 - ts1) / 1e6
+```
+
+Expected baselines (Fzg. 146 idle / passenger traffic):
+
+| Trunk | Live rate | Utilization |
+|-------|-----------|-------------|
+| Per inter-coach trunk (active) | 100–155 Mbps total | ~1.5% of 10G |
+| Stadler FW trunk (A3 e1-4) | ~15 Mbps total | ~1.5% of 1G |
+| FW trunk asymmetry | TX ≈ 13× RX cumulative | Normal for routed traffic |
+| PWLAN trunks (e0-4) | Near 0 if no clients | — |
+
+If the FW trunk is sustained above ~700 Mbps, the 1G link is becoming a real bottleneck for Stadler-side throughput.
+
+## Phase 6 — End-to-end CCU ↔ Stadler firewall
+
+This phase answers **three separate questions** about the vlan7 connection to `172.19.X.1`. Don't conflate them — each has its own test and its own success criterion. Conflating them silently produces wrong customer-report classifications (audit finding F9, 2026-05-11).
+
+### Q1 — Path health: does traffic flow to the FW peer?
+
+```bash
+ip neigh show dev vlan7 | grep 172.19.X.1   # should show REACHABLE with FW MAC (00:90:e8:... — Westermo OUI)
+ip -s link show vlan7                       # errors and drops should be 0
+```
+
+| Result | Meaning |
+|---|---|
+| ARP `REACHABLE`, link counters clean | ✅ path OK — traffic flows to `.1` |
+| ARP `FAILED` / no neighbour | 🔴 path broken — vlan7 misconfigured, vlan not trunked through, FW absent on subnet |
+
+If Q1 fails, stop. Q2 and Q3 are meaningless without a working path. Investigate vlan7 IP (use `dosto-vlan7-config` skill), inter-coach trunks (use `lldp_topology_check.py`), or whether the Stadler FW box is even installed/powered.
+
+### Q2 — FW commission state: has Stadler applied policy to the firewall?
+
+This is **the deciding test for whether Stadler has commissioned the FW for this train.** It is NOT TCP. It IS ICMP.
+
+```bash
+ping -c 5 172.19.X.1
+```
+
+| Result | Meaning |
+|---|---|
+| 0 replies (100% loss) AND path OK from Q1 | ✅ FW **commissioned** — Stadler policy is dropping echo-request as designed |
+| Replies received | 🟡 FW responding but **NOT commissioned** — bare/default Westermo behavior, no Stadler policy applied yet |
+| 100% loss AND Q1 also failed | 🔴 path broken (Q1 issue, not commission state) |
+
+**Important:** A configured Stadler FW deliberately drops ICMP. Reading "ping fails" as a fault is the long-standing trap. Reading "ping succeeds" as health is the *new* trap that F9 surfaced. The correct heuristic:
+
+> **Ping works = FW exists but Stadler hasn't finished configuring it.**
+> **Ping fails (with ARP REACHABLE) = FW is fully commissioned and applying policy.**
+
+### Q3 — Service availability: are the FW-exposed services up?
+
+```bash
+nc -zv -w 5 172.19.X.1 80
+nc -zv -w 5 172.19.X.1 22
+# ...and any other Stadler-intended services for this train (camera VLAN gateways, etc.)
+```
+
+| Result | Meaning (depending on Q2 outcome) |
+|---|---|
+| OPEN, Q2 says "commissioned" | ✅ FW exposes 80/22 as intended (rare — typically Stadler filters these) |
+| OPEN, Q2 says "uncommissioned" | 🟡 you're hitting the bare Westermo management interface, not a Stadler service |
+| refused/filtered, Q2 says "commissioned" | ✅ FW applying policy as expected (80/22 not in the policy whitelist) |
+| timeout, Q1 was OK | 🔴 specific service path broken — investigate FW config |
+
+TCP probes alone **cannot** tell you whether the FW is commissioned. They tell you whether *something* responds on a given port. The Q2 ICMP test is the only authoritative commission-state test from the CCU side.
+
+### Summary table — how to read all three together
+
+| Q1 ARP | Q2 ICMP | Q3 TCP 80/22 | Verdict |
+|---|---|---|---|
+| REACHABLE | 0 replies | refused/filtered | ✅ **FW fully commissioned by Stadler** |
+| REACHABLE | replies | OPEN | 🟡 **FW responding but not yet commissioned** (Stadler-side work pending) |
+| REACHABLE | (any) | timeout | 🟢 path OK, specific TCP services down — investigate |
+| FAILED | (any) | (any) | 🔴 **path broken** — fix vlan7 / trunks / FW presence first |
+
+Until you've run Q1 + Q2, **do NOT write a verdict in `fleet-status.md`'s `FW reach` column.** TCP-OPEN alone is ambiguous between "commissioned with weird policy" and "not yet commissioned" — and historically the latter is more common during rollout.
+
+**Fleet-wide note:** any train marked `FW reach: ✅` in `fleet-status.md` based on TCP-OPEN alone (without an ICMP test) may need re-verification. F9 in `handoff-bootstrap-audit-2026-05-11.md` lists this as a fleet-wide carryover task.
+
+## Phase 7 — Aggregate L2 traffic on the fabric
+
+For a "how busy is this train" snapshot, sample byte counters on every inter-coach trunk on every switch twice 30–60s apart. Sum per-port deltas and divide by interval.
+
+Important: summing every inter-coach trunk **double-counts** traffic that traverses multiple cars. The headline number to report is *average per-active-trunk Mbps*, not the sum across all trunks. From the Fzg. 146 baseline: average active inter-coach trunk = ~140 Mbps total → ~1.5% utilization on a 10G link.
+
+## Phase 8 — Recording the baseline
+
+For every train you check:
+
+1. Note the **Fzg. ID** (from the IPv4 schema PDF).
+2. Save `show interface <port> details` output for every inter-coach trunk and every Stadler-facing trunk to a timestamped file.
+3. Capture the STP root MAC and confirm it's stable (single root, all switches agree).
+4. Note any anomalies (down links, non-zero error counters) — even small numbers, for trend tracking.
+5. Save aggregate utilization samples (per-trunk Mbps) — useful for capacity-planning and for diff against future baselines.
+
+A clean baseline lets you spot drift on the next visit. The Fzg. 146 baseline is captured in `.claude/sample1.txt` and `.claude/sample2.txt` (54s window) — use those as templates for output format.
+
+## Common false alarms (don't be fooled)
+
+| Observation | Likely cause | Verdict |
+|-------------|--------------|---------|
+| 100% ICMP loss to Stadler FW | FW drops ICMP echo-request by policy | Healthy if TCP probes succeed |
+| `e0-1` link DOWN on a couple of switches | Those are end-of-train switches; e0-1 has no neighbour | Expected, not a fault |
+| Front coupler trunks (e0-2 on A1/A3/B1/B3) DOWN | Train running solo, no second consist coupled | Expected |
+| ZFR at B3 has RX = 0 packets | B1 is primary ZFR (active), B3 is standby (silent) | Expected — they share one IP |
+| RDC trunk (e0-3) RX near 0 | RDC powered off / idle | Likely fine; flag if RDC service is supposed to be active |
+| Single-digit RX errors over millions of packets | Noise — single corrupted frame on connect, EMI transient | Not actionable |
+| Switch firmware shows version differences across the fleet | Possible — note for fleet management, but not a fault per se | Document, don't escalate unless mismatch is large |
+| `show system` returns no hostname | VDS switches don't expose hostname this way | Use config fingerprint to identify them |
+
+## Real red flags
+
+| Observation | Action |
+|-------------|--------|
+| Non-zero `RX crc errors` (any sustained count) | Replace cable or SFP at the link end-points; check connectors |
+| Non-zero `carrier false` (any sustained count) | Physical-layer instability — cable / vibration / surge protection tripping |
+| Non-zero `pause frames received` | Egress queue overflow on the upstream switch — trace the bottleneck |
+| Multiple STP roots, or root flapping | RSTP topology unstable — find the link causing TCNs |
+| Inter-coach trunk speed degraded (e.g. 1G when expected 10G) | Auto-negotiation problem — check both ends |
+| Sustained inter-coach utilization > 70% | Capacity issue — investigate which devices are saturating the trunk |
+| TCP probe to FW peer fails AND vlan7 has drops | FW path actually broken — escalate to Stadler |
+
+## Pitfalls and quirks (learned the hard way)
+
+- **Switch CLI rejects `;`-chaining** — run one command per SSH session. Loop in shell, don't chain.
+- **Pseudo-terminal warning** — appears whenever you run `ssh ... <command>` from a script. Harmless, ignore.
+- **`show system` doesn't include hostname** — switches identify themselves only by their config fingerprint (which trunks/access ports are configured), so use Phase 2 mapping instead.
+- **PuTTYgen-converted keys must have NO passphrase** — non-interactive SSH from scripts can't prompt. Re-export with empty passphrase if needed.
+- **Train cellular networks drop frequently** — long-running tasks (full-fleet sweeps) should be backgrounded; if SSH dies mid-sweep, just retry the missing switches.
+- **`ping` is not a useful health probe past the FW** — switch to TCP probes.
+- **`show interface trunks` only lists configured trunks** — a port can be admin-enabled but the link DOWN; use `show interface summary` to see actual link state.
+- **The PWLAN trunk (e0-4) is usually idle** — if e0-4 shows zero traffic on every switch, the train is empty. Not a bug.
+- **Two devices sharing one IP is expected for ZFR / Sprechstelle redundancy** (`Redundanz` in the schema). Only one is active at a time.
+- **`train_id` must only be set inside the per-switch `.cfg` template files (`/etc/obn/template/nv6-*.cfg`)** — never in `backbone-discovery.yaml` or any other file. Those `.cfg` files are the single source of truth for the Fzg ID rendered into switch hostnames. Setting `train_id` elsewhere (e.g. `backbone-discovery.yaml`) moves the CCU to a different IP subnet on reboot without changing the switch configs, breaking connectivity.
+- **Factory-config APs block OBN SNMP silently** — Westermo RT610LV APs shipped in factory config (`RT610LV-...-v1-FD`) use SNMP community `admin-community`, not `NomadStayOut!`. OBN prints "configuration update applied, device rebooting" regardless — it does not check the return value before printing. ICMP to the AP will work fine; only SNMP is silently dropped. Use the LuCI HTTP import method (see `troubleshooting-runbook.md` → "Westermo AP Config Push") to push the Nomad config when OBN SNMP fails. LuCI admin password on factory APs is `Nom@dCome1n`. After config apply, SSH CLI uses `nomad`/`NomadComeIn`.
+
+## Quick "is this train healthy" recipe
+
+If someone asks "is the network on Fzg. NNN healthy?" and you have ~10 minutes:
+
+1. Read the `ND-DEL-OBB-035-IPA-NNN_NV_*.pdf` schema. Confirm car count and identify A3/B1/B3/D1/D3.
+2. SSH into the CCU. `fping` the management VLAN. Confirm expected number of VDS switches.
+3. Run `show interface summary` on every switch. Confirm trunk speeds match schema and no unexpected DOWN links.
+4. Run `show spanning-tree` on every switch. Confirm one stable root MAC across the fleet.
+5. Run `show interface <port> details` on every inter-coach trunk + the Stadler-facing trunks (A3 e1-4, D1/D3 e0-2/e0-3, B1/B3 e1-11). Confirm 0 errors / 0 CRC / 0 carrier-false.
+6. TCP-probe the Stadler firewall on vlan7. Confirm port 80 OPEN and ARP REACHABLE. **Don't trust ICMP** here.
+7. Sample inter-coach byte counters twice 30s apart. Confirm utilization sane (typically <5% of link capacity at idle).
+
+If all seven steps come back clean, the L2 fabric is healthy. Reported user-perceived packet loss is then almost certainly NOT in this fabric — investigate end-host (NIC/driver/OS — see `iperf3-troubleshooting.md` for the Windows UDP pacing artefact pattern), Stadler-side beyond the FW (no CCU visibility), or PWLAN/cellular (separate scopes).
+
+## Folder layout
+
+The project is organised into the following subfolders. Anything not listed here lives at the root.
+
+### Root
+
+- `CLAUDE.md` — this file (the playbook / methodology).
+- `fleet-status.md` — **per-train v8 rollout status. Read first, update last.** Status row per Fzg with `Next action` so any engineer can pick up mid-rollout.
+- `train-login-checklist.md` — **canonical 11-step procedure** for any train session. Step 11 is "update fleet-status.md".
+- `troubleshooting-runbook.md` — operational runbook (LLDP cabling check, OBN bug fixes, AP manual config push, etc.).
+- `cable-issues-register.md` — fleet-wide register of physical cabling faults found during health checks.
+- `iperf3-troubleshooting.md` — prior investigation documenting 5% UDP loss → TCP collapse via Mathis formula. Read before iperf3-ing.
+- `openssh` / `pvt_key.ppk` — SSH credentials for CCU. Referenced by absolute path from the runbook and from scripts — do not move.
+- `package.json` / `package-lock.json` / `node_modules/` — dependencies for the report-generation JS scripts under `scripts/`.
+- `train-ip-allocation-commission/` — IP allocations and commissioning docs for all trains. Structure: `4734-xxx/4734-NNN/` and `4736-xxx/4736-NNN/` (101–120 each), plus `4705-xxx/`, `4706-xxx/`, `Bench/`, and template folders. Each per-train subfolder contains the IP-Allocation PDF, Phase2a/2b PDFs, and commissioning templates. Check here first when you need the management IP or commissioning docs for any device on any consist.
+
+### `docs/` — reference material
+
+- `ND-DEL-OBB-035-IPA-NNN_NV_6Teiler.pdf` — IPv4 schema for Fzg. NNN (one per train).
+- `switch_user_manual.pdf` — VDS Consist Switch User Manual v2.0.4. Full-text extract cached at `.claude/switch_manual.txt`.
+- `Westermo-Management-Guide-6.9.5.pdf` — Westermo AP management reference.
+- `ND-DEL-OBB-035-CFG-001-01 OBB Fleet Control Sheet 20260211.xlsx` — fleet control sheet.
+
+### `scripts/` — all scripts
+
+- `fix_obn.py` — idempotent patcher applying all known OBN bugs (1–7). Run on every CCU at the start of an OBN session. Copied to CCU `/tmp/` via scp.
+- `fix_obn_templates.sh` — template fixups for OBN config templates.
+- `lldp_topology_check.py` — pexpect-based script that SSHes into all VDS switches on vlan100, runs `show lldp neighbours`, and compares e0-0/e0-1 trunk peers against the expected OBN topology. Run this when OBN or auto-topology fails — wrong LLDP peers on trunk ports = cabling error by Stadler. Edit `SWITCHES` and `EXPECTED_TOPOLOGY` at the top for each train.
+- `lldp_topology_check_t8.py`, `lldp_check_4734-119.py` — train-specific variants of the above.
+- `check_cabling.py`, `build_cable_tracker.py` — cabling validation and tracker generation.
+- `gen_report_108.py`, `generate_health_check_report.js`, `generate_report.js`, `generate_report_109.js` — report generators.
+- `push_ap_config.sh` / `push_all_aps.sh` / `push_remaining_aps.sh` / `apply_ap_configs.sh` — pushing Nomad config to factory-default APs via LuCI HTTP when OBN SNMP fails.
+- `dbc12` — utility script.
+
+### `findings/` — raw L2 health-check JSON output
+
+- `findings_<train-or-ccu>_<date>.json` — output of the dosto-l2-health skill, one per run. Consumed by the dosto-l2-report skill.
+
+### `reports/` — deliverables
+
+- `reports/customer/` — latest customer-facing reports (`OBB_Fzg*_Network_Health_Check_Report_v1.x.docx/.pdf`, `Stadler_*_Cabling_Fault_Report*.docx`).
+- `reports/internal/` — internal working notes (`105-update-report-*`, `105-l2-health-report-*` for Fzg 133 / 4736-105).
+- `reports/_archive/` — superseded versions of customer reports (kept for reference, do not touch).
+
+### `trackers/` — fleet trackers
+
+- `cable-issues-tracker.xlsx` — spreadsheet companion to `cable-issues-register.md`.
+- `topology_4736-106.svg` — generated topology diagrams.
+
+### Bootstrapping a fresh workspace
+
+If you need to recreate this workspace on a fresh machine without cloning git, paste [`BOOTSTRAP_DOSTO_v1.md`](BOOTSTRAP_DOSTO_v1.md) into a fresh Claude Code session in an empty directory. It contains every contract, agent definition, skill, and the OBN fix scripts inline — Claude reads each STEP block and recreates the file with the exact content. Once scaffolded, drop in your `openssh` SSH key and the schema PDFs separately (those are credentials/binaries, never embedded).
+
+The bootstrap is **regenerated** from the live tree by `scripts/regenerate_bootstrap.py`. Run it after any material change to a contract, agent definition, or skill so the bootstrap stays canonical:
+
+```bash
+python scripts/regenerate_bootstrap.py            # scaffold only (~8k lines, ~127k tokens)
+python scripts/regenerate_bootstrap.py --include-state   # + fleet-status, handoff, runbooks (~10k lines, ~156k tokens)
+python scripts/regenerate_bootstrap.py --check    # dry run, just report sizes
+```
+
+The regenerator embeds: 4 contracts + 2 agent definitions + 14 SKILL.mds + CLAUDE.md + 5 fix scripts + the regenerator script itself (self-replicating). It does NOT embed: the SSH key, schema PDFs, IP-Port-Allocation PDFs, customer reports, log files, node_modules. Those are engineer-supplied or generated.
+
+### `.claude/` — Claude harness state
+
+- `.claude/sample1.txt`, `.claude/sample2.txt` — Fzg. 146 byte-counter snapshots (54s window). Reference output format.
+- `.claude/switch_manual.txt` — full-text extract of `docs/switch_user_manual.pdf` for grep.
+- `.claude/contracts/` — 4 design contracts (`subagent-report.md`, `autonomy-boundary.md`, `approval-gates.md`, `confluence-sync.md`).
+- `.claude/agents/dosto-train-worker.md` — per-train commissioning subagent definition (Sonnet 4.6, JSON-only output).
+- `.claude/skills/` — 13 project-local skills:
+  - **Diagnostic / read-only:** `dosto-device-discovery`, `dosto-extract-train-data`, `dosto-l2-health`, `dosto-fzg-id-check`, `dosto-vlan7-config`, `dosto-tftp-helper-check`.
+  - **Per-device push (single-AP/SW serial):** `dosto-ap-config-update`, `dosto-ap-firmware-update`, `dosto-sw-config-update`, `dosto-sw-firmware-update`.
+  - **CCU-side persistence:** `dosto-obn-patches` (with `--persist` fold-in for vlan7 + fzg-id fixes).
+  - **Orchestration / output:** `dosto-commission-train` (19-stage per-train pipeline), `dosto-l2-report` (customer docx), `dosto-confluence-sync` (push `fleet-status.md` to team Confluence page).
+- `.claude/logs/` — append-only orchestration logs:
+  - `confluence-sync.jsonl` — one JSON line per successful Confluence push (used by drift detection).
+  - `confluence-drift.jsonl` — one JSON line per detected drift event (manual edit on Confluence between pushes).

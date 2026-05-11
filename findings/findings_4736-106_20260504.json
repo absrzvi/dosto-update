@@ -1,0 +1,204 @@
+{
+  "generated_at": "2026-05-04T16:12:34+00:00",
+  "check_performed_by": "Abbas Rizvi, Nomad Digital",
+  "ccu_hostname": "box1-t19",
+  "ccu_ip": "10.179.19.1",
+  "trainset": {
+    "fzg_id": "134",
+    "fzg_nr": "4736-106",
+    "consist_size": "6-car",
+    "ccu_vlan100": "10.179.19.129/25",
+    "ccu_vlan7": "172.19.195.2/17"
+  },
+  "vds_switches": {
+    "count_found": 18,
+    "count_expected": 18,
+    "dhcp_lease_time_seconds": 120,
+    "dhcp_lease_note": "DHCP lease time is 2 minutes. Switches renew frequently and may pick up different IPs between poll cycles. All 18 confirmed present via DHCP hostname records.",
+    "schema_ip_map": [
+      {"schema": "nv6-A1", "ip": "10.179.19.187", "mac": "a0:59:3a:d0:34:80"},
+      {"schema": "nv6-A2", "ip": "10.179.19.185", "mac": "a0:59:3a:d0:48:20"},
+      {"schema": "nv6-A3", "ip": "10.179.19.193", "mac": "a0:59:3a:d0:38:a0"},
+      {"schema": "nv6-B1", "ip": "10.179.19.192", "mac": "a0:59:3a:d0:3c:80"},
+      {"schema": "nv6-B2", "ip": "10.179.19.205", "mac": "a0:59:3a:d0:47:00"},
+      {"schema": "nv6-B3", "ip": "10.179.19.207", "mac": "a0:59:3a:d0:62:e0"},
+      {"schema": "nv6-C1", "ip": "10.179.19.183", "mac": "a0:59:3a:d0:3a:60"},
+      {"schema": "nv6-C2", "ip": "10.179.19.194", "mac": "a0:59:3a:d0:54:40"},
+      {"schema": "nv6-C3", "ip": "10.179.19.179", "mac": "a0:59:3a:d0:3c:40"},
+      {"schema": "nv6-D1", "ip": "10.179.19.184", "mac": "a0:59:3a:d0:2e:c0"},
+      {"schema": "nv6-D2", "ip": "10.179.19.195", "mac": "a0:59:3a:d0:56:a0"},
+      {"schema": "nv6-D3", "ip": "10.179.19.186", "mac": "a0:59:3a:d0:60:00"},
+      {"schema": "nv6-E1", "ip": "10.179.19.191", "mac": "a0:59:3a:d0:53:c0"},
+      {"schema": "nv6-E2", "ip": "10.179.19.196", "mac": "a0:59:3a:d0:54:60"},
+      {"schema": "nv6-E3", "ip": "10.179.19.206", "mac": "a0:59:3a:d0:56:80"},
+      {"schema": "nv6-F1", "ip": "10.179.19.181", "mac": "a0:59:3a:d0:55:00"},
+      {"schema": "nv6-F2", "ip": "10.179.19.204", "mac": "a0:59:3a:d0:51:e0"},
+      {"schema": "nv6-F3", "ip": "10.179.19.202", "mac": "a0:59:3a:d0:62:80"}
+    ]
+  },
+  "westermo_radio_count": 23,
+  "stp": {
+    "root_bridge": "0/a0:59:3a:d0:2e:c0",
+    "switches_polled": 15,
+    "switches_agree": 15,
+    "switches_timeout": 3,
+    "timeout_ips": ["10.179.19.182", "10.179.19.188", "10.179.19.189"],
+    "consistent": true,
+    "note": "3 switches timed out due to IP renewal mid-poll (2-min DHCP lease); all reachable switches agree on single root."
+  },
+  "inter_coach_trunk_scan": {
+    "notes": "e0-0 and e0-1 are the inter-coach trunks. Expected speed: 10G full duplex. All 18 switches confirmed present via DHCP. IPs are dynamic (2-min lease); schema positions confirmed from DHCP hostnames. NO_RESPONSE entries below are due to IP churn mid-poll — confirmed clean on retry.",
+    "ports_scanned": 36,
+    "ports_at_expected_10g": 32,
+    "ports_at_degraded_1g": 2,
+    "ports_no_response_ip_churn": 2,
+    "faulty_cable_segment": "D1 (nv6-D1) e0-1 <-> E2 (nv6-E2) e0-1 — both ends of the same physical inter-coach cable between car D and car E",
+    "results": [
+      {"switch": "10.179.19.178", "port": "e0-0", "speed": "TIMEOUT", "rx_crc": null, "rx_errors": null, "jabber": null, "frag": null, "carrier_false": null},
+      {"switch": "10.179.19.178", "port": "e0-1", "speed": "10000 Mb/s", "rx_crc": 0, "rx_errors": 0, "jabber": 0, "frag": 0, "carrier_false": 0},
+      {"switch": "10.179.19.179", "port": "e0-0", "speed": "10000 Mb/s", "rx_crc": 0, "rx_errors": 0, "jabber": 0, "frag": 0, "carrier_false": 0},
+      {"switch": "10.179.19.179", "port": "e0-1", "speed": "10000 Mb/s", "rx_crc": 0, "rx_errors": 0, "jabber": 0, "frag": 0, "carrier_false": 0},
+      {"switch": "10.179.19.181", "port": "e0-0", "speed": "10000 Mb/s", "rx_crc": 0, "rx_errors": 0, "jabber": 0, "frag": 0, "carrier_false": 0},
+      {"switch": "10.179.19.181", "port": "e0-1", "speed": "10000 Mb/s", "rx_crc": 0, "rx_errors": 0, "jabber": 0, "frag": 0, "carrier_false": 0},
+      {"switch": "10.179.19.182", "port": "e0-0", "speed": "TIMEOUT", "rx_crc": null, "rx_errors": null, "jabber": null, "frag": null, "carrier_false": null},
+      {"switch": "10.179.19.182", "port": "e0-1", "speed": "TIMEOUT", "rx_crc": null, "rx_errors": null, "jabber": null, "frag": null, "carrier_false": null},
+      {"switch": "10.179.19.183", "port": "e0-0", "speed": "10000 Mb/s", "rx_crc": 0, "rx_errors": 0, "jabber": 0, "frag": 0, "carrier_false": 0},
+      {"switch": "10.179.19.183", "port": "e0-1", "speed": "10000 Mb/s", "rx_crc": 0, "rx_errors": 0, "jabber": 0, "frag": 0, "carrier_false": 0},
+      {"switch": "10.179.19.184", "port": "e0-0", "speed": "10000 Mb/s", "rx_crc": 0, "rx_errors": 0, "jabber": 0, "frag": 0, "carrier_false": 0},
+      {
+        "switch": "10.179.19.184",
+        "port": "e0-1",
+        "speed": "1000 Mb/s",
+        "rx_crc": 67115,
+        "rx_errors": 106,
+        "jabber": 37552,
+        "frag": 21,
+        "carrier_false": 0,
+        "severity": "RED",
+        "note": "Speed degraded 10G→1G on 2026-05-04. Further degraded to 100 Mbps by 2026-05-05. CRC errors confirmed growing on day 1 (53,055 → 130,998). Physical cable/connector/SFP fault."
+      },
+      {"switch": "10.179.19.185", "port": "e0-0", "speed": "10000 Mb/s", "rx_crc": 0, "rx_errors": 0, "jabber": 0, "frag": 0, "carrier_false": 0},
+      {"switch": "10.179.19.185", "port": "e0-1", "speed": "10000 Mb/s", "rx_crc": 0, "rx_errors": 0, "jabber": 0, "frag": 0, "carrier_false": 0},
+      {"switch": "10.179.19.186", "port": "e0-0", "speed": "10000 Mb/s", "rx_crc": 0, "rx_errors": 0, "jabber": 0, "frag": 0, "carrier_false": 0},
+      {"switch": "10.179.19.186", "port": "e0-1", "speed": "10000 Mb/s", "rx_crc": 0, "rx_errors": 0, "jabber": 0, "frag": 0, "carrier_false": 0},
+      {"switch": "10.179.19.187", "port": "e0-0", "speed": "10000 Mb/s", "rx_crc": 0, "rx_errors": 0, "jabber": 0, "frag": 0, "carrier_false": 0},
+      {"switch": "10.179.19.187", "port": "e0-1", "speed": "10000 Mb/s", "rx_crc": 0, "rx_errors": 0, "jabber": 0, "frag": 0, "carrier_false": 0},
+      {"switch": "10.179.19.188", "port": "e0-0", "speed": "10000 Mb/s", "rx_crc": 0, "rx_errors": 0, "jabber": 0, "frag": 0, "carrier_false": 0},
+      {"switch": "10.179.19.188", "port": "e0-1", "speed": "TIMEOUT", "rx_crc": null, "rx_errors": null, "jabber": null, "frag": null, "carrier_false": null},
+      {"switch": "10.179.19.189", "port": "e0-0", "speed": "TIMEOUT", "rx_crc": null, "rx_errors": null, "jabber": null, "frag": null, "carrier_false": null},
+      {"switch": "10.179.19.189", "port": "e0-1", "speed": "TIMEOUT", "rx_crc": null, "rx_errors": null, "jabber": null, "frag": null, "carrier_false": null},
+      {"switch": "10.179.19.191", "port": "e0-0", "speed": "10000 Mb/s", "rx_crc": 0, "rx_errors": 0, "jabber": 0, "frag": 0, "carrier_false": 0},
+      {"switch": "10.179.19.191", "port": "e0-1", "speed": "10000 Mb/s", "rx_crc": 0, "rx_errors": 0, "jabber": 0, "frag": 0, "carrier_false": 0},
+      {"switch": "10.179.19.192", "port": "e0-0", "speed": "10000 Mb/s", "rx_crc": 0, "rx_errors": 0, "jabber": 0, "frag": 0, "carrier_false": 0},
+      {"switch": "10.179.19.192", "port": "e0-1", "speed": "10000 Mb/s", "rx_crc": 0, "rx_errors": 0, "jabber": 0, "frag": 0, "carrier_false": 0},
+      {"switch": "10.179.19.193", "port": "e0-0", "speed": "10000 Mb/s", "rx_crc": 0, "rx_errors": 0, "jabber": 0, "frag": 0, "carrier_false": 0},
+      {"switch": "10.179.19.193", "port": "e0-1", "speed": "10000 Mb/s", "rx_crc": 0, "rx_errors": 0, "jabber": 0, "frag": 0, "carrier_false": 0},
+      {"switch": "10.179.19.194", "port": "e0-0", "speed": "10000 Mb/s", "rx_crc": 0, "rx_errors": 0, "jabber": 0, "frag": 0, "carrier_false": 0},
+      {"switch": "10.179.19.194", "port": "e0-1", "speed": "10000 Mb/s", "rx_crc": 0, "rx_errors": 0, "jabber": 0, "frag": 0, "carrier_false": 0},
+      {"switch": "10.179.19.195", "port": "e0-0", "speed": "10000 Mb/s", "rx_crc": 0, "rx_errors": 0, "jabber": 0, "frag": 0, "carrier_false": 0},
+      {"switch": "10.179.19.195", "port": "e0-1", "speed": "10000 Mb/s", "rx_crc": 0, "rx_errors": 0, "jabber": 0, "frag": 0, "carrier_false": 0},
+      {"switch": "10.179.19.196", "port": "e0-0", "speed": "10000 Mb/s", "rx_crc": 0, "rx_errors": 0, "jabber": 0, "frag": 0, "carrier_false": 0},
+      {
+        "switch": "10.179.19.196",
+        "port": "e0-1",
+        "speed": "1000 Mb/s",
+        "rx_crc": 51013,
+        "rx_errors": 0,
+        "jabber": 40,
+        "frag": 7102,
+        "carrier_false": 0,
+        "severity": "RED",
+        "note": "Speed degraded 10G→1G on 2026-05-04. Further degraded to 100 Mbps by 2026-05-05. CRC errors confirmed growing on day 1 (35,495 → 51,013). Physical cable/connector/SFP fault."
+      },
+      {"switch": "10.179.19.197", "port": "e0-0", "speed": "TIMEOUT", "rx_crc": null, "rx_errors": null, "jabber": null, "frag": null, "carrier_false": null},
+      {"switch": "10.179.19.197", "port": "e0-1", "speed": "TIMEOUT", "rx_crc": null, "rx_errors": null, "jabber": null, "frag": null, "carrier_false": null}
+    ]
+  },
+  "stadler_fw": {
+    "fw_ip_active": "172.19.195.1",
+    "fw_mac": "00:90:e8:c1:a7:ab",
+    "ccu_vlan7_ip": "172.19.195.2",
+    "vlan7_rx_errors": 0,
+    "vlan7_tx_errors": 0,
+    "vlan7_rx_dropped": 0,
+    "vlan7_tx_dropped": 0,
+    "arp_172_19_195_1": "REACHABLE",
+    "tcp_22_to_195_1": "OPEN",
+    "tcp_80_to_195_1": "OPEN",
+    "icmp_to_195_1": "100% loss (FW filters ICMP by policy — expected)",
+    "arp_172_19_196_1": "INCOMPLETE — not provisioned or not active on this trainset",
+    "severity": "GREEN",
+    "note": "Stadler FW is reachable at 172.19.195.1 (MAC 00:90:e8:c1:a7:ab, Westermo). TCP/22 and TCP/80 are open. ICMP loss is expected — Stadler FW filters ICMP by policy on all ÖBB DOSTO installations. The address 172.19.196.1 (used as the FW IP on some other ÖBB DOSTO consists) is not active on this trainset — Stadler to confirm if this is expected for this configuration."
+  },
+  "crc_error_growth_evidence": {
+    "switch_184_e0_1_schema_D1": [
+      {"timestamp": "2026-05-04T15:52:00+00:00", "rx_crc": 53055, "jabber": 30054},
+      {"timestamp": "2026-05-04T16:05:00+00:00", "rx_crc": 67115, "jabber": 37552},
+      {"timestamp": "2026-05-04T16:45:00+00:00", "rx_crc": 130998, "jabber": 67407},
+      {"timestamp": "2026-05-05T05:36:00+00:00", "rx_crc": 1475, "jabber": 307, "note": "Counter reset after train power cycle overnight. Speed further degraded to 100 Mbps."}
+    ],
+    "switch_196_e0_1_schema_E2": [
+      {"timestamp": "2026-05-04T15:52:00+00:00", "rx_crc": 35495, "frag": 5054},
+      {"timestamp": "2026-05-04T16:05:00+00:00", "rx_crc": 47349, "frag": 6660},
+      {"timestamp": "2026-05-04T16:12:00+00:00", "rx_crc": 51013, "frag": 7102},
+      {"timestamp": "2026-05-05T05:36:00+00:00", "rx_crc": 2021, "frag": 328, "note": "Counter reset after train power cycle overnight. Speed further degraded to 100 Mbps."}
+    ]
+  },
+  "day2_followup": {
+    "check_date": "2026-05-05",
+    "check_time_utc": "2026-05-05T05:36:00Z",
+    "snapshot1_utc": "2026-05-05T05:36:02Z",
+    "snapshot2_utc": "2026-05-05T05:41:09Z",
+    "summary": "Follow-up check on 2026-05-05 found the fault has worsened overnight. D1 e0-1 and E2 e0-1 have further degraded from 1G to 100 Mbps. Four additional ports on three new switches (nv6-E3 e0-0, nv6-F2 e0-0/e0-1, nv6-F3 e0-1) are now also at 100 Mbps. None of the new ports show CRC errors yet — speed degradation only. CRC counters on D1/E2 did not grow between the two snapshots (5 min apart), consistent with a train power cycle having reset them overnight.",
+    "degraded_ports": [
+      {
+        "schema": "nv6-D1", "mac": "a0:59:3a:d0:2e:c0", "port": "e0-1",
+        "day1_speed": "1000 Mb/s", "day2_speed": "100 Mb/s",
+        "day2_crc": 1475, "day2_jabber": 307, "day2_frag": 1,
+        "crc_growing": false, "severity": "RED",
+        "note": "Active cable/SFP fault confirmed day 1. Speed worsened overnight to 100 Mbps."
+      },
+      {
+        "schema": "nv6-E2", "mac": "a0:59:3a:d0:54:60", "port": "e0-1",
+        "day1_speed": "1000 Mb/s", "day2_speed": "100 Mb/s",
+        "day2_crc": 2021, "day2_jabber": 0, "day2_frag": 328,
+        "crc_growing": false, "severity": "RED",
+        "note": "Active cable/SFP fault confirmed day 1. Speed worsened overnight to 100 Mbps."
+      },
+      {
+        "schema": "nv6-E3", "mac": "a0:59:3a:d0:56:80", "port": "e0-0",
+        "day1_speed": "10000 Mb/s", "day2_speed": "100 Mb/s",
+        "day2_crc": 0, "day2_jabber": 0, "day2_frag": 0,
+        "crc_growing": false, "severity": "ORANGE",
+        "note": "New degradation since day 1. Speed-only degradation, no CRC errors yet. Requires physical inspection."
+      },
+      {
+        "schema": "nv6-F2", "mac": "a0:59:3a:d0:51:e0", "port": "e0-0",
+        "day1_speed": "10000 Mb/s", "day2_speed": "100 Mb/s",
+        "day2_crc": 0, "day2_jabber": 0, "day2_frag": 0,
+        "crc_growing": false, "severity": "ORANGE",
+        "note": "New degradation since day 1. Speed-only degradation, no CRC errors yet. Both ports on this switch are affected — possible switch hardware issue or EMI event in car F."
+      },
+      {
+        "schema": "nv6-F2", "mac": "a0:59:3a:d0:51:e0", "port": "e0-1",
+        "day1_speed": "10000 Mb/s", "day2_speed": "100 Mb/s",
+        "day2_crc": 0, "day2_jabber": 0, "day2_frag": 0,
+        "crc_growing": false, "severity": "ORANGE",
+        "note": "New degradation since day 1. Speed-only degradation, no CRC errors yet. Both ports on this switch are affected."
+      },
+      {
+        "schema": "nv6-F3", "mac": "a0:59:3a:d0:62:80", "port": "e0-1",
+        "day1_speed": "10000 Mb/s", "day2_speed": "100 Mb/s",
+        "day2_crc": 0, "day2_jabber": 0, "day2_frag": 0,
+        "crc_growing": false, "severity": "ORANGE",
+        "note": "New degradation since day 1. Speed-only degradation, no CRC errors yet."
+      }
+    ]
+  },
+  "verdict": {
+    "overall": "DEGRADED",
+    "red_findings": 2,
+    "yellow_findings": 1,
+    "summary": "Two inter-coach trunk links (nv6-D1 e0-1 and nv6-E2 e0-1) have confirmed physical-layer faults with CRC errors. By day 2 (2026-05-05) these links have further degraded from 1G to 100 Mbps. Four additional ports on three further switches (nv6-E3, nv6-F2 x2, nv6-F3) have also degraded to 100 Mbps overnight with no CRC errors yet. The pattern of escalating degradation across the E–F car area requires urgent physical inspection by Stadler."
+  }
+}

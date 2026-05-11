@@ -1,0 +1,193 @@
+{
+  "check_time": "2026-05-05T08:18:00Z",
+  "ccu": {
+    "hostname": "box1-t11",
+    "ip": "10.179.11.1",
+    "vlan100": "10.179.11.129/25",
+    "vlan7": "172.19.197.130/17"
+  },
+  "switch_count": {
+    "expected": 18,
+    "found": 18,
+    "verdict": "OK"
+  },
+  "switch_map": [
+    {
+      "ip": "10.179.11.138",
+      "role": "standard"
+    },
+    {
+      "ip": "10.179.11.140",
+      "role": "standard"
+    },
+    {
+      "ip": "10.179.11.141",
+      "role": "standard"
+    },
+    {
+      "ip": "10.179.11.142",
+      "role": "A1_or_A3_coupler_end"
+    },
+    {
+      "ip": "10.179.11.178",
+      "role": "D1_STP_root"
+    },
+    {
+      "ip": "10.179.11.179",
+      "role": "A3_Stadler_FW"
+    },
+    {
+      "ip": "10.179.11.180",
+      "role": "standard"
+    },
+    {
+      "ip": "10.179.11.181",
+      "role": "standard"
+    },
+    {
+      "ip": "10.179.11.182",
+      "role": "end_of_train_low_traffic"
+    },
+    {
+      "ip": "10.179.11.183",
+      "role": "B1_ZFR_primary"
+    },
+    {
+      "ip": "10.179.11.184",
+      "role": "D3_OBS_RDC"
+    },
+    {
+      "ip": "10.179.11.197",
+      "role": "standard"
+    },
+    {
+      "ip": "10.179.11.198",
+      "role": "standard"
+    },
+    {
+      "ip": "10.179.11.200",
+      "role": "B3_ZFR_standby"
+    },
+    {
+      "ip": "10.179.11.201",
+      "role": "standard"
+    },
+    {
+      "ip": "10.179.11.202",
+      "role": "standard"
+    },
+    {
+      "ip": "10.179.11.203",
+      "role": "end_of_train_ALTR_BLK"
+    },
+    {
+      "ip": "10.179.11.205",
+      "role": "standard"
+    }
+  ],
+  "stp": {
+    "root_mac": "a0:59:3a:d0:35:00",
+    "root_ip": "10.179.11.178",
+    "consistent_across_fleet": true,
+    "verdict": "OK"
+  },
+  "inter_coach_trunks": {
+    "speed_all_10G": true,
+    "duplex_all_full": true,
+    "error_counters_nonzero": [],
+    "verdict": "OK",
+    "notes": ".203 e0-0 in ALTR/BLK (normal RSTP loop prevention at end-of-train). .182 e0-1 near-zero traffic (end-of-train STP-blocked side)."
+  },
+  "stadler_facing_trunks": {
+    "A3_e1-4": {
+      "ip": "10.179.11.179",
+      "speed": "1000 Mb/s Full",
+      "rx_errors": 0,
+      "crc_errors": 0,
+      "carrier_false": 0,
+      "utilisation_pct": 2.5,
+      "verdict": "OK"
+    },
+    "D1_e0-2_OBS": {
+      "ip": "10.179.11.178",
+      "speed": "2500 Mb/s Full",
+      "rx_errors": 72,
+      "crc_errors": 0,
+      "carrier_false": 0,
+      "verdict": "YELLOW",
+      "note": "72 RX errors but 0 CRC. Port is up at 2.5G (not 10G as expected for OBS trunk). Speed negotiated down \u2014 possible cable or SFP issue. No CRC = frames received intact but something triggered error counter (possibly auto-neg transitions). Flag for investigation."
+    },
+    "D3_e0-2_OBS": {
+      "ip": "10.179.11.184",
+      "speed": "10000 Mb/s Full",
+      "rx_errors": 0,
+      "crc_errors": 0,
+      "carrier_false": 0,
+      "verdict": "OK"
+    },
+    "D1_e0-3_RDC": {
+      "ip": "10.179.11.178",
+      "speed": "10000 Mb/s Full",
+      "rx_errors": 0,
+      "crc_errors": 0,
+      "carrier_false": 0,
+      "rx_packets": 259,
+      "verdict": "OK",
+      "note": "Near-zero RX (259 pkts) \u2014 RDC likely idle/powered down"
+    },
+    "D3_e0-3_RDC": {
+      "ip": "10.179.11.184",
+      "speed": "10000 Mb/s Full",
+      "rx_errors": 0,
+      "crc_errors": 0,
+      "carrier_false": 0,
+      "rx_packets": 258,
+      "verdict": "OK",
+      "note": "Near-zero RX \u2014 RDC idle"
+    },
+    "B1_e1-11_ZFR": {
+      "ip": "10.179.11.183",
+      "speed": "1000 Mb/s Full",
+      "rx_errors": 0,
+      "crc_errors": 0,
+      "carrier_false": 0,
+      "verdict": "OK",
+      "note": "Active ZFR \u2014 receiving traffic"
+    },
+    "B3_e1-11_ZFR": {
+      "ip": "10.179.11.200",
+      "speed": "1000 Mb/s Full",
+      "rx_errors": 0,
+      "crc_errors": 0,
+      "carrier_false": 0,
+      "rx_packets": 0,
+      "verdict": "OK",
+      "note": "Standby ZFR \u2014 RX=0 expected (redundant pair, B1 is active)"
+    }
+  },
+  "e2e_fw_reachability": {
+    "fw_ip": "172.19.196.1",
+    "arp_reachable": false,
+    "icmp": "100% loss",
+    "tcp_port_80": "No route to host (ARP failed)",
+    "tcp_port_22": "No route to host (ARP failed)",
+    "vlan7_rx_errors": 0,
+    "vlan7_tx_errors": 0,
+    "verdict": "YELLOW",
+    "note": "Stadler FW at 172.19.196.1 not responding to ARP. vlan7 L2 path is up (port UP, zero errors). CCU IP is 172.19.197.130/17 \u2014 same /17, so direct ARP. This could mean the Stadler FW is powered off, in a different VLAN, or the OBS trunk path through D1 e0-2 (which is up at 2.5G with 72 RX errors) is the path issue. D3 e0-2 is up at 10G with zero errors. Investigate whether vlan7 traffic egresses D1 or D3."
+  },
+  "throughput_sample": {
+    "interval_seconds": 79,
+    "fw_trunk_A3_e1-4_rx_mbps": 1.1,
+    "fw_trunk_A3_e1-4_tx_mbps": 24.3,
+    "fw_trunk_utilisation_pct": 2.5,
+    "active_inter_coach_trunk_avg_mbps": 152,
+    "active_inter_coach_trunk_utilisation_pct": 1.5,
+    "verdict": "OK"
+  },
+  "overall_verdict": "NEEDS ATTENTION",
+  "findings_summary": [
+    "YELLOW: D1 (10.179.11.178) e0-2 OBS trunk \u2014 72 RX errors, speed 2.5G (expected 10G). Possible auto-neg problem or cable issue on this side. D3 side (10.179.11.184 e0-2) is clean at 10G.",
+    "YELLOW: Stadler FW 172.19.196.1 \u2014 ARP not resolving. vlan7 L2 is up with zero errors. FW may be powered off or path issue. TCP probes fail. Confirm FW power state with Stadler."
+  ]
+}

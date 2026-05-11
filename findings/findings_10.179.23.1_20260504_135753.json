@@ -1,0 +1,39 @@
+{
+  "generated_at": "2026-05-04T12:14:25Z",
+  "ccu_ip": "10.179.23.1",
+  "vds_switches": {
+    "count": 18,
+    "ips": ["10.179.23.178", "10.179.23.179", "10.179.23.180", "10.179.23.181", "10.179.23.182", "10.179.23.183", "10.179.23.184", "10.179.23.185", "10.179.23.186", "10.179.23.187", "10.179.23.188", "10.179.23.189", "10.179.23.190", "10.179.23.191", "10.179.23.192", "10.179.23.193", "10.179.23.194", "10.179.23.195"],
+    "consist_size": "6-car",
+    "firmware": { "10.179.23.178": "Firmware Version: 7.4.2 Build Release: 77411 ", "10.179.23.179": "Firmware Version: 7.4.2 Build Release: 77411 ", "10.179.23.180": "Firmware Version: 7.4.2 Build Release: 77411 ", "10.179.23.181": "Firmware Version: 7.4.2 Build Release: 77411 ", "10.179.23.182": "Firmware Version: 7.4.2 Build Release: 77411 ", "10.179.23.183": "Firmware Version: 7.4.2 Build Release: 77411 ", "10.179.23.184": "Firmware Version: 7.4.2 Build Release: 77411 ", "10.179.23.185": "Firmware Version: 7.4.2 Build Release: 77411 ", "10.179.23.186": "Firmware Version: 7.4.2 Build Release: 77411 ", "10.179.23.187": "Firmware Version: 7.4.2 Build Release: 77411 ", "10.179.23.188": "Firmware Version: 7.4.2 Build Release: 77411 ", "10.179.23.189": "Firmware Version: 7.4.2 Build Release: 77411 ", "10.179.23.190": "Firmware Version: 7.4.2 Build Release: 77411 ", "10.179.23.191": "Firmware Version: 7.4.2 Build Release: 77411 ", "10.179.23.192": "Firmware Version: 7.4.2 Build Release: 77411 ", "10.179.23.193": "Firmware Version: 7.4.2 Build Release: 77411 ", "10.179.23.194": "Firmware Version: 7.4.2 Build Release: 77411 ", "10.179.23.195": "Firmware Version: 7.4.2 Build Release: 77411 " }
+  },
+  "westermo_radio_count": 23,
+  "stp": {
+    "root": "0/a0:59:3a:d0:59:20",
+    "agreement": "18/18",
+    "consistent": true
+  },
+  "trunks_up": {
+    "e0-0": "18/18",
+    "e0-1": "18/18",
+    "e0-4": "18/18"
+  },
+  "port_anomalies": [{"switch":"10.179.23.185","port":"e0-2","rx_errors":1,"crc":0,"carrier_false":0}],
+  "stadler_fw": {
+    "fw_ip": "172.19.197.1",
+    "fw_mac": "00:90:e8:c5:3d:9d",
+    "arp": "reachable",
+    "tcp_22": "open",
+    "tcp_80": "open",
+    "tcp_443": "closed/filtered",
+    "vlan7_rx_errors": "0",
+    "vlan7_rx_drops": "0",
+    "icmp_note": "100% loss — ICMP filtered by FW policy. Path confirmed healthy via TCP/22+80 and ARP.",
+    "note": "FW vlan7 IP is 172.19.197.1 (not default 172.19.196.1) for this train"
+  },
+  "verdict": {
+    "overall": "HEALTHY",
+    "port_anomaly_count": 1,
+    "notes": "Single RX error on .185 e0-2 (1 against 267K packets, CRC=0, carrier-false=0) — noise, not actionable. All other counters clean. Stadler FW path healthy. STP consistent. Firmware uniform 7.4.2 build 77411 across all 18 switches."
+  }
+}

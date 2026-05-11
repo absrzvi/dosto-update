@@ -1,0 +1,116 @@
+#!/bin/bash
+
+HOSTNAME=""
+
+# server for debian10
+#HOSTNAME=vmpuppet01.ovh.21net.com
+
+# server for debian12
+HOSTNAME=vmpuppet01.ovh2.21net.com
+
+if [ -z "${HOSTNAME}" ]; then
+  echo "Please uncomment the correct HOSTNAME entry at the top of the script."
+  exit
+fi
+
+ENVURL=http://${HOSTNAME}:9494/env
+CERTURL=http://${HOSTNAME}:9494/cert
+
+function help() {
+  echo "usage: $0 [-d] <hostname> [branch]"
+  echo "       $0 -q <hostname_string> [branch_string]"
+  echo "       $0 -c <hostname_string>"
+  echo "Please see https://nomad-digital.atlassian.net/wiki/spaces/2SD/pages/892272723/Set+a+CCU+to+a+particular+branch for all documentation."
+  exit 1
+}
+
+function check_puppet_master() {
+  ping -n 1 ${HOSTNAME} >/dev/null 2>&1
+  if [ $? -ne 0 ]; then
+    echo "puppet master is not reachable at ${HOSTNAME}, please check your network"
+    exit 1
+  fi
+}
+
+function get_branch() {
+  branch=$(curl -s ${ENVURL}?host=${1} | jq -r .env)
+  if [ ! -z "${branch}" ]; then
+    echo "$1 is currently set to \"${branch}\""
+  else
+    echo "$1 is currently set to \"master\""
+  fi
+}
+
+function delete_branch() {
+  curl -f -X DELETE ${ENVURL}?host=${1} >/dev/null 2>&1
+  if [ $? -eq 0 ]; then
+    echo "$1 has been deleted"
+  else
+    echo "curl returned non-zero exit code"
+  fi
+}
+
+function set_branch() {
+  # Check if $1 is a valid FQDN and not an IP
+  if [[ "$1" =~ ^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
+    if [ "master" == "${2}" ]; then
+      echo "please use the -d option to set a host to master, do not specify \"master\" as a branch name"
+      exit 1
+    fi
+    curl -f -s -d "host=${1}&env=${2}" ${ENVURL} >/dev/null 2>&1
+    if [ $? -eq 0 ]; then
+      echo "$1 has been set to $2"
+    else
+      echo "curl returned non-zero exit code"
+    fi
+  else
+    echo "Invalid input: $1 is not a fully qualified domain name (FQDN)"
+    exit 1
+  fi
+}
+
+function query_branch() {
+  if [ ! -z "${2}" ]; then
+    curl -s ${ENVURL} | jq ".[] |select(.host|contains(\"${1}\"))|select(.env|contains(\"${2}\"))"
+  else
+    curl -s ${ENVURL} | jq ".[] |select(.host|contains(\"${1}\"))"
+  fi
+}
+
+function clear_certificate() {
+  returncode=$(curl -s -o /dev/null -w "%{http_code}" -X DELETE ${CERTURL}?fqdn=${1})
+  if [ "${returncode}" == "200" ]; then
+    echo "certificate for ${1} cleared on puppet master"
+  elif [ "${returncode}" == "404" ]; then
+    echo "certificate for ${1} not found on puppet master"
+  elif [ "${returncode}" == "406" ]; then
+    echo "fqdn ${1} does not match acceptable patterns"
+  else
+    echo "an internal error occurred"
+  fi
+}
+
+if [ $# -eq 0 ]; then
+  help
+  exit
+fi
+
+check_puppet_master
+
+if [ $# -eq 1 ]; then
+  get_branch $1
+elif [ $# -eq 2 ]; then
+  if [ "${1}" == "-d" ]; then
+    delete_branch $2
+  elif [ "${1}" == "-q" ]; then
+    query_branch $2
+  elif [ "${1}" == "-c" ]; then
+    clear_certificate $2
+  else
+    set_branch $1 $2
+  fi
+elif [ $# -eq 3 ]; then
+  if [ "${1}" == "-q" ]; then
+    query_branch $2 $3
+  fi
+fi

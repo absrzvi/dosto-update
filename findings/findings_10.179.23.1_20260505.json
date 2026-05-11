@@ -1,0 +1,82 @@
+{
+  "generated_at": "2026-05-05T11:36:00Z",
+  "ccu_ip": "10.179.23.1",
+  "ccu_hostname": "box1-t23",
+  "vds_switches": {
+    "count": 18,
+    "ips": ["10.179.23.138", "10.179.23.179", "10.179.23.181", "10.179.23.184", "10.179.23.186", "10.179.23.196", "10.179.23.197", "10.179.23.198", "10.179.23.199", "10.179.23.200", "10.179.23.201", "10.179.23.202", "10.179.23.203", "10.179.23.204", "10.179.23.205", "10.179.23.206", "10.179.23.207", "10.179.23.208"],
+    "consist_size": "6-car",
+    "firmware": {
+      "10.179.23.138": "Firmware Version: 7.4.2 Build Release: 77411",
+      "10.179.23.179": "Firmware Version: 7.4.2 Build Release: 77411",
+      "10.179.23.181": "Firmware Version: 7.4.2 Build Release: 77411",
+      "10.179.23.184": "Firmware Version: 7.4.2 Build Release: 77411",
+      "10.179.23.186": "Firmware Version: 7.4.2 Build Release: 77411",
+      "10.179.23.196": "Firmware Version: 7.4.2 Build Release: 77411",
+      "10.179.23.197": "Firmware Version: 7.4.2 Build Release: 77411",
+      "10.179.23.198": "Firmware Version: 7.4.2 Build Release: 77411",
+      "10.179.23.199": "Firmware Version: 7.4.2 Build Release: 77411",
+      "10.179.23.200": "Firmware Version: 7.4.2 Build Release: 77411",
+      "10.179.23.201": "Firmware Version: 7.4.2 Build Release: 77411",
+      "10.179.23.202": "Firmware Version: 7.4.2 Build Release: 77411",
+      "10.179.23.203": "Firmware Version: 7.4.2 Build Release: 77411",
+      "10.179.23.204": "Firmware Version: 7.4.2 Build Release: 77411",
+      "10.179.23.205": "Firmware Version: 7.4.2 Build Release: 77411",
+      "10.179.23.206": "Firmware Version: 7.4.2 Build Release: 77411",
+      "10.179.23.207": "Firmware Version: 7.4.2 Build Release: 77411",
+      "10.179.23.208": "Firmware Version: 7.4.2 Build Release: 77411"
+    }
+  },
+  "westermo_radio_count": 23,
+  "stp": {
+    "root": "0/a0:59:3a:d0:59:20",
+    "agreement": "18/18",
+    "consistent": true
+  },
+  "trunks_up": {
+    "e0-0": "18/18",
+    "e0-1": "18/18",
+    "e0-4": "18/18"
+  },
+  "port_anomalies": [
+    {
+      "switch": "10.179.23.208",
+      "port": "e0-2",
+      "rx_errors": 47,
+      "crc": 0,
+      "carrier_false": 0,
+      "note": "Static counter — confirmed zero growth over 32s live window. Stale transient, not an active fault."
+    }
+  ],
+  "stadler_fw": {
+    "fw_ip": "172.19.197.1",
+    "fw_mac": "00:90:e8:c5:3d:9d",
+    "arp": "reachable",
+    "tcp_22": "open",
+    "tcp_80": "open",
+    "tcp_443": "closed/filtered",
+    "vlan7_rx_errors": "0",
+    "vlan7_rx_drops": "0",
+    "icmp_note": "100% loss — ICMP filtered by FW policy. Path confirmed healthy via TCP/22+80 and ARP.",
+    "note": "FW vlan7 IP is 172.19.197.1 (not default 172.19.196.1) for this train"
+  },
+  "critical_trunks": {
+    "A3_e1-4": {"ip": "10.179.23.199", "speed": "1000 Mb/s Full", "rx_errors": 0, "crc": 0, "carrier_false": 0},
+    "B1_e1-11": {"ip": "10.179.23.184", "speed": "1000 Mb/s Full", "rx_errors": 0, "crc": 0, "carrier_false": 0, "note": "ZFR standby today — RX=0 expected"},
+    "B3_e1-11": {"ip": "10.179.23.204", "speed": "1000 Mb/s Full", "rx_errors": 0, "crc": 0, "carrier_false": 0, "note": "ZFR active today — RX=8.3M pkts"},
+    "D1_e0-2": {"ip": "10.179.23.205", "speed": "10000 Mb/s Full", "rx_errors": 0, "crc": 0, "carrier_false": 0},
+    "D1_e0-3": {"ip": "10.179.23.205", "speed": "10000 Mb/s Full", "rx_errors": 0, "crc": 0, "carrier_false": 0},
+    "D3_e0-2": {"ip": "10.179.23.208", "speed": "10000 Mb/s Full", "rx_errors": 47, "crc": 0, "carrier_false": 0, "note": "Static — zero growth confirmed"},
+    "D3_e0-3": {"ip": "10.179.23.208", "speed": "10000 Mb/s Full", "rx_errors": 0, "crc": 0, "carrier_false": 0}
+  },
+  "throughput_sample": {
+    "interval_seconds": 145,
+    "active_intercoach_trunk_range_mbps": "92-161",
+    "pwlan_e0-4_mbps": "~0"
+  },
+  "verdict": {
+    "overall": "HEALTHY",
+    "port_anomaly_count": 1,
+    "notes": "47 RX errors on D3 (.208) e0-2 — static counter, zero growth over 32s, CRC=0, carrier-false=0. Stale transient, not actionable. Monitor on next check. ZFR active/standby swapped vs yesterday (normal). All other counters clean. STP consistent. Firmware uniform 7.4.2 build 77411."
+  }
+}

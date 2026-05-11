@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="480" font-family="Arial, sans-serif" font-size="13">
+
+  <rect width="900" height="480" fill="#F8F9FA"/>
+
+  <!-- Title -->
+  <text x="450" y="30" text-anchor="middle" font-size="15" font-weight="bold" fill="#1F4E79">4736-106 — Degraded Inter-Coach Trunks</text>
+  <text x="450" y="50" text-anchor="middle" font-size="11" fill="#595959">Ring order: A – C – D – E – F – B   |   Check date: 2026-05-05</text>
+
+  <!-- ── CAR LABELS ── -->
+  <text x="200" y="90" text-anchor="middle" font-size="12" fill="#888">Car D</text>
+  <text x="400" y="90" text-anchor="middle" font-size="12" fill="#888">Car E</text>
+  <text x="600" y="90" text-anchor="middle" font-size="12" fill="#888">Car F</text>
+  <text x="800" y="90" text-anchor="middle" font-size="12" fill="#888">Car B</text>
+
+  <!-- ── CAR DIVIDERS ── -->
+  <line x1="300" y1="70" x2="300" y2="420" stroke="#DDDDDD" stroke-width="1" stroke-dasharray="4,4"/>
+  <line x1="500" y1="70" x2="500" y2="420" stroke="#DDDDDD" stroke-width="1" stroke-dasharray="4,4"/>
+  <line x1="700" y1="70" x2="700" y2="420" stroke="#DDDDDD" stroke-width="1" stroke-dasharray="4,4"/>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- SWITCHES                                -->
+  <!-- D1  centre (200, 180)  RED             -->
+  <!-- E2  centre (400, 180)  RED             -->
+  <!-- E3  centre (400, 320)  ORANGE          -->
+  <!-- F2  centre (600, 250)  ORANGE          -->
+  <!-- F3  centre (600, 370)  ORANGE          -->
+  <!-- B2  centre (800, 370)  ORANGE/unknown  -->
+  <!-- ═══════════════════════════════════════ -->
+
+  <!-- D1 -->
+  <rect x="140" y="148" width="120" height="64" rx="8" fill="#FCE4D6" stroke="#C00000" stroke-width="2.5"/>
+  <text x="200" y="170" text-anchor="middle" font-weight="bold" font-size="14" fill="#C00000">nv6-D1</text>
+  <text x="200" y="188" text-anchor="middle" font-size="11" fill="#C00000">e0-1 → E2</text>
+  <text x="200" y="203" text-anchor="middle" font-size="10" fill="#888">100 Mbps + CRC</text>
+
+  <!-- E2 -->
+  <rect x="340" y="148" width="120" height="64" rx="8" fill="#FCE4D6" stroke="#C00000" stroke-width="2.5"/>
+  <text x="400" y="170" text-anchor="middle" font-weight="bold" font-size="14" fill="#C00000">nv6-E2</text>
+  <text x="400" y="188" text-anchor="middle" font-size="11" fill="#C00000">e0-1 → D1</text>
+  <text x="400" y="203" text-anchor="middle" font-size="10" fill="#888">100 Mbps + CRC</text>
+
+  <!-- E3 -->
+  <rect x="340" y="288" width="120" height="64" rx="8" fill="#FFF2CC" stroke="#ED7D31" stroke-width="2.5"/>
+  <text x="400" y="310" text-anchor="middle" font-weight="bold" font-size="14" fill="#833C00">nv6-E3</text>
+  <text x="400" y="328" text-anchor="middle" font-size="11" fill="#833C00">e0-0 → E2</text>
+  <text x="400" y="343" text-anchor="middle" font-size="11" fill="#833C00">e0-1 → F2</text>
+
+  <!-- F2 -->
+  <rect x="540" y="208" width="120" height="64" rx="8" fill="#FFF2CC" stroke="#ED7D31" stroke-width="2.5"/>
+  <text x="600" y="230" text-anchor="middle" font-weight="bold" font-size="14" fill="#833C00">nv6-F2</text>
+  <text x="600" y="248" text-anchor="middle" font-size="11" fill="#833C00">e0-0 → E3</text>
+  <text x="600" y="263" text-anchor="middle" font-size="11" fill="#833C00">e0-1 → F3</text>
+
+  <!-- F3 -->
+  <rect x="540" y="338" width="120" height="64" rx="8" fill="#FFF2CC" stroke="#ED7D31" stroke-width="2.5"/>
+  <text x="600" y="360" text-anchor="middle" font-weight="bold" font-size="14" fill="#833C00">nv6-F3</text>
+  <text x="600" y="378" text-anchor="middle" font-size="11" fill="#833C00">e0-0 → B2</text>
+  <text x="600" y="393" text-anchor="middle" font-size="10" fill="#888">100 Mbps</text>
+
+  <!-- B2 -->
+  <rect x="740" y="338" width="120" height="64" rx="8" fill="#FFF2CC" stroke="#ED7D31" stroke-width="2.5" stroke-dasharray="6,3"/>
+  <text x="800" y="360" text-anchor="middle" font-weight="bold" font-size="14" fill="#833C00">nv6-B2</text>
+  <text x="800" y="378" text-anchor="middle" font-size="11" fill="#833C00">e0-1 → F3</text>
+  <text x="800" y="393" text-anchor="middle" font-size="10" fill="#888">not yet confirmed</text>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- LINKS                                   -->
+  <!-- ═══════════════════════════════════════ -->
+
+  <!-- D1 e0-1 <-> E2 e0-1  RED dashed  100Mbps+CRC -->
+  <line x1="260" y1="180" x2="340" y2="180" stroke="#C00000" stroke-width="3" stroke-dasharray="7,3"/>
+  <text x="300" y="170" text-anchor="middle" font-size="10" font-weight="bold" fill="#C00000">100M + CRC</text>
+  <text x="268" y="183" font-size="13">⚡</text>
+  <text x="322" y="183" font-size="13">⚡</text>
+
+  <!-- E2 e0-0 <-> E3 e0-0  ORANGE dashed  100Mbps -->
+  <line x1="400" y1="212" x2="400" y2="288" stroke="#ED7D31" stroke-width="3" stroke-dasharray="7,3"/>
+  <text x="415" y="254" font-size="10" font-weight="bold" fill="#ED7D31">100M</text>
+  <text x="388" y="220" font-size="13">⚡</text>
+  <text x="388" y="298" font-size="13">⚡</text>
+
+  <!-- E3 e0-1 <-> F2 e0-0  ORANGE dashed  100Mbps -->
+  <line x1="460" y1="325" x2="540" y2="255" stroke="#ED7D31" stroke-width="3" stroke-dasharray="7,3"/>
+  <text x="510" y="280" text-anchor="middle" font-size="10" font-weight="bold" fill="#ED7D31">100M</text>
+  <text x="462" y="328" font-size="13">⚡</text>
+  <text x="526" y="258" font-size="13">⚡</text>
+
+  <!-- F2 e0-1 <-> F3 e0-?  ORANGE dashed  100Mbps -->
+  <line x1="600" y1="272" x2="600" y2="338" stroke="#ED7D31" stroke-width="3" stroke-dasharray="7,3"/>
+  <text x="615" y="308" font-size="10" font-weight="bold" fill="#ED7D31">100M</text>
+  <text x="588" y="280" font-size="13">⚡</text>
+  <text x="588" y="348" font-size="13">⚡</text>
+
+  <!-- F3 e0-0 <-> B2 e0-1  ORANGE dashed  unconfirmed -->
+  <line x1="660" y1="370" x2="740" y2="370" stroke="#ED7D31" stroke-width="3" stroke-dasharray="7,3"/>
+  <text x="700" y="360" text-anchor="middle" font-size="10" font-weight="bold" fill="#ED7D31">100M (?)</text>
+  <text x="662" y="373" font-size="13">⚡</text>
+  <text x="724" y="373" font-size="13">⚡</text>
+
+  <!-- ── LEGEND ── -->
+  <rect x="40" y="420" width="820" height="44" rx="6" fill="white" stroke="#CCCCCC" stroke-width="1"/>
+  <line x1="60" y1="442" x2="110" y2="442" stroke="#C00000" stroke-width="3" stroke-dasharray="7,3"/>
+  <text x="118" y="446" font-size="11" fill="#333">100 Mbps + active CRC errors (confirmed cable fault)</text>
+  <line x1="360" y1="442" x2="410" y2="442" stroke="#ED7D31" stroke-width="3" stroke-dasharray="7,3"/>
+  <text x="418" y="446" font-size="11" fill="#333">100 Mbps, no CRC yet (speed degradation only)</text>
+  <rect x="660" y="433" width="16" height="16" rx="3" fill="#FFF2CC" stroke="#ED7D31" stroke-width="2" stroke-dasharray="4,2"/>
+  <text x="682" y="446" font-size="11" fill="#833C00">B2 counters pending confirmation</text>
+
+</svg>

@@ -1,0 +1,127 @@
+{
+  "generated_at": "2026-05-04T00:00:00Z",
+  "ccu_ip": "10.179.8.1",
+  "ccu_hostname": "box1-t8",
+  "fzg_id": "108",
+  "fzg_nr": "4736-108",
+  "consist_size": "6-car",
+  "obn_train_id": 136,
+  "vds_switches": {
+    "count": 18,
+    "expected": 18,
+    "ips": [
+      "10.179.8.178", "10.179.8.179", "10.179.8.180",
+      "10.179.8.181", "10.179.8.182", "10.179.8.183",
+      "10.179.8.184", "10.179.8.185", "10.179.8.186",
+      "10.179.8.187", "10.179.8.188", "10.179.8.189",
+      "10.179.8.190", "10.179.8.191", "10.179.8.192",
+      "10.179.8.193", "10.179.8.194", "10.179.8.195"
+    ],
+    "ip_to_switch_id": {
+      "10.179.8.178": "B2",
+      "10.179.8.179": "E1",
+      "10.179.8.180": "C3",
+      "10.179.8.181": "B1",
+      "10.179.8.182": "A3",
+      "10.179.8.183": "D1",
+      "10.179.8.184": "F1",
+      "10.179.8.185": "A1",
+      "10.179.8.186": "D3",
+      "10.179.8.187": "F2",
+      "10.179.8.188": "E3",
+      "10.179.8.189": "B3",
+      "10.179.8.190": "C1",
+      "10.179.8.191": "E2",
+      "10.179.8.192": "C2",
+      "10.179.8.193": "F3",
+      "10.179.8.194": "A2",
+      "10.179.8.195": "D2"
+    },
+    "obn_template_family": "nv6-v7"
+  },
+  "westermo_radio_count": 24,
+  "lldp_topology": {
+    "checked": true,
+    "total_trunk_ports_checked": 36,
+    "ok_count": 32,
+    "mismatch_count": 4,
+    "mismatches": [
+      {
+        "switch_id": "C3",
+        "switch_ip": "10.179.8.180",
+        "port": "e0-0",
+        "live_neighbour": "C2",
+        "expected_neighbour": "A2",
+        "diagnosis": "Cables swapped on C3 — e0-0 and e0-1 are transposed"
+      },
+      {
+        "switch_id": "C3",
+        "switch_ip": "10.179.8.180",
+        "port": "e0-1",
+        "live_neighbour": "A2",
+        "expected_neighbour": "C2",
+        "diagnosis": "Cables swapped on C3 — e0-0 and e0-1 are transposed"
+      },
+      {
+        "switch_id": "D1",
+        "switch_ip": "10.179.8.183",
+        "port": "e0-1",
+        "live_neighbour": "NO NEIGHBOUR",
+        "expected_neighbour": "E2",
+        "diagnosis": "No LLDP peer on D1 e0-1 — cable missing, unplugged, or routed to wrong port"
+      },
+      {
+        "switch_id": "E2",
+        "switch_ip": "10.179.8.191",
+        "port": "e0-1",
+        "live_neighbour": "NO NEIGHBOUR",
+        "expected_neighbour": "D1",
+        "diagnosis": "No LLDP peer on E2 e0-1 — far end of same broken D1<->E2 trunk link"
+      }
+    ],
+    "ok_links": [
+      {"switch": "B2", "port": "e0-0", "neighbour": "B3"},
+      {"switch": "B2", "port": "e0-1", "neighbour": "F3"},
+      {"switch": "E1", "port": "e0-0", "neighbour": "F1"},
+      {"switch": "E1", "port": "e0-1", "neighbour": "D2"},
+      {"switch": "B1", "port": "e0-0", "neighbour": "B3"},
+      {"switch": "B1", "port": "e0-1", "neighbour": "F1"},
+      {"switch": "A3", "port": "e0-0", "neighbour": "A1"},
+      {"switch": "A3", "port": "e0-1", "neighbour": "A2"},
+      {"switch": "D1", "port": "e0-0", "neighbour": "C1"},
+      {"switch": "F1", "port": "e0-0", "neighbour": "B1"},
+      {"switch": "F1", "port": "e0-1", "neighbour": "E1"},
+      {"switch": "A1", "port": "e0-0", "neighbour": "A3"},
+      {"switch": "A1", "port": "e0-1", "neighbour": "C1"},
+      {"switch": "D3", "port": "e0-0", "neighbour": "C2"},
+      {"switch": "D3", "port": "e0-1", "neighbour": "D2"},
+      {"switch": "F2", "port": "e0-0", "neighbour": "F3"},
+      {"switch": "F2", "port": "e0-1", "neighbour": "E3"},
+      {"switch": "E3", "port": "e0-0", "neighbour": "F2"},
+      {"switch": "E3", "port": "e0-1", "neighbour": "E2"},
+      {"switch": "B3", "port": "e0-0", "neighbour": "B1"},
+      {"switch": "B3", "port": "e0-1", "neighbour": "B2"},
+      {"switch": "C1", "port": "e0-0", "neighbour": "A1"},
+      {"switch": "C1", "port": "e0-1", "neighbour": "D1"},
+      {"switch": "E2", "port": "e0-0", "neighbour": "E3"},
+      {"switch": "C2", "port": "e0-0", "neighbour": "C3"},
+      {"switch": "C2", "port": "e0-1", "neighbour": "D3"},
+      {"switch": "F3", "port": "e0-0", "neighbour": "B2"},
+      {"switch": "F3", "port": "e0-1", "neighbour": "F2"},
+      {"switch": "A2", "port": "e0-0", "neighbour": "A3"},
+      {"switch": "A2", "port": "e0-1", "neighbour": "C3"},
+      {"switch": "D2", "port": "e0-0", "neighbour": "D3"},
+      {"switch": "D2", "port": "e0-1", "neighbour": "E1"}
+    ]
+  },
+  "stp": {"checked": false, "note": "Not assessed — topology faults must be resolved first"},
+  "port_errors": {"checked": false, "note": "Not assessed — topology faults must be resolved first"},
+  "stadler_fw": {"checked": false, "note": "Not assessed — topology faults must be resolved first"},
+  "throughput": {"checked": false, "note": "Not assessed — topology faults must be resolved first"},
+  "verdict": {
+    "overall": "CABLING_FAULTS",
+    "lldp_ok": false,
+    "cabling_fault_count": 2,
+    "notes": "Two cabling faults identified via LLDP topology check. Full L2 health check (STP, port errors, throughput, FW probe) deferred until Stadler resolves cabling. OBN train_id correctly set to 136 (128+8)."
+  }
+}
