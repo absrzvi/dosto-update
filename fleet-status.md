@@ -1,6 +1,6 @@
 # DOSTO Fleet — v8 Rollout Status
 
-**Last updated:** 2026-05-11 by Abbas Rizvi
+**Last updated:** 2026-05-12 by Abbas Rizvi
 **Update discipline:** This file is the source of truth for "where did we leave off". Every engineer **must update the relevant row at the end of every train session, before logging out** — this is Step 11 of the train-login checklist. If you don't update, the next person can't pick up.
 
 **Companion file:** Narrative per-train history (recovery sequences, discovered lessons, session context) lives in [`fleet-journal.md`](fleet-journal.md). This file holds **current state** only — table + diagnostic-state bullet lists. Prose blocks in the per-train detail sections below are being migrated to the journal as each train is visited. When you visit a train, move its prose to the journal and trim its block here to just the diagnostic-state fields.
@@ -35,7 +35,7 @@ Five-column scan tables. For full per-train detail (OBN patches, switch firmware
 | Fzg | Train# | CCU IP | Status | Next action |
 |---|---|---|---|---|
 | 129 | 4736-101 | ❓ | ⚪ UNKNOWN | initial visit |
-| 130 | 4736-102 | `10.179.47.1` | 🔴 **BLOCKED** | wait for Stadler on D2/E2/E3/F2 — unchanged 2026-05-11; FW confirmed commissioned per ICMP+ARP test |
+| 130 | 4736-102 | `10.179.47.1` | 🟡 **PAUSED** | push config to 3 `-man` switches (.180 .186 .187), then push AP fw 6.10.0-0→6.11.2-0 on 24 APs |
 | 131 | 4736-103 | `10.179.11.1` | 🟡 **PAUSED — awaiting Stadler on F3 AP3m + B2 null fw** | reboot to activate run3 (8/8 OBN persisted); push AP fw 6.10.0-0→6.11.2-0 after Stadler |
 | 132 | 4736-104 | `10.179.10.1` | 🟡 **PAUSED — train offline; D4 BLOCKED Stadler** | verify .231; push .237 .238 .240 — see detail |
 | 133 | 4736-105 | `10.179.1.1` | 🟢 **DONE w/ Stadler** | wait for Stadler on Coach5 AP2 + FW path |
@@ -104,21 +104,35 @@ One block per train that's been touched or has known state. Fields under each bl
 
 ---
 
-### Fzg 130 — 4736-102 — 🔴 BLOCKED (CCU-local recovery done; awaiting Stadler on D2/E2/E3/F2)
+### Fzg 130 — 4736-102 — 🟡 PAUSED (3 switches need config push; 24 APs need fw upgrade)
 
-**Status:** 🔴 **BLOCKED** · **CCU:** `10.179.47.1` (`box1-t47`) · **Last touched:** 2026-05-11 AR
+**Status:** 🟡 **PAUSED** · **CCU:** `10.179.47.1` (`box1-t47`) · **Last touched:** 2026-05-12 AR
 
 **Diagnostic state:**
 - **OBN patches:** ✅ 8/8 patched (persisted in run1; bug 6 count=2 per audit F7)
-- **Switches v8:** 🔴 14/18 visible (D2, E2, E3, F2 missing — awaiting Stadler diagnosis)
-- **APs:** ❓ (23 visible at Stage-1 probe; config classification not run — deferred until consist complete)
+- **Switches v8:** 🟡 18/18 visible and reachable; 15/18 on correct `nv6-*-v8-130` config; **3 still on `-man` config** (`.180` E1, `.186` B1, `.187` F1) — need `obn update c` in leaf-first order
+- **APs:** 🟡 24 APs visible, all correct Nomad config, all on `6.10.0-0` (target `6.11.2-0`) — firmware upgrade not yet started
 - **vlan7:** ✅ `172.19.193.2/17` live (run1, post-reboot verified)
-- **Stadler cabling:** 🔴 4 switches not visible (see above)
-- **FW reach:** ✅ **commissioned** (2026-05-11): ARP REACHABLE to `00:90:e8:bb:9d:67`, **ICMP 100% loss = Stadler policy drop = commissioned per CLAUDE.md Phase 6 Q2**; TCP 80 + 22 OPEN. Resolves prior fleet-wide F9 carryover question for this train.
-- **Health check:** ⬜ (blocked by incomplete consist)
-- **Customer report:** ⬜ (blocked by incomplete consist)
+- **Stadler cabling:** ✅ 18/18 switches visible — D2/E2/E3/F2 returned; no cable fault (prior BLOCKED state lifted)
+- **FW reach:** ✅ **commissioned** (2026-05-12 confirmed): ARP REACHABLE `00:90:e8:bb:9d:67`, ICMP 100% loss = Stadler policy drop per Phase 6 Q2; TCP 80+22 OPEN
+- **Health check:** ⬜ (defer until 18/18 config + 24/24 AP firmware complete)
+- **Customer report:** ⬜ (defer until health check done)
+- **TFTP helper:** 🟡 runtime fix applied this session (in-memory only — re-apply after any CCU reboot before AP fw push)
 
-Session-specific narrative: see [fleet-journal.md#fzg-130--4736-102](fleet-journal.md). Architectural findings from the orchestrator-stack test run that recovered this train: see [handoff-bootstrap-audit-2026-05-11.md](handoff-bootstrap-audit-2026-05-11.md).
+**OBN workflow:** always run `sudo obn discover && sudo obn report` before any `obn update c` or `obn validate` — OBN reads from `discovery.prev.json` (committed report snapshot), not raw `discovery.json`. Skipping `obn report` causes stale data / "readonly" false-positive. See [handoff-fzg130-2026-05-12.md](handoff-fzg130-2026-05-12.md).
+
+**Next session — first commands:**
+```bash
+lsmod | grep nf_conntrack_tftp   # re-apply if missing
+sudo python3 -c "import json; d=json.load(open('/tmp/discovery.prev.json')); print(len(d.get('devices',[])), 'devices')"
+# If < 43: sudo obn discover && sudo obn report
+sudo obn update c 10.179.47.180  # leaf
+sudo obn update c 10.179.47.186  # leaf
+sudo obn update c 10.179.47.187  # middle node — try without --allow-non-leaf first
+# Then: 24 × AP firmware push serially
+```
+
+Session-specific narrative: see [fleet-journal.md#fzg-130--4736-102](fleet-journal.md) and [handoff-fzg130-2026-05-12.md](handoff-fzg130-2026-05-12.md).
 
 ---
 

@@ -34,6 +34,30 @@ Narrative companion to [`fleet-status.md`](fleet-status.md). Where `fleet-status
 
 ### Fzg 130 — 4736-102
 
+#### 2026-05-12 — AR — L2 health check; 4 missing switches returned; FW commission confirmed; OBN readonly bug found
+
+**Session goal.** Full L2 health check, push config to 3 `-man` switches, upgrade 24 APs from `6.10.0-0` → `6.11.2-0`.
+
+**What changed.**
+
+- Prior BLOCKED state (D2/E2/E3/F2 missing) **resolved without Stadler action** — all 4 switches returned; 18/18 now visible. Removed from cable-issues-register (no cabling fault, switches came back on their own — likely transient cellular outage on the previous visit).
+- **Stadler FW commission state confirmed:** `ping -c 5 172.19.193.1` → 100% loss with ARP REACHABLE (`00:90:e8:bb:9d:67`). ICMP loss = Stadler policy drop = commissioned. Closes the open question from 2026-05-11 journal entry.
+- **L2 fabric healthy:** 18/18 switches, all trunks UP 10G full, zero CRC/carrier-false errors, single stable RSTP root.
+- **OBN patches:** 8/8 confirmed still in run1 (no reboot had wiped them).
+- **TFTP conntrack helper** applied (runtime): `modprobe nf_conntrack_tftp` + `iptables -t raw -I PREROUTING -p udp --dport 69 -j CT --helper tftp`.
+- **3 switches still on `-man` config:** `.180` (E1), `.186` (B1), `.187` (F1) — `obn validate -t sw` shows `✗`. These were never given OBN-rendered config (possibly pre-existed from factory or a different commissioning run).
+- **24 APs on `6.10.0-0`** (target `6.11.2-0`), all correct Nomad config. Firmware push not yet started.
+- **OBN `discover → report → update` workflow order learned:** `obn update c` and `obn validate` read from `discovery.prev.json` (the committed report snapshot), not `discovery.json` (raw scan). This is by design — `obn report` is the step that commits the scan. We had skipped `obn report`, so `discovery.prev.json` was stale (1 device only) → empty device set for target IP → Python `all([]) = True` → "Update not supported for readonly devices". Fix: always run `sudo obn discover && sudo obn report` before any `obn update c` or `obn validate`. `obn report` started in background; CCU dropped (cellular) before completion confirmed.
+
+**What we learned.**
+
+- **OBN canonical workflow is `discover → report → update/validate`** — not a bug, by design. `obn report` commits the raw scan into the stable snapshot that all OBN operations read from. Any train where `obn report` hasn't been run will show stale data in `obn validate` and "readonly" errors in `obn update c`. Always run both commands in sequence before any OBN push. Document in troubleshooting-runbook.md under "OBN update fails — readonly devices".
+- **`obn validate` empty table when consist.yaml is empty** — OBN hadn't built a topology tree on this CCU. Workaround: read `/tmp/discovery.json` directly via Python.
+- **`08_e2e_probe.sh` had hardcoded FW IP `172.19.196.1`** — produced false `path_broken` for Fzg 130 (actual FW is `172.19.193.1`). Always pass explicit second arg. Background task spawned to fix the script.
+- **VDS switch reboot CLI command unknown** — `reboot`, `reload`, `system reboot` all rejected. Investigate via docs/switch_user_manual.pdf.
+
+**Next.** Re-connect when CCU is back. Verify discovery.prev.json populated (≥43 devices). Push `.180`, `.186`, `.187` config in leaf-first order. Then push 24 AP firmware serially. See [handoff-fzg130-2026-05-12.md](handoff-fzg130-2026-05-12.md) for detailed resume commands.
+
 #### 2026-05-11 — AR — CCU-local recovery executed via orchestrator-stack test run
 
 **Session goal.** Test the orchestrator → train-worker → commission-train flow end-to-end. Recovery of Fzg 130 was a means to that end, not the primary goal. Findings on the stack are in [`handoff-bootstrap-audit-2026-05-11.md`](handoff-bootstrap-audit-2026-05-11.md).
