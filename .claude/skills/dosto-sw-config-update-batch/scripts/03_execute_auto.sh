@@ -16,8 +16,7 @@ emit_event "auto_mode_kickoff" log_file="$LOG" rstp_root_mac_pre="$RSTP_ROOT_PRE
 
 # Kick off obn update c sw in the background on the CCU via nohup.
 # We capture its PID so we can wait for it later.
-ccu_run "$CCU_IP" "sudo nohup bash -c 'obn update c sw > $LOG 2>&1' </dev/null >/dev/null 2>&1 & echo \$!" > /tmp/obn_bg_pid.txt
-OBN_PID=$(cat /tmp/obn_bg_pid.txt | tr -d '[:space:]')
+OBN_PID=$(ccu_run "$CCU_IP" "sudo nohup bash -c 'obn update c sw > $LOG 2>&1' </dev/null >/dev/null 2>&1 & echo \$!" | tr -d '[:space:]')
 emit_event "obn_update_started" pid=$OBN_PID
 
 # Iterate through pre-computed batches as our reporting frame.
