@@ -30,6 +30,10 @@ switch_run() {
 
 # emit_event <event_name> [key=value ...]
 # Emits one-line JSON to stdout. Used by --execute and --dry-run-execute.
+# Limitation: values starting with `[` or `{` are passed through as raw JSON.
+# Callers must NOT pass plain string values that happen to begin with those
+# chars. All current callers pass either valid JSON literals or non-bracket
+# strings; if you add a new caller, audit your value shape.
 emit_event() {
   local event="$1"; shift
   local ts; ts="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
