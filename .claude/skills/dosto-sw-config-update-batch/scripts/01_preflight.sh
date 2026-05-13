@@ -49,8 +49,12 @@ else
   fi
 fi
 
-# 4. obn busy? Any CLI obn process other than serve-api/telemetry?
-BUSY=$(sudo ps -eo pid,cmd | grep '/usr/share/obn/venv/bin/python' | grep -vE 'serve-api|telemetry|grep' | wc -l)
+# 4. obn busy? Any CLI obn process other than known long-running background jobs.
+# serve-api / telemetry are the daemon processes from supervisord.
+# user-count / wifi-status / discover-schedule are recurring scheduled jobs that
+# can run in the background — we exclude them too, the guard is only for
+# operator-driven CLI commands like `obn update`, `obn discover` (manual), `obn report`.
+BUSY=$(sudo ps -eo pid,cmd | grep '/usr/share/obn/venv/bin/python' | grep -vE 'serve-api|telemetry|user-count|wifi-status|discover-schedule|grep' | wc -l)
 if [ "$BUSY" -eq 0 ]; then
   echo "obn_busy:OK"
 else
