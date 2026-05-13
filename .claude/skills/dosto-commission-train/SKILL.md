@@ -28,7 +28,8 @@ You (top-level orchestrator session)
                                        → /dosto-ap-config-update (per AP)
                                        → /dosto-ap-firmware-update (per AP)
                                        → /dosto-sw-firmware-update (per switch, leaf-first)
-                                       → /dosto-sw-config-update (per switch, leaf-first)
+                                       → /dosto-sw-config-update-batch --execute --auto
+                                         (legacy single-switch fallback: --legacy-serial-sw-config)
                                        → /dosto-l2-health
                                        → /dosto-l2-report
 ```
@@ -52,6 +53,7 @@ This skill is **single-train scope**. Multi-train fan-out is the orchestrator's 
 | `--consist <4-car|6-car>` | enum | yes | Affects expected device counts (12+16 for nv4, 18+24 for nv6). |
 | `--resume <stage_id>` | enum | no | Skips ahead to the named stage; assumes prior stages succeeded. Re-runs `initial_diagnostics` to confirm prior post-conditions are met before resuming. |
 | `--dry-run` | flag | no | Every per-device skill runs in `--prepare` mode. No CCU writes, no approval gates fire (since nothing destructive is about to happen). Output JSON has `dry_run: true` at top level. |
+| `--legacy-serial-sw-config` | flag | no | At stage 13, fall back to per-switch serial config push (`dosto-sw-config-update --execute` looped leaf-first) instead of the default batched parallel path (`dosto-sw-config-update-batch --execute --auto`). Use only when the batch skill has shown problems on the specific train being commissioned. |
 
 ### Pre-stage-1 input cross-validation (mandatory)
 
@@ -85,7 +87,7 @@ Per [`subagent-report.md`](../../contracts/subagent-report.md) → "Commissionin
 | 10 | `post_reboot_verify` | `DIAGNOSING` | only after reboot | re-run `--post-flight` mode of OBN-patches, fzg-id-check, vlan7-config — verifies *rendered output* (hostnames, live IP, FW reach) not just file markers |
 | 11 | `obn_discover_initial` | `DIAGNOSING` | always | `sudo obn discover` from CCU, parse `/tmp/discovery.json` for AP factory-state and switch firmware/config state |
 | 12 | `await_obn_update_c` | `NEEDS_APPROVAL` (Gate 3) | only if any switch needs config push OR Nomad APs need config refresh | — |
-| 13 | `push_switch_config` | `PUSHING_TO_DEVICES` | only if Gate 3 approved AND any switch needs config | `dosto-sw-config-update --execute`, one switch at a time, OBNTree leaf-first. **Highest-value device push — fires first under power-off risk** because the v8 config carries Stadler-specific switch IPs the customer cares about. |
+| 13 | `push_switch_config` | `PUSHING_TO_DEVICES` | only if Gate 3 approved AND any switch needs config | **Default**: `dosto-sw-config-update-batch --execute --auto` — OBN-driven parallel leaf-first batches, ~30-45 min wall-clock for a 6-car DOSTO. **Legacy fallback**: with orchestrator flag `--legacy-serial-sw-config`, loops `dosto-sw-config-update --execute` per switch (~3 hours). Same OBNTree leaf-first ordering either way. **Highest-value device push — fires first under power-off risk** because the v8 config carries Stadler-specific switch IPs the customer cares about. |
 | 14 | `obn_discover_post_sw_config` | `DIAGNOSING` | only after `push_switch_config` | `sudo obn discover` to verify all switches now show config `✓` (renamed from `obn_discover_post_config` to disambiguate from the AP-config phase later) |
 | 15 | `await_obn_update_f` | `NEEDS_APPROVAL` (Gate 4) | only if any device needs firmware push | — |
 | 16 | `push_switch_firmware` | `PUSHING_TO_DEVICES` | only if Gate 4 approved AND any switch needs firmware update | `dosto-sw-firmware-update --execute`, one switch at a time, OBNTree leaf-first. **NEW stage** — split from old combined `push_ap_firmware` two-phase form. Runs after switch config so the operational payload (Stadler IPs) is locked in before the maintenance payload (firmware version). |
@@ -357,11 +359,15 @@ The Gate 3 approval covers BOTH the switch-config push (stage 13) AND the eventu
 
 **This is the highest-value device push.** The v8 config carries Stadler-specific switch IPs the customer cares about, and is fully tested as the next step after CCU commissioning. Power-off-risk principle: if the train powers off after this stage, the operational payload (Stadler IPs on every switch) is locked in, regardless of whether subsequent firmware/AP work completes.
 
-Iterates switches in **OBNTree leaf-first order** (per `dosto-sw-config-update`'s precondition). For each switch, invokes `/dosto-sw-config-update <ccu-ip> <switch-ip> --execute --json`. The per-switch skill enforces the leaf check; non-leaves require `--allow-non-leaf` which this stage passes only when iterating up the tree after all children of that switch are done.
+**Default path — parallel batched** (`dosto-sw-config-update-batch --execute --auto`):
 
-`stage.current_step` / `total_steps` track per-switch progress (e.g. 7/18 switches done, 11 remaining).
+Wraps OBN's built-in parallel batcher (`obn update c sw` → `OBNTree.calculate_parallel_update_order` → `ThreadPoolExecutor`). Same OBNTree leaf-first ordering as the legacy path, but multiple sibling leaves reboot concurrently rather than one-at-a-time. ~30-45 min wall-clock on a 6-car DOSTO vs. ~3 hours legacy. `stage.current_step` / `total_steps` track per-batch progress (e.g. batch 2/5). Gate 2 surfaces per-batch failures with engineer choice (abort / extend-poll / retry / skip); 3 consecutive non-success outcomes auto-abort. See [`dosto-sw-config-update-batch`](../dosto-sw-config-update-batch/SKILL.md) for full event schema and gate semantics.
 
-If any per-switch push fails (e.g. `config_did_not_trigger_reboot` from `dosto-sw-config-update`), halt with `BLOCKED`. Capture the failed switch and full diagnostic context.
+**Legacy serial path** (`--legacy-serial-sw-config` orchestrator flag):
+
+Iterates switches in OBNTree leaf-first order. For each switch, invokes `/dosto-sw-config-update <ccu-ip> <switch-ip> --execute --json`. The per-switch skill enforces the leaf check; non-leaves require `--allow-non-leaf` which this stage passes only when iterating up the tree after all children of that switch are done. `stage.current_step` / `total_steps` track per-switch progress. Use only when the batch skill has a known issue on the specific train (e.g. surfaced during a previous failed run).
+
+If any push fails (`config_did_not_trigger_reboot` from `dosto-sw-config-update`, `gate_4:targets_still_failing` from `dosto-sw-config-update-batch`, or any unhandled abort), halt with `BLOCKED`. Capture the failed switches and full diagnostic context.
 
 ### Stage 14: `obn_discover_post_sw_config`
 
