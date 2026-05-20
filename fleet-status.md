@@ -1,6 +1,6 @@
 # DOSTO Fleet — v8 Rollout Status
 
-**Last updated:** 2026-05-19 by Abbas Rizvi (Fzg 138 vlan7 fix + CCU IP correction)
+**Last updated:** 2026-05-20 by Abbas Rizvi (Fzg 143 + 144 commissioning: 18/18 switches v8 each, OBN bug 9 patched + persisted, AP firmware push mid-install)
 **Update discipline:** This file is the source of truth for "where did we leave off". Every engineer **must update the relevant row at the end of every train session, before logging out** — this is Step 11 of the train-login checklist. If you don't update, the next person can't pick up.
 
 **Companion file:** Narrative per-train history (recovery sequences, discovered lessons, session context) lives in [`fleet-journal.md`](fleet-journal.md). This file holds **current state** only — table + diagnostic-state bullet lists. Prose blocks in the per-train detail sections below are being migrated to the journal as each train is visited. When you visit a train, move its prose to the journal and trim its block here to just the diagnostic-state fields.
@@ -48,8 +48,8 @@ Five-column scan tables. For full per-train detail (OBN patches, switch firmware
 | 140 | 4736-112 | `10.178.40.1` | ⚪ UNKNOWN | CCU IP corrected from sheet 2026-05-20 (was `10.179.12.1` — sheet says that is Fzg 147 / 4736-119); re-verify next visit |
 | 141 | 4736-113 | ❓ | ⚪ UNKNOWN | initial visit |
 | 142 | 4736-114 | ❓ | ⚪ UNKNOWN | initial visit |
-| 143 | 4736-115 | `10.179.18.1` | ⚪ UNKNOWN | initial visit |
-| 144 | 4736-116 | `10.179.16.1` | ⚪ UNKNOWN | initial visit |
+| 143 | 4736-115 | `10.179.18.1` | 🟡 **PAUSED — batch experiment in flight** | 18/18 sw v8-143 ✅; 2nd `obn update f ap` (full-batch w/ TFTP helper pre-applied) launched 2026-05-20 15:41Z. OBN identified all 15 targets cleanly, exited at exact 5m7s (lesson 14). CCU offline before post-15-min validate could run (likely cellular drop — Fzg 144 dropped at same time). Resume: `obn validate` to count actual 6.11.2-0 success rate. See [[project_obn_update_f_ap_batch_experiment_fzg143]]. Coaches 4-6 also need AP*-v1 → AP*m-v1 config refresh. |
+| 144 | 4736-116 | `10.179.16.1` | 🟡 **PAUSED — AP fw in progress; Coach 6 AP3 BLOCKED Stadler** | 18/18 sw at v8-144 ✅ (bug 9 patched + persisted); AP fw push launched on 23 visible APs — validate currently 0/23 (still installing); Coach 6 AP3 missing from DHCP across 2 cycles → Stadler register; coaches 4-6 APs also need config refresh AP*-v1 → AP*m-v1 |
 | 145 | 4736-117 | ❓ | ⚪ UNKNOWN | initial visit |
 | 146 | 4736-118 | `10.179.21.1` | ⚪ UNKNOWN | CCU IP populated from sheet 2026-05-20; confirm v8 state — only baseline + customer report on file |
 | 147 | 4736-119 | `10.179.12.1` | ⚪ UNKNOWN | CCU IP populated from sheet 2026-05-20 — was previously attributed to Fzg 140 in error |
@@ -613,6 +613,85 @@ Cable register item #1 — E2↔B1 trunk wrong-neighbour (E2.e0-0 reaches B1, pl
 - **Customer report:** ⬜
 
 **Stadler action required:** Commission Stadler FW at `172.19.138.1` (currently responding at `.129` = bare Westermo default IP).
+
+---
+
+### Fzg 143 — 4736-115 — 🟡 PAUSED (AP fw in progress)
+
+**Status:** 🟡 **PAUSED — AP fw in progress** · **CCU:** `10.179.18.1` (`box1-t18`) · **Last touched:** 2026-05-20 AR
+
+**Diagnostic state:**
+- **OBN patches:** ✅ 8/8 + bug 9 (pysnmp thread-safety) persisted in btrfs `run3` (id 309)
+- **Switches v8:** ✅ 18/18 on `nv6-*-v8-143`, all firmware `7.4.2`
+- **APs:** 🟡 24/24 visible, all Nomad config — firmware push launched but currently 0/24 at target `6.11.2-0`; APs still installing (curl-download evidence per direct AP probe). Coaches 4-6 (12 APs) also need config refresh from `AP*-v1` → `AP*m-v1` (folded into next config push)
+- **vlan7:** ✅ `172.19.199.130/17` live (was wrong `172.19.201.2` — encoded Fzg 146; fixed + persisted via chroot promote)
+- **Stadler cabling:** ✅ 18/18 sw + 24/24 AP visible (pre-flight discovery clean)
+- **FW reach:** ⬜ Q1/Q2/Q3 not yet probed
+- **Health check:** ⬜
+- **Customer report:** ⬜
+- **OBN template:** ✅ `train_id = 143` hardcoded in all 18 nv6-*.cfg
+- **nd-systemupdate:** ✅ `.dont` renamed (fleet standard)
+- **TFTP helper:** 🟡 runtime fix applied this session (in-memory only — re-apply post-reboot before next AP fw push)
+
+**2026-05-20 session (AR):**
+- Initial visit from ⚪ UNKNOWN. OBN was at v2.2.23 with new lib hierarchy `/usr/share/obn/lib/device/vendor/`. `fix_obn.py` already targets these paths — no script changes needed.
+- v8 template detection bug surfaced: workers false-alarmed `v8_templates_missing_post_update` because they globbed for `nv6-*-v8-*.cfg` (a pattern that doesn't exist in any shipped package). 0.0.19 package retains flat `nv6-NNN-XN.cfg` naming. Updated `dosto-commission-train` SKILL.md to use `dpkg-query` version check (`nd-obn-template-dostoneu-nv6 ≥ 0.0.19`) in 6 spots.
+- Applied OBN 8/8 fixes + train_id=143 + vlan7=172.19.199.130 via single chroot promote (Gate 1 approved).
+- Switch config push (Gate 3) crashed mid-batch with `pysnmp.error.PySnmpError: IndexError: pop from empty list` — diagnosed as `SNMPEngineManager` singleton sharing one `SnmpEngine` across `ThreadPoolExecutor` workers in `cli/update.py`. Pysnmp's asyncore dispatcher is not thread-safe.
+- **OBN Bug 9 patch:** added `scripts/fix_obn_bug9_pysnmp_thread_safety.py` — module-level `threading.Lock()` around `_snmp_parse_results`'s `list(generator)`. Persisted in chroot promote (run3).
+- Post-patch `obn update c sw` ran cleanly to completion: 18/18 switches converged to `nv6-*-v8-143`.
+- TFTP helper runtime fix applied; AP firmware push launched (`obn update f ap`); OBN exited at its optimistic 5-min wait while APs still curl-downloading 30MB images (handoff lesson 14).
+
+**Next session — first commands:**
+```bash
+ssh developer@10.179.18.1
+sudo modprobe nf_conntrack_tftp && sudo iptables -t raw -I PREROUTING -p udp --dport 69 -j CT --helper tftp
+sudo obn discover && sudo obn report
+sudo obn validate -t ap | grep -c '6.11.2-0 ✓'   # if not 24, single-AP serial via dosto-ap-firmware-update
+# After APs done: push config refresh for coaches 4-6 APs (AP*-v1 → AP*m-v1)
+```
+
+Then: L2 health sweep + FW Q1/Q2/Q3 probe + customer report.
+
+---
+
+### Fzg 144 — 4736-116 — 🟡 PAUSED (AP fw in progress; Coach 6 AP3 BLOCKED Stadler)
+
+**Status:** 🟡 **PAUSED — AP fw in progress; Coach 6 AP3 BLOCKED Stadler** · **CCU:** `10.179.16.1` (`box1-t16`) · **Last touched:** 2026-05-20 AR
+
+**Diagnostic state:**
+- **OBN patches:** ✅ 8/8 + bug 9 (pysnmp thread-safety) persisted in btrfs `run2` (id 303)
+- **Switches v8:** ✅ 18/18 on `nv6-*-v8-144`, all firmware `7.4.2`
+- **APs:** 🟡 23/24 visible — Coach 6 AP3 missing across 2 discovery cycles (cable register #6). Firmware push launched but currently 0/23 at target `6.11.2-0`; APs still installing. Coaches 4-6 (8+ visible APs) also need config refresh from `AP*-v1` → `AP*m-v1`
+- **vlan7:** ✅ `172.19.200.2/17` live (was already correct for even Fzg 144 — no nmconnection edit needed)
+- **Stadler cabling:** 🔴 Coach 6 AP3 missing (B3 e1-2 port live with RX/TX traffic per pre-flight but AP not in DHCP across 2 cycles — likely AP physically present but bricked or stuck) — cable register #6
+- **FW reach:** ✅ **commissioned** (2026-05-20): Q1 ARP REACHABLE `00:90:e8:ca:3e:aa`, Q2 ICMP 100% loss = Stadler policy drop per Phase 6, Q3 TCP 80+22 OPEN
+- **Health check:** ⬜
+- **Customer report:** ⬜
+- **OBN template:** ✅ `train_id = 144` hardcoded in all 18 nv6-*.cfg (was broken `128 + train_id` formula)
+- **nd-systemupdate:** ✅ `.dont` renamed
+- **TFTP helper:** 🟡 runtime fix applied this session (in-memory only — re-apply post-reboot before next AP fw push)
+
+**2026-05-20 session (AR):**
+- Initial visit from ⚪ UNKNOWN. Same OBN 2.2.23 + v8 detection bug pattern as Fzg 143; same fixes applied.
+- Pre-flight soft-FAIL: 23/24 APs in DHCP at first probe (all 6 X3 e1-2 AP4 ports active per `show interface details`) — engineer chose `proceed` at Gate 5. Coach 6 AP3 still missing post-reboot, confirmed across two discovery cycles → cable register #6.
+- Applied OBN 8/8 + train_id=144 fold-in via single chroot promote (Gate 1). vlan7 was already correct so no fold-in there.
+- Bug 9 patch applied + persisted (same procedure as Fzg 143). 18/18 switches converged to `nv6-*-v8-144` on `obn update c sw`.
+- AP firmware push launched on 23 APs; OBN exited at 5-min wait while APs still installing.
+
+**For Stadler (open items):**
+- **Coach 6 AP3 missing** (cable register #6) — B3 e1-2 port live with RX/TX traffic, but AP not in DHCP after 2 discovery cycles. Likely AP physically connected but bricked / stuck / not booting. Required action: visually verify AP installed → replace patch cable B3 e1-2 ↔ AP → swap AP unit if cable doesn't restore.
+
+**Next session — first commands:**
+```bash
+ssh developer@10.179.16.1
+sudo modprobe nf_conntrack_tftp && sudo iptables -t raw -I PREROUTING -p udp --dport 69 -j CT --helper tftp
+sudo obn discover && sudo obn report
+sudo obn validate -t ap | grep -c '6.11.2-0 ✓'   # if not 23, single-AP serial via dosto-ap-firmware-update
+# After APs done: push config refresh for coaches 4-6 APs (AP*-v1 → AP*m-v1)
+```
+
+Then: L2 health sweep + customer report. FW reach already validated this session — no further FW work needed.
 
 ---
 
