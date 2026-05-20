@@ -398,7 +398,17 @@
       "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no scripts/fix_obn.py scripts/fix_obn_bugs67.py scripts/fix_obn_bug8.py scripts/fix_bug1_regex.py developer@10.179.18.1:/tmp/)",
       "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no scripts/fix_obn.py scripts/fix_obn_bugs67.py scripts/fix_obn_bug8.py scripts/fix_bug1_regex.py developer@10.179.16.1:/tmp/)",
       "Bash(echo \"143-reboot-sent-exit=$?\")",
-      "Bash(echo \"144-reboot-sent-exit=$?\")"
+      "Bash(echo \"144-reboot-sent-exit=$?\")",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no scripts/fix_obn.py developer@10.179.45.1:/var/tmp/fix_obn.py)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no scripts/fix_obn.py developer@10.179.45.1:/tmp/fix_obn.py)",
+      "Bash(timeout 5 bash -c \"</dev/tcp/10.179.45.1/22\")",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no scripts/fix_obn_bug9_pysnmp_thread_safety.py developer@10.179.18.1:/tmp/)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no scripts/fix_obn_bug9_pysnmp_thread_safety.py developer@10.179.16.1:/tmp/)",
+      "Bash(timeout 5 bash -c \"</dev/tcp/10.178.24.1/22\")",
+      "Bash(timeout 5 bash -c \"</dev/tcp/10.178.27.1/22\")",
+      "Bash(timeout 5 bash -c \"</dev/tcp/10.178.22.1/22\")",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no scripts/lldp_check_4734-120.py developer@10.179.49.1:/tmp/lldp_check_4734-120.py)",
+      "Bash(git fetch *)"
     ]
   }
 }
