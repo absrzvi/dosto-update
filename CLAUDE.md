@@ -529,9 +529,10 @@ The regenerator embeds: 4 contracts + 2 agent definitions + 14 SKILL.mds + CLAUD
 - `.claude/switch_manual.txt` — full-text extract of `docs/switch_user_manual.pdf` for grep.
 - `.claude/contracts/` — 4 design contracts (`subagent-report.md`, `autonomy-boundary.md`, `approval-gates.md`, `confluence-sync.md`).
 - `.claude/agents/dosto-train-worker.md` — per-train commissioning subagent definition (Sonnet 4.6, JSON-only output).
-- `.claude/skills/` — 13 project-local skills:
+- `.claude/skills/` — 14 project-local skills:
   - **Diagnostic / read-only:** `dosto-device-discovery`, `dosto-extract-train-data`, `dosto-l2-health`, `dosto-fzg-id-check`, `dosto-vlan7-config`, `dosto-tftp-helper-check`.
   - **Per-device push (single-AP/SW serial):** `dosto-ap-config-update`, `dosto-ap-firmware-update`, `dosto-sw-config-update`, `dosto-sw-firmware-update`.
+  - **Per-device push (parallel batched):** `dosto-sw-config-update-batch` — default switch-config path in `dosto-commission-train`; legacy single-switch-serial path is preserved as escape hatch via `--legacy-serial-sw-config`.
   - **CCU-side persistence:** `dosto-obn-patches` (with `--persist` fold-in for vlan7 + fzg-id fixes).
   - **Orchestration / output:** `dosto-commission-train` (19-stage per-train pipeline), `dosto-l2-report` (customer docx), `dosto-confluence-sync` (push `fleet-status.md` to team Confluence page).
 - `.claude/logs/` — append-only orchestration logs:

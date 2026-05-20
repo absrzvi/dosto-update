@@ -1,0 +1,20 @@
+﻿Total MAR3/mar3 occurrences: 9
+
+[mar3 @ 353103] r>Nomad MAR-Server (mar3be06 – mar3be09)<w:tcW w
+---
+[mar3 @ 353114] w:eastAsia="Times New Roman" w:cs="Calibri"/>Nomad MAR-Server (mar3be06 – mar3be09)<w:tcW w:w="2200" w
+---
+[mar3 @ 369205] -GB"/>mar3be06 <w:tr
+---
+[mar3 @ 376193] -GB"/>mar3be07 <w:tr
+---
+[mar3 @ 382513] -GB"/>mar3be08 <w:tr
+---
+[mar3 @ 392180] -GB"/>mar3be09 </w:t
+---
+[MAR3 @ 467851] onts w:eastAsia="Times New Roman" w:cs="Calibri"/>Diese Seite zeigt Aktionen an, die von MAR3 durchgeführt wurden. MAR3 führt eine Aktion aus und sendet eine MQTT-Nachricht zum Thema mar3/action. Telemetrie verarbeitet diese Nachricht und sendet sie dann als MQTT-Nachricht zum Thema event
+---
+[MAR3 @ 467877] Roman" w:cs="Calibri"/>Diese Seite zeigt Aktionen an, die von MAR3 durchgeführt wurden. MAR3 führt eine Aktion aus und sendet eine MQTT-Nachricht zum Thema mar3/action. Telemetrie verarbeitet diese Nachricht und sendet sie dann als MQTT-Nachricht zum Thema event_action weiter. Die Seite
+---
+[mar3 @ 467945] B"/>Diese Seite zeigt Aktionen an, die von MAR3 durchgeführt wurden. MAR3 führt eine Aktion aus und sendet eine MQTT-Nachricht zum Thema mar3/action. Telemetrie verarbeitet diese Nachricht und sendet sie dann als MQTT-Nachricht zum Thema event_action weiter. Die Seite zeigt den Aktionstitel, Längen- und Breitengrad sowie die Zeit der A
+---

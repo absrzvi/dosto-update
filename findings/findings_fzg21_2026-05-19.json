@@ -1,0 +1,251 @@
+{
+  "meta": {
+    "fzg_id": 21,
+    "series": "4734-121",
+    "car_count": 4,
+    "template": "nv4",
+    "ccu_ip": "10.179.50.1",
+    "ccu_hostname": "box1-t50",
+    "vlan100_subnet": "10.179.50.128/25",
+    "vlan7_ip": "172.19.138.130/17",
+    "fw_peer_ip_expected": "172.19.138.1",
+    "check_date": "2026-05-19",
+    "check_start_utc": "approx 11:35 local",
+    "ccu_uptime_seconds": 24510,
+    "engineer": "Abbas Rizvi"
+  },
+  "step1_connectivity": {
+    "status": "ok",
+    "ccu_reachable": true,
+    "hostname": "box1-t50",
+    "vlan100_ip": "10.179.50.129/25",
+    "vlan7_ip_live": "172.19.138.130/17",
+    "vlan7_errors": 0,
+    "vlan7_drops": 0,
+    "notes": "CCU dropped off cellular mid-session (after step 8); this is a known DOSTO cellular network behaviour, not a fabric fault."
+  },
+  "step2_discovery": {
+    "status": "ok",
+    "vds_switches_found": 12,
+    "vds_switches_expected": 12,
+    "westermo_aps_found": 16,
+    "westermo_aps_expected": 16,
+    "count_sanity": "ok",
+    "switches": [
+      {"ip": "10.179.50.178", "mac": "a0:59:3a:d0:91:80", "dhcp_name": "nv4-B3-v8-021"},
+      {"ip": "10.179.50.179", "mac": "a0:59:3a:d0:9e:00", "dhcp_name": "nv4-G3-v8-021"},
+      {"ip": "10.179.50.180", "mac": "a0:59:3a:d0:97:e0", "dhcp_name": "nv4-B1-v8-021"},
+      {"ip": "10.179.50.181", "mac": "a0:59:3a:d0:40:e0", "dhcp_name": "nv4-G1-v8-021"},
+      {"ip": "10.179.50.182", "mac": "a0:59:3a:d0:af:00", "dhcp_name": "nv4-E1-v8-021"},
+      {"ip": "10.179.50.183", "mac": "a0:59:3a:d0:9c:a0", "dhcp_name": "nv4-G2-v8-021"},
+      {"ip": "10.179.50.184", "mac": "a0:59:3a:d0:ae:00", "dhcp_name": "nv4-E3-v8-021"},
+      {"ip": "10.179.50.185", "mac": "a0:59:3a:d0:ae:c0", "dhcp_name": "nv4-E2-v8-021"},
+      {"ip": "10.179.50.186", "mac": "a0:59:3a:d0:ac:00", "dhcp_name": "nv4-A1-v8-021"},
+      {"ip": "10.179.50.187", "mac": "a0:59:3a:d0:b1:20", "dhcp_name": "nv4-A2-v8-021"},
+      {"ip": "10.179.50.188", "mac": "a0:59:3a:d0:48:40", "dhcp_name": "nv4-B2-v8-021"},
+      {"ip": "10.179.50.189", "mac": "a0:59:3a:d0:ab:40", "dhcp_name": "nv4-A3-v8-021"}
+    ],
+    "aps": [
+      {"ip": "10.179.50.218", "mac": "00:14:5a:04:b3:2c", "dhcp_name": "AP4-v1-00145a"},
+      {"ip": "10.179.50.219", "mac": "00:14:5a:04:b3:3c", "dhcp_name": "AP4m-v1-00145a"},
+      {"ip": "10.179.50.220", "mac": "00:14:5a:04:b3:99", "dhcp_name": "AP4-v1-00145a"},
+      {"ip": "10.179.50.221", "mac": "00:14:5a:04:b3:8b", "dhcp_name": "AP4m-v1-00145a"},
+      {"ip": "10.179.50.222", "mac": "00:14:5a:04:ad:b6", "dhcp_name": "AP3-v1-00145a"},
+      {"ip": "10.179.50.223", "mac": "00:14:5a:04:ef:1d", "dhcp_name": "AP3m-v1-00145a"},
+      {"ip": "10.179.50.224", "mac": "00:14:5a:04:ad:48", "dhcp_name": "AP3m-v1-00145a"},
+      {"ip": "10.179.50.225", "mac": "00:14:5a:04:b3:40", "dhcp_name": "AP3-v1-00145a"},
+      {"ip": "10.179.50.226", "mac": "00:14:5a:04:ad:44", "dhcp_name": "AP1-v1-00145a"},
+      {"ip": "10.179.50.227", "mac": "00:14:5a:04:b3:c1", "dhcp_name": "AP2-v1-00145a"},
+      {"ip": "10.179.50.228", "mac": "00:14:5a:04:ad:90", "dhcp_name": "AP1m-v1-00145a"},
+      {"ip": "10.179.50.229", "mac": "00:14:5a:04:b3:95", "dhcp_name": "AP1m-v1-00145a"},
+      {"ip": "10.179.50.230", "mac": "00:14:5a:04:58:33", "dhcp_name": "AP2m-v1-00145a"},
+      {"ip": "10.179.50.231", "mac": "00:14:5a:04:ae:02", "dhcp_name": "AP2-v1-00145a"},
+      {"ip": "10.179.50.232", "mac": "00:14:5a:04:ad:c6", "dhcp_name": "AP2m-v1-00145a"},
+      {"ip": "10.179.50.233", "mac": "00:14:5a:04:ad:be", "dhcp_name": "AP1m-v1-00145a"}
+    ]
+  },
+  "step3_fingerprint": {
+    "status": "ok",
+    "confirmed_by": "dhcp_hostname + trunk_vlan_fingerprint",
+    "roles": {
+      "A1": {"ip": "10.179.50.186", "name": "nv4-A1-v8-021"},
+      "A2": {"ip": "10.179.50.187", "name": "nv4-A2-v8-021"},
+      "A3_stadler_fw": {"ip": "10.179.50.189", "name": "nv4-A3-v8-021", "fw_trunk_port": "e1-4", "fw_trunk_vlans": "2,3,5,6,7,8,9,12,15"},
+      "B1_zfr_primary": {"ip": "10.179.50.180", "name": "nv4-B1-v8-021", "zfr_port": "e1-11", "zfr_vlan": 2, "zfr_rx_bytes": 0, "zfr_role": "standby"},
+      "B2": {"ip": "10.179.50.188", "name": "nv4-B2-v8-021"},
+      "B3_zfr_standby": {"ip": "10.179.50.178", "name": "nv4-B3-v8-021", "zfr_port": "e1-11", "zfr_vlan": 2, "zfr_rx_bytes": 473387819, "zfr_role": "active"},
+      "E1": {"ip": "10.179.50.182", "name": "nv4-E1-v8-021"},
+      "E2": {"ip": "10.179.50.185", "name": "nv4-E2-v8-021"},
+      "E3": {"ip": "10.179.50.184", "name": "nv4-E3-v8-021"},
+      "G1_stp_root": {"ip": "10.179.50.181", "name": "nv4-G1-v8-021", "stp_priority": 0},
+      "G2": {"ip": "10.179.50.183", "name": "nv4-G2-v8-021"},
+      "G3": {"ip": "10.179.50.179", "name": "nv4-G3-v8-021", "stp_priority": 4096}
+    }
+  },
+  "step4_error_scan": {
+    "status": "clean",
+    "ports_scanned": "all 24 inter-coach trunks (e0-0, e0-1) across 12 switches",
+    "non_zero_error_ports": [],
+    "summary": "Zero RX errors, zero CRC errors, zero carrier-false, zero collisions on all inter-coach trunk ports. All inter-coach trunks UP at 10G full duplex."
+  },
+  "step5_stadler_trunks": {
+    "A3_e1-4_fw_trunk": {
+      "ip": "10.179.50.189",
+      "port": "e1-4",
+      "speed_mbps": 1000,
+      "duplex": "Full",
+      "line": "up",
+      "rx_errors": 0,
+      "tx_errors": 0,
+      "crc_errors": 0,
+      "carrier_false": 0,
+      "pause_frames_rx": 0,
+      "rx_bytes": 2289800491,
+      "tx_bytes": 37309766372,
+      "vlans_carried": "2,3,5,6,7,8,9,12,15",
+      "verdict": "ok"
+    },
+    "A3_e1-2_ap_trunk": {
+      "ip": "10.179.50.189",
+      "port": "e1-2",
+      "speed_mbps": 1000,
+      "duplex": "Full",
+      "line": "up",
+      "rx_errors": 0,
+      "tx_errors": 0,
+      "crc_errors": 0,
+      "carrier_false": 0,
+      "verdict": "ok"
+    },
+    "A3_e0-2_front_coupler": {
+      "ip": "10.179.50.189",
+      "port": "e0-2",
+      "speed_mbps": null,
+      "line": "down",
+      "rx_errors": 0,
+      "tx_errors": 0,
+      "crc_errors": 0,
+      "carrier_false": 0,
+      "verdict": "expected_down_solo_consist"
+    },
+    "B1_e1-11_zfr": {
+      "ip": "10.179.50.180",
+      "port": "e1-11",
+      "speed_mbps": 1000,
+      "duplex": "Full",
+      "line": "up",
+      "rx_bytes": 0,
+      "rx_errors": 0,
+      "crc_errors": 0,
+      "carrier_false": 0,
+      "verdict": "ok_standby_zfr_rx0_expected"
+    },
+    "B3_e1-11_zfr": {
+      "ip": "10.179.50.178",
+      "port": "e1-11",
+      "speed_mbps": 1000,
+      "duplex": "Full",
+      "line": "up",
+      "rx_bytes": 473387819,
+      "rx_errors": 0,
+      "crc_errors": 0,
+      "carrier_false": 0,
+      "verdict": "ok_active_zfr"
+    }
+  },
+  "step6_stp": {
+    "status": "ok",
+    "protocol": "RSTP",
+    "root_mac": "a0:59:3a:d0:40:e0",
+    "root_switch": "nv4-G1-v8-021 (10.179.50.181)",
+    "root_priority": 0,
+    "all_switches_agree_on_root": true,
+    "root_flapping_observed": false,
+    "switches_with_blocking_ports": [],
+    "notes": "All ports in FWD state. G3 (.179) has priority 4096 — intentional secondary priority, not root. Single stable root across all 12 switches."
+  },
+  "step7_throughput": {
+    "status": "estimated_from_cumulative",
+    "interval_seconds": 24510,
+    "note": "Live 30s sample was interrupted by CCU cellular dropout. Estimates computed from cumulative counters since boot (~6h49m uptime).",
+    "G1_e0-0_avg_mbps": {
+      "rx_avg": 1.93,
+      "tx_avg": 5.35,
+      "total_avg": 7.28,
+      "utilisation_pct_of_10G": 0.07
+    },
+    "G1_e0-1_avg_mbps": {
+      "rx_avg": 5.21,
+      "tx_avg": 2.29,
+      "total_avg": 7.50,
+      "utilisation_pct_of_10G": 0.07
+    },
+    "A3_e1-4_fw_trunk_avg_mbps": {
+      "rx_avg": 0.75,
+      "tx_avg": 12.19,
+      "total_avg": 12.94,
+      "utilisation_pct_of_1G": 1.29
+    },
+    "verdict": "Very low utilisation across all sampled trunks. No congestion risk."
+  },
+  "step8_fw_reach": {
+    "fw_peer_ip": "172.19.138.1",
+    "fw_peer_ip_expected": "172.19.138.1",
+    "fw_actual_ip_responding": "172.19.138.129",
+    "fw_actual_mac": "00:90:e8:db:4d:6a",
+    "fw_mac_vendor": "Westermo",
+    "fw_lldp_sysname": "firewall.networ",
+    "fw_lldp_port": "A3 e1-4",
+    "arp_state_at_expected_ip": "failed",
+    "arp_state_at_actual_ip": "reachable",
+    "icmp_sent": 5,
+    "icmp_replies": 0,
+    "icmp_result_at_expected_ip": "dest_host_unreachable",
+    "tcp80_at_expected_ip": "no_route",
+    "tcp80_at_actual_ip": "open",
+    "vlan7_link_errors": 0,
+    "vlan7_link_drops": 0,
+    "fw_commission_state": "uncommissioned",
+    "fw_present_physically": true,
+    "analysis": "The Stadler FW (Westermo, MAC 00:90:e8:db:4d:6a) is physically connected to A3 e1-4 and visible via LLDP as 'firewall.networ'. However it is responding at 172.19.138.129 (bare Westermo default or wrong Stadler-configured IP), not at 172.19.138.1 as expected for Fzg 21. ARP FAILED at .1, REACHABLE at .129. TCP:80 OPEN at .129 (bare Westermo web interface). ICMP = 0 replies — but path to .1 is actually broken (ARP failure), not commissioned. Root cause: Stadler has not commissioned this firewall with the correct IP for Fzg 21.",
+    "action_required": "Stadler to configure FW at 172.19.138.1. This is a Stadler-side action item, not a Nomad fault. The Nomad L2 path (vlan7 trunk through A3 e1-4) is correctly configured."
+  },
+  "step9_aggregate": {
+    "overall_verdict": "NEEDS_ATTENTION",
+    "fabric_verdict": "HEALTHY",
+    "fw_verdict": "UNCOMMISSIONED",
+    "switches_reachable": 12,
+    "switches_expected": 12,
+    "inter_coach_trunks_up_at_10G": 14,
+    "inter_coach_trunks_expected": 14,
+    "stadler_fw_trunk_up": true,
+    "stadler_fw_trunk_speed_ok": true,
+    "per_port_error_counters_nonzero": 0,
+    "stp_root_consistent": true,
+    "stp_root_mac": "a0:59:3a:d0:40:e0",
+    "fw_commission_state": "uncommissioned",
+    "findings": [
+      {
+        "severity": "yellow",
+        "category": "stadler_action",
+        "title": "Stadler FW not commissioned — wrong IP",
+        "detail": "Stadler firewall (Westermo, MAC 00:90:e8:db:4d:6a) is physically present on A3 e1-4 and LLDP-visible. It responds at 172.19.138.129 (bare defaults or wrong Stadler config), not at 172.19.138.1 as expected for Fzg 21 (odd Fzg, host .1). This is a Stadler-side commissioning action. Nomad vlan7 config and L2 trunk path are correct.",
+        "action": "Stadler to configure FW IP to 172.19.138.1"
+      },
+      {
+        "severity": "info",
+        "category": "normal",
+        "title": "B1/B3 ZFR roles reversed from naming",
+        "detail": "B3 (.178) is the active ZFR (473 MB RX on e1-11); B1 (.180) is standby (0 RX). This is expected — ZFR redundant pair, only one active at a time. Naming is schema-assigned, not indicative of fault.",
+        "action": "none"
+      },
+      {
+        "severity": "info",
+        "category": "normal",
+        "title": "Front coupler A3 e0-2 DOWN",
+        "detail": "Train running solo — expected for uncoupled consist.",
+        "action": "none"
+      }
+    ]
+  }
+}
