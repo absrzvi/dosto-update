@@ -82,8 +82,8 @@ vlan7 IPs marked ✅ (PDF) are confirmed from the IP-Port-Allocation PDF; ❓ (e
 | 16 | 4734-116 | ❓ | ⚪ UNKNOWN | initial visit |
 | 17 | 4734-117 | ❓ | ⚪ UNKNOWN | initial visit |
 | 18 | 4734-118 | ❓ | ⚪ UNKNOWN | initial visit |
-| 19 | 4734-119 | ❓ | ⚪ UNKNOWN | scripts/lldp_check_4734-119.py exists — possibly visited |
-| 20 | 4734-120 | `10.179.49.1` | ⚪ UNKNOWN | confirm switches v8 state; APs done 2026-05-05 |
+| 19 | 4734-119 | `10.179.45.1` | 🟡 **PAUSED — train offline post-reboot** | revert mistaken `{%- set train_id = 19 -%}` from 12 nv4-*.cfg templates; verify OBN patches survived; complete commissioning |
+| 20 | 4734-120 | `10.179.49.1` | 🟢 **DONE — commissioning complete** | 12/12 sw + 16/16 AP validated (obn validate 2026-05-20); cabling 24/24 OK; vlan7 OK; OBN 7/7 patched; remaining: L2 health sweep + FW Q1/Q2/Q3 + customer report |
 | 21 | 4734-121 | `10.179.50.1` | 🟢 **DONE w/ Stadler** | L2 healthy (12/12 sw, 16 APs, 0 errors) — v8 config ✅; FW UNCOMMISSIONED (at .129 not .1 — bare Westermo); wait for Stadler to commission FW at 172.19.138.1 |
 
 ### 4706 series
@@ -364,23 +364,61 @@ Cable register item #1 — E2↔B1 trunk wrong-neighbour (E2.e0-0 reaches B1, pl
 
 ---
 
-### Fzg 20 — 4734-120 — ⚪ UNKNOWN (APs done)
+### Fzg 19 — 4734-119 — 🟡 PAUSED — train offline post-reboot
 
-**Status:** ⚪ **UNKNOWN** · **CCU:** `10.179.49.1` · **Last touched:** 2026-05-05 AR
+**Status:** 🟡 **PAUSED** · **CCU:** `10.179.45.1` (box1-t45) · **Last touched:** 2026-05-20 AR
 
 **Diagnostic state:**
-- **OBN patches:** ❓
-- **Switches v8:** ❓
-- **APs:** ✅ 16/16 (factory bypass via LuCI)
-- **vlan7:** ✅ `172.19.138.2` (PDF)
-- **Stadler cabling:** ❓
+- **OBN patches:** ⚠️ applied + promoted 2026-05-20 (snapshot `run1` pre-reboot); post-reboot verification pending (train offline)
+- **Switches v8:** ✅ 12/12 visible as `nv4-*-v8-019` in DHCP leases (4-car ABEG)
+- **APs:** ❓ not yet enumerated
+- **vlan7:** ⚠️ was `172.19.150.130/17` (correct for box1-t45 odd train_id 45) — may change after promote like Fzg 20 did
+- **Stadler cabling:** ❓ LLDP topology check not run (train offline)
 - **FW reach:** ❓
 - **Health check:** ⬜
 - **Customer report:** ⬜
 
-2026-05-05: All 16 APs on this CCU were in factory `RT610LV-…-v1-FD` config after Stadler commissioning. Pushed Nomad config via LuCI HTTP import + `rpcCfgApply` (scripts: `scripts/push_ap_config.sh`, `scripts/push_remaining_aps.sh`, `scripts/apply_ap_configs.sh`).
+**2026-05-20 session (AR):**
+- State inventory: 0/7 OBN patches, vlan7 OK, NDSU `.dont`, btrfs `run2` (id 305).
+- **Mistake made**: added `{%- set train_id = 19 -%}` to all 12 `/etc/obn/template/nv4-*.cfg` files inside the chroot promote, based on misread of pre-promote inventory. Subsequent investigation on Fzg 20 (box1-t49) confirmed the nv4 template convention is to NOT hardcode `train_id` — it comes from a runtime Jinja2 variable populated from `/etc/obn/backbone-discovery.yaml`. The Fzg 20 templates carry no `{%- set -%}` line and `obn validate` shows all 12 switches rendering correctly. **The 12 `{%- set train_id = 19 -%}` lines on Fzg 19 need to be reverted next session.** See [[feedback_train_id_4734_4teiler.md]] (memory) for the corrected model.
+- OBN patches applied via fix_obn.py in chroot → promote → reboot at ~15:41 WEST. CCU did NOT come back within polling window (>90 min by end of session). Likely train powered off or extended cellular drop.
 
-**Switch v8 state not captured.** Confirm next visit.
+**Resume actions (next session):**
+1. Confirm CCU online (TCP/22 on `10.179.45.1`).
+2. Open chroot via `nd-systemupdate.sh.dont shell` and revert: `sed -i '/^{%- set train_id = 19 -%}$/d' /etc/obn/template/nv4-*.cfg` (12 files).
+3. Verify OBN 7/7 markers persisted post-reboot.
+4. Apply TFTP runtime helper.
+5. Run `obn discover && obn report && obn validate` — expect 12/12 switches + N/N APs all green like Fzg 20.
+6. LLDP topology check (scripts/lldp_check_4734-120.py adapted for box1-t45's IPs) — investigate the original "B&E We1/W2 vertauscht" report from this session's user request. Fzg 20 (twin) cabling was confirmed OK, so the issue, if real, would be specific to Fzg 19.
+
+---
+
+### Fzg 20 — 4734-120 — 🟢 DONE — commissioning complete
+
+**Status:** 🟢 **DONE** · **CCU:** `10.179.49.1` (box1-t49) · **Last touched:** 2026-05-20 AR
+
+**Diagnostic state:**
+- **OBN patches:** ✅ 7/7 (fix_obn.py bugs 1-7) persisted in btrfs `run2` snapshot (id 294)
+- **Switches v8:** ✅ 12/12 at firmware 7.4.2 + config `nv4-*-v8-020` (`obn validate`)
+- **APs:** ✅ 16/16 at firmware 6.11.2-0 + Nomad v1 config (4 per coach × 4 coaches)
+- **vlan7:** ✅ `172.19.152.130/17` (auto-fixed by chroot promote from wrong `172.19.138.2`; correct per odd train_id 49)
+- **Stadler cabling:** ✅ 24/24 inter-coach trunks correct (scripts/lldp_check_4734-120.py 2026-05-20)
+- **FW reach:** ⬜ (Q1/Q2/Q3 not yet probed)
+- **Health check:** ⬜ (L2 sweep not yet run)
+- **Customer report:** ⬜
+- **TFTP helper:** 🟡 runtime fix re-applied 2026-05-20 post-reboot (lost on next reboot — Puppet fix pending)
+
+**2026-05-20 session (AR):**
+- Tier-1 reachability: ONLINE.
+- State inventory found: OBN 0/7, vlan7 wrong-parity (`.138.2` instead of `.152.130`), templates as designed (no `{%- set train_id -%}` — uses runtime Jinja2 var).
+- Promote (Gate 1 approved) staged `fix_obn.py` to `/var/tmp/`, opened chroot via `nd-systemupdate.sh.dont shell`, applied all 7 OBN bugs → new `run2` snapshot.
+- Reboot (Gate 2 approved) at 16:34 WEST → back up at 16:38 WEST.
+- Post-reboot: OBN 7/7 markers OK; vlan7 now correct; `obn discover && obn report && obn validate` → 12/12 switches + 16/16 APs all green ✓.
+- Investigation finding (B&E We1/W2 cabling): **no issue on Fzg 20** — LLDP topology check confirms 24/24 trunks match expected ABEG 4-car layout. If the original report referred to Fzg 19 specifically, that train is offline and could not be checked this session.
+
+**Remaining for sign-off:** L2 health sweep (`dosto-l2-health`) → FW Q1/Q2/Q3 probes → customer report.
+
+**2026-05-05 history:** All 16 APs were in factory `RT610LV-…-v1-FD` config; pushed Nomad config via LuCI HTTP import + `rpcCfgApply` (scripts: `scripts/push_ap_config.sh`, `scripts/apply_ap_configs.sh`).
 
 ---
 
