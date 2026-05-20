@@ -147,8 +147,9 @@ These are the stages a per-train commissioning subagent moves through. Listed in
 
 | `stage.id` | `status` during this stage | Expected duration | Notes |
 |---|---|---|---|
-| `initial_diagnostics` | `DIAGNOSING` | 60s | All `--check` skills + cross-checks (includes `dosto-device-discovery` and `dosto-state-inventory` as first sub-steps) |
+| `initial_diagnostics` | `DIAGNOSING` | 60s | All `--check` skills + cross-checks (includes `dosto-device-discovery` and `dosto-state-inventory` as first sub-steps); also globs `/etc/obn/template/{nv6,nv4}-*-v8-*.cfg` to gate the next stage |
 | `await_device_count_mismatch` | `NEEDS_APPROVAL` | — | Gate 5: `device_count_mismatch` — three-way response. Only fires if `dosto-device-discovery` found missing devices. |
+| `ensure_v8_templates` | `APPLYING_FIXES` | 360s | **Auto, no gate** (see autonomy-boundary v2). Conditional — only fires if `initial_diagnostics` found no v8 template files. Runs `sudo /usr/sbin/nd-systemupdate.sh.dont up` (~300s), then `sudo systemctl reboot`, then probes TCP/22 every 10s up to 300s, then re-verifies v8 templates present. On any failure: `status = ISSUE`, halt this worker only. |
 | `apply_obn_patches` | `APPLYING_FIXES` | 120s | Run `fix_obn.py` etc. under `btrfs ro=false` |
 | `apply_train_id_fix` | `APPLYING_FIXES` | 10s | Sed loop on `nv6-*.cfg` if `128 + train_id` formula present, or wrong hardcoded value |
 | `apply_vlan7_fix` | `APPLYING_FIXES` | 10s | Edit `address1=` in nmconnection if mismatched |
@@ -172,7 +173,7 @@ These are the stages a per-train commissioning subagent moves through. Listed in
 
 Other subagent types (cabling investigator, etc.) define their own stage IDs without touching this contract. The orchestrator validates against the union of registered stage namespaces — a stage ID not in any registered list is a contract violation.
 
-**Stage list version:** v2 (2026-05-09). v1 had `obn_discover_post_config` (renamed) and a single combined `push_ap_firmware` stage (split into `push_switch_firmware` + `push_ap_firmware`); v1 also placed `ap_factory_bypass` before `await_obn_update_c` (now after `push_switch_firmware`), and lacked the `push_ap_config` final refresh stage. Migration: subagents emitting the v1 stage IDs are still accepted by the orchestrator, but flagged as `schema_version_drift` in `issues[]` until they update.
+**Stage list version:** v3 (2026-05-20) — added `ensure_v8_templates` conditional stage between `await_device_count_mismatch` and `apply_obn_patches`; reboot inside this stage is auto (no Gate-2 prompt) per autonomy-boundary v2. v2 (2026-05-09). v1 had `obn_discover_post_config` (renamed) and a single combined `push_ap_firmware` stage (split into `push_switch_firmware` + `push_ap_firmware`); v1 also placed `ap_factory_bypass` before `await_obn_update_c` (now after `push_switch_firmware`), and lacked the `push_ap_config` final refresh stage. Migration: subagents emitting the v1 stage IDs are still accepted by the orchestrator, but flagged as `schema_version_drift` in `issues[]` until they update.
 
 ### `fields` — object, required
 

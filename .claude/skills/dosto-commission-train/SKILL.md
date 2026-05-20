@@ -77,6 +77,7 @@ Per [`subagent-report.md`](../../contracts/subagent-report.md) → "Commissionin
 |---|---|---|---|---|
 | 1 | `initial_diagnostics` | `DIAGNOSING` | always | `dosto-state-inventory`, `dosto-device-discovery`, `dosto-obn-patches --check`, `dosto-fzg-id-check --check`, `dosto-vlan7-config --check`, `dosto-tftp-helper-check --check` |
 | 2 | `await_device_count_mismatch` | `NEEDS_APPROVAL` (Gate 5) | only if missing devices | — |
+| 2.5 | `ensure_v8_templates` | `APPLYING_FIXES` | only if `initial_diagnostics` found `nd-obn-template-dostoneu-{nv6,nv4}` dpkg version `< 0.0.19` | `sudo /usr/sbin/nd-systemupdate.sh.dont up` → `sudo systemctl reboot` → TCP/22 probe loop (10s × 30) → re-verify dpkg version `≥ 0.0.19`. **Auto, NO gate** (autonomy-boundary v2 carve-out — runtime state is empty pre-patch). On failure: `status = ISSUE`, halt this worker only. |
 | 3 | `apply_obn_patches` | `APPLYING_FIXES` | only if OBN < 8/8 | `dosto-obn-patches --apply` |
 | 4 | `apply_train_id_fix` | `APPLYING_FIXES` | only if fzg-id verdict ≠ `all_match` | `dosto-fzg-id-check --apply` *(in-place sed before chroot)* |
 | 5 | `apply_vlan7_fix` | `APPLYING_FIXES` | only if vlan7 verdict ≠ `all_match` | `dosto-vlan7-config --apply` *(in-place edit before chroot)* |
@@ -194,6 +195,7 @@ Invokes (in this order, all `--check --json`):
 4. `/dosto-fzg-id-check <fzg> --check --json` — template `train_id` line consistency.
 5. `/dosto-vlan7-config <fzg> --check --json` — vlan7 IP triplet diff.
 6. `/dosto-tftp-helper-check <ccu-ip> --check --json` — kernel module + iptables rule + Puppet persistence.
+7. **v8-template version** — `dpkg-query -W -f='${Version}' nd-obn-template-dostoneu-nv6 2>/dev/null` (or `-nv4` for 4-car consists). If the package version is `< 0.0.19` (or the package is absent), the next stage to fire is `ensure_v8_templates` (stage 2.5) regardless of patches / fzg-id / vlan7 verdicts. v8 templates must be on disk before OBN patches are applied (patches reference template paths). **Note (2026-05-20):** v8 ≠ filename pattern. The 0.0.19 package keeps the flat `nv6-NNN-XN.cfg` / `nv4-NNN-XN.cfg` naming; v8-ness is conveyed by package version and template *content*, not filename. Detecting via filename glob (`*-v8-*.cfg`) is wrong — that pattern doesn't exist in any shipped package version. Discovered when both Fzg 143 and Fzg 144 workers false-alarmed `v8_templates_missing_post_update` after a successful `nd-systemupdate.sh.dont up` to 0.0.19.
 
 The state inventory check (#1) runs first because it's the fastest to fail. If something silently changed since the last session — auto-update fired, someone hand-edited the CCU, the fleet rebooted — we want to know before spending 30s on the per-skill deep checks. The deep checks (#2-#6) still run if the inventory is clean or only `expected_drift`; they catch issues the inventory doesn't (e.g. AP factory config, missing devices, deep diff on vlan7 nmconnection).
 
@@ -214,8 +216,9 @@ Stage outcome routing:
 |---|---|
 | **`dosto-obn-patches` reports `nd_systemupdate_path: null`** (NDSU=MISSING — neither `.sh` nor `.sh.dont` exists, after the `-f` probe) | **Skill emits terminal `BLOCKED` immediately** with `next_action: "engineer must investigate missing /usr/sbin/nd-systemupdate.sh on this CCU before any commissioning — chroot mechanism does not exist on this image"`. No further stages run. This is a hard fail because every persistence path (stages 7, 12, 14, 17) requires the chroot mechanism. **Caveat: only emit this if the probe used `[ -f ]` not `[ -x ]`.** On the fleet, `nd-systemupdate.sh.dont` is mode 0500 owner=root and `[ -x ]` returns false for the `developer` SSH user even though the file is fully usable via `sudo`. Validated 2026-05-09 on box1-t47 — false-positive `-x` detection initially mis-flagged this CCU as NDSU=MISSING. |
 | Missing devices (`dosto-device-discovery` reports any) | Stage 2 (`await_device_count_mismatch`) |
-| All preconditions clean (8/8 patches persisted, fzg ✓, vlan7 ✓, tftp helper ✓) | Skip to stage 11 (`obn_discover_initial`) |
-| Any of patches/fzg/vlan7 needs fix | Stage 3-7 block runs (with single-promote fold-in at stage 7) |
+| **v8 template package `< 0.0.19` or absent** | Stage 2.5 (`ensure_v8_templates`) — auto, no gate. After it completes, re-enter stage 1 (post-reboot state may have changed everything). |
+| All preconditions clean (8/8 patches persisted, fzg ✓, vlan7 ✓, tftp helper ✓, v8 template package `≥ 0.0.19`) | Skip to stage 11 (`obn_discover_initial`) |
+| Any of patches/fzg/vlan7 needs fix (and v8 templates present) | Stage 3-7 block runs (with single-promote fold-in at stage 7) |
 | TFTP helper missing | Skill emits `BLOCKED` with `next_action: /dosto-tftp-helper-check <ccu-ip> --apply-runtime` — engineer must fix before resuming |
 
 ### Stage 2: `await_device_count_mismatch` (Gate 5)
@@ -228,6 +231,38 @@ Stage outcome routing:
 - `abort` — terminal `BLOCKED`
 
 `approval_needed.missing_devices` carries the per-device structured info from `dosto-device-discovery` output (slot, expected_switch, expected_port, stadler_instruction). Orchestrator formats one prompt section per missing device per `.claude/contracts/approval-gates.md`.
+
+### Stage 2.5: `ensure_v8_templates`
+
+**Status:** `APPLYING_FIXES`. **Conditional:** only if `initial_diagnostics` found `dpkg-query -W -f='${Version}' nd-obn-template-dostoneu-{nv6,nv4}` returned a version `< 0.0.19` (or the package was absent).
+
+**Auto, no gate.** Per autonomy-boundary v2 (2026-05-20), this stage's reboot is carved out from Gate 2. Reasoning: stage runs before any OBN patches or runtime fixes are applied, so reboot wipes nothing valuable.
+
+**Recipe:**
+
+```bash
+# Step 1: pull v8 templates from Puppet via chroot. Expected ~300s.
+sudo /usr/sbin/nd-systemupdate.sh.dont up
+
+# Step 2: only if exit 0 — reboot immediately (don't wait for the script's "reboot?" prompt).
+sudo systemctl reboot
+
+# Step 3: from orchestrator side, probe TCP/22 every 10s for up to 300s.
+# Once SSH returns, re-verify the dpkg version on the active root:
+dpkg-query -W -f='${Version}\n' nd-obn-template-dostoneu-nv6   # expect ≥ 0.0.19 for 6-car
+dpkg-query -W -f='${Version}\n' nd-obn-template-dostoneu-nv4   # expect ≥ 0.0.19 for 4-car
+```
+
+**Detection of "v8 missing":** dpkg package version — `nd-obn-template-dostoneu-nv6` (or `-nv4`) `< 0.0.19`. The 0.0.19 package retains the flat `nv6-NNN-XN.cfg` / `nv4-NNN-XN.cfg` naming convention from prior versions; v8-ness is encoded in template *content* (new VLAN/port assignments) and the package version, NOT in filename. Trains on pre-0.0.19 versions (Fzg 139 / 140 / 12 / 13 currently on v3) trigger this stage. **Do NOT detect via filename glob like `*-v8-*.cfg`** — that pattern doesn't exist in any shipped package version (regression caught 2026-05-20 on Fzg 143 + Fzg 144 — both false-alarmed post-`up` because the worker globbed for filenames the package never produces).
+
+**Failure modes (all → `status = ISSUE`, halt this worker only, no engineer gate):**
+- `nd-systemupdate.sh.dont up` exits non-zero → halt with stderr captured in `issues[]`
+- Reboot triggers but SSH doesn't return within 300s → halt with `ssh_recovery_timeout`
+- Post-reboot, `nd-obn-template-dostoneu-{nv6,nv4}` dpkg version still `< 0.0.19` → halt with `v8_templates_missing_post_update`
+
+Other workers in the cycle keep running. Engineer picks the halted train back up manually next session.
+
+**Why no gate:** spec 2026-05-20 — engineer doesn't want to be interrupted for this reboot; pre-patch CCU has no runtime state worth preserving.
 
 ### Stage 3: `apply_obn_patches`
 

@@ -1,6 +1,6 @@
 ---
 name: dosto-orchestrate
-description: Run a fleet-day commissioning orchestration inline in the engineer's top-level session. Use when starting a multi-train commissioning day, when the engineer says "/dosto-orchestrate fzg=...", or when fanning out commissioning across two or more trains in parallel. Engineer invokes this skill with a list of trains; the skill validates each train against fleet-status.md and the per-series Fzg formulas, emits a pre-flight block, then runs the orchestration in-line in the engineer's session — spawning N parallel dosto-train-worker subagents, surfacing approval gates one at a time, batching fleet-status writes per cycle, and pushing Confluence on gates/terminals/digests. The engineer's top-level session IS the orchestrator (per audit finding F5, 2026-05-11 — the platform doesn't allow agents-spawning-agents, so the skill became inline instead of bootstrapping a separate orchestrator agent).
+description: Run a fleet-day commissioning orchestration inline in the engineer's top-level session. Use when starting a multi-train commissioning day, when the engineer says "/dosto-orchestrate fzg=...", or when fanning out commissioning across two or more trains in parallel. Engineer invokes this skill with a list of trains; the skill validates each train against fleet-status.md and the per-series Fzg formulas, emits an input-validation pre-flight block, runs a network-level pre-flight diagnostic (CCU reachability + full expected device count via dosto-device-discovery, in parallel across trains, gated on a single consolidated engineer prompt), then runs the orchestration in-line in the engineer's session — spawning N parallel dosto-train-worker subagents for the trains that passed pre-flight, surfacing approval gates one at a time, batching fleet-status writes per cycle, and pushing Confluence on gates/terminals/digests. The engineer's top-level session IS the orchestrator (per audit finding F5, 2026-05-11 — the platform doesn't allow agents-spawning-agents, so the skill became inline instead of bootstrapping a separate orchestrator agent).
 ---
 
 # DOSTO Orchestrate
@@ -250,7 +250,48 @@ Rules for the Pre-Flight:
 - Simplicity check is one paragraph: are you taking the simplest path, or deviating? If deviating, name the evidence forcing the deviation.
 - Per-train success criteria MUST be verifiable at end-of-day from skill outputs or fleet-status fields.
 
-Default is **Y** (proceed). Engineer types `n` to abort cleanly. This is the ONLY pre-spawn confirmation; everything after is per-gate.
+Default is **Y** (proceed). Engineer types `n` to abort cleanly.
+
+### Step 5.5 — Network pre-flight diagnostic (gated dispatch)
+
+After Step 5's text pre-flight is approved, run a **real network-level diagnostic** against each train in parallel BEFORE spawning any commissioning worker. Purpose: confirm every accepted train has CCU reachability AND the full expected device count visible (18 sw + 24 AP for nv6, 12 sw + 16 AP for nv4). Trains that fail this gate are surfaced separately and excluded from dispatch unless the engineer explicitly opts to proceed.
+
+**Why this exists:** the text pre-flight (Step 5) validates the engineer's *input* (Fzg formula, fleet-status row exists, CCU IP populated). It does NOT touch the network. Going straight from input-validation to spawning 19-stage commissioning workers means the workers' Stage 1 (`initial_diagnostics`) is the first time we see actual device state — and if multiple trains have missing devices, the engineer gets bombarded with Gate 5 prompts in parallel. Better: do the discovery once, up front, in parallel, with a single consolidated engineer prompt.
+
+**Procedure:**
+
+1. For each accepted train, in **parallel** (single Agent message with N tool-uses OR direct parallel SSH from the orchestrator session if no Agent fan-out is needed):
+   - TCP/22 probe to the CCU (5s timeout) — `reachable: bool`
+   - If reachable: invoke `/dosto-device-discovery <ccu-ip> --json` — returns `{switches_seen, switches_expected, aps_seen, aps_expected, missing: [{kind, slot, expected_switch, expected_port}]}`
+   - Total wall-clock: ~30–60s for the whole batch regardless of N
+2. Classify each train:
+   - **PASS**: `reachable: true` AND `switches_seen == switches_expected` AND `aps_seen == aps_expected`
+   - **FAIL**: any of: CCU unreachable, missing switches, missing APs
+3. Emit a consolidated result block:
+
+```
+─── Network Pre-Flight Results ──────────────────
+Trains passing pre-flight (N):
+  ✅ Fzg 143 / 4736-115 / 10.179.18.1 — 18/18 sw + 24/24 AP visible
+  ✅ Fzg 144 / 4736-116 / 10.179.16.1 — 18/18 sw + 24/24 AP visible
+
+Trains failing pre-flight (M):
+  🔴 Fzg 132 / 4736-104 / 10.179.10.1 — 18/18 sw + 23/24 AP (D4 missing — Stadler cable)
+  🔴 Fzg 9   / 4734-109 / 10.179.38.1 — UNREACHABLE on TCP/22
+
+Dispatch the 2 passing trains? Failing trains stay in fleet-status as-is.
+[Y/n/all]:
+```
+
+- `Y` (default) → dispatch only the PASS subset; FAIL trains are skipped this run with a one-line note appended to their fleet-status `Next action` (`pre-flight YYYY-MM-DD: <reason>`)
+- `n` → abort the whole orchestration; no workers spawn
+- `all` → dispatch all trains including failing ones; the failing workers will hit Gate 5 (device_count_mismatch) in their Stage 2 as normal — engineer accepts the duplicate prompting
+
+**If all trains pass:** still surface the block (one line per train + "All N trains passed; dispatching."), no engineer prompt needed, proceed to Step 6.
+
+**If all trains fail:** surface the block, halt with "0 trains passed pre-flight; nothing to dispatch." No spawn, no fleet-status edit, exit cleanly.
+
+**Logging:** append a JSON line per pre-flight run to `.claude/logs/orchestrate-preflight.jsonl` — `{cycle_id, run_at, trains: [{fzg, ccu_ip, reachable, switches: "n/m", aps: "n/m", verdict: "PASS|FAIL", failure_reason}]}` — useful for diagnosing recurring failures (same train fails pre-flight 3 days in a row → escalate).
 
 ### Step 6 — Spawn all train-worker subagents in parallel
 
@@ -539,7 +580,7 @@ This skill prints human-readable status. It does NOT support `--json` output —
 - 🟡 **Train list with all `DONE` trains.** All fail the include-anyway prompt → effective abort. Skill exits cleanly.
 - 🟡 **`fleet-status.md` doesn't exist or is unreadable.** Halt with a clear file-not-found error. The orchestrator can't operate without the source file.
 - 🟡 **Engineer omits `@<ip>` for one Fzg in a list.** Halt at parse time per Step 1. Don't try to half-resolve from fleet-status — the contract is that IP is required for every Fzg.
-- 🟡 **Engineer types an IP that doesn't ping.** Skill does NOT pre-flight ping during reconcile (would slow startup and mask transient cellular drops). The first subagent's `initial_diagnostics` stage will surface the unreachable CCU as a normal `BLOCKED` rationale.
+- 🟡 **Engineer types an IP that doesn't ping.** Caught at Step 5.5 network pre-flight (added 2026-05-20) — the TCP/22 probe + device-discovery happens before any worker spawns, and unreachable CCUs land in the FAIL list with a consolidated engineer prompt rather than blocking individual subagents at their Stage 1.
 - 🟡 **Two engineers reconciling the same train file simultaneously.** Skill reads + edits + writes `fleet-status.md` non-atomically. Two `/dosto-orchestrate` invocations racing on the same file CAN drop one engineer's edit. Mitigation: this is a one-engineer-per-day workflow by convention; if multiple engineers are working in parallel, coordinate verbally before invoking.
 - 🟡 **Case D row creation lands the new row in the wrong series section.** Skill must write under the right `### 4734 series` / `### 4736 series` header. If the file structure has been modified (new sections, renamed headers), the safest fall-back is to halt with a clear error rather than guess where to insert.
 

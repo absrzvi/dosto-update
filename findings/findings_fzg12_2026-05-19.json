@@ -1,0 +1,124 @@
+{
+  "meta": {
+    "fzg": 12,
+    "series": "4734",
+    "train_id_in_schema": "4734-112",
+    "ccu_ip": "10.179.41.1",
+    "ccu_hostname": "box1-t41",
+    "check_date": "2026-05-19",
+    "engineer": "Abbas Rizvi",
+    "completion_status": "PARTIAL — CCU cellular link dropped mid-session after Step 4 (partial). Steps 5-8 incomplete.",
+    "notes": [
+      "Consist appears to be 5-car (A,B,C,E,F cars, 15 VDS switches, 20 APs) — not 4-car as briefed. Verify against schema PDF.",
+      "nv4 OBN templates do not have train_id hardcoded (Jinja var renders from nd-redundancy train_id=41 which is subnet index, NOT Fzg). Flagged — do not fix without R&D guidance.",
+      "vlan7 confirmed correct: 172.19.134.2/17 (Fzg 12 even formula correct), FW peer = 172.19.134.1.",
+      "CCU dropped after ~45 min session. Steps 5 (Stadler trunks detail), 6 (STP), 7 (throughput), 8 (FW probe) could not be completed. Resume session required.",
+      "C3 (10.179.41.189) notable: all four 10G ports (e0-0 through e0-3) UP/UP — unusual for non-junction switch. Warrants investigation when CCU recovers.",
+      "B1 (185) and B3 (181) ZFR ports (e1-11) both enabled but DOWN — ZFR devices not connected or powered at time of check."
+    ]
+  },
+  "step1_ccu_sanity": {
+    "status": "PASS",
+    "hostname": "box1-t41",
+    "vlan100_ip": "10.179.41.129/25",
+    "bond0_ip": "10.179.41.1/25",
+    "vlan7_ip": "172.19.134.2/17",
+    "vlan7_link": "UP",
+    "vlan7_rx_errors": 0,
+    "vlan7_tx_errors": 0,
+    "vlan7_rx_packets": 246353,
+    "vlan7_tx_packets": 110790
+  },
+  "step2_discovery": {
+    "status": "COMPLETE",
+    "vds_switches_found": 15,
+    "vds_switches_expected": "12 (briefed 4-car) or 15 (5-car — actual)",
+    "westermo_aps_found": 20,
+    "westermo_aps_expected": "4 (briefed 4-car) or 20 (5-car — actual)",
+    "consist_size_verdict": "5-CAR (cars A,B,C,E,F — 3 switches per car = 15 total, 4 APs per car = 20 total). Verify against 4734-112 schema PDF.",
+    "vds_switches": [
+      {"ip": "10.179.41.178", "mac": "a0:59:3a:d0:8e:a0", "dhcp_hostname": "fv5-C1-v3-231"},
+      {"ip": "10.179.41.179", "mac": "a0:59:3a:d0:8c:20", "dhcp_hostname": "fv5-C2-v3-231"},
+      {"ip": "10.179.41.180", "mac": "a0:59:3a:d0:8a:00", "dhcp_hostname": "fv5-F1-v3-231"},
+      {"ip": "10.179.41.181", "mac": "a0:59:3a:d0:8d:40", "dhcp_hostname": "fv5-B3-v6m-231"},
+      {"ip": "10.179.41.182", "mac": "a0:59:3a:d0:8c:e0", "dhcp_hostname": "fv5-A3-v3-231"},
+      {"ip": "10.179.41.183", "mac": "a0:59:3a:d0:8d:a0", "dhcp_hostname": "fv5-F3-v3-231"},
+      {"ip": "10.179.41.184", "mac": "a0:59:3a:d0:8a:80", "dhcp_hostname": "fv5-A2-v3-231"},
+      {"ip": "10.179.41.185", "mac": "a0:59:3a:d0:8d:60", "dhcp_hostname": "fv5-B1-v3-231"},
+      {"ip": "10.179.41.186", "mac": "a0:59:3a:d0:9f:e0", "dhcp_hostname": "fv5-F2-v3-231"},
+      {"ip": "10.179.41.187", "mac": "a0:59:3a:d0:8a:a0", "dhcp_hostname": "fv5-E3-v3-231"},
+      {"ip": "10.179.41.188", "mac": "a0:59:3a:d0:89:a0", "dhcp_hostname": "fv5-A1-v6m-231"},
+      {"ip": "10.179.41.189", "mac": "a0:59:3a:d0:8a:40", "dhcp_hostname": "fv5-C3-v3-231"},
+      {"ip": "10.179.41.190", "mac": "a0:59:3a:d0:89:80", "dhcp_hostname": "fv5-B2-v3-231"},
+      {"ip": "10.179.41.191", "mac": "a0:59:3a:d0:8d:20", "dhcp_hostname": "fv5-E2-v3-231"},
+      {"ip": "10.179.41.192", "mac": "a0:59:3a:d0:8e:60", "dhcp_hostname": "fv5-E1-v3-231"}
+    ]
+  },
+  "step3_fingerprinting": {
+    "status": "COMPLETE",
+    "method": "DHCP hostname + trunk config verification",
+    "switch_roles": [
+      {"ip": "10.179.41.178", "role": "C1", "fingerprint": "4x10G up (e0-0..e0-3), confirmed by hostname fv5-C1"},
+      {"ip": "10.179.41.179", "role": "C2", "fingerprint": "e0-0/e0-1 trunks up, e0-2/e0-3 disabled"},
+      {"ip": "10.179.41.180", "role": "F1", "fingerprint": "e0-0/e0-1 up, e0-2/e0-3 disabled — F-car end"},
+      {"ip": "10.179.41.181", "role": "B3", "fingerprint": "e1-11 access VLAN2 (ZFR/zrp-train-repair) via vlans table, e1-2 trunk at 1G (uplink), e0-2 front coupler enabled/down"},
+      {"ip": "10.179.41.182", "role": "A3", "fingerprint": "e1-4 Stadler FW trunk (VLANs 2,3,5,6,7,8,9,12) confirmed UP at 1G, e0-2 front coupler enabled/down, e1-2 at 1G"},
+      {"ip": "10.179.41.183", "role": "F3", "fingerprint": "e0-0/e0-1 up, e1-2 at 1G — F-car end"},
+      {"ip": "10.179.41.184", "role": "A2", "fingerprint": "standard mid-car profile"},
+      {"ip": "10.179.41.185", "role": "B1", "fingerprint": "e1-11 access VLAN2 (ZFR) confirmed DOWN (no device), e0-2 front coupler enabled/down"},
+      {"ip": "10.179.41.186", "role": "F2", "fingerprint": "standard mid-car profile, F-car"},
+      {"ip": "10.179.41.187", "role": "E3", "fingerprint": "e1-2 at 1G, e0-0/e0-1 up"},
+      {"ip": "10.179.41.188", "role": "A1", "fingerprint": "e0-2 front coupler enabled/down — end of consist"},
+      {"ip": "10.179.41.189", "role": "C3", "fingerprint": "ANOMALY: e0-0+e0-1+e0-2+e0-3 all UP at 10G — 4 active 10G ports unusual"},
+      {"ip": "10.179.41.190", "role": "B2", "fingerprint": "standard mid-car profile"},
+      {"ip": "10.179.41.191", "role": "E2", "fingerprint": "standard mid-car profile"},
+      {"ip": "10.179.41.192", "role": "E1", "fingerprint": "standard mid-car profile"}
+    ],
+    "stadler_fw_switch": {"role": "A3", "ip": "10.179.41.182", "fw_port": "e1-4", "fw_port_status": "UP 1000 Mbps Full"},
+    "zfr_switches": [
+      {"role": "B1", "ip": "10.179.41.185", "zfr_port": "e1-11", "zfr_port_status": "enabled DOWN"},
+      {"role": "B3", "ip": "10.179.41.181", "zfr_port": "e1-11", "zfr_port_status": "enabled DOWN"}
+    ]
+  },
+  "step4_error_scan": {
+    "status": "PARTIAL — E2(.191) and E1(.192) not checked before CCU dropout",
+    "ports_checked": "e0-0, e0-1 on all 13 of 15 switches; e0-2, e0-3 on C1 and C3; e1-4 (Stadler FW trunk) on A3; e1-2 on B3/F3/E3/C3",
+    "non_zero_errors": [],
+    "alert_flags": [
+      {
+        "switch_ip": "10.179.41.189",
+        "role": "C3",
+        "finding": "e0-2 and e0-3 both UP at 10G Full — 4 x 10G trunk ports active simultaneously. For a non-junction switch this is unusual. Warrants LLDP topology investigation to confirm all 4 peers are expected.",
+        "severity": "YELLOW — investigate, not necessarily a fault"
+      }
+    ],
+    "summary": "ALL CHECKED PORTS CLEAR. No CRC errors, no carrier-false events, no pause frames, no collisions on any checked trunk port. 10G inter-coach trunks all operating at correct speed."
+  },
+  "step5_stadler_trunks": {
+    "status": "NOT COMPLETED — CCU dropped before this step",
+    "a3_e1_4": "confirmed UP 1G Full from fingerprint step; detailed error counters not checked"
+  },
+  "step6_stp": {
+    "status": "NOT COMPLETED — CCU dropped before this step"
+  },
+  "step7_throughput": {
+    "status": "NOT COMPLETED — CCU dropped before this step"
+  },
+  "step8_fw_probe": {
+    "status": "NOT COMPLETED — CCU dropped before this step",
+    "fw_peer_ip": "172.19.134.1",
+    "fw_commission_state": "unknown",
+    "note": "vlan7 confirmed UP and correctly configured (172.19.134.2/17). FW IP formula verified correct for Fzg 12 even. Q1/Q2/Q3 tests not run."
+  },
+  "step9_aggregate": {
+    "overall_verdict": "INCOMPLETE",
+    "fabric_health_from_partial_data": "HEALTHY (no errors on 13/15 switches checked, all inter-coach trunks at 10G Full)",
+    "open_items": [
+      "Resume session: run Steps 5-8 (Stadler trunk detail, STP, throughput, FW probe)",
+      "Check E2 (191) and E1 (192) e0-0/e0-1 error counters",
+      "Investigate C3 (189) 4x10G UP anomaly via LLDP topology",
+      "Verify consist car count against 4734-112 schema PDF — found 15 switches (5-car) not 12 (4-car as briefed)",
+      "nv4 train_id rendering issue — flag to R&D (train_id=41 renders subnet index, not Fzg=12)"
+    ]
+  }
+}

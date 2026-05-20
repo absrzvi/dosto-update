@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DOSTO Fleet Dashboard</title>
+<style>
+  :root {
+    --bg: #0f172a; --surface: #1e293b; --surface2: #273344;
+    --border: #334155; --text: #e2e8f0; --text-muted: #94a3b8; --accent: #38bdf8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 14px; }
+  header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; }
+  header h1 { font-size: 18px; font-weight: 700; color: var(--accent); letter-spacing: .05em; }
+  header .subtitle { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  header .updated { font-size: 11px; color: var(--text-muted); }
+  .container { max-width: 1400px; margin: 0 auto; padding: 24px 32px; }
+  .stats-row { display: grid; grid-template-columns: repeat(6,1fr); gap: 12px; margin-bottom: 28px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-align: center; }
+  .stat-card .num { font-size: 28px; font-weight: 700; }
+  .stat-card .lbl { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em; margin-top: 4px; }
+  .section { margin-bottom: 32px; }
+  .section-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+  .section-header h2 { font-size: 16px; font-weight: 600; }
+  .section-header .count { font-size: 12px; color: var(--text-muted); }
+  .table-wrap { overflow-x: auto; border-radius: 8px; border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { background: var(--surface2); }
+  thead th { padding: 10px 14px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted); font-weight: 600; white-space: nowrap; border-bottom: 1px solid var(--border); }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background .1s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--surface2); }
+  td { padding: 9px 14px; vertical-align: top; }
+  .row-done       { border-left: 3px solid #22c55e; }
+  .row-paused     { border-left: 3px solid #eab308; }
+  .row-blocked    { border-left: 3px solid #ef4444; }
+  .row-inprogress { border-left: 3px solid #3b82f6; }
+  .row-unknown    { border-left: 3px solid var(--border); }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; color: #fff; letter-spacing: .04em; white-space: nowrap; }
+  .fault-tag { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 11px; background: #1e3a5f; color: #93c5fd; border: 1px solid #2563eb44; }
+  .mono { font-family: "Consolas","Courier New",monospace; font-size: 12px; }
+  .small { font-size: 12px; color: var(--text-muted); }
+  .center { text-align: center; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } .stats-row { grid-template-columns: repeat(3,1fr); } }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>DOSTO Fleet Dashboard</h1>
+    <div class="subtitle">Nomad Digital &middot; &Ouml;BB DOSTO NEU commissioning status</div>
+  </div>
+  <div class="updated">Generated 2026-05-19 15:46</div>
+</header>
+<div class="container">
+<div class="stats-row">
+  <div class="stat-card"><div class="num" style="color:#22c55e">2</div><div class="lbl">Done</div></div>
+  <div class="stat-card"><div class="num" style="color:#3b82f6">0</div><div class="lbl">In Progress</div></div>
+  <div class="stat-card"><div class="num" style="color:#eab308">3</div><div class="lbl">Paused</div></div>
+  <div class="stat-card"><div class="num" style="color:#ef4444">4</div><div class="lbl">Blocked</div></div>
+  <div class="stat-card"><div class="num" style="color:#94a3b8">35</div><div class="lbl">Unknown</div></div>
+  <div class="stat-card"><div class="num" style="color:#fb923c">8</div><div class="lbl">Cable Issues Open</div></div>
+</div>
+<div class="two-col">
+<div class="section">
+  <div class="section-header"><h2>4736 Series</h2><span class="count">23 trains</span></div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Fzg</th><th>Trainset</th><th>CCU IP</th><th>Status</th><th>Next Action</th></tr></thead>
+    <tbody><tr class="row-unknown"><td class="mono center">129</td><td class="mono">4736-101</td><td><span style="color:#475569">—</span></td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">initial visit</td></tr>
+<tr class="row-paused"><td class="mono center">130</td><td class="mono">4736-102</td><td><span class="mono">10.179.47.1</span></td><td><span class="badge" style="background:#eab308">PAUSED</span></td><td class="small">push config to 3 -man switches (.180 .186 .187), then push AP fw 6.10.0-0→6.11.2-0 on 24 APs</td></tr>
+<tr class="row-paused"><td class="mono center">131</td><td class="mono">4736-103</td><td><span class="mono">10.179.11.1</span></td><td><span class="badge" style="background:#eab308">PAUSED</span></td><td class="small">reboot to activate run3 (8/8 OBN persisted); push AP fw 6.10.0-0→6.11.2-0 after Stadler</td></tr>
+<tr class="row-blocked"><td class="mono center">132</td><td class="mono">4736-104</td><td><span class="mono">10.179.10.1</span></td><td><span class="badge" style="background:#ef4444">BLOCKED</span></td><td class="small">verify .231; push .237 .238 .240 — see detail</td></tr>
+<tr class="row-done"><td class="mono center">133</td><td class="mono">4736-105</td><td><span class="mono">10.179.1.1</span></td><td><span class="badge" style="background:#22c55e">DONE</span></td><td class="small">wait for Stadler on Coach5 AP2 + FW path</td></tr>
+<tr class="row-unknown"><td class="mono center">134</td><td class="mono">4736-106</td><td><span class="mono">10.179.19.1</span></td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">confirm v8 state — only customer report on file</td></tr>
+<tr class="row-unknown"><td class="mono center">135</td><td class="mono">4736-107</td><td><span style="color:#475569">—</span></td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">initial visit</td></tr>
+<tr class="row-blocked"><td class="mono center">136</td><td class="mono">4736-108</td><td><span class="mono">10.179.8.1</span></td><td><span class="badge" style="background:#ef4444">BLOCKED</span></td><td class="small">train mostly offline — only 2 switches visible; wait for Stadler on register #2 + #3; then apply OBN patches + full v8 push</td></tr>
+<tr class="row-blocked"><td class="mono center">137</td><td class="mono">4736-109</td><td><span style="color:#475569">—</span></td><td><span class="badge" style="background:#ef4444">BLOCKED</span></td><td class="small">wait for Stadler on register #4 (AP install at B3)</td></tr>
+<tr class="row-unknown"><td class="mono center">138</td><td class="mono">4736-110</td><td><span style="color:#475569">—</span></td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">confirm v8 state — only customer report on file</td></tr>
+<tr class="row-unknown"><td class="mono center">139</td><td class="mono">4736-111</td><td><span class="mono">10.179.24.1</span></td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">L2 healthy (18/18 sw, 24 APs, 0 errors) — v3 config, needs full v8 push; FW probe incomplete (CCU dropped); OBN template train_id not hardcoded</td></tr>
+<tr class="row-unknown"><td class="mono center">140</td><td class="mono">4736-112</td><td><span class="mono">10.179.12.1</span></td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">L2 healthy (18/18 sw, 24 APs, 0 errors) — v8 config (wrong train_id 147); FW path broken (not commissioned); OBN template train_id not hardcoded</td></tr>
+<tr class="row-unknown"><td class="mono center">141</td><td class="mono">4736-113</td><td><span style="color:#475569">—</span></td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">initial visit</td></tr>
+<tr class="row-unknown"><td class="mono center">142</td><td class="mono">4736-114</td><td><span style="color:#475569">—</span></td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">initial visit</td></tr>
+<tr class="row-unknown"><td class="mono center">143</td><td class="mono">4736-115</td><td><span style="color:#475569">—</span></td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">initial visit</td></tr>
+<tr class="row-unknown"><td class="mono center">144</td><td class="mono">4736-116</td><td><span style="color:#475569">—</span></td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">initial visit</td></tr>
+<tr class="row-unknown"><td class="mono center">145</td><td class="mono">4736-117</td><td><span style="color:#475569">—</span></td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">initial visit</td></tr>
+<tr class="row-unknown"><td class="mono center">146</td><td class="mono">4736-118</td><td><span style="color:#475569">—</span></td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">confirm v8 state — only baseline + customer report on file</td></tr>
+<tr class="row-unknown"><td class="mono center">147</td><td class="mono">4736-119</td><td><span style="color:#475569">—</span></td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">initial visit (schema PDF in docs/)</td></tr>
+<tr class="row-paused"><td class="mono center">148</td><td class="mono">4736-120</td><td><span class="mono">10.179.2.1</span></td><td><span class="badge" style="background:#eab308">PAUSED</span></td><td class="small">push AP fw 6.10.0-0 → 6.11.2-0 on 24 APs</td></tr>
+<tr class="row-unknown"><td class="mono center">149</td><td class="mono">4736-121</td><td><span style="color:#475569">—</span></td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">initial visit</td></tr>
+<tr class="row-unknown"><td class="mono center">150</td><td class="mono">4736-122</td><td><span style="color:#475569">—</span></td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">initial visit</td></tr>
+<tr class="row-unknown"><td class="mono center">151</td><td class="mono">4736-123</td><td><span class="mono">10.179.23.1</span></td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">L2 healthy (18/18 sw, 24 APs, 0 errors) — v8 config (wrong train_id 138); FW path broken (not commissioned); OBN template train_id not hardcoded</td></tr></tbody>
+  </table></div>
+</div>
+<div class="section">
+  <div class="section-header"><h2>4734 Series</h2><span class="count">21 trains</span></div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Fzg</th><th>Trainset</th><th>CCU IP</th><th>Status</th><th>Next Action</th></tr></thead>
+    <tbody><tr class="row-blocked"><td class="mono center">1</td><td class="mono">4734-101</td><td><span style="color:#475569">—</span></td><td><span class="badge" style="background:#ef4444">BLOCKED</span></td><td class="small">wait for Stadler on register #1 (re-patch E↔B trunk)</td></tr>
+<tr class="row-unknown"><td class="mono center">2</td><td class="mono">4734-102</td><td><span style="color:#475569">—</span></td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">initial visit</td></tr>
+<tr class="row-unknown"><td class="mono center">3</td><td class="mono">4734-103</td><td><span style="color:#475569">—</span></td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">initial visit</td></tr>
+<tr class="row-unknown"><td class="mono center">4</td><td class="mono">4734-104</td><td><span style="color:#475569">—</span></td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">initial visit</td></tr>
+<tr class="row-unknown"><td class="mono center">5</td><td class="mono">4734-105</td><td><span style="color:#475569">—</span></td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">initial visit</td></tr>
+<tr class="row-unknown"><td class="mono center">6</td><td class="mono">4734-106</td><td><span style="color:#475569">—</span></td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">initial visit</td></tr>
+<tr class="row-unknown"><td class="mono center">7</td><td class="mono">4734-107</td><td><span style="color:#475569">—</span></td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">initial visit</td></tr>
+<tr class="row-unknown"><td class="mono center">8</td><td class="mono">4734-108</td><td><span style="color:#475569">—</span></td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">initial visit</td></tr>
+<tr class="row-unknown"><td class="mono center">9</td><td class="mono">4734-109</td><td><span class="mono">10.179.38.1</span></td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">L2 healthy (12/12 sw, 16 APs, 0 errors) — v5 config; B1+B3 ZFR e1-11 DOWN; FW probe incomplete (CCU dropped)</td></tr>
+<tr class="row-unknown"><td class="mono center">10</td><td class="mono">4734-110</td><td><span style="color:#475569">—</span></td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">initial visit</td></tr>
+<tr class="row-unknown"><td class="mono center">11</td><td class="mono">4734-111</td><td><span style="color:#475569">—</span></td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">initial visit</td></tr>
+<tr class="row-unknown"><td class="mono center">12</td><td class="mono">4734-112</td><td><span class="mono">10.179.41.1</span></td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">L2 healthy (15/15 sw seen, 20 APs) — 5-car consist (cars A,B,C,E,F); v3 config (wrong train_id 231); vlan7 fixed today; STP+FW probe incomplete (CCU dropped); C3 has 4×10G UP (verify LLDP)</td></tr>
+<tr class="row-unknown"><td class="mono center">13</td><td class="mono">4734-113</td><td><span class="mono">10.179.42.1</span></td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">L2 healthy (15/18 sw visible, 3 missing); v3 config (wrong train_id 229); 0 errors on checked switches; STP+FW probe incomplete (CCU dropped)</td></tr>
+<tr class="row-unknown"><td class="mono center">14</td><td class="mono">4734-114</td><td><span style="color:#475569">—</span></td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">initial visit</td></tr>
+<tr class="row-unknown"><td class="mono center">15</td><td class="mono">4734-115</td><td><span style="color:#475569">—</span></td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">initial visit</td></tr>
+<tr class="row-unknown"><td class="mono center">16</td><td class="mono">4734-116</td><td><span style="color:#475569">—</span></td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">initial visit</td></tr>
+<tr class="row-unknown"><td class="mono center">17</td><td class="mono">4734-117</td><td><span style="color:#475569">—</span></td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">initial visit</td></tr>
+<tr class="row-unknown"><td class="mono center">18</td><td class="mono">4734-118</td><td><span style="color:#475569">—</span></td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">initial visit</td></tr>
+<tr class="row-unknown"><td class="mono center">19</td><td class="mono">4734-119</td><td><span style="color:#475569">—</span></td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">scripts/lldp_check_4734-119.py exists — possibly visited</td></tr>
+<tr class="row-unknown"><td class="mono center">20</td><td class="mono">4734-120</td><td><span class="mono">10.179.49.1</span></td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">confirm switches v8 state; APs done 2026-05-05</td></tr>
+<tr class="row-done"><td class="mono center">21</td><td class="mono">4734-121</td><td><span class="mono">10.179.50.1</span></td><td><span class="badge" style="background:#22c55e">DONE</span></td><td class="small">L2 healthy (12/12 sw, 16 APs, 0 errors) — v8 config ✅; FW UNCOMMISSIONED (at .129 not .1 — bare Westermo); wait for Stadler to commission FW at 172.19.138.1</td></tr></tbody>
+  </table></div>
+</div>
+</div>
+<div class="section">
+  <div class="section-header"><h2>Cable Issues Register</h2><span class="count">8 total &middot; 8 open</span></div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>#</th><th>Trainset</th><th>Consist</th><th>Switch / Link</th><th>Port(s)</th><th>Fault Type</th><th>Required Action</th><th>Status</th><th>Found</th></tr></thead>
+    <tbody><tr><td class="mono center">1</td><td class="mono">4734-101</td><td class="small">4-car</td><td class="small">E2 ↔ B1</td><td class="small mono">E2.e0-0 ↔ B1.e0-1</td><td><span class="fault-tag">wrong neighbour</span></td><td class="small">Re-patch E-coach end so E2.e0-0 lands on E3, and inter-coach E↔B trunk lands on E1.e0-0 ↔ B1.e0-1.</td><td><span class="badge" style="background:#ef4444">OPEN</span></td><td class="small">2026-05-06</td></tr>
+<tr><td class="mono center">2</td><td class="mono">4736-108</td><td class="small">6-car</td><td class="small">C3</td><td class="small mono">e0-0 / e0-1</td><td><span class="fault-tag">cable swap</span></td><td class="small">Swap the two trunk cables on C3. After swap, 'show lldp neighbours' on C3 should show e0-0=A2, e0-1=C2.</td><td><span class="badge" style="background:#ef4444">OPEN</span></td><td class="small">2026-05-04</td></tr>
+<tr><td class="mono center">3</td><td class="mono">4736-108</td><td class="small">6-car</td><td class="small">D1 ↔ E2</td><td class="small mono">D1.e0-1 / E2.e0-1</td><td><span class="fault-tag">missing trunk</span></td><td class="small">Locate and reconnect inter-coach trunk cable between D1 e0-1 and E2 e0-1. Install replacement if absent.</td><td><span class="badge" style="background:#ef4444">OPEN</span></td><td class="small">2026-05-04</td></tr>
+<tr><td class="mono center">4</td><td class="mono">4736-109</td><td class="small">6-car</td><td class="small">B3</td><td class="small mono">e0-4 (AP trunk)</td><td><span class="fault-tag">AP not connected</span></td><td class="small">Verify whether an AP is physically installed at B3 position. If yes, connect the patch cable to B3 e0-4.</td><td><span class="badge" style="background:#ef4444">OPEN</span></td><td class="small">2026-05-04</td></tr>
+<tr><td class="mono center">5</td><td class="mono">4736-104</td><td class="small">6-car</td><td class="small">D3</td><td class="small mono">e1-2 (AP trunk)</td><td><span class="fault-tag">faulty SFP/cable</span></td><td class="small">1. Replace patch cable between AP D4 and switch D3 e1-2 (data pairs likely damaged, power pairs intact). 2. If no improvement, swa…</td><td><span class="badge" style="background:#ef4444">OPEN</span></td><td class="small">2026-05-09</td></tr>
+<tr><td class="mono center">6</td><td class="mono">4734-113</td><td class="small">6-car(?)</td><td class="small">Unknown - 3 switches absent</td><td class="small mono">Unknown</td><td><span class="fault-tag">missing trunk</span></td><td class="small">Identify which 3 cars' switch positions are missing; inspect cable/power at those switch locations. Run LLDP topology check once a…</td><td><span class="badge" style="background:#ef4444">OPEN</span></td><td class="small">2026-05-19</td></tr>
+<tr><td class="mono center">7</td><td class="mono">4734-109</td><td class="small">4-car</td><td class="small">B1 / B3 - ZFR access port</td><td class="small mono">B1 e1-11 / B3 e1-11</td><td><span class="fault-tag">AP not connected</span></td><td class="small">Verify ZFR devices are physically installed and powered at B1 and B3 positions on Fzg 9. Check patch cable from switch port to ZFR…</td><td><span class="badge" style="background:#ef4444">OPEN</span></td><td class="small">2026-05-19</td></tr>
+<tr><td class="mono center">8</td><td class="mono">4734-112</td><td class="small">5-car</td><td class="small">C3 - all 4x10G ports UP</td><td class="small mono">C3 e0-0/e0-1/e0-2/e0-3</td><td><span class="fault-tag">other</span></td><td class="small">Run LLDP topology check on C3 (CCU 10.179.41.1) to identify all 4 peer switch identities. Cross-reference against 4734-112 IP-allo…</td><td><span class="badge" style="background:#ef4444">OPEN</span></td><td class="small">2026-05-19</td></tr></tbody>
+  </table></div>
+</div>
+</div>
+</body>
+</html>

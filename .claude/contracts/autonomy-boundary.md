@@ -1,6 +1,6 @@
 # Subagent Autonomy Boundary
 
-**Status:** v1, locked 2026-05-09 (Option A from build planning).
+**Status:** v2, 2026-05-20 (added `ensure_v8_templates` auto-reboot carve-out). v1 locked 2026-05-09.
 
 What a per-train subagent may do without asking, and what it must request human approval for. This is workflow-level policy — distinct from Claude Code's tool-permission prompts (which are configured separately via `.claude/settings.json`).
 
@@ -76,6 +76,17 @@ The `--json` output of `dosto-device-discovery` (per [.claude/skills/dosto-devic
 - Produced an actionable Stadler instruction for each missing device
 
 **What approval costs the human:** ~30 seconds reading the per-device Stadler-actionable instructions and choosing the default (`partial`) or one of the alternatives.
+
+### What about the `ensure_v8_templates` reboot?
+
+Per spec (2026-05-20): **not a gate, despite involving a reboot.** When `initial_diagnostics` finds no `nv6-*-v8-*.cfg` (or `nv4-*-v8-*.cfg`) files in `/etc/obn/template/`, the subagent autonomously runs `sudo /usr/sbin/nd-systemupdate.sh.dont up` (pulls v8 templates from Puppet via chroot), then `sudo systemctl reboot`, then probes TCP/22 every 10s for up to 300s, then re-verifies templates are present, then resumes at `apply_obn_patches`.
+
+**Why this reboot doesn't need Gate-2 treatment:**
+- Stage runs *before* `apply_obn_patches`, so runtime state worth preserving (TFTP CT helper, in-memory iptables, OBN patches in `/usr/share/obn/*.py`) hasn't been applied yet. Reboot wipes nothing valuable.
+- The Puppet `up` apply is idempotent and the v8 templates are baseline-configurable — if the apply or reboot fails, recovery is "engineer SSHes in, re-runs `up`", same as the regular Gate 2 failure mode.
+- Train-power-during-passenger-service consideration applies the same as Gate 2 — but the orchestrator can't disambiguate "engineer wants minimal interruptions" from "engineer doesn't want this specific reboot." Per the 2026-05-20 spec call, the carve-out is explicit: this reboot is auto, no prompt.
+
+**Failure handling:** if `nd-systemupdate.sh.dont up` exits non-zero, OR templates are still missing after reboot, OR SSH doesn't return within 300s, the subagent sets `status = ISSUE`, adds the failure mode to `issues[]`, and halts *that one worker*. Other workers in the cycle keep running. No gate prompt to the engineer — they pick the failed train back up manually.
 
 ### What about AP factory-config bypass?
 
