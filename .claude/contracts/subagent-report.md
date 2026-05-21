@@ -1,6 +1,11 @@
 # Subagent Report Contract
 
-**Status:** v2, updated 2026-05-11 per audit finding F2 (context-bloat fix). v1 reports remain accepted by the orchestrator with a `schema_version_drift` flag. Changes require all subagents and the orchestrator to be updated together.
+**Status:** v2.1, updated 2026-05-21 (harness enhancements A1/B3/C1/C4/D1). v2.0 locked 2026-05-11 (F2). v1 reports remain accepted with a `schema_version_drift` flag. Changes require all subagents and the orchestrator to be updated together.
+
+**v2.1 changes from v2:**
+- `obn_discover_post_sw_config` stage `expected_duration_seconds` updated from 60s → 120s (spot-SSH adds ~60s — see stage-14 detail in `dosto-commission-train` SKILL.md).
+- Stage list entry updated: stage 14 now mandates direct SSH spot-check of 3 switches in addition to `obn discover`. Subagents emitting stage 14 without the spot-SSH (i.e. only running `obn discover`) are accepted but flagged as `schema_version_drift`.
+- No breaking schema changes — all v2 fields/types preserved.
 
 **v2 changes from v1:**
 - `skill_outputs` default semantics tightened: **current-stage only, no historical echo** (was: unspecified). See "Compactness rules" below.
@@ -161,7 +166,7 @@ These are the stages a per-train commissioning subagent moves through. Listed in
 | `obn_discover_initial` | `DIAGNOSING` | 60s | `obn discover` to map switch + AP states |
 | `await_obn_update_c` | `NEEDS_APPROVAL` | — | Gate 3: `obn_update_c` (covers both SW-config and the final AP-config) |
 | `push_switch_config` | `PUSHING_TO_DEVICES` | 420s × N switches | Stadler IPs land here — highest-value device-push, fires first under power-off risk. `current_step` / `total_steps` track per-switch |
-| `obn_discover_post_sw_config` | `DIAGNOSING` | 60s | Verify all switches now on target config (renamed from `obn_discover_post_config` to disambiguate from the AP-config phase that comes later) |
+| `obn_discover_post_sw_config` | `DIAGNOSING` | 120s | Verify all switches on target config via `obn discover` AND direct SSH spot-check of 3 switches (leaf, root, random intermediate) — independent evaluator check so OBN's own report doesn't self-validate. 120s budget covers 45s discover + 3×25s SSH probes. |
 | `await_obn_update_f` | `NEEDS_APPROVAL` | — | Gate 4: `obn_update_f` (covers both SW-firmware and AP-firmware) |
 | `push_switch_firmware` | `PUSHING_TO_DEVICES` | 600s × N switches | SW firmware push, leaf-first OBNTree order. NEW stage — split from old `push_ap_firmware` two-phase form. |
 | `ap_factory_bypass` | `APPLYING_FIXES` | 180s × N factory APs | LuCI HTTP push for any AP in `RT610LV-…-v1-FD`. Conditional — only fires if stage 11 found factory APs. **MOVED** from after `obn_discover_initial` to before AP firmware push (where it's actually needed: makes factory APs OBN-reachable so the firmware step can hit them). No separate gate — fix-up step. |

@@ -89,7 +89,7 @@ Per [`subagent-report.md`](../../contracts/subagent-report.md) → "Commissionin
 | 11 | `obn_discover_initial` | `DIAGNOSING` | always | `sudo obn discover` from CCU, parse `/tmp/discovery.json` for AP factory-state and switch firmware/config state |
 | 12 | `await_obn_update_c` | `NEEDS_APPROVAL` (Gate 3) | only if any switch needs config push OR Nomad APs need config refresh | — |
 | 13 | `push_switch_config` | `PUSHING_TO_DEVICES` | only if Gate 3 approved AND any switch needs config | **Default**: `dosto-sw-config-update-batch --execute --auto` — OBN-driven parallel leaf-first batches, ~30-45 min wall-clock for a 6-car DOSTO. **Legacy fallback**: with orchestrator flag `--legacy-serial-sw-config`, loops `dosto-sw-config-update --execute` per switch (~3 hours). Same OBNTree leaf-first ordering either way. **Highest-value device push — fires first under power-off risk** because the v8 config carries Stadler-specific switch IPs the customer cares about. |
-| 14 | `obn_discover_post_sw_config` | `DIAGNOSING` | only after `push_switch_config` | `sudo obn discover` to verify all switches now show config `✓` (renamed from `obn_discover_post_config` to disambiguate from the AP-config phase later) |
+| 14 | `obn_discover_post_sw_config` | `DIAGNOSING` | only after `push_switch_config` | `sudo obn discover` + direct SSH spot-check of 3 switches (leaf, root, random intermediate) to independently verify config `✓` and rendered hostnames — OBN report alone is insufficient (Fzg 133 cascade lesson). Expected ~120s. |
 | 15 | `await_obn_update_f` | `NEEDS_APPROVAL` (Gate 4) | only if any device needs firmware push | — |
 | 16 | `push_switch_firmware` | `PUSHING_TO_DEVICES` | only if Gate 4 approved AND any switch needs firmware update | `dosto-sw-firmware-update --execute`, one switch at a time, OBNTree leaf-first. **NEW stage** — split from old combined `push_ap_firmware` two-phase form. Runs after switch config so the operational payload (Stadler IPs) is locked in before the maintenance payload (firmware version). |
 | 17 | `ap_factory_bypass` | `APPLYING_FIXES` | only if any AP in factory config (per stage 11 inventory) | `dosto-ap-config-update --execute` (Path B: LuCI HTTP), one AP at a time, serially. **MOVED** from old position (was after `obn_discover_initial`) to here, just before AP firmware push. Reason: the bypass exists *to make factory APs OBN-reachable for the firmware push that immediately follows*; doing it earlier interleaves it with switch work it has no dependency on. |
@@ -410,7 +410,32 @@ If any push fails (`config_did_not_trigger_reboot` from `dosto-sw-config-update`
 
 Force-fresh `sudo obn discover` to verify all switches now show config `✓` AND the rendered hostnames match `<variant>-X-v8-<Fzg>` (rendered-output Post-Flight check, Karpathy Principle 4). If any still show `✗`, this is a regression — halt with `ERROR`.
 
-Stage renamed from old `obn_discover_post_config` to disambiguate from the AP-config phase that comes much later. (The validator's C7 checks renamed-stage-IDs are referenced consistently.)
+**Spot-SSH direct verification (independent evaluator check):** OBN's own `discover` report reflects what OBN *believes* it pushed — it does not independently verify the switch's running config. After `obn discover` returns all switches `✓`, perform a direct SSH spot-check against **3 switches** sampled as:
+- The first leaf switch (lowest IP in OBNTree)
+- The root switch (highest in OBNTree)
+- One randomly selected intermediate switch
+
+For each spot-checked switch, run via the CCU:
+
+```bash
+SSH_OPTS="-o StrictHostKeyChecking=no -o ConnectTimeout=8 \
+  -o KexAlgorithms=+diffie-hellman-group14-sha1,diffie-hellman-group1-sha1 \
+  -o HostKeyAlgorithms=+ssh-rsa,ssh-dss \
+  -o PubkeyAuthentication=no"
+sshpass -p "Nom@dCome1n" ssh $SSH_OPTS admin@<switch-ip> "show vlans"
+```
+
+**What to verify:**
+- The VLAN assignments match the v8 template for this Fzg (spot-check VLANs 3, 7, and 100 — these are the most train-specific assignments in the v8 config)
+- The switch hostname (from `show system`) begins with the correct `<variant>-X-v8-<Fzg>` pattern
+
+**Why direct SSH and not OBN:** OBN `validate` reads from its own snapshot (`discovery.prev.json`), which reflects the pre-push scan. OBN's "Successful" return string does not verify the switch's actual post-push state — this was the silent failure mode observed in the Fzg 133 cascade. The spot-SSH is the independent evaluator (Generator-Evaluator pattern, Article 3 harness design): OBN pushes (generator), direct SSH verifies (evaluator).
+
+**Failure handling:** if any spot-checked switch shows wrong VLANs or wrong hostname pattern, halt immediately with `ERROR` and populate `issues[]` with the switch IP, expected hostname pattern, observed output. Do NOT proceed to stage 15 — a failed spot-check means the push may have silently misconfigured the entire consist, and an engineer must inspect before firmware push proceeds.
+
+**Sampling rationale:** 3 of N switches (not all N) keeps this stage within its `expected_duration_seconds` budget (~120s). The leaf + root + random sample catches the most structurally distinct positions in the OBNTree. A full sweep is available via `/dosto-l2-health` if the engineer wants deeper assurance.
+
+Stage renamed from old `obn_discover_post_config` to disambiguate from the AP-config phase that comes much later.
 
 ### Stage 15: `await_obn_update_f` (Gate 4)
 

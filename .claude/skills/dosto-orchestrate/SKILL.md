@@ -419,8 +419,21 @@ After Step 6, you (the engineer's session) are now the running orchestrator. The
    b. Branch on `status`:
       - `NEEDS_APPROVAL` → **immediately** surface the gate prompt to the engineer per `.claude/contracts/approval-gates.md` v2 (compact form, expandable on `?`). Don't wait for cycle end.
       - `DONE` / `BLOCKED` / `ERROR` → **immediately** push Confluence via `Skill: dosto-confluence-sync --push --json`. Stage out the worker for the end-of-cycle digest.
-      - `DIAGNOSING` / `APPLYING_FIXES` / `PUSHING_TO_DEVICES` / `PAUSED` → buffer in your in-memory per-train state. No immediate action.
+      - `DIAGNOSING` / `APPLYING_FIXES` / `PUSHING_TO_DEVICES` / `PAUSED` → buffer in your in-memory per-train state. **Then immediately check stage duration budget (see below).** No other immediate action.
    c. Update in-memory per-train state: latest report, latest stage, latest fields (per the F2 contract, you only see *current-stage* `skill_outputs`; you maintain the audit trail externally via the log).
+   d. **Stage duration budget check (C4 — fires on every notification, not just at cycle end):**
+      - Compute `stage_elapsed = now - stage.started_at`.
+      - If `stage.expected_duration_seconds` is non-null AND `stage_elapsed > stage.expected_duration_seconds * 1.5`:
+        - Emit inline to the engineer **immediately** (do NOT wait for cycle digest):
+          ```
+          ⚠️  Fzg <NN> — stage <stage_id> over budget.
+              Expected: <expected>s   Elapsed: <actual>s   (<ratio>× budget)
+              Current step: <current_step>/<total_steps> (if set)
+              Last issue: <issues[-1].description or "none">
+          ```
+        - Log `over_budget: true` in the per-turn event written to `orchestrator.jsonl`.
+        - Do NOT halt the worker. The warning is informational — the engineer may choose to `abort` or let it run. Over-budget alone is not a gate.
+      - Threshold of 1.5× (not 2×): chosen to surface a warning while the stage is still recoverable, not after it has already failed silently.
 
 2. **Handle engineer input between notifications:**
    - `status` / `status?` / `where are you` → print a per-train one-line summary table (compact, scannable in <5s). Do NOT re-fetch from workers — use your in-memory state.
@@ -463,6 +476,8 @@ fleet-status.md: 2 rows updated (132, 148).
 **Pending-approval visibility rule:** for every approval in the queue at digest time, compute `now - <queued_at>`. If any single approval > 10 min, emit `⚠️  Approvals waiting > 10 min: N (Fzg X, gate Y, Z min)` after the totals line. Engineers stepping away from the keyboard then notice on return that they have unanswered acks blocking work.
 
 If multiple approvals are over threshold, list them comma-separated. Don't truncate.
+
+**SSH flap visibility rule:** for every active train, include its `ssh_flap_count` and `paused_seconds_total` in the digest line when either is non-zero. Format: `(flaps: N, paused: Xs total)`. If any train has `ssh_flap_count ≥ 3`, flag it with `⚠️  high connectivity noise` in the digest and suggest `--legacy-serial-sw-config` if the train is in a device-push stage.
 
 ## Approval flow
 
@@ -546,15 +561,82 @@ Push via `Skill: dosto-confluence-sync --push --json`. The skill handles drift d
 
 ## Logging
 
-Three append-only files in `.claude/logs/`:
+Four append-only files in `.claude/logs/`:
 
 | File | One entry per |
 |---|---|
-| `orchestrator.jsonl` | Cycle digest. Includes per-train snapshot + cycle metadata. |
-| `approval-gates.jsonl` | Each gate decision (approved / denied / deferred / wait / partial / continue_full). |
+| `orchestrator.jsonl` | Per-turn event AND cycle digest. See schema below. |
+| `approval-gates.jsonl` | Each gate decision (approved / denied / deferred / auto_blocked_defer_limit). Includes `defer_count`. |
 | `orchestrator-errors.jsonl` | Each schema-version mismatch, malformed JSON, or contract violation. |
+| `orchestrate-preflight.jsonl` | Each pre-flight run — per-train device counts, verdict, scripts_staged result. |
 
 Existing files: `confluence-sync.jsonl` and `confluence-drift.jsonl` (both managed by the sync skill).
+
+### `orchestrator.jsonl` per-turn event schema
+
+Every inbound subagent notification (not just cycle digests) appends one JSON line. This enables crash recovery to replay state without re-running diagnostics — the orchestrator reads the last `cycle_digest` event and re-spawns workers at `--resume <stage_id>`, skipping full re-diagnosis unless the last recorded stage was `initial_diagnostics` or `pre_flight`.
+
+**Per-turn event** (one per `<task-notification>` received):
+
+```json
+{
+  "event": "subagent_report",
+  "cycle_id": 7,
+  "recorded_at": "2026-05-09T14:32:11Z",
+  "train": {"fzg": 132, "train_number": "4736-104", "ccu_ip": "10.179.10.1"},
+  "stage_id": "push_switch_config",
+  "status": "PUSHING_TO_DEVICES",
+  "elapsed_seconds": 1980,
+  "current_step": 7,
+  "total_steps": 18,
+  "issues_count": 0,
+  "report_hash": "sha256:<first-8-chars-of-sha256-of-raw-report-JSON>",
+  "ssh_flap_count": 0,
+  "paused_seconds_total": 0
+}
+```
+
+**Cycle digest event** (one per cycle boundary):
+
+```json
+{
+  "event": "cycle_digest",
+  "cycle_id": 7,
+  "recorded_at": "2026-05-09T14:35:00Z",
+  "elapsed_minutes": 35,
+  "per_train": [
+    {
+      "fzg": 132,
+      "status": "DONE",
+      "stage_id": "done",
+      "ssh_flap_count": 0,
+      "paused_seconds_total": 0,
+      "issues": []
+    },
+    {
+      "fzg": 130,
+      "status": "APPLYING_FIXES",
+      "stage_id": "apply_obn_patches",
+      "elapsed_stage_seconds": 220,
+      "expected_stage_seconds": 120,
+      "over_budget": true,
+      "ssh_flap_count": 1,
+      "paused_seconds_total": 60,
+      "issues": [{"severity": "warning", "description": "bug 6 marker still missing"}]
+    }
+  ],
+  "gates_approved": 3,
+  "gates_denied": 0,
+  "gates_deferred": 0,
+  "gates_auto_blocked": 0,
+  "fleet_status_changed": true,
+  "confluence_pushed": true
+}
+```
+
+**`report_hash`** is `sha256(raw_json_string)[:8]` — cheap fingerprint for deduplication on crash replay. If two consecutive per-turn events share the same `(fzg, stage_id, report_hash)`, skip the second write.
+
+**Crash recovery:** on re-invoke, read the last `cycle_digest` event to determine which trains were in-flight and at which stage, then spawn fresh workers with `--resume <stage_id>`. Defer counter state is NOT recoverable from `orchestrator.jsonl` — defer counters reset on session restart, which is the correct behaviour (a new session is a fresh chance to approve).
 
 ## End of day
 
@@ -634,6 +716,7 @@ While the runtime loop is active, the engineer can:
 |---|---|
 | Worker emits malformed JSON | Log to `orchestrator-errors.jsonl`. Treat that report as `ERROR`. Don't kill the worker — wait for next report; it may recover. After 3 consecutive malformed reports, `SendMessage` shutdown_request and surface to engineer. |
 | Worker goes silent > 30 min | Treat as `PAUSED`. Surface in next digest. After 60 min silent, kill and surface as `BLOCKED`. |
+| Worker emits `PAUSED` (SSH timeout) | Increment `ssh_flap_count` for that train in in-memory state. After **3 consecutive `PAUSED` reports on the same stage** (train kept dropping before completing the stage), emit inline immediately: `⚠️  Fzg <NN> — 3 consecutive SSH flaps on <stage_id>. Consider switching to --legacy-serial-sw-config or deferring this train. [k=keep running / s=suggest serial / d=defer train]`. Log `ssh_flap_count` and `paused_seconds_total` in the per-turn `orchestrator.jsonl` event. Accumulated per-train `ssh_flap_count` across the session is surfaced in the cycle digest and end-of-day summary. |
 | Confluence push fails | Log to `confluence-sync.jsonl`. Surface in next digest. Local file remains source of truth. Retry on next push trigger. |
 | Drift detected on Confluence | Halt the push. Surface to engineer. Ask whether to `--force` or pull-then-push. |
 | Engineer types nonsense in approval prompt | Treat per contract: binary → deny + warning, three-way → partial + warning. Re-show with `(treating as denied; type 'y' to override)` hint. |

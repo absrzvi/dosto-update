@@ -1,6 +1,6 @@
 # Approval Gate Protocol
 
-**Status:** v2, updated 2026-05-11 per audit finding F8-L1 (engineer-UX / cognitive-load fix).
+**Status:** v2.1, updated 2026-05-21 (B3: defer limit → auto-BLOCKED). v2 locked 2026-05-11 (F8-L1).
 
 **v2 changes from v1:**
 - New "Compact prompt template" (default format) — single screen, scannable in <5 seconds.
@@ -180,18 +180,47 @@ If the human doesn't respond within **30 minutes**, the orchestrator:
 
 No subagent is ever auto-approved or auto-denied by inactivity. Human silence is silence — work waits.
 
+## Defer limit (auto-BLOCKED after 3 deferrals)
+
+To prevent indefinite gate stall, the orchestrator tracks how many times each gate has been `deferred` for a given train and gate name. The counter is stored in-memory per orchestrator session and persisted to `approval-gates.jsonl` via the `defer_count` field.
+
+**Rule:** when the same `(train, gate)` pair accumulates **3 `deferred` responses** in a single orchestrator session, the orchestrator:
+
+1. Does NOT surface the gate a fourth time.
+2. Sends `{"approval": "denied", "approved_by": "orchestrator-defer-limit", "approved_at": "<now>"}` to the subagent.
+3. Emits the following inline warning immediately (does NOT wait for cycle digest):
+
+```
+⚠️  Fzg <NN> — gate <gate-name> auto-BLOCKED after 3 deferrals.
+    Train marked BLOCKED. Re-spawn manually when ready to approve.
+    Log entry written to .claude/logs/approval-gates.jsonl.
+```
+
+4. Logs to `approval-gates.jsonl`:
+
+```json
+{"timestamp": "...", "train": "4736-104", "gate": "promote_snapshot", "decision": "auto_blocked_defer_limit", "defer_count": 3, "command_preview_hash": "sha256:...", "subagent_session_id": "..."}
+```
+
+**Why 3:** one deferral = "I need to check something"; two = "still not sure"; three = "this gate is genuinely blocked and won't be approved this session." At three, the automatic denial is cheaper than continuing to show a prompt the engineer is actively avoiding.
+
+**Reset:** the defer counter resets when the orchestrator session ends (crash + re-invoke), or when the engineer re-spawns the worker with a new `resume_stage` that skips the deferred gate (e.g. a `denied` for `promote_snapshot` → subagent set to BLOCKED → engineer manually investigates → new session with fresh defer counters).
+
 ## Logging
 
 Every approval gate is logged to `.claude/logs/approval-gates.jsonl` (append-only):
 
 ```json
-{"timestamp": "2026-05-09T06:55:30Z", "train": "4736-104", "gate": "promote_snapshot", "decision": "approved", "command_preview_hash": "sha256:...", "subagent_session_id": "...", "rationale": "..."}
+{"timestamp": "2026-05-09T06:55:30Z", "train": "4736-104", "gate": "promote_snapshot", "decision": "approved", "defer_count": 0, "command_preview_hash": "sha256:...", "subagent_session_id": "...", "rationale": "..."}
 ```
+
+`decision` values: `approved`, `denied`, `deferred`, `auto_blocked_defer_limit`.
+`defer_count`: how many times this `(train, gate)` pair had been deferred before this decision. `0` for first-time decisions; `3` for `auto_blocked_defer_limit` entries.
 
 Useful for:
 - Audit trail (who approved what)
 - Postmortem when a fleet operation goes wrong
-- Skill-improvement (which gates get denied most often, why?)
+- Skill-improvement (which gates get denied most often, why? which gates accumulate the most deferrals?)
 
 ## Rationale for not auto-approving anything
 
