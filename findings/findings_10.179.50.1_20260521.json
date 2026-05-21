@@ -1,0 +1,93 @@
+{
+  "meta": {
+    "ccu_ip": "10.179.50.1",
+    "ccu_hostname": "box1-t50",
+    "fzg": 21,
+    "series": "4734",
+    "train": "4734-121",
+    "check_date": "2026-05-21",
+    "engineer": "Abbas Rizvi",
+    "consist_size": "4-car"
+  },
+  "discovery": {
+    "vds_switches_expected": 12,
+    "vds_switches_found": 12,
+    "aps_found": 16,
+    "switch_map": {
+      "10.179.50.178": {"hostname": "nv4-G1-v8-021", "role": "G1/D1", "note": "OBS+RDC (e0-2, e0-3 trunks), STP root"},
+      "10.179.50.179": {"hostname": "nv4-A3-v8-021", "role": "A3", "note": "Stadler FW switch (e1-4 trunk)"},
+      "10.179.50.180": {"hostname": "nv4-G3-v8-021", "role": "G3/D3", "note": "OBS+RDC (e0-2, e0-3 trunks)"},
+      "10.179.50.181": {"hostname": "nv4-E2-v8-021", "role": "E2"},
+      "10.179.50.182": {"hostname": "nv4-A2-v8-021", "role": "A2"},
+      "10.179.50.183": {"hostname": "nv4-G2-v8-021", "role": "G2"},
+      "10.179.50.184": {"hostname": "nv4-B1-v8-021", "role": "B1", "note": "ZFR primary (e1-11 UP 1G)"},
+      "10.179.50.185": {"hostname": "nv4-B2-v8-021", "role": "B2"},
+      "10.179.50.186": {"hostname": "nv4-A1-v8-021", "role": "A1"},
+      "10.179.50.187": {"hostname": "nv4-E1-v8-021", "role": "E1"},
+      "10.179.50.188": {"hostname": "nv4-E3-v8-021", "role": "E3"},
+      "10.179.50.189": {"hostname": "nv4-B3-v8-021", "role": "B3", "note": "ZFR standby (e1-11 UP 1G)"}
+    }
+  },
+  "error_scan": {
+    "ports_scanned": ["e0-0", "e0-1", "e0-4"],
+    "switches_scanned": 12,
+    "non_zero_error_ports": [],
+    "all_clean": true,
+    "summary": "0 RX errors, 0 CRC errors, 0 carrier-false, 0 collisions, 0 pause frames across all 12 switches"
+  },
+  "critical_trunks": {
+    "A3_e1-4_fw_trunk":  {"ip": "10.179.50.179", "speed_mbps": 1000,  "duplex": "Full", "rx_errors": 0, "crc_errors": 0, "carrier_false": 0, "status": "up"},
+    "G1_e0-2_obs_trunk": {"ip": "10.179.50.178", "speed_mbps": 10000, "duplex": "Full", "rx_errors": 0, "crc_errors": 0, "carrier_false": 0, "status": "up"},
+    "G1_e0-3_rdc_trunk": {"ip": "10.179.50.178", "speed_mbps": 10000, "duplex": "Full", "rx_errors": 0, "crc_errors": 0, "carrier_false": 0, "status": "up"},
+    "G3_e0-2_obs_trunk": {"ip": "10.179.50.180", "speed_mbps": 10000, "duplex": "Full", "rx_errors": 0, "crc_errors": 0, "carrier_false": 0, "status": "up"},
+    "G3_e0-3_rdc_trunk": {"ip": "10.179.50.180", "speed_mbps": 10000, "duplex": "Full", "rx_errors": 0, "crc_errors": 0, "carrier_false": 0, "status": "up"},
+    "B1_e1-11_zfr":      {"ip": "10.179.50.184", "speed_mbps": 1000,  "duplex": "Full", "rx_errors": 0, "crc_errors": 0, "carrier_false": 0, "status": "up"},
+    "B3_e1-11_zfr":      {"ip": "10.179.50.189", "speed_mbps": 1000,  "duplex": "Full", "rx_errors": 0, "crc_errors": 0, "carrier_false": 0, "status": "up", "note": "ZFR standby — both ZFR ports UP, B1 is primary"}
+  },
+  "stp": {
+    "root_mac": "a0:59:3a:d0:40:e0",
+    "root_ip": "10.179.50.178",
+    "root_hostname": "nv4-G1-v8-021",
+    "root_bridge_priority": 0,
+    "all_switches_agree": true,
+    "topology_stable": true
+  },
+  "throughput": {
+    "interval_seconds": 15,
+    "active_trunks": [
+      {"port": "G1(.178) e0-0", "rx_mbps": 73.8, "tx_mbps": 43.6, "total_mbps": 117.4, "link_capacity_mbps": 10000, "utilization_pct": 1.2},
+      {"port": "G1(.178) e0-1", "rx_mbps": 31.6, "tx_mbps": 91.8, "total_mbps": 123.4, "link_capacity_mbps": 10000, "utilization_pct": 1.2},
+      {"port": "A3(.179) e0-0", "rx_mbps": 61.3, "tx_mbps": 61.6, "total_mbps": 122.9, "link_capacity_mbps": 10000, "utilization_pct": 1.2},
+      {"port": "A3(.179) e0-1", "rx_mbps": 61.5, "tx_mbps": 61.2, "total_mbps": 122.7, "link_capacity_mbps": 10000, "utilization_pct": 1.2},
+      {"port": "G3(.180) e0-0", "rx_mbps":  1.1, "tx_mbps": 91.0, "total_mbps":  92.1, "link_capacity_mbps": 10000, "utilization_pct": 0.9},
+      {"port": "G3(.180) e0-1", "rx_mbps": 90.9, "tx_mbps":  1.0, "total_mbps":  91.9, "link_capacity_mbps": 10000, "utilization_pct": 0.9},
+      {"port": "E2(.181) e0-0", "rx_mbps": 19.2, "tx_mbps": 103.9, "total_mbps": 123.1, "link_capacity_mbps": 10000, "utilization_pct": 1.2},
+      {"port": "E2(.181) e0-1", "rx_mbps": 91.5, "tx_mbps": 31.3, "total_mbps": 122.8, "link_capacity_mbps": 10000, "utilization_pct": 1.2},
+      {"port": "G2(.183) e0-0", "rx_mbps":  1.0, "tx_mbps": 91.2, "total_mbps":  92.2, "link_capacity_mbps": 10000, "utilization_pct": 0.9},
+      {"port": "G2(.183) e0-1", "rx_mbps": 60.7, "tx_mbps":  0.7, "total_mbps":  61.4, "link_capacity_mbps": 10000, "utilization_pct": 0.6}
+    ],
+    "avg_active_trunk_mbps": 107.1
+  },
+  "fw_reach": {
+    "fw_peer_ip": "172.19.138.129",
+    "ccu_vlan7_ip": "172.19.138.130/17",
+    "arp_state": "reachable",
+    "fw_peer_mac": "00:90:e8:db:4d:6a",
+    "icmp_sent": 5,
+    "icmp_replies": 0,
+    "tcp80": "open",
+    "tcp22": "open",
+    "fw_commission_state": "uncommissioned",
+    "vlan7_link_errors_rx": 0,
+    "vlan7_link_errors_tx": 0,
+    "note": "ARP REACHABLE but ICMP gets replies — bare Westermo defaults, Stadler has not commissioned this FW. FW responding at .129 (bare default IP), not .1 (commissioned position)."
+  },
+  "verdict": "HEALTHY — FW UNCOMMISSIONED (Stadler action required)",
+  "findings": [
+    {
+      "severity": "stadler_action",
+      "component": "fw_reach",
+      "description": "Stadler firewall at 172.19.138.129 is reachable (Westermo MAC 00:90:e8:db:4d:6a) but ICMP replies = NOT commissioned. FW is responding at .129 (bare Westermo default IP) instead of .1. Stadler must commission the FW for this train."
+    }
+  ]
+}

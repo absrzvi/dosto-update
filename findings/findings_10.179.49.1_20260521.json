@@ -1,0 +1,90 @@
+{
+  "meta": {
+    "ccu_ip": "10.179.49.1",
+    "ccu_hostname": "box1-t49",
+    "fzg": 20,
+    "series": "4734",
+    "train": "4734-120",
+    "check_date": "2026-05-21",
+    "engineer": "Abbas Rizvi",
+    "consist_size": "4-car"
+  },
+  "discovery": {
+    "vds_switches_expected": 12,
+    "vds_switches_found": 12,
+    "aps_found": 16,
+    "switch_map": {
+      "10.179.49.178": {"hostname": "nv4-A3-v8-020", "role": "A3", "note": "Stadler FW switch (e1-4 trunk)"},
+      "10.179.49.179": {"hostname": "nv4-G3-v8-020", "role": "G3/D3", "note": "OBS+RDC (e0-2, e0-3 trunks)"},
+      "10.179.49.180": {"hostname": "nv4-A1-v8-020", "role": "A1"},
+      "10.179.49.181": {"hostname": "nv4-G2-v8-020", "role": "G2"},
+      "10.179.49.182": {"hostname": "nv4-A2-v8-020", "role": "A2"},
+      "10.179.49.183": {"hostname": "nv4-E1-v8-020", "role": "E1"},
+      "10.179.49.184": {"hostname": "nv4-B1-v8-020", "role": "B1", "note": "ZFR primary (e1-11 VLAN2)"},
+      "10.179.49.185": {"hostname": "nv4-B2-v8-020", "role": "B2"},
+      "10.179.49.186": {"hostname": "nv4-B3-v8-020", "role": "B3", "note": "ZFR standby (e1-11 VLAN2)"},
+      "10.179.49.187": {"hostname": "nv4-G1-v8-020", "role": "G1/D1", "note": "OBS+RDC (e0-2, e0-3 trunks)"},
+      "10.179.49.188": {"hostname": "nv4-E3-v8-020", "role": "E3"},
+      "10.179.49.189": {"hostname": "nv4-E2-v8-020", "role": "E2"}
+    }
+  },
+  "error_scan": {
+    "ports_scanned": ["e0-0", "e0-1", "e0-4"],
+    "switches_scanned": 12,
+    "non_zero_error_ports": [],
+    "all_clean": true,
+    "summary": "0 RX errors, 0 CRC errors, 0 carrier-false, 0 collisions, 0 pause frames across all 12 switches on inter-coach trunks and AP trunks"
+  },
+  "critical_trunks": {
+    "A3_e1-4_fw_trunk":    {"ip": "10.179.49.178", "speed_mbps": 1000, "duplex": "Full", "rx_errors": 0, "crc_errors": 0, "carrier_false": 0, "status": "up"},
+    "G3_e0-2_obs_trunk":   {"ip": "10.179.49.179", "speed_mbps": 10000, "duplex": "Full", "rx_errors": 0, "crc_errors": 0, "carrier_false": 0, "status": "up"},
+    "G3_e0-3_rdc_trunk":   {"ip": "10.179.49.179", "speed_mbps": 10000, "duplex": "Full", "rx_errors": 0, "crc_errors": 0, "carrier_false": 0, "status": "up"},
+    "G1_e0-2_obs_trunk":   {"ip": "10.179.49.187", "speed_mbps": 10000, "duplex": "Full", "rx_errors": 0, "crc_errors": 0, "carrier_false": 0, "status": "up"},
+    "G1_e0-3_rdc_trunk":   {"ip": "10.179.49.187", "speed_mbps": 10000, "duplex": "Full", "rx_errors": 0, "crc_errors": 0, "carrier_false": 0, "status": "up"},
+    "B1_e1-11_zfr":        {"ip": "10.179.49.184", "speed": "auto/link-down", "rx_errors": 0, "crc_errors": 0, "carrier_false": 0, "status": "enabled-link-down", "note": "ZFR device not connected / powered off at time of check"},
+    "B3_e1-11_zfr":        {"ip": "10.179.49.186", "speed": "auto/link-down", "rx_errors": 0, "crc_errors": 0, "carrier_false": 0, "status": "enabled-link-down", "note": "ZFR standby — expected"}
+  },
+  "stp": {
+    "root_mac": "a0:59:3a:d0:b0:60",
+    "root_ip": "10.179.49.187",
+    "root_hostname": "nv4-G1-v8-020",
+    "root_bridge_priority": 0,
+    "all_switches_agree": true,
+    "topology_stable": true
+  },
+  "throughput": {
+    "interval_seconds": 69,
+    "active_trunks": [
+      {"port": "G3(.179) e0-0", "rx_mbps": 0.6, "tx_mbps": 47.4, "total_mbps": 48.0, "link_capacity_mbps": 10000, "utilization_pct": 0.5},
+      {"port": "G3(.179) e0-1", "rx_mbps": 44.7, "tx_mbps": 0.5, "total_mbps": 45.2, "link_capacity_mbps": 10000, "utilization_pct": 0.5},
+      {"port": "G2(.181) e0-0", "rx_mbps": 0.5, "tx_mbps": 40.2, "total_mbps": 40.7, "link_capacity_mbps": 10000, "utilization_pct": 0.4},
+      {"port": "G2(.181) e0-1", "rx_mbps": 25.2, "tx_mbps": 0.3, "total_mbps": 25.5, "link_capacity_mbps": 10000, "utilization_pct": 0.3},
+      {"port": "G1(.187) e0-0", "rx_mbps": 0.4, "tx_mbps": 23.4, "total_mbps": 23.8, "link_capacity_mbps": 10000, "utilization_pct": 0.2},
+      {"port": "G1(.187) e0-1", "rx_mbps": 18.3, "tx_mbps": 0.3, "total_mbps": 18.6, "link_capacity_mbps": 10000, "utilization_pct": 0.2}
+    ],
+    "note": "Switches .178/.180/.182/.183/.184/.185/.186/.188/.189 showed no byte counter output — likely post-reboot counters reset or no active traffic on those trunks at sample time"
+  },
+  "fw_reach": {
+    "fw_peer_ip": "172.19.138.1",
+    "ccu_vlan7_ip": "172.19.138.2/17",
+    "vlan7_fix_applied": true,
+    "vlan7_previous_ip": "172.19.152.130/17",
+    "arp_state": "reachable",
+    "fw_peer_mac": "00:90:e8:db:4d:5d",
+    "icmp_sent": 5,
+    "icmp_replies": 0,
+    "tcp80": "open",
+    "tcp22": "open",
+    "fw_commission_state": "commissioned",
+    "vlan7_link_errors_rx": 0,
+    "vlan7_link_errors_tx": 0
+  },
+  "verdict": "HEALTHY",
+  "findings": [
+    {
+      "severity": "fixed",
+      "component": "vlan7",
+      "description": "vlan7 IP was misconfigured as 172.19.152.130/17 (encodes Fzg 49). Corrected to 172.19.138.2/17 (Fzg 20) via chroot + safe_reboot during this session."
+    }
+  ]
+}
