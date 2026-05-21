@@ -408,7 +408,11 @@
       "Bash(timeout 5 bash -c \"</dev/tcp/10.178.27.1/22\")",
       "Bash(timeout 5 bash -c \"</dev/tcp/10.178.22.1/22\")",
       "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no scripts/lldp_check_4734-120.py developer@10.179.49.1:/tmp/lldp_check_4734-120.py)",
-      "Bash(git fetch *)"
+      "Bash(git fetch *)",
+      "Bash(ping -n 3 10.179.17.1)",
+      "Bash(grep -E \"^\\(fix_obn|fix_bug1_regex|fix_obn_bug8|fix_obn_bugs67\\)\\\\.py$\")",
+      "Bash(scp -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bugs67.py C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug8.py C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_bug1_regex.py developer@10.179.17.1:/tmp/)",
+      "Bash(scp -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug9.py developer@10.179.17.1:/tmp/fix_obn_bug9.py)"
     ]
   }
 }
