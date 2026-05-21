@@ -1,6 +1,6 @@
 # DOSTO Fleet — v8 Rollout Status
 
-**Last updated:** 2026-05-20 by Abbas Rizvi (Fzg 143 + 144 commissioning: 18/18 switches v8 each, OBN bug 9 patched + persisted, AP firmware push mid-install)
+**Last updated:** 2026-05-20 by Abbas Rizvi (Fzg 138 COMPLETE: OBN 8/8+bug9 persisted, 18/18 sw v8-138, **24/24 APs at 6.11.2-0** ✅; new lesson — AP firmware activation needs `obn update f`, not bare reboot)
 **Update discipline:** This file is the source of truth for "where did we leave off". Every engineer **must update the relevant row at the end of every train session, before logging out** — this is Step 11 of the train-login checklist. If you don't update, the next person can't pick up.
 
 **Companion file:** Narrative per-train history (recovery sequences, discovered lessons, session context) lives in [`fleet-journal.md`](fleet-journal.md). This file holds **current state** only — table + diagnostic-state bullet lists. Prose blocks in the per-train detail sections below are being migrated to the journal as each train is visited. When you visit a train, move its prose to the journal and trim its block here to just the diagnostic-state fields.
@@ -43,7 +43,7 @@ Five-column scan tables. For full per-train detail (OBN patches, switch firmware
 | 135 | 4736-107 | ❓ | ⚪ UNKNOWN | initial visit |
 | 136 | 4736-108 | `10.179.8.1` | 🔴 **BLOCKED** | train mostly offline — only 2 switches visible; wait for Stadler on register #2 + #3; then apply OBN patches + full v8 push |
 | 137 | 4736-109 | `10.179.28.1` | 🔴 **BLOCKED** | wait for Stadler on register #4 (AP install at B3); CCU IP populated from fleet control sheet 2026-05-20 (Train NC ID T28, prio test train, v8/6.10.0 per sheet) |
-| 138 | 4736-110 | `10.179.23.1` | 🟡 **PAUSED** | fix OBN template train_id → 138; apply OBN patches; obn update c all; check nd-systemupdate rename |
+| 138 | 4736-110 | `10.179.23.1` | 🟡 **PAUSED — AP fw DONE; L2 health + report pending** | OBN 8/8+bug9 persisted (run1) · 18/18 sw v8-138 ✅ · **24/24 APs at 6.11.2-0** ✅ (2026-05-20); remaining: L2 health sweep + customer report |
 | 139 | 4736-111 | `10.178.24.1` | ⚪ UNKNOWN | CCU IP corrected from sheet 2026-05-20 (was `10.179.24.1` — sheet says 178/16); L2 healthy notes below were collected against the wrong IP, re-verify next visit |
 | 140 | 4736-112 | `10.178.40.1` | ⚪ UNKNOWN | CCU IP corrected from sheet 2026-05-20 (was `10.179.12.1` — sheet says that is Fzg 147 / 4736-119); re-verify next visit |
 | 141 | 4736-113 | ❓ | ⚪ UNKNOWN | initial visit |
@@ -494,28 +494,40 @@ Cable register item #1 — E2↔B1 trunk wrong-neighbour (E2.e0-0 reaches B1, pl
 
 ---
 
-### Fzg 138 — 4736-110 — 🟡 PAUSED
+### Fzg 138 — 4736-110 — 🟡 PAUSED (AP fw DONE; L2 health + customer report pending)
 
-**Status:** 🟡 **PAUSED** · **CCU:** `10.179.23.1` (`box1-t23`) · **Last touched:** 2026-05-19 AR
+**Status:** 🟡 **PAUSED** · **CCU:** `10.179.23.1` (`box1-t23`) · **Last touched:** 2026-05-20 AR
 
 **Diagnostic state:**
-- **OBN patches:** ❓ (not checked this session)
-- **Switches v8:** ✅ 18/18 on v8 config (`nv6-*-v8-138`)
-- **APs:** ✅ 24 APs visible, all `AP*-v1` / `AP*m-v1` Nomad config ✅
-- **vlan7:** ✅ `172.19.197.2/17` — **FIXED 2026-05-19** (was `172.19.203.130`, now correct for even Fzg 138, persisted via chroot + safe_reboot; post-reboot verified)
+- **OBN patches:** ✅ **8/8 + bug 9 persisted** in `/.snapshots/run1` (2026-05-20 chroot promote + safe_reboot; markers verified bug1/6/7/9 directly via grep post-reboot)
+- **Switches v8:** ✅ 18/18 on v8 config (`nv6-*-v8-138`), fw 7.4.2
+- **APs:** ✅ **24/24 at 6.11.2-0** (target firmware), all `AP*-v1` / `AP*m-v1` Nomad config ✅ — completed 2026-05-20 via serial `obn update f <ip>` re-runs
+- **vlan7:** ✅ `172.19.197.2/17` (correct for even Fzg 138; persisted from 2026-05-19)
 - **Stadler cabling:** ✅ 18/18 switches visible, all inter-coach trunks clean, 0 errors
 - **FW reach:** ✅ **commissioned** (2026-05-19): ARP REACHABLE `00:90:e8:c5:3d:9d` (Westermo), ICMP 100% loss = Stadler policy drop per Phase 6 Q2
 - **Health check:** ⬜
 - **Customer report:** ⬜
-- **OBN template:** 🔴 `train_id` not hardcoded (was rendering as 138 from broken formula — fix to hardcode `138`)
-- **nd-systemupdate:** ❓ not checked
+- **OBN template:** ✅ `train_id = 138` hardcoded in all 18 nv6-*.cfg
+- **nd-systemupdate:** ✅ `.dont` renamed (fleet standard)
+- **TFTP helper:** 🟡 runtime fix applied 2026-05-20 (re-apply post any reboot)
 
-**Next actions:**
-1. Fix OBN template `train_id` → hardcode `138` in all `/etc/obn/template/nv6-*.cfg`
-2. Check/apply OBN patches (`sudo python3 /tmp/fix_obn.py`), rename `nd-systemupdate.sh → .dont`
-3. Persist fixes via `sudo /usr/sbin/nd-systemupdate.sh.dont shell` + reboot
-4. `sudo obn discover && sudo obn report && sudo obn update c all` (leaf-first)
-5. Run `/dosto-l2-health` for customer baseline
+**2026-05-20 session (AR):**
+- /dosto-orchestrate fzg=138 — pre-flight PASS (18/18 sw + 24/24 AP visible).
+- Discovered OBN had only bug 9 marker present (1/9) — bugs 1-8 missing on active subvol. Parent SCP'd all 5 fix scripts to `/var/tmp/`; Gate 1 approved → chroot promote applied all → new `run1`. Gate 2 approved → reboot. Post-reboot bug markers all present.
+- TFTP CT helper runtime fix re-applied; Gate 4 approved for AP firmware push.
+- Initial OBN-driven push to 7 APs (.219 .225 .232 .233 .235 .238 .241) staged firmware but didn't activate — APs sat at `current (staged) ✗`. SSH-`reboot` and SNMP-reboot OID both restarted the APs but they came back on OLD firmware → bare reboot does NOT swap firmware partitions.
+- **Discovered: re-running `obn update f <ip>` is the activation trigger** (it calls confmgmtd's `set firmware` RPC under the hood). Verified end-to-end on `.219` first, then looped the remaining 6 serially. All 7 activated to 6.11.2-0.
+- Special case `.225`: SSH non-interactive exec is in dropbear restricted-exec mode (every command incl. `echo test` returns "Command failed: Not found"). SNMP-reboot worked (OID `.1.3.6.1.4.1.16177.1.400.1.3.3.1.0`) but bare reboot still didn't swap firmware; `obn update f .225` did swap. Lesson 18 added to `dosto-ap-firmware-update` skill.
+
+**Discovered lessons (folded back into runbook):**
+- **AP firmware activation requires OBN's full flow, not just a reboot.** SSH `reboot` and SNMP reboot OID `.1.3.6.1.4.1.16177.1.400.1.3.3.1.0` both restart the AP on its existing partition — they do NOT mark the staged firmware as active. Only `obn update f <ap-ip>` (which calls confmgmtd's `set firmware` RPC) triggers the partition swap. If you see `current (staged) ✗` in `obn validate -t ap`, the recovery is to re-run `obn update f <ap-ip>`, not a force-reboot.
+- **`Command failed: Not found` from non-interactive SSH** is the Westermo restricted-exec-mode signal. Diagnostic test: `ssh nomad@<ap-ip> 'echo test'` — if that returns "Not found", every non-interactive command is blocked. Fall back to OBN SNMP set on reboot OID for restart; but per above, **prefer re-running `obn update f`** to actually swap firmware.
+
+**Next actions (next session):**
+1. Re-apply TFTP CT helper runtime fix if any CCU reboot happened in between.
+2. Run `/dosto-l2-health` for customer baseline.
+3. Generate customer docx report via `/dosto-l2-report`.
+4. After report filed, set status to 🟢 **DONE**.
 
 ---
 
