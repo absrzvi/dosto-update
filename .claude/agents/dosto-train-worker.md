@@ -177,7 +177,7 @@ You don't need to "remember" anything between spawns — each spawn is fresh, an
 | `approved` (Gate 4: obn_update_f) | `obn_update_f` | — |
 | `denied` (any binary gate) | `done` | (skill walks straight to terminal `BLOCKED`) |
 | `wait` (Gate 5) | `done` | (train marked `BLOCKED` for Stadler cabling) |
-| `partial` (Gate 5) | `<next_stage_id>` | `--partial-only` (skill skips Gates 3, 4, device-push stages 13/16/17/18/19, and stage 20 final L2 health — proceeds with CCU-local fixes only) |
+| `partial` (Gate 5) | `<next_stage_id>` | `--partial-only` (skill skips Gates 3, 4 and device-push stages 13/16/17/18/19 — proceeds with CCU-local fixes only) |
 | `continue_full` (Gate 5) | Treat as `approved` for Gate 5 | — |
 
 If the orchestrator's response doesn't arrive within a contract-defined window, the previous worker has already exited — there is nothing to "re-emit." The orchestrator handles staleness by re-spawning with the same `resume_stage` later.

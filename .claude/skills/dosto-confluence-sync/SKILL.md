@@ -117,7 +117,7 @@ The Confluence page body has these sections in this order:
 2. **Header** — title + last-updated + update-discipline note (from the top of fleet-status.md).
 3. **Status legend** — small table mapping the 5 status-lozenge emoji to status names + meanings.
 4. **Fzg-ID convention** — series formulas (unchanged from local).
-5. **Per-series exec table** — 5 columns: `Fzg`, `Train#`, `CCU IP`, `Status`, `Next action`. One table for 4736 (DOSTO NEU 6-car), one for 4734 (DOSTO NEU 4-car). 4705/4706 series gets a placeholder note. The 5-column shape fits without horizontal scroll on any laptop.
+5. **Per-series exec table** — 6 columns: `Fzg`, `Train#`, `CCU IP`, `Nomad status`, `Stadler status`, `Next action`. One table for 4736 (DOSTO NEU 6-car), one for 4734 (DOSTO NEU 4-car). 4705/4706 series gets a placeholder note. The `Stadler status` column was added 2026-05-21 so the team can see at a glance which trains are blocked by Stadler-side work (missing APs/switches or open cabling faults) vs which are Nomad-side work still in flight.
 6. **Per-train notes** — unchanged from local, rendered as standard markdown headings + lists.
 7. **How to update** — engineer-facing reminder (5-step procedure).
 
@@ -128,7 +128,7 @@ The Confluence page body has these sections in this order:
 > Last sync: <ISO-8601 UTC> · Page version: <V_current + 1> · Sync source: <engineer name> (manual) — or — orchestrator (auto)
 > Manual edits to this page will be overwritten on next sync. Edit `fleet-status.md` instead, or comment on this page.
 >
-> 📄 **For full detail** (all 14 columns: OBN patches, switch firmware, AP firmware, vlan7 ok, Stadler cabling, FW reach, health-check date, customer report, last touched), open `fleet-status.md` in the `dosto-troubleshooting` workspace. The exec view below carries the four columns most useful for "where's this train at right now?".
+> 📄 **For full detail** (all 14 columns: OBN patches, switch firmware, AP firmware, vlan7 ok, Stadler cabling, FW reach, health-check date, customer report, last touched), open `fleet-status.md` in the `dosto-troubleshooting` workspace. The exec view below carries the six columns most useful for "where's this train at right now?".
 ```
 
 This four-line banner doubles as drift detection signal (the exact opening text `> **Auto-synced from` is the detection prefix) AND as the "where to find more" pointer.
@@ -150,16 +150,18 @@ A 3-column markdown table for status meanings — replaces the bullet-list legen
 
 The lozenge column uses Unicode coloured-circle emoji for at-a-glance visual scan. Each row maps to one of the values that appears in the per-series exec table's `Status` column.
 
-#### Exec table shape (5 columns)
+#### Exec table shape (6 columns)
 
 ```markdown
-| Fzg | Train# | CCU IP | Status | Next action |
-|---|---|---|---|---|
-| 129 | 4736-101 | ❓ | ⚪ UNKNOWN | initial visit |
-| 130 | 4736-102 | `10.179.47.1` | 🟡 **PAUSED** | apply patches + persist + fix train_id + fix vlan7 — see notes |
-| 132 | 4736-104 | `10.179.10.1` | 🔴 **BLOCKED w/ Stadler + 6 APs stuck** | Push remaining 3 APs (.237 .238 .240); D4 cable Stadler item — see notes |
-| 133 | 4736-105 | `10.179.1.1` | 🟢 **DONE w/ Stadler** | wait for Stadler on Coach5 AP2 + FW path |
+| Fzg | Train# | CCU IP | Nomad status | Stadler status | Next action |
+|---|---|---|---|---|---|
+| 129 | 4736-101 | ❓ | ⚪ UNKNOWN | ❓ | initial visit |
+| 130 | 4736-102 | `10.179.47.1` | 🟡 **PAUSED** | ✅ clear | apply patches + persist + fix train_id + fix vlan7 — see notes |
+| 132 | 4736-104 | `10.179.10.1` | 🔴 **BLOCKED w/ Stadler + 6 APs stuck** | 🔴 D4 AP missing (cable reg #5) | Push remaining 3 APs (.237 .238 .240); D4 cable Stadler item — see notes |
+| 133 | 4736-105 | `10.179.1.1` | 🟢 **DONE w/ Stadler** | 🔴 Coach 5 AP2 missing | wait for Stadler on Coach5 AP2 + FW path |
 ```
+
+**Stadler status rule:** 🔴 BLOCKED when any APs/switches are missing OR a cabling fault is open (any open `cable-issues-register.md` entry for the train); ✅ clear otherwise; ❓ when not yet checked / UNKNOWN. Copy the value verbatim from the local `fleet-status.md` row's `Stadler status` column.
 
 Status formatting rule: `<emoji> **<STATUS>**` — emoji first for visual scan, bold status text for hierarchy. The emoji prefix MUST match the legend table above. Mapping:
 

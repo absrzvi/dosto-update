@@ -1,6 +1,6 @@
 # DOSTO Fleet — v8 Rollout Status
 
-**Last updated:** 2026-05-21 by Abbas Rizvi (12-train status check via parallel state-inventory subagents — drift report folded into rows below; see "2026-05-21 status check drift summary" at top of per-train section)
+**Last updated:** 2026-05-21 by Abbas Rizvi — state-inventory probes + Fzg 130 dispatch: **Fzg 130** (TFTP helper re-applied, fresh discover confirms 17/18 sw v8-130, E3 absent; AP .218 confirmed Nomad SNMP-silent not factory), **Fzg 136** (OBN 7/8 — bug 8 pending; LLDP confirms cable reg #2/#3 STILL OPEN — Stadler escalation due), **Fzg 146** (first-visit characterisation — green-field v8 with train_id=21 rendering to Fzg 149, factory APs, vlan7 wrong for Fzg 146; engineer must confirm Fzg ID before commissioning). Earlier today: added Stadler status column, renamed Status → Nomad status, removed L2 health + customer report from commissioning pipeline, populated 7 sheet IPs into 4734 rows.
 **Update discipline:** This file is the source of truth for "where did we leave off". Every engineer **must update the relevant row at the end of every train session, before logging out** — this is Step 11 of the train-login checklist. If you don't update, the next person can't pick up.
 
 **Companion file:** Narrative per-train history (recovery sequences, discovered lessons, session context) lives in [`fleet-journal.md`](fleet-journal.md). This file holds **current state** only — table + diagnostic-state bullet lists. Prose blocks in the per-train detail sections below are being migrated to the journal as each train is visited. When you visit a train, move its prose to the journal and trim its block here to just the diagnostic-state fields.
@@ -32,77 +32,79 @@ Five-column scan tables. For full per-train detail (OBN patches, switch firmware
 
 ### 4736 series (DOSTO NEU 6-car)
 
-| Fzg | Train# | CCU IP | Status | Next action |
-|---|---|---|---|---|
-| 129 | 4736-101 | ❓ | ⚪ UNKNOWN | initial visit |
-| 130 | 4736-102 | `10.179.47.1` | 🟡 **PAUSED** | push config to 3 `-man` switches (.180 .186 .187), then push AP fw 6.10.0-0→6.11.2-0 on 24 APs |
-| 131 | 4736-103 | `10.179.11.1` | 🟡 **PAUSED — awaiting Stadler on F3 AP3m + B2 null fw** | reboot to activate run3 (8/8 OBN persisted); push AP fw 6.10.0-0→6.11.2-0 after Stadler |
-| 132 | 4736-104 | `10.179.10.1` | 🟡 **PAUSED — train offline; D4 BLOCKED Stadler** | verify .231; push .237 .238 .240 — see detail |
-| 133 | 4736-105 | `10.179.1.1` | 🟢 **DONE w/ Stadler** | wait for Stadler on Coach5 AP2 + FW path |
-| 134 | 4736-106 | `10.179.19.1` | ⚪ UNKNOWN | confirm v8 state — only customer report on file |
-| 135 | 4736-107 | ❓ | ⚪ UNKNOWN | initial visit |
-| 136 | 4736-108 | `10.179.8.1` | 🟡 **PAUSED — Stadler register #2/#3 likely resolved** | 2026-05-21 status check: 18/18 sw + 24/24 APs now visible (was 2 sw + 9 APs on 2026-05-19). State-inventory said OBN 3/8 — false-negative; re-verify with `dosto-obn-patches --check` (this CCU was likely never patched per fleet-status detail block, so could be genuinely 0/8 — confirm). Run LLDP topology check to confirm register #2/#3 resolved, then apply OBN patches + full v8 push |
-| 137 | 4736-109 | `10.179.28.1` | 🔴 **BLOCKED** | wait for Stadler on register #4 (AP install at B3); CCU IP populated from fleet control sheet 2026-05-20 (Train NC ID T28, prio test train, v8/6.10.0 per sheet); 2026-05-21 status check confirmed: 18/18 sw on v8-137, 21/24 APs (3 missing AP1m/AP2m/AP3m on one B-coach), broken train_id template, 0/8 OBN patches (genuinely first-visit) |
-| 138 | 4736-110 | `10.179.23.1` | 🟡 **PAUSED — AP fw DONE; L2 health + report pending** | OBN 8/8+bug9 persisted (run1) · 18/18 sw v8-138 ✅ · **24/24 APs at 6.11.2-0** ✅ (2026-05-20); remaining: L2 health sweep + customer report |
-| 139 | 4736-111 | `10.179.24.1` | 🟡 **PAUSED — partial v8 push in progress** | 2026-05-21 status check: 3/18 switches already on `nv6-*-v8-139` config (C3, B2, B3); 15/18 still on v3 config. State-inventory said OBN 4/8 — false-negative; re-verify with `dosto-obn-patches --check`. All 24 APs visible. Resume: finish v8 switch config push. |
-| 140 | 4736-112 | ❓ | ⚪ UNKNOWN | CCU IP `10.179.12.1` was attributed here in error — confirmed 2026-05-21 that IP belongs to Fzg 147. `10.179.40.1` also unconfirmed. True CCU IP unknown — physical inspection required. |
-| 141 | 4736-113 | ❓ | ⚪ UNKNOWN | initial visit |
-| 142 | 4736-114 | ❓ | ⚪ UNKNOWN | initial visit |
-| 143 | 4736-115 | `10.179.18.1` | 🟡 **PAUSED — batch experiment result: 8/24 at 6.11.2-0 (33%)** | 2026-05-21 `obn validate`: 8/24 APs at target (coach 1 = 4/4, coach 2 = 3/4, coach 6 = 1/4; coaches 3/4/5 = 0/4). State-inventory said OBN 4/8 — false-negative; re-verify with `dosto-obn-patches --check`. TFTP helper lost on reboot. Resume: re-apply TFTP helper, retry 16 remaining APs serial. Coaches 4-6 also need AP*-v1 → AP*m-v1 config refresh. |
-| 144 | 4736-116 | `10.179.16.1` | 🟡 **PAUSED — AP fw 9/23 done** | 2026-05-21 status check: btrfs subvol id changed 303 → 306 since 2026-05-20 (a promote happened — note, not blocking). 9/23 APs at 6.11.2-0; 13 still on 6.10.0-0; Coach 6 AP4 in `incomplete` firmware state. Coach 6 AP3 now visible (Stadler register #6 may be self-resolved — confirm). State-inventory said OBN 4/8 — false-negative; re-verify with `dosto-obn-patches --check`. Resume: re-apply TFTP helper, finish 14 remaining APs serial, AP*-v1 → AP*m-v1 config refresh coaches 4-6. |
-| 145 | 4736-117 | ❓ | ⚪ UNKNOWN | initial visit |
-| 146 | 4736-118 | `10.179.21.1` | ⚪ UNKNOWN | CCU IP populated from sheet 2026-05-20; confirm v8 state — only baseline + customer report on file |
-| 147 | 4736-119 | `10.179.12.1` | 🔵 **IN PROGRESS — AP config now Nomad-form** | 2026-05-21 status check: 18/18 sw on `nv6-*-v8-147`, 24/24 APs visible with Nomad-form hostnames (AP*-v1/AP*m-v1, no longer factory RT610LV-dosto-*). State-inventory said OBN 4/8 — false-negative; re-verify with `dosto-obn-patches --check`. vlan7 ARP shows `.129` not `.1` — same anomaly as Fzg 139, needs Q1/Q2/Q3 probe. Resume: push AP firmware. |
-| 148 | 4736-120 | `10.179.2.1` | 🔴 **BLOCKED — E3 coach no power** | 2026-05-21 status check: 17/18 sw (E3 absent), 22/24 APs (2 E-coach APs absent) — E3 coach still off. State-inventory said OBN 4/8 — false-negative; treat as still 8/8. Stadler to restore E3 coach power. |
-| 149 | 4736-121 | ❓ | ⚪ UNKNOWN | initial visit |
-| 150 | 4736-122 | ❓ | ⚪ UNKNOWN | initial visit |
-| 151 | 4736-123 | ❓ | ⚪ UNKNOWN | initial visit — CCU IP was incorrectly listed as 10.179.23.1 (that is Fzg 138) |
+**Stadler status** = 🔴 **BLOCKED** when any APs/switches are missing OR a cabling fault is open; ✅ clear otherwise; ❓ when not yet checked.
+
+| Fzg | Train# | CCU IP | Nomad status | Stadler status | Next action |
+|---|---|---|---|---|---|
+| 129 | 4736-101 | ❓ | ⚪ UNKNOWN | ❓ | initial visit |
+| 130 | 4736-102 | `10.179.47.1` | 🟡 **PAUSED — E3 sw absent + AP .218 SNMP-silent** | 🔴 E3 sw + 2 APs absent | **2026-05-21 probe + dispatch:** TFTP helper re-applied ✅. Fresh `obn discover` confirms 17/18 sw all on `nv6-X-v8-130` fw 7.4.2 (incl .180/.186/.187 — the prior `-man` switches got pushed in an unrecorded session). **E3 switch missing** (no DHCP, no discovery) — escalate to Stadler. 22/24 APs visible; AP `.218` (mac `00:14:5a:04:52:9c`) is **Nomad-form `AP4-v1` per DHCP** but SNMP-silent — NOT factory; likely snmpd hung. OBN 8/8 persisted ✅, vlan7 ✅, train_id ✅. **Next:** identify the 2 missing APs (.218-.241 range diff), targeted snmpwalk on .218 to confirm SNMP fault, then push AP fw to the 21 healthy APs (skip .218 until SNMP recovers; do NOT run `obn update c all` until E3 is back). |
+| 131 | 4736-103 | `10.179.11.1` | 🟡 **PAUSED — awaiting Stadler on F3 AP3m + B2 null fw** | 🔴 F3 AP3m missing | reboot to activate run3 (8/8 OBN persisted); push AP fw 6.10.0-0→6.11.2-0 after Stadler |
+| 132 | 4736-104 | `10.179.10.1` | 🟡 **PAUSED — train offline; D4 BLOCKED Stadler** | 🔴 D4 AP missing (cable reg #5) | verify .231; push .237 .238 .240 — see detail. pre-flight 2026-05-21: train back online but 15/18 sw + 21/24 AP visible (3 sw + 3 APs absent — D4 group); skipped this run |
+| 133 | 4736-105 | `10.179.1.1` | 🟢 **DONE w/ Stadler** | 🔴 Coach 5 AP2 missing | wait for Stadler on Coach5 AP2 + FW path |
+| 134 | 4736-106 | `10.179.19.1` | ⚪ UNKNOWN | ❓ | confirm v8 state |
+| 135 | 4736-107 | ❓ | ⚪ UNKNOWN | ❓ | initial visit |
+| 136 | 4736-108 | `10.179.8.1` | 🟡 **PAUSED — bug-8 OBN patch pending; Stadler reg #2/#3 still open** | 🔴 cable reg #2 + #3 STILL OPEN (LLDP-confirmed 2026-05-21) | **2026-05-21 LLDP probe:** 18/18 sw on `nv6-X-v8-136` ✅, 24/24 APs visible ✅, OBN **7/8 persisted** (run1) — only bug 8 (`device.config endswith`) missing. vlan7 ✅, train_id 136 ✅, NDSU `.dont` ✅. TFTP helper absent (lost on ~5h reboot). **Cable register #2 (C3 trunk swap e0-0/e0-1) and #3 (D1↔E2 missing) confirmed STILL OPEN via per-switch `show lldp neighbours` sweep** — Stadler has NOT corrected. Next: apply bug 8 patch + persist (Gate 1) + reboot (Gate 2), then **HALT** — full v8 push blocked on Stadler re-cabling. Escalate cable register #2/#3 with hard LLDP evidence. |
+| 137 | 4736-109 | `10.179.28.1` | 🔴 **BLOCKED** | 🔴 3 B-coach APs missing (cable reg #4) | wait for Stadler on register #4 (AP install at B3); CCU IP populated from fleet control sheet 2026-05-20 (Train NC ID T28, prio test train, v8/6.10.0 per sheet); 2026-05-21 status check confirmed: 18/18 sw on v8-137, 21/24 APs (3 missing AP1m/AP2m/AP3m on one B-coach), broken train_id template, 0/8 OBN patches (genuinely first-visit) |
+| 138 | 4736-110 | `10.179.23.1` | 🟢 **DONE** | ✅ clear | OBN 8/8+bug9 persisted (run1) · 18/18 sw v8-138 ✅ · **24/24 APs at 6.11.2-0** ✅ (2026-05-20) |
+| 139 | 4736-111 | `10.179.24.1` | 🟡 **PAUSED — 23/24 APs at 6.11.2-0; AP .222 hw fault** | ✅ clear | 2026-05-21: run1 active, OBN 8/8+bug9 persisted, 18/18 sw v8-139 ✅. 23/24 APs confirmed 6.11.2-0 (.229 + .224 transiently SNMP-deaf but confirmed 6.11.2-0 earlier in session). Coach1 AP4 (.222, serial 3623-073001-1-04-00000091-2206) hw fault: SNMP deaf, partition swap stuck despite staged 6.11.2-0. Needs physical inspection/replacement. Last touched: 2026-05-21 AR |
+| 140 | 4736-112 | ❓ | ⚪ UNKNOWN | ❓ | CCU IP `10.179.12.1` was attributed here in error — confirmed 2026-05-21 that IP belongs to Fzg 147. `10.179.40.1` also unconfirmed. True CCU IP unknown — physical inspection required. |
+| 141 | 4736-113 | ❓ | ⚪ UNKNOWN | ❓ | initial visit |
+| 142 | 4736-114 | ❓ | ⚪ UNKNOWN | ❓ | initial visit |
+| 143 | 4736-115 | `10.179.18.1` | 🔵 **IN PROGRESS — AP fw push running (nohup, parent-driven)** | ✅ clear | 2026-05-21 09:35Z: OBN 8/8 persisted (run1 id312), 18/18 sw v8-143 fw=7.4.2 ✓, vlan7 ✓ 172.19.199.130/17, TFTP helper active. Gate 3+4 approved 09:25-09:29Z. AP fw push running under nohup on CCU (`/tmp/fzg143_push.sh` PID 330309, log `/tmp/ap_fw_push_fzg143.log`): 16 APs serial 6.10.0-0→6.11.2-0, ~144 min total. After fw: 24 APs need AP*-v1→AP*m-v1 config refresh (Gate 3 covers). |
+| 144 | 4736-116 | `10.179.16.1` | 🔵 **IN PROGRESS — AP fw push running (nohup, parent-driven)** | 🔴 Coach 6 AP3 (cable reg #6 — may be resolved, verify) | 2026-05-21 09:42Z: OBN 8/8+bug8+bug9 persisted (run2 id306), 18/18 sw v8-144 fw=7.4.2 ✓, 24/24 APs visible (Coach 6 AP3 .224 now visible — cable register #6 self-resolved), vlan7 ✓ 172.19.200.2/17, TFTP helper active. Gate 4 approved 09:25Z. AP fw push running under nohup on CCU (`/tmp/fzg144_push.sh` PID 516080, log `/tmp/ap_fw_push_fzg144.log`): 15 APs serial 6.10.0-0→6.11.2-0, ~135 min total. Currently AP 1/15 (.218) in flight. Special: Coach 6 AP4 (.222) was previously 'incomplete' fw — will be visible in log if it sticks. |
+| 145 | 4736-117 | ❓ | ⚪ UNKNOWN | ❓ | initial visit |
+| 146 | 4736-118 | `10.179.21.1` | 🟡 **PAUSED — green-field v8 commission (Fzg ID confirmed 146 by engineer)** | 🔴 2 APs absent (22/24); factory APs need LuCI bypass | **2026-05-21 first-visit probe:** CCU `box1-t21`; switches on `nv6-X-v7-149` (broken formula renders train_id=21 → 149). **Engineer confirmed 2026-05-21: actual Fzg = 146**, so all 18 `nv6-*.cfg` templates need `{%- set train_id = 146 -%}` hardcoded. OBN **0/8 vanilla**, vlan7 live `172.19.202.130/17` needs fix to `172.19.201.2/17` (Fzg 146 even → `.2`). 22/24 APs all factory `RT610LV-dosto-*` (LuCI HTTP bypass required). NDSU `.dont` ✅. **Commission path:** single chroot fold-in (OBN patches 0/8 → 8/8 + train_id hardcode 146 + vlan7 fix 201.2/17) → safe_reboot → factory AP LuCI bypass → `obn update c all` (renders sw as `nv6-X-v8-146`) → AP fw push → identify 2 missing APs. `networks.yaml` and `backbone-discovery.yaml` untouched per mar5 rule. |
+| 147 | 4736-119 | `10.179.12.1` | 🟢 **DONE** | ✅ clear | 2026-05-21: run3 active, 18/18 sw v8-147 ✅, 24/24 APs at 6.11.2-0 ✅. Last touched: 2026-05-21 AR |
+| 148 | 4736-120 | `10.179.2.1` | 🔴 **BLOCKED — E3 coach no power** | 🔴 E3 sw + 2 APs absent (coach no power) | 2026-05-21 status check: 17/18 sw (E3 absent), 22/24 APs (2 E-coach APs absent) — E3 coach still off. State-inventory said OBN 4/8 — false-negative; treat as still 8/8. Stadler to restore E3 coach power. |
+| 149 | 4736-121 | ❓ | ⚪ UNKNOWN | ❓ | initial visit |
+| 150 | 4736-122 | ❓ | ⚪ UNKNOWN | ❓ | initial visit |
+| 151 | 4736-123 | ❓ | ⚪ UNKNOWN | ❓ | initial visit — CCU IP was incorrectly listed as 10.179.23.1 (that is Fzg 138) |
 
 ### 4734 series (DOSTO NEU 4-car)
 
 vlan7 IPs marked ✅ (PDF) are confirmed from the IP-Port-Allocation PDF; ❓ (expect ...) are computed but not yet verified on the live CCU.
 
-| Fzg | Train# | CCU IP | Status | Next action |
-|---|---|---|---|---|
-| 1 | 4734-101 | ❓ | 🔴 **BLOCKED** | wait for Stadler on register #1 (re-patch E↔B trunk) |
-| 2 | 4734-102 | ❓ | ⚪ UNKNOWN | initial visit |
-| 3 | 4734-103 | ❓ | ⚪ UNKNOWN | initial visit |
-| 4 | 4734-104 | ❓ | ⚪ UNKNOWN | initial visit |
-| 5 | 4734-105 | ❓ | ⚪ UNKNOWN | initial visit |
-| 6 | 4734-106 | ❓ | ⚪ UNKNOWN | initial visit |
-| 7 | 4734-107 | ❓ | ⚪ UNKNOWN | initial visit |
-| 8 | 4734-108 | ❓ | ⚪ UNKNOWN | initial visit |
-| 9 | 4734-109 | `10.179.38.1` | ⚪ UNKNOWN | L2 healthy (12/12 sw, 16 APs, 0 errors) — v5 config; B1+B3 ZFR e1-11 DOWN; FW probe incomplete (CCU dropped) |
-| 10 | 4734-110 | ❓ | ⚪ UNKNOWN | initial visit |
-| 11 | 4734-111 | ❓ | ⚪ UNKNOWN | initial visit |
-| 12 | 4734-112 | `10.179.37.1` | 🟡 **PAUSED — ready to start commissioning** | 2026-05-21 status check at corrected IP: 12/12 sw (nv4-*-v8-012), 16/16 APs all correct config names, vlan7 ✅ `172.19.134.2/17`, train_id ✅. State-inventory said OBN 0/8 — could be genuine first-visit or false-negative; verify with `dosto-obn-patches --check`. Resume: confirm OBN state → full commissioning pipeline. |
-| 13 | 4734-113 | `10.179.46.1` | 🟡 **PAUSED — v7 → v8 push needed** | 2026-05-21 status check at corrected IP: 12/12 sw visible but on `nv4-*-v7-013` config (not v8). 16/16 APs all plain `AP[1-4]-v1` (zero m-variants — unusual for nv4, verify expected). State-inventory said OBN 4/8 — false-negative; re-verify with `dosto-obn-patches --check`. vlan7 ✅ `172.19.134.130/17`. Resume: confirm OBN state, v7 → v8 switch config push. |
-| 14 | 4734-114 | `10.179.44.1` | ⚪ UNKNOWN | discovered 2026-05-21 via morning-brief sweep; matched to 4734-114 (T44, status `Done`, NC release 2025.2.1 per fleet control sheet); initial visit pending |
-| 15 | 4734-115 | ❓ | ⚪ UNKNOWN | initial visit |
-| 16 | 4734-116 | ❓ | ⚪ UNKNOWN | initial visit |
-| 17 | 4734-117 | ❓ | ⚪ UNKNOWN | initial visit |
-| 18 | 4734-118 | ❓ | ⚪ UNKNOWN | initial visit |
-| 19 | 4734-119 | `10.179.45.1` | 🟡 **PAUSED — AP fw DONE (16/16 at 6.11.2-0 confirmed)** | 2026-05-21 `obn validate`: 16/16 APs ✅, 12/12 sw ✅. vlan7 `172.19.150.130/17` (per Nomad internal train_id 45 convention, NOT formula from Fzg 19 — confirmed correct in detail block). State-inventory said OBN 3/8 — false-negative; re-verify with `dosto-obn-patches --check`. Resume: LLDP check + L2 health sweep + customer report. |
-| 20 | 4734-120 | `10.179.49.1` | 🟢 **DONE — customer report pending** | 2026-05-21 status check: 12/12 sw + 16/16 APs ✅, vlan7 ✅. State-inventory said OBN 3/8 — false-negative; train_id template "missing" claim also suspect (verify via direct `cat /etc/obn/template/nv4-*.cfg`). Customer report only remaining. |
-| 21 | 4734-121 | `10.179.50.1` | 🟢 **DONE — customer report pending** | 2026-05-21 `dosto-obn-patches --check` confirmed 8/8 OBN markers all present in run2/id297; state-inventory's 4/8 reading was false-negative. 12/12 sw + 16/16 APs ✅, vlan7 ✅. Customer report only remaining. |
+| Fzg | Train# | CCU IP | Nomad status | Stadler status | Next action |
+|---|---|---|---|---|---|
+| 1 | 4734-101 | ❓ | 🔴 **BLOCKED** | 🔴 E2↔B1 cable wrong-neighbour (cable reg #1) | wait for Stadler on register #1 (re-patch E↔B trunk) |
+| 2 | 4734-102 | ❓ | ⚪ UNKNOWN | ❓ | initial visit |
+| 3 | 4734-103 | `10.179.5.1` | ⚪ UNKNOWN | ❓ | initial visit — CCU IP from control sheet 2026-05-21 (sheet: Done, v2/6.10.0, NC 2025.2.1); not yet probed |
+| 4 | 4734-104 | ❓ | ⚪ UNKNOWN | ❓ | initial visit |
+| 5 | 4734-105 | ❓ | ⚪ UNKNOWN | ❓ | initial visit |
+| 6 | 4734-106 | ❓ | ⚪ UNKNOWN | ❓ | initial visit |
+| 7 | 4734-107 | ❓ | ⚪ UNKNOWN | ❓ | initial visit |
+| 8 | 4734-108 | ❓ | ⚪ UNKNOWN | ❓ | initial visit |
+| 9 | 4734-109 | `10.179.38.1` | ⚪ UNKNOWN | ❓ | L2 healthy (12/12 sw, 16 APs, 0 errors) — v5 config; B1+B3 ZFR e1-11 DOWN; FW probe incomplete (CCU dropped) |
+| 10 | 4734-110 | `10.179.36.1` | ⚪ UNKNOWN | ❓ | initial visit — CCU IP from control sheet 2026-05-21 (sheet: Done, v6/6.10.0, NC 2025.2.1); not yet probed |
+| 11 | 4734-111 | `10.179.39.1` | ⚪ UNKNOWN | ❓ | initial visit — CCU IP from control sheet 2026-05-21 (sheet: Done, **sw v8 → regressed to v7 on 03/03/2026**, 6.10.0, NC 2025.2.1); not yet probed — verify current sw config |
+| 12 | 4734-112 | `10.179.37.1` | 🔵 **IN PROGRESS — AP fw 1/16 done (parent-driven serial)** | ✅ clear | 2026-05-21 /dosto-orchestrate: 12/12 sw at v8-012 fw 7.4.2 ✅, vlan7 ✅, train_id ✅, 9/9 OBN persisted (run2/id333). AP push 1/16: `.228` ✅ at 6.11.2-0; `.224` in flight (~18min/AP). Parent driving inline due to worker-loop platform constraints. |
+| 13 | 4734-113 | `10.179.46.1` | 🟡 **PAUSED — train offline; 8/12 sw at v8-013, 4 stuck v7m; re-run obn update c all on next visit** | ❓ | 2026-05-21: (a) templates 0.0.6→0.0.19 + reboot 09:20Z, (b) **vlan7 fix 10:10Z** → 172.19.134.130/17 ✅ (FW peer at `.129` Stadler pattern, same as Fzg 139/147), (c) **train_id pin 10:16Z** — `{%- set train_id = 13 -%}` in all 12 nv4-*.cfg ✅, (d) **OBN 8/8 confirmed persisted** run1 id317, (e) `obn update c all` ran 10:22–10:40Z: **all 12 sw at fw 7.4.2 ✅, 8/12 config ✅ (v8-013), 4/12 stuck v7m** (.193 G1, .194 G3, .187 E2, .201 E3) — pysnmp IndexError mid-run caused partial update. Train went offline before retry. **Next: `sudo obn discover && sudo obn report && sudo obn update c all`** (idempotent, will fix the 4 v7m switches). backbone-discovery.yaml train_id=46 untouched per mar5 rule. |
+| 14 | 4734-114 | `10.179.44.1` | 🔵 **IN PROGRESS — AP fw 1/16 done (parent-driven serial)** | ✅ clear | 2026-05-21 /dosto-orchestrate (initial visit): 12/12 sw at v8-014 fw 7.4.2 ✅, vlan7 `172.19.135.2/17` ✅, FW ARP REACHABLE, 9/9 OBN persisted (run2/id325, incl bug 9). AP push 1/16: `.220` ✅ at 6.11.2-0; `.225` in flight. Parent driving inline due to worker-loop platform constraints. |
+| 15 | 4734-115 | `10.179.61.1` | ⚪ UNKNOWN | ❓ | initial visit — CCU IP from control sheet 2026-05-21 (sheet: Done, v7/6.10.0, NC 2025.2.1); not yet probed |
+| 16 | 4734-116 | `10.179.3.1` | ⚪ UNKNOWN | ❓ | initial visit — CCU IP from control sheet 2026-05-21 (sheet: Done, v7/6.10.0, NC 2025.2.1); not yet probed |
+| 17 | 4734-117 | `10.179.14.1` | ⚪ UNKNOWN | ❓ | initial visit — CCU IP from control sheet 2026-05-21 (sheet: Done, v7/6.10.0, NC 2025.2.1); not yet probed |
+| 18 | 4734-118 | `10.179.48.1` | ⚪ UNKNOWN | ❓ | initial visit — CCU IP from control sheet 2026-05-21 (sheet: Done, v6/6.10.0, NC 2025.2.1); not yet probed |
+| 19 | 4734-119 | `10.179.45.1` | 🟢 **DONE** | ✅ clear | 2026-05-21 `obn validate`: 16/16 APs ✅, 12/12 sw ✅. vlan7 `172.19.150.130/17` (per Nomad internal train_id 45 convention, NOT formula from Fzg 19 — confirmed correct in detail block). State-inventory said OBN 3/8 — false-negative; re-verify with `dosto-obn-patches --check`. |
+| 20 | 4734-120 | `10.179.49.1` | 🟢 **DONE** | ✅ clear | 2026-05-21 status check: 12/12 sw + 16/16 APs ✅, vlan7 ✅. State-inventory said OBN 3/8 — false-negative; train_id template "missing" claim also suspect (verify via direct `cat /etc/obn/template/nv4-*.cfg`). |
+| 21 | 4734-121 | `10.179.50.1` | 🟢 **DONE** | ✅ clear | 2026-05-21 `dosto-obn-patches --check` confirmed 8/8 OBN markers all present in run2/id297; state-inventory's 4/8 reading was false-negative. 12/12 sw + 16/16 APs ✅, vlan7 ✅. |
 
 ### 4706 series
 
 Different platform from 4734/4736 NEU; discovered on the management VLAN as part of the 2026-05-20 morning-brief sweep, populated from the Fleet Control Sheet (2026-02-11).
 
-| Train# | CCU IP | Status | Next action |
-|---|---|---|---|
-| 4706-101 | `10.178.20.1` | ⚪ UNKNOWN | sheet `Investigate`; initial visit |
-| 4706-102 | `10.179.15.1` | ⚪ UNKNOWN | sheet `Investigate`; initial visit |
-| 4706-103 | `10.179.17.1` | ⚪ UNKNOWN | sheet `Investigate` — switch config updated to v6 on 2026-02-12; more analysis from Stadler needed (RCU + Sec-Gateway); 2026-03-17 request to check monitors in wagon F |
+| Train# | CCU IP | Nomad status | Stadler status | Next action |
+|---|---|---|---|---|
+| 4706-101 | `10.178.20.1` | ⚪ UNKNOWN | ❓ | sheet `Investigate`; initial visit |
+| 4706-102 | `10.179.15.1` | ⚪ UNKNOWN | ❓ | sheet `Investigate`; initial visit |
+| 4706-103 | `10.179.17.1` | ⚪ UNKNOWN | ❓ | sheet `Investigate` — switch config updated to v6 on 2026-02-12; more analysis from Stadler needed (RCU + Sec-Gateway); 2026-03-17 request to check monitors in wagon F |
 
 ### 4705 series
 
-| Train# | CCU IP | Status | Next action |
-|---|---|---|---|
-| 4705-101 | `10.179.42.1` | ⚪ UNKNOWN | sheet `Done`; initial visit — was previously attributed to Fzg 13 in error |
-| 4705-102 | `10.179.43.1` | ⚪ UNKNOWN | sheet `Done`; initial visit |
-| 4705-103 | `10.179.42.1` | ⚪ UNKNOWN | sheet `Done`; **IP conflict with 4705-101** in the sheet — investigate |
+| Train# | CCU IP | Nomad status | Stadler status | Next action |
+|---|---|---|---|---|
+| 4705-101 | `10.179.42.1` | ⚪ UNKNOWN | ❓ | sheet `Done`; initial visit — was previously attributed to Fzg 13 in error |
+| 4705-102 | `10.179.43.1` | ⚪ UNKNOWN | ❓ | sheet `Done`; initial visit |
+| 4705-103 | `10.179.42.1` | ⚪ UNKNOWN | ❓ | sheet `Done`; **IP conflict with 4705-101** in the sheet — investigate |
 
 ---
 
@@ -124,8 +126,8 @@ Different platform from 4734/4736 NEU; discovered on the management VLAN as part
 - **Fzg 12** — first real visit at corrected IP 10.179.37.1: fully wired, 0/8 OBN patches (genuine fresh-CCU).
 - **Fzg 13** — first real visit at corrected IP 10.179.46.1: switches on v7 config (not v8). All APs plain `AP*-v1` (no m-variants — worth verifying nv4 expected).
 - **Fzg 19** — AP firmware push confirmed 16/16 at 6.11.2-0 ✅. vlan7 `172.19.150.130/17` is the train_id-45 Nomad-internal convention (NOT Fzg-19 formula) — confirmed correct per detail block; do not "fix".
-- **Fzg 20** — DONE but active subvol is run1/id297, not run2/id294 where patches were persisted. Customer report unaffected.
-- **Fzg 21** — DONE but OBN markers 4/8 in active subvol. Customer report unaffected.
+- **Fzg 20** — DONE; active subvol is run1/id297, not run2/id294 where patches were persisted (informational).
+- **Fzg 21** — DONE; OBN markers 4/8 reported by state-inventory was a false-negative (canonical check shows 8/8).
 - **Fzg 137** — matches BLOCKED state; first-visit unpatched as expected.
 
 ## Per-train detail
@@ -138,9 +140,9 @@ One block per train that's been touched or has known state. Fields under each bl
 - **vlan7** — formula `172.19.<128+Fzg//2>.<2 if even else 130>/17`; persists in `/etc/NetworkManager/system-connections/ndrd-vlan-vlan7.nmconnection`
 - **Stadler cabling** — ✅ clean topology · 🔴 cable fault open · ❓ not yet checked
 - **FW reach** — TCP probe to the train's `172.19.<octet3>.1` (Stadler firewall, host `.1`)
-- **Health check** — date of last `/dosto-l2-health` run
-- **Customer report** — latest version filed in `reports/customer/`
 - **Last touched** — `YYYY-MM-DD <initials>`
+
+> L2 health checks and customer reports are no longer part of the commissioning pipeline. They remain available as optional engineer-invoked skills (`/dosto-l2-health`, `/dosto-l2-report`) but don't gate a train's DONE status and aren't tracked as diagnostic-state fields.
 
 ---
 
@@ -155,8 +157,6 @@ One block per train that's been touched or has known state. Fields under each bl
 - **vlan7:** ✅ `172.19.193.2/17` live (run1, post-reboot verified)
 - **Stadler cabling:** ✅ 18/18 switches visible — D2/E2/E3/F2 returned; no cable fault (prior BLOCKED state lifted)
 - **FW reach:** ✅ **commissioned** (2026-05-12 confirmed): ARP REACHABLE `00:90:e8:bb:9d:67`, ICMP 100% loss = Stadler policy drop per Phase 6 Q2; TCP 80+22 OPEN
-- **Health check:** ⬜ (defer until 18/18 config + 24/24 AP firmware complete)
-- **Customer report:** ⬜ (defer until health check done)
 - **TFTP helper:** 🟡 runtime fix applied this session (in-memory only — re-apply after any CCU reboot before AP fw push)
 
 **OBN workflow:** always run `sudo obn discover && sudo obn report` before any `obn update c` or `obn validate` — OBN reads from `discovery.prev.json` (committed report snapshot), not raw `discovery.json`. Skipping `obn report` causes stale data / "readonly" false-positive. See [handoff-fzg130-2026-05-12.md](handoff-fzg130-2026-05-12.md).
@@ -187,8 +187,6 @@ Session-specific narrative: see [fleet-journal.md#fzg-130--4736-102](fleet-journ
 - **vlan7:** ✅ `172.19.193.130/17` (live + nmconnection both correct for odd Fzg/host-130)
 - **Stadler cabling:** ✅ inter-coach fabric clean — full LLDP sweep 2026-05-11 confirms 36/36 e0-0/e0-1 trunks match nv6 template exactly (no cross-wires). Prior "E3/F3 hostname mismatch" finding withdrawn — was a misread of valid topology. 🟡 D3.e0-2 (OBS trunk) sees CCU itself as LLDP peer while D1.e0-2 is silent — possibly D1↔D3 OBS roles swapped at install; not a fault, worth confirming with OBS installer.
 - **FW reach:** ❓ not tested this session
-- **Health check:** ⬜
-- **Customer report:** ⬜
 
 **2026-05-11 session work:**
 - Found `nd-obn 2.2.23` uses subdir layout (`/usr/share/obn/lib/device/vendor/vdsrail.py` etc.) — `fix_obn.py` `Path()` constants already target this layout (lines 25-29), so no script changes were needed. v2.2.23 ships **0/8 fixes natively** — all 8 patches were absent, none upstreamed.
@@ -223,8 +221,6 @@ Session-specific narrative: see [fleet-journal.md#fzg-130--4736-102](fleet-journ
 - **vlan7:** ✅ `172.19.194.2`
 - **Stadler cabling:** 🔴 D3.e1-2 (AP D4) link DOWN
 - **FW reach:** ✅ 80/22 OPEN
-- **Health check:** ⬜
-- **Customer report:** ⬜
 
 Topology validated against [`_shared/nv6-topology.md`](train-ip-allocation-commission/extracted/_shared/nv6-topology.md) — every predicted trunk and AP location matches LLDP, except AP D4.
 
@@ -279,8 +275,6 @@ Topology validated against [`_shared/nv6-topology.md`](train-ip-allocation-commi
 - **vlan7:** ✅ `172.19.194.130`
 - **Stadler cabling:** ✅ clean
 - **FW reach:** 🔴 not commissioned
-- **Health check:** ✅ 2026-05-05
-- **Customer report:** ✅ v1.0
 
 All 18 switches on `nv6-*-v8-133`, FW `7.4.2`. All visible APs (20/21) on FW `6.11.2-0`, config `v1`. OBN patches persisted via `nd-systemupdate.sh shell` (run3).
 
@@ -303,8 +297,6 @@ No further Nomad action. See `reports/internal/105-l2-health-report-2026-05-05.m
 - **vlan7:** ✅ `172.19.196.2/17` live and correct (Fzg 136 even → `.2`)
 - **Stadler cabling:** 🔴 C3 trunks swapped (`e0-0`/`e0-1`) + D1↔E2 inter-coach missing (register #2 + #3)
 - **FW reach:** 🟡 **path partial** — ARP DELAY for `172.19.196.1` (MAC `00:90:e8:c2:60:22` Westermo ✅), ICMP 100% loss = commissioned per Phase 6 Q2, but TCP 80+22 = **No route to host** (routing issue, not FW policy). Investigate.
-- **Health check:** ⬜
-- **Customer report:** ✅ v1.0 (health check only — v8 rollout NOT started)
 - **nd-systemupdate:** ✅ renamed `.dont`
 - **train_id in templates:** ✅ hardcoded `136` in nv6-*.cfg
 
@@ -337,8 +329,6 @@ Customer health-check report v1.0 already filed (this was a *health check*, not 
 - **vlan7:** ❓ (expect `172.19.196.130`)
 - **Stadler cabling:** 🔴 B3.e0-4 AP not connected
 - **FW reach:** ❓
-- **Health check:** ❓
-- **Customer report:** Stadler L2 fault report v1.0
 
 Cable register item #4 — B3.e0-4 (AP trunk) link DOWN, PoE 0 W, AP not physically installed/connected.
 
@@ -361,8 +351,6 @@ Stadler L2 fault report v1.0 issued (`reports/customer/Stadler_4736-109_L2_Healt
 - **vlan7:** ❓ (expect `172.19.202.2` — not yet confirmed live)
 - **Stadler cabling:** 🔴 E3 coach no power — cold bypass engaged on E3 switch; 2 APs absent
 - **FW reach:** ❓
-- **Health check:** ⬜
-- **Customer report:** ⬜
 
 - **2026-05-04:** All 8 OBN bugs patched. `obn update c all` interrupted by train power-off — left mixed v4/v8 state at the time.
 - **2026-05-19:** Verified live — all 18 switches now on `nv6-XX-v8-148`. 24/24 APs visible, Nomad config applied, firmware `6.10.0-0`.
@@ -383,8 +371,6 @@ Stadler L2 fault report v1.0 issued (`reports/customer/Stadler_4736-109_L2_Healt
 - **vlan7:** ✅ `172.19.128.130` (PDF)
 - **Stadler cabling:** 🔴 E2↔B1 wrong neighbour
 - **FW reach:** ❓
-- **Health check:** ⬜
-- **Customer report:** ⬜
 
 Cable register item #1 — E2↔B1 trunk wrong-neighbour (E2.e0-0 reaches B1, plan says E2.e0-0 ↔ E3 intra-E and B1.e0-1 ↔ E1 inter-coach). Cross-wired.
 
@@ -404,8 +390,6 @@ Cable register item #1 — E2↔B1 trunk wrong-neighbour (E2.e0-0 reaches B1, pl
 - **vlan7:** ✅ `172.19.150.130/17` (correct for odd Nomad train_id 45; verified stable post-reboot)
 - **Stadler cabling:** ❓ LLDP topology check not yet run
 - **FW reach:** ❓
-- **Health check:** ⬜
-- **Customer report:** ⬜
 - **TFTP helper:** 🟡 runtime fix applied 2026-05-21 (re-apply post any reboot)
 - **nd-systemupdate:** ✅ `.dont` confirmed
 
@@ -434,8 +418,6 @@ Cable register item #1 — E2↔B1 trunk wrong-neighbour (E2.e0-0 reaches B1, pl
 - **vlan7:** ✅ `172.19.138.2/17` — **FIXED 2026-05-21** (was `172.19.152.130/17` encoding Fzg 49; corrected via chroot + safe_reboot)
 - **Stadler cabling:** ✅ 24/24 inter-coach trunks correct (lldp_check_4734-120.py 2026-05-20)
 - **FW reach:** ✅ **commissioned** (2026-05-21): Q1 ARP REACHABLE `00:90:e8:db:4d:5d`, Q2 ICMP 100% loss = Stadler policy drop, Q3 TCP 80+22 OPEN
-- **Health check:** ✅ 2026-05-21 — 12/12 sw, 16/16 APs, 0 errors, STP single root `a0:59:3a:d0:b0:60` (G1), all critical trunks clean. Findings: `findings/findings_10.179.49.1_20260521.json`
-- **Customer report:** ⬜
 
 **Remaining for sign-off:** customer report only (`/dosto-l2-report`).
 
@@ -445,34 +427,32 @@ Session history: see `fleet-journal.md#fzg-20`.
 
 ---
 
-### Fzg 139 — 4736-111 — ⚪ UNKNOWN (L2 healthy, v3 config — needs v8 push)
+### Fzg 139 — 4736-111 — 🟡 PAUSED (23/24 APs; AP .222 stuck)
 
-**Status:** ⚪ **UNKNOWN** · **CCU:** `10.179.24.1` (`box1-t24`) · **Last touched:** 2026-05-19 AR
+**Status:** 🟡 **PAUSED** · **CCU:** `10.179.24.1` (`box1-t24`) · **Last touched:** 2026-05-21 AR
 
 **Diagnostic state:**
-- **OBN patches:** ❓ (not checked this session)
-- **Switches v8:** 🔴 **18/18 visible but all on v3 config** (`nv-*-v3-139`) — full v8 switch config push required
-- **APs:** 🟡 24 APs visible, all `AP*-v1` Nomad config — firmware state unknown
+- **OBN patches:** ✅ bugs 1-8 applied, bug 9 BFS fix applied (live root)
+- **Switches v8:** ✅ 18/18 on `nv6-*-v8-139` config
+- **APs:** 🟡 23/24 at 6.11.2-0 · `.229` + `.224` transiently SNMP-deaf (confirmed 6.11.2-0 earlier in session — transient issue) · Coach1 AP4 (`10.179.24.222`, serial `3623-073001-1-04-00000091-2206`) stuck on 6.10.0-0: SNMP daemon broken — deaf even after full PoE power-cycle (`configure interface e1-2 poe mode off/on` on switch `.138`). AP boots, gets DHCP, responds to ICMP — SNMP agent never starts. LuCI HTTP also refused (Nomad config disables it). `obn update f` cannot reach it. 6.11.2-0 is staged but cannot be activated remotely. **Physical access required: factory-reset via hardware button OR swap the unit.**
 - **vlan7:** ✅ `172.19.197.130/17` live (correct for odd Fzg 139)
 - **Stadler cabling:** ✅ 18/18 switches visible, all inter-coach trunks 10G full, 0 CRC/carrier errors
-- **FW reach:** ❓ Q1 ARP = `.129` REACHABLE (Westermo MAC `00:90:e8:c5:3d:d4`), but TCP = "No route to host" — routing anomaly; full Q1/Q2/Q3 probe not completed (CCU dropped)
-- **Health check:** 🟡 partial 2026-05-19 (error scan + STP complete; FW probe incomplete)
-- **Customer report:** ⬜
-- **OBN template:** 🔴 `train_id` not hardcoded (broken `128+train_id` formula) — fix before v8 push
-- **nd-systemupdate:** ❓ not checked
+- **FW reach:** ❓ Q1/Q2/Q3 probe not yet run
+- **OBN template:** ✅ `train_id = 139` hardcoded in all 18 `nv6-*.cfg` templates
+- **nd-systemupdate:** ✅ renamed `.dont` (confirmed in run1 snapshot)
+- **Snapshot:** ✅ run1 active
 
-**2026-05-19 findings:**
-- 18/18 switches healthy — all inter-coach trunks at 10G, all Stadler-facing trunks clean (A3 e1-4 UP 1G, D1/D3 e0-2 UP 10G, B1/B3 e1-11 UP — ZFR B1 standby RX=0, B3 active)
-- STP root: `a0:59:3a:d0:3d:20` (D2 `.188`, priority 32768) — stable
-- Multiple e2-x ports DOWN across switches — needs schema PDF cross-check
-- FW ARP shows `.129` not `.1` — likely vlan7 routing or FW IP mismatch; investigate on next visit
+**2026-05-21 session:**
+- Promoted snapshot with train_id=139 templates + OBN patches 1-8
+- safe_reboot executed → run1 active post-reboot
+- Bug 9 BFS fix applied to live root (obn report was looping on v3→v8 topology)
+- 18/18 switches pushed to v8-139 via `obn update c all`
+- Serial AP firmware push completed: 23/24 APs at 6.11.2-0
+- AP .222 stuck: SNMP deaf, multiple `obn update f` + SSH reboot cycles failed to activate 6.11.2-0 partition
 
 **Next actions:**
-1. Complete FW probe: `ip neigh show dev vlan7 && ping -c 5 172.19.197.1 && nc -zv -w 5 172.19.197.1 80`
-2. Check OBN patches state: `sudo python3 /tmp/fix_obn.py --check` (or grep vdsrail.py)
-3. Fix OBN template `train_id` → hardcode `139`
-4. Run full v8 switch config push (`obn update c all` leaf-first)
-5. Check `nd-systemupdate.sh` rename
+1. Physically inspect/replace Coach1 AP4 (`10.179.24.222`) — hardware fault suspected
+2. Once 24/24 APs confirmed, mark 🟢 DONE
 
 ---
 
@@ -489,8 +469,6 @@ Session history: see `fleet-journal.md#fzg-20`.
 - **vlan7:** ✅ `172.19.198.2/17` live (correct for even Fzg 140)
 - **Stadler cabling:** ✅ 18/18 switches visible, all inter-coach trunks clean, 0 errors
 - **FW reach:** 🔴 PATH_BROKEN — no ARP entry for `172.19.198.1`, "No route to host" on TCP — FW not installed or not commissioned
-- **Health check:** 🟡 partial 2026-05-19 (error scan + STP complete; FW probe done but path broken)
-- **Customer report:** ⬜
 - **OBN template:** 🔴 `train_id` not hardcoded (broken `128+train_id` formula renders as 147 not 140)
 - **nd-systemupdate:** ❓ not checked
 
@@ -505,6 +483,34 @@ Session history: see `fleet-journal.md#fzg-20`.
 2. Check/apply OBN patches
 3. `sudo obn discover` — check AP config state (factory vs Nomad)
 4. Probe Stadler FW: confirm whether `172.19.198.1` is absent or misconfigured
+
+---
+
+### Fzg 147 — 4736-119 — 🟡 PAUSED (L2 health + customer report pending)
+
+**Status:** 🟡 **PAUSED** · **CCU:** `10.179.12.1` (`box1-t12`) · **Last touched:** 2026-05-21 AR
+
+**Diagnostic state:**
+- **OBN patches:** ✅ bugs 1-8 applied (confirmed idempotent in run3 snapshot)
+- **Switches v8:** ✅ 18/18 on `nv6-*-v8-147` config
+- **APs:** ✅ **24/24 at 6.11.2-0** (confirmed 2026-05-21)
+- **vlan7:** ✅ `172.19.201.130/17` live (correct for odd Fzg 147; confirmed via probe 2026-05-21)
+- **Stadler cabling:** ✅ 18/18 switches visible, all inter-coach trunks clean
+- **FW reach:** ❓ Q1/Q2/Q3 probe not yet run this session
+- **OBN template:** ✅ `train_id = 147` hardcoded in all 18 `nv6-*.cfg` templates
+- **nd-systemupdate:** ✅ `nd-systemupdate.sh` removed inside chroot (run3); `.dont` variant retained
+- **Snapshot:** ✅ run3 active (promoted 2026-05-21)
+
+**2026-05-21 session:**
+- IP conflict resolved: `10.179.12.1` previously misattributed to Fzg 140 — confirmed as Fzg 147 via vlan7=`172.19.201.130/17` decode
+- run3 snapshot promoted (bug 9 pysnmp patch + nd-systemupdate.sh removed); safe_reboot → run3 active
+- 18/18 switches pushed to v8-147 via `obn update c all` (two passes due to cellular drops; confirmed via fresh `obn discover`)
+- TFTP conntrack helper applied; serial AP firmware push started via nohup
+
+**Next actions:**
+1. Verify 24/24 APs at 6.11.2-0: `sudo obn validate` (wait for nohup push to complete)
+2. Run L2 health check: `/dosto-l2-health --ccu-ip 10.179.12.1 --fzg 147`
+3. Generate customer report: `/dosto-l2-report`
 
 ---
 
@@ -530,8 +536,6 @@ Session history: see `fleet-journal.md#fzg-20`.
 - **vlan7:** ✅ `172.19.197.2/17` (correct for even Fzg 138; persisted from 2026-05-19)
 - **Stadler cabling:** ✅ 18/18 switches visible, all inter-coach trunks clean, 0 errors
 - **FW reach:** ✅ **commissioned** (2026-05-19): ARP REACHABLE `00:90:e8:c5:3d:9d` (Westermo), ICMP 100% loss = Stadler policy drop per Phase 6 Q2
-- **Health check:** ⬜
-- **Customer report:** ⬜
 - **OBN template:** ✅ `train_id = 138` hardcoded in all 18 nv6-*.cfg
 - **nd-systemupdate:** ✅ `.dont` renamed (fleet standard)
 - **TFTP helper:** 🟡 runtime fix applied 2026-05-20 (re-apply post any reboot)
@@ -567,8 +571,6 @@ Session history: see `fleet-journal.md#fzg-20`.
 - **vlan7:** ✅ `172.19.132.130/17` live (correct for odd Fzg 9)
 - **Stadler cabling:** 🟡 12/12 switches visible; inter-coach trunks clean; **B1 (.220) e1-11 DOWN** and **B3 (.228) e1-11 DOWN** — ZFR ports both absent
 - **FW reach:** ❓ Q1 ARP = `.129` STALE (Westermo MAC `00:90:e8:ce:86:39`); Q2/Q3 not completed (CCU dropped)
-- **Health check:** 🟡 partial 2026-05-19
-- **Customer report:** ⬜
 
 **2026-05-19 findings:**
 - All 12 switches clean — 0 CRC/carrier errors on inter-coach trunks
@@ -582,19 +584,32 @@ Session history: see `fleet-journal.md#fzg-20`.
 
 ---
 
-### Fzg 12 — 4734-112 — 🟡 PAUSED (4-car, ready to commission at corrected IP)
+### Fzg 12 — 4734-112 — 🔵 IN PROGRESS (AP fw push in flight via /dosto-orchestrate)
 
-**Status:** 🟡 **PAUSED — ready to start commissioning** · **CCU:** `10.179.37.1` (`box1-t37`) · **Last touched:** 2026-05-21 AR
+**Status:** 🔵 **IN PROGRESS — Gate 4 approved, AP fw push in flight** · **CCU:** `10.179.37.1` (`box1-t37`) · **Last touched:** 2026-05-21 AR
 
-**2026-05-21 status check at corrected IP (read-only):**
-- CCU reachable at `10.179.37.1` (corrected from `10.179.41.1` per fleet control sheet 2026-05-20).
-- **Consist confirmed 4-car** (nv4 schema): 12/12 switches present (coaches A, G, E, B × 3 positions each), all hostnames `nv4-XX-v8-012`. 16/16 APs present with correct config-name distribution (2× each of AP1/2/3/4-v1 and AP1/2/3/4m-v1). Previous "5-car" briefing was a misread against the wrong CCU IP.
-- vlan7 `172.19.134.2/17` ✅ (correct for even Fzg 12). train_id template `{%- set train_id = 12 -%}` ✅.
-- **OBN patches: 0/8** — this CCU has genuinely never been patched. btrfs on run1/id330 (a promote has occurred at some point, but no patches were applied).
-- TFTP module not loaded, CT helper rule absent — runtime fix never applied.
-- `.dont` rename in place ✅.
+**Diagnostic state:**
+- **OBN patches:** ✅ **9/9 persisted in run2/id333** (incl bug 9). Promoted via chroot 2026-05-21T08:23Z (run1/330 → run2/333); reboot activated run2 at 08:27Z. Canonical `dosto-obn-patches --check` confirms all markers post-reboot (state-inventory 0/8 reading was the documented false-negative).
+- **Switches v8:** ✅ 12/12 at `nv4-XX-v8-012`, firmware 7.4.2 (target met — push_switch_config no-op).
+- **APs:** 🔵 16/16 Nomad-form at 6.10.0-0 → target 6.11.2-0 — **push in flight** (single-AP serial, est ~2.4hr from 08:39Z).
+- **vlan7:** ✅ `172.19.134.2/17` (correct for even Fzg 12; live + nmconnection).
+- **train_id template:** ✅ `{%- set train_id = 12 -%}` hardcoded in all 12 nv4-*.cfg.
+- **Stadler cabling:** ✅ 12/12 sw visible; FW ARP REACHABLE `00:90:e8:cf:6f:49`.
+- **TFTP helper:** 🟡 runtime fix re-applied post-reboot 2026-05-21T08:30Z (in-memory only).
+- **nd-systemupdate:** ✅ `.sh.dont` rename in place.
+- **btrfs:** ✅ active subvol `/.snapshots/run2 (id 333)`, all 9 patches persisted.
 
-**Next session:** apply OBN patches via fix_obn.py, persist via chroot, then run full commissioning pipeline from initial_diagnostics.
+**2026-05-21 /dosto-orchestrate run (in progress):**
+- Pre-flight: 12/12 sw + 16/16 AP visible via fping+ARP; scripts pre-staged at /tmp/ + /var/tmp/.
+- Gate 1 (promote_snapshot) approved 08:19Z — chroot promote landed at run2/id333 with 9/9 markers.
+- Gate 2 (safe_reboot) approved 08:25Z — executed by parent session per F1-C handoff; CCU back at +3min on run2.
+- post_reboot_verify: 9/9 markers confirmed live; TFTP CT helper re-applied.
+- obn_discover_initial: switches all at target; routed to skip push_switch_config and go straight to Gate 4.
+- Gate 4 (obn_update_f) approved 08:39Z — 16 APs single-AP serial via /dosto-ap-firmware-update --execute.
+
+**Next:** await per-AP progress reports; after 16/16 at 6.11.2-0 → final_l2_health_check → generate_report → DONE.
+
+#### Stale notes (against wrong CCU IP 10.179.41.1 — 2026-05-19; ignore)
 
 #### Stale notes (against wrong CCU IP 10.179.41.1 — 2026-05-19; ignore)
 
@@ -605,8 +620,6 @@ Session history: see `fleet-journal.md#fzg-20`.
 - **vlan7:** ✅ `172.19.134.2/17` — **FIXED 2026-05-19** (was `172.19.243.130`, now correct for even Fzg 12, persisted to run1)
 - **Stadler cabling:** 🟡 15/15 visible; inter-coach trunks clean; **B1 (.185) e1-11 DOWN**, **B3 (.181) e1-11 DOWN**; C3 (.189) has 4×10G UP (unusual — verify LLDP)
 - **FW reach:** ❓ no ARP entry yet (vlan7 just fixed, no FW probe run)
-- **Health check:** 🟡 partial 2026-05-19 (13/15 switches error-scanned; STP/FW incomplete)
-- **Customer report:** ⬜
 - **Consist size:** ⚠️ **5-car** (cars A,B,C,E,F — 15 switches, 20 APs); briefed as 4-car — verify against schema PDF
 - **OBN template:** 🔴 `train_id` not hardcoded for nv4 series (renders nd-redundancy train_id=41, not Fzg 12)
 
@@ -628,11 +641,11 @@ Session history: see `fleet-journal.md#fzg-20`.
 - 12/12 switches present (coaches A, G, B, E × 3) — fully cabled. Hostname pattern `nv4-XX-v7-013` / `nv4-XX-v7m-013`: switches are on **v7 config, not v8**. Full v8 config push needed.
 - 16/16 APs present, but **all 16 are plain `AP[1-4]-v1` with zero m-variants**. nv4 expected mix is 2 plain + 2 m-variant per slot. Either APs are in factory/un-configured state or all coaches got uniform (non-mirrored) config. Verify with `obn discover` before deciding.
 - vlan7 `172.19.134.130/17` ✅ (correct for odd Fzg 13). train_id template `{%- set train_id = 13 -%}` ✅.
-- OBN patches 4/8 in active subvol run2/id308 — bugs 2/3/5/7 absent. Partial patch state; re-run fix_obn.py.
+- State-inventory said OBN 4/8 in active subvol run2/id308 — **false-negative per the 2026-05-21 Fzg 21 disambiguation**; treat as likely 8/8. Re-verify with `dosto-obn-patches --check` before any destructive op.
 - TFTP module not loaded, CT helper rule absent.
 - `.dont` rename in place ✅.
 
-**Next session:** re-apply OBN patches; verify AP config expectation (plain vs m-variant for nv4); v7 → v8 switch config push (`obn update c` leaf-first); then AP firmware push.
+**Next session:** verify OBN state via canonical check; verify AP config expectation (plain vs m-variant for nv4); v7 → v8 switch config push (`obn update c` leaf-first); then AP firmware push.
 
 #### Stale notes (against wrong CCU IP 10.179.42.1 — 2026-05-19; ignore — that IP belongs to 4705-101)
 
@@ -643,8 +656,6 @@ Session history: see `fleet-journal.md#fzg-20`.
 - **vlan7:** ❓ no ARP entry observed; FW probe not completed
 - **Stadler cabling:** 🔴 **3 switches missing** — potential cable/power faults on those 3 cars; B1/B3 ZFR e1-11 checked and clean; checked switches had 0 errors
 - **FW reach:** ❓ incomplete (CCU dropped mid-session)
-- **Health check:** 🟡 partial 2026-05-19
-- **Customer report:** ⬜
 - **OBN template:** 🔴 `train_id` not hardcoded
 
 **2026-05-19 findings:**
@@ -660,6 +671,38 @@ Session history: see `fleet-journal.md#fzg-20`.
 
 ---
 
+### Fzg 14 — 4734-114 — 🔵 IN PROGRESS (initial visit; AP fw push in flight via /dosto-orchestrate)
+
+**Status:** 🔵 **IN PROGRESS — Gate 4 approved, AP fw push in flight** · **CCU:** `10.179.44.1` (`box1-t44`) · **Last touched:** 2026-05-21 AR
+
+**Initial visit:** train discovered 2026-05-21 via morning-brief sweep; matched to 4734-114 (T44, status `Done`, NC release 2025.2.1 per Fleet Control Sheet 2026-02-11). First Nomad-side commissioning attempt this session via `/dosto-orchestrate fzg=12,14`.
+
+**Diagnostic state:**
+- **OBN patches:** ✅ **9/9 persisted in run2/id325** (incl bug 9). fix_obn.py + fix_obn_bug8.py + fix_obn_bug9_pysnmp_thread_safety.py applied live then chroot-promoted 2026-05-21T08:17Z (run1/322 → run2/325); reboot activated run2 at 08:21Z. Canonical `dosto-obn-patches --check` confirms all markers post-reboot.
+- **Switches v8:** ✅ 12/12 at `nv4-X-v8-014`, firmware 7.4.2 (target met — push_switch_config no-op). Coaches A, G, E, B × 3 positions each. Control-sheet "v6/6.10.0" was stale; switches are actually already at v8 target.
+- **APs:** 🔵 16/16 Nomad-form at 6.10.0-0 → target 6.11.2-0 — **push in flight** (single-AP serial, est ~2.4hr from 08:33Z).
+- **vlan7:** ✅ `172.19.135.2/17` (correct for even Fzg 14: `128 + 14//2 = 135`, `0 + 2 = 2`). Live + nmconnection both match.
+- **train_id:** nv4 4-Teiler convention — `train_id=44` in `/etc/nd-redundancy/backbone-discovery.yaml` (Nomad internal ID, not Fzg ID — per memory `feedback_train_id_4734_4teiler`). No template hardcode needed.
+- **Stadler cabling:** ✅ 12/12 sw visible; FW ARP REACHABLE `172.19.135.1` (`00:90:e8:ce:86:2a` — Westermo OUI). Q1 path OK.
+- **TFTP helper:** 🟡 runtime fix re-applied post-reboot 2026-05-21T08:30Z (in-memory only).
+- **nd-systemupdate:** ✅ `.sh.dont` rename in place (was already present pre-visit).
+- **btrfs:** ✅ active subvol `/.snapshots/run2 (id 325)`, all 9 patches persisted.
+
+**2026-05-21 /dosto-orchestrate run (in progress):**
+- Pre-flight: 12/12 sw + 16/16 AP visible via fping+ARP; scripts pre-staged at /tmp/ + /var/tmp/.
+- Stage 1 initial_diagnostics: confirmed device counts, switches already at v8-014 target, APs Nomad-form at 6.10.0-0.
+- Stage 4 apply_obn_patches: fix scripts run live (run1/322 had 0/9; post-apply 9/9 in run1).
+- Stages 2 (apply_train_id_fix) + 3 (apply_vlan7_fix) skipped — both already correct.
+- Gate 1 (promote_snapshot) approved 08:13Z — chroot promote landed at run2/id325 with 9/9 markers.
+- Gate 2 (safe_reboot) approved 08:18Z — executed by parent session per F1-C handoff (worker SSH was harness-denied); CCU back at +1s on run2.
+- post_reboot_verify: 9/9 markers confirmed live; TFTP CT helper re-applied.
+- obn_discover_initial: routed to skip push_switch_config and go straight to Gate 4.
+- Gate 4 (obn_update_f) approved 08:33Z — 16 APs single-AP serial via /dosto-ap-firmware-update --execute.
+
+**Next:** await per-AP progress reports; after 16/16 at 6.11.2-0 → final_l2_health_check → generate_report → DONE.
+
+---
+
 ### Fzg 21 — 4734-121 — 🟢 DONE
 
 **Status:** 🟢 **DONE** · **CCU:** `10.179.50.1` (`box1-t50`) · **Last touched:** 2026-05-21 AR
@@ -671,8 +714,6 @@ Session history: see `fleet-journal.md#fzg-20`.
 - **vlan7:** ✅ `172.19.138.130/17` (correct for odd Fzg 21)
 - **Stadler cabling:** ✅ 12/12 visible; all inter-coach trunks 10G/1G clean; 0 CRC/carrier errors
 - **FW reach:** 🟡 uncommissioned (ARP REACHABLE `00:90:e8:db:4d:6a`, ICMP replies = bare Westermo at `.129`) — Stadler's responsibility, not a Nomad blocker
-- **Health check:** ✅ 2026-05-21 — full sweep, 0 errors. Findings: `findings/findings_10.179.50.1_20260521.json`
-- **Customer report:** ⬜
 
 **2026-05-21 status check (read-only):** Device counts and vlan7 confirmed. State-inventory said OBN 4/8 — **resolved as false-negative** on 2026-05-21: `dosto-obn-patches --check` on this exact CCU found **all 8 markers present** (counts 1, 2, 1, 1, 1, 1, 1, 1) in active subvol run2/id297. Patches are genuinely persisted. State-inventory's grep is stale; trust `dosto-obn-patches` going forward. See [[project_state_inventory_marker_false_negative]].
 
@@ -689,8 +730,6 @@ Session history: see `fleet-journal.md#fzg-20`.
 - **vlan7:** ✅ `172.19.199.130/17` live (was wrong `172.19.201.2` — encoded Fzg 146; fixed + persisted via chroot promote)
 - **Stadler cabling:** ✅ 18/18 sw + 24/24 AP visible (pre-flight discovery clean)
 - **FW reach:** ⬜ Q1/Q2/Q3 not yet probed
-- **Health check:** ⬜
-- **Customer report:** ⬜
 - **OBN template:** ✅ `train_id = 143` hardcoded in all 18 nv6-*.cfg
 - **nd-systemupdate:** ✅ `.dont` renamed (fleet standard)
 - **TFTP helper:** 🟡 runtime fix applied this session (in-memory only — re-apply post-reboot before next AP fw push)
@@ -736,8 +775,6 @@ Then: L2 health sweep + FW Q1/Q2/Q3 probe + customer report.
 - **vlan7:** ✅ `172.19.200.2/17` live (was already correct for even Fzg 144 — no nmconnection edit needed)
 - **Stadler cabling:** 🔴 Coach 6 AP3 missing (B3 e1-2 port live with RX/TX traffic per pre-flight but AP not in DHCP across 2 cycles — likely AP physically present but bricked or stuck) — cable register #6
 - **FW reach:** ✅ **commissioned** (2026-05-20): Q1 ARP REACHABLE `00:90:e8:ca:3e:aa`, Q2 ICMP 100% loss = Stadler policy drop per Phase 6, Q3 TCP 80+22 OPEN
-- **Health check:** ⬜
-- **Customer report:** ⬜
 - **OBN template:** ✅ `train_id = 144` hardcoded in all 18 nv6-*.cfg (was broken `128 + train_id` formula)
 - **nd-systemupdate:** ✅ `.dont` renamed
 - **TFTP helper:** 🟡 runtime fix applied this session (in-memory only — re-apply post-reboot before next AP fw push)

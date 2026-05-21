@@ -58,11 +58,8 @@ The mapping is keyword-based and opinionated. Order matters — first match wins
 | `push config` / `obn update c` / `update c all` | `await_obn_update_c` | Gate 3 — needs engineer approval |
 | `push ap fw` / `push ap firmware` / `obn update f` / `6.11.2-0` | `await_obn_update_f` | Gate 4 — needs engineer approval |
 | `factory` / `luci` / `RT610LV` | `ap_factory_bypass` | Factory-config bypass needed |
-| `health check` / `l2 health` / `/dosto-l2-health` | `final_l2_health_check` | Run the L2 sweep |
-| `customer report` / `report v1` | `generate_report` | Generate docx |
 | `initial visit` / `confirm v8 state` | `initial_diagnostics` | Read-only first pass |
 | `wait for stadler` / `stadler` | `BLOCKED` | Cannot proceed — Stadler-dependent |
-| `initial visit` / `confirm v8 state` | `initial_diagnostics` | Must run discovery + state-inventory before any specific stage can be inferred — wins over later rules so prose like "confirm v8 state — only customer report on file" doesn't false-positive into `generate_report`. |
 | (no match) | `?` | Engineer review needed |
 
 ## Recommendation rule

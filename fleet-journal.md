@@ -112,7 +112,31 @@ CCU `10.179.11.1` unreachable (ping + ssh timeout) at attempt time. Fzg 130 on t
 
 *(Journal entries to be migrated. Current state: BLOCKED on cable register #1.)*
 
+### Fzg 19 — 4734-119
+
+#### 2026-05-21 — AR — Customer B&E WAP1/WAP2 swap report investigated; no Nomad-side fault
+
+**Session goal.** Customer (ÖBB) ran an in-coach Wi-Fi scan on Fzg 19 and Fzg 20 and reported that on coaches B and E the WE1 and WE2 SSIDs appear swapped vs schema.
+
+**Method.** SSH to CCU (`10.179.45.1`); LLDP-walk every leaf switch's AP port (e0-4 / e1-2); then SSH each AP (`nomad`/`NomadComeIn`) and read `cfgSysHostname.0`.
+
+**Result.** AP→switch-port mapping is uniform and consistent:
+- Coach A: A1.e0-4=AP1, A2.e0-4=AP2, A3.e0-4=AP3, A3.e1-2=AP4 (`APx-v1` config)
+- Coach G: G1.e0-4=AP1, G2.e0-4=AP2, G3.e0-4=AP3, G3.e1-2=AP4 (`APx-v1` config)
+- Coach E: E1.e0-4=AP1m, E2.e0-4=AP2m, E3.e0-4=AP3m, E3.e1-2=AP4m (`APxm-v1` config)
+- Coach B: B1.e0-4=AP1m, B2.e0-4=AP2m, B3.e0-4=AP3m, B3.e1-2=AP4m (`APxm-v1` config)
+
+No swap at the OBN/cabling/switch-config layer. Pattern matches Fzg 20 exactly.
+
+**Remaining suspects.** (1) `APxm-v1` Nomad payload broadcasts WE1/WE2 SSIDs inverted vs schema position numbering — only m-variant coaches affected; (2) coaches B and E physically installed reversed end-for-end relative to A and G.
+
+**Next.** Handoff to Stadler/ÖBB: confirm physical orientation of B and E, or pull the `APxm-v1` vs `APx-v1` Nomad config payload diff to locate inverted Wi-Fi role parameter. No Nomad action required; train remains DONE.
+
 ### Fzg 20 — 4734-120
+
+#### 2026-05-21 — AR — Customer B&E WAP1/WAP2 swap report investigated; no Nomad-side fault
+
+Same investigation as Fzg 19 (see entry above). AP→switch-port mapping on Fzg 20 verified identical to Fzg 19. Symptom not in Nomad/OBN/cabling layer; suspects are m-variant Wi-Fi config payload or coach physical orientation. Train remains DONE. See [project_be_wap_swap_fzg19_20](../.claude/projects/C--Users-AbbasRizvi-Documents-dosto-troubleshooting/memory/project_be_wap_swap_fzg19_20.md) memory entry.
 
 #### 2026-05-11 — AR — Partial Stage-1 probe via orchestrator-stack test; worker stalled mid-diagnostics
 

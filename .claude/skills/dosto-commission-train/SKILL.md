@@ -30,9 +30,9 @@ You (top-level orchestrator session)
                                        → /dosto-sw-firmware-update (per switch, leaf-first)
                                        → /dosto-sw-config-update-batch --execute --auto
                                          (legacy single-switch fallback: --legacy-serial-sw-config)
-                                       → /dosto-l2-health
-                                       → /dosto-l2-report
 ```
+
+(`/dosto-l2-health` and `/dosto-l2-report` are no longer pipeline stages — they remain available as optional engineer-invoked skills.)
 
 This skill is **single-train scope**. Multi-train fan-out is the orchestrator's responsibility, achieved by spawning N subagents in a single `Agent` tool message (the SDK runs them concurrently).
 
@@ -95,10 +95,10 @@ Per [`subagent-report.md`](../../contracts/subagent-report.md) → "Commissionin
 | 17 | `ap_factory_bypass` | `APPLYING_FIXES` | only if any AP in factory config (per stage 11 inventory) | `dosto-ap-config-update --execute` (Path B: LuCI HTTP), one AP at a time, serially. **MOVED** from old position (was after `obn_discover_initial`) to here, just before AP firmware push. Reason: the bypass exists *to make factory APs OBN-reachable for the firmware push that immediately follows*; doing it earlier interleaves it with switch work it has no dependency on. |
 | 18 | `push_ap_firmware` | `PUSHING_TO_DEVICES` | only if Gate 4 approved AND any AP needs firmware update | `dosto-ap-firmware-update --execute`, single-AP serial. After both `ap_factory_bypass` (factory APs now Nomad-form, OBN-reachable) and `push_switch_firmware` (fabric on target FW first). `current_step` / `total_steps` track per-AP. |
 | 19 | `push_ap_config` | `PUSHING_TO_DEVICES` | only if any Nomad AP shows config drift after firmware push | `dosto-ap-config-update --execute` (Path A: OBN SNMP, NOT LuCI HTTP — these APs are Nomad-form). **NEW stage** — final config refresh. Catches APs whose Nomad config went stale post-firmware (firmware updates can reset some config fields) or that need the latest cert/network bindings. |
-| 20 | `final_l2_health_check` | `DIAGNOSING` | always | `dosto-l2-health --json` |
-| 21 | `generate_report` | `APPLYING_FIXES` | always (unless prior stage failed) | `dosto-l2-report --json` |
 
-The `done` terminal stage is reached after stage 21 emits `status: DONE`.
+The `done` terminal stage is reached after stage 19 emits `status: DONE` (or after the earlier stages converge when stage 19 isn't needed).
+
+> **Removed 2026-05-21:** the pipeline previously had two terminal stages — `final_l2_health_check` (`dosto-l2-health --json`) and `generate_report` (`dosto-l2-report --json`). These have been removed; a train is `DONE` once all device pushes (config + firmware, switches + APs) converge. The `/dosto-l2-health` and `/dosto-l2-report` skills remain available for engineer-initiated invocation but are no longer pipeline-mandated.
 
 ## The orchestration model: skill-as-driver
 
@@ -373,7 +373,7 @@ Stage outcome routing:
 
 | Inventory at stage 11 | Next stage |
 |---|---|
-| All switches on target config AND target firmware AND all APs at target firmware AND no Nomad AP config drift AND no factory APs | Skip to stage 20 (`final_l2_health_check`) |
+| All switches on target config AND target firmware AND all APs at target firmware AND no Nomad AP config drift AND no factory APs | Terminal — emit `done` |
 | Any switch needs config update | Stage 12 (`await_obn_update_c`) — Gate 3 covers SW config + final AP config refresh |
 | Switches OK on config, but any switch needs firmware update OR any AP needs firmware update | Skip to stage 15 (`await_obn_update_f`) — Gate 4 covers SW firmware + AP firmware |
 | Switches OK on config and firmware, but factory APs present | Skip to stage 17 (`ap_factory_bypass`) — no gate needed (fix-up step) |
@@ -472,21 +472,9 @@ If any per-AP push fails, halt with `BLOCKED`. The fabric is operational (config
 
 `stage.current_step` / `total_steps` track per-AP progress.
 
-### Stage 20: `final_l2_health_check`
+### Terminal — `done`
 
-**Status:** `DIAGNOSING`. **Conditional:** always (unless prior stage halted with `BLOCKED` or `ERROR`).
-
-Invokes `/dosto-l2-health <ccu-ip> --json`. Captures full L2 fabric state (per-switch error counters, RSTP root, trunk states, end-to-end Stadler firewall reachability).
-
-If any L2 health verdict is non-clean, populate `issues[]` with the findings but don't halt — generate the report anyway (engineer reads it and decides next steps).
-
-### Stage 21: `generate_report`
-
-**Status:** `APPLYING_FIXES` *(per the contract — generating a docx is technically a write, even though it's local-only)*. **Conditional:** always (unless prior stage was `BLOCKED` or `ERROR`).
-
-Invokes `/dosto-l2-report <findings.json from stage 20> --json`. Emits the path to the generated docx in the final report's `next_action` field.
-
-After this stage, emit terminal `status: DONE` and exit.
+After stage 19 (`push_ap_config`) — or after the earlier device-push stages converge when stage 19 isn't needed — emit terminal `status: DONE` and exit. A train is considered commissioning-DONE once all device pushes (switch config, switch firmware, AP config, AP firmware) have converged. **L2 health checks and customer reports are no longer pipeline stages** — they remain available as optional engineer-invoked skills (`/dosto-l2-health`, `/dosto-l2-report`) but don't gate train DONE state.
 
 ## `--resume <stage_id>` semantics
 
@@ -500,7 +488,6 @@ After this stage, emit terminal `status: DONE` and exit.
    - For resuming `ap_factory_bypass` (stage 17): all of the above + all switches show firmware on target after stage 16.
    - For resuming `push_ap_firmware` (stage 18): all of the above + no APs remain in factory config (every entry in stage 11 inventory is now Nomad-form).
    - For resuming `push_ap_config` (stage 19): all of the above + all APs at target firmware.
-   - For resuming `final_l2_health_check` (stage 20): all of the above + all device pushes complete.
 4. If post-conditions not satisfied, refuses to resume; emits `ERROR` with explanation in `issues[]`.
 5. If satisfied, jumps to `<stage_id>` and continues.
 
@@ -551,7 +538,7 @@ There is no human-readable mode by default. The orchestrator/subagent layers con
 - ❌ Skip the approval gates — even with `--dry-run`, gate stages still emit `NEEDS_APPROVAL` reports (informational); in normal mode, they are contract-mandated halts.
 - ❌ Allow the engineer to bypass per-device skill preconditions (e.g. push firmware before TFTP helper is in place).
 - ❌ Run more than one device's `--execute` push at a time — strict serialisation per the per-device skills' single-device discipline (handoff lesson 11).
-- ❌ Write any non-CCU files. Only the orchestrator writes fleet-status / Confluence / docx reports (the latter via `dosto-l2-report` invoked at stage 21 — the report file is the output, not an orchestration artefact).
+- ❌ Write any non-CCU files. Only the orchestrator writes fleet-status / Confluence. (Customer docx reports — when an engineer opts to generate one — come from the optional `/dosto-l2-report` skill, which is no longer pipeline-driven.)
 
 ## Edge cases and gotchas
 

@@ -145,24 +145,7 @@ Default Y. Engineer types `n` → halt and ask for explicit `@<ip>` on next invo
 
 **Status: DONE** trains get a context-aware prompt — read the train's `Next action` column from fleet-status first, then branch:
 
-**Sub-case DONE-1 — Customer-report-only remaining** (Next action contains `customer report only` / `report v1` / `generate_report`):
-
-```
-⚠️ Fzg <NN> is DONE but has Customer report: ⬜.
-   Next action per fleet-status: <next_action_text>
-   Including will run report generation only (skip stages 1-19, run stage 20).
-
-Options:
-  [Y] Include for report generation
-  [s] Skip
-  [a] Abort
-
-Choice [Y/s/a]:
-```
-
-Default Y — generating a report on a healthy train is the obvious next step.
-
-**Sub-case DONE-2 — Other outstanding items** (Next action contains anything else — e.g. "wait for Stadler", "verify .231"):
+**Sub-case DONE-1 — Other outstanding items** (Next action contains anything substantive — e.g. "wait for Stadler", "verify .231"):
 
 ```
 ⚠️ Fzg <NN> is DONE but has outstanding work: <next_action_text>
@@ -176,7 +159,7 @@ Options:
 Choice [s/i/a]:
 ```
 
-**Sub-case DONE-3 — No outstanding work** (Next action is empty or `—`):
+**Sub-case DONE-2 — No outstanding work** (Next action is empty or `—`):
 
 ```
 ⚠️ Fzg <NN> is already DONE with no outstanding work in fleet-status.

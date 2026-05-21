@@ -88,20 +88,34 @@ def clean(text: str) -> str:
     return t.strip()
 
 def parse_table(text: str, header: str):
+    """Return list of (header_cols, data_rows). Captures the header row so callers can map column names to indices — the 4736/4734 tables grew a 'Stadler status' column on 2026-05-21 between 'Nomad status' (formerly 'Status') and 'Next action', so positional indexing is fragile."""
     idx = text.find(header)
-    if idx == -1: return []
+    if idx == -1: return [], []
+    header_cols = []
     rows = []
+    saw_header = False
     in_table = False
     for line in text[idx:].split('\n'):
+        if line.startswith('|') and not saw_header and not re.match(r'^\|[-| ]+\|$', line):
+            header_cols = [c.strip() for c in line.split('|')[1:-1]]
+            saw_header = True
+            continue
         if re.match(r'^\|[-| ]+\|$', line):
             in_table = True
             continue
         if in_table:
             if not line.startswith('|'): break
             cols = [c.strip() for c in line.split('|')[1:-1]]
-            if len(cols) >= 5:
+            if len(cols) == len(header_cols):
                 rows.append(cols)
-    return rows
+    return header_cols, rows
+
+def col_idx(header_cols, name_substr_lower):
+    """Find a column index by lower-cased substring match in the header."""
+    for i, h in enumerate(header_cols):
+        if name_substr_lower in h.lower():
+            return i
+    return None
 
 def probe_tcp(ip: str, port: int = 22, timeout: float = 5.0) -> bool:
     try:
@@ -278,7 +292,7 @@ def assign_to_series(path: str, ip: str, fzg: str, series: str):
     # Trainset hint: if 4736 series, trainset = fzg - 28; if 4734, trainset = fzg + 100.
     fzg_i = int(fzg)
     trainset = f'{series}-{fzg_i - 28:03d}' if series == '4736' else f'{series}-{fzg_i + 100:03d}'
-    new_row = f'| {fzg} | {trainset} | `{ip}` | ⚪ UNKNOWN | initial visit |'
+    new_row = f'| {fzg} | {trainset} | `{ip}` | ⚪ UNKNOWN | ❓ | initial visit |'
     lines.insert(insert_at, new_row)
     Path(path).write_text('\n'.join(lines), encoding='utf-8')
     return True
@@ -298,12 +312,13 @@ def render_html(reachable, unreachable, discovered, recommended_fzg, recommended
             f'<td class="mono">{t["trainset"]}</td>'
             f'<td class="mono">{t["ip"]}</td>'
             f'<td>{status_badge(t["status"])}</td>'
+            f'<td class="small">{t.get("stadler", "")}</td>'
             f'<td class="small">{t["next_action"]}</td>'
             f'<td>{stage_tag(t["stage"])}</td>'
             f'<td class="small">{rec_cell}</td>'
             f'</tr>'
         )
-    rows_html = '\n'.join(rows) or '<tr><td colspan="6" class="small center">No reachable trains.</td></tr>'
+    rows_html = '\n'.join(rows) or '<tr><td colspan="8" class="small center">No reachable trains.</td></tr>'
 
     if unreachable:
         un_lines = '<br>'.join(f'Fzg {t["fzg"]} / {t["trainset"]} ({t["ip"]}) — {t["next_action"][:80]}' for t in unreachable)
@@ -328,7 +343,7 @@ def render_html(reachable, unreachable, discovered, recommended_fzg, recommended
 <div class="section">
   <div class="section-header"><h2>Reachable trains</h2><span class="count">{len(reachable)} online</span></div>
   <div class="table-wrap"><table>
-    <thead><tr><th>Fzg</th><th>Trainset</th><th>CCU IP</th><th>Status</th><th>Next Action</th><th>Resume Stage</th><th>Recommended?</th></tr></thead>
+    <thead><tr><th>Fzg</th><th>Trainset</th><th>CCU IP</th><th>Nomad status</th><th>Stadler status</th><th>Next Action</th><th>Resume Stage</th><th>Recommended?</th></tr></thead>
     <tbody>{rows_html}</tbody>
   </table></div>
 </div>
@@ -379,20 +394,30 @@ def main():
         return
 
     md = Path(args.fleet_status).read_text(encoding='utf-8')
-    rows = parse_table(md, '### 4736 series') + parse_table(md, '### 4734 series')
 
     trains_with_ip = []
-    for r in rows:
-        fzg = r[0]
-        ip = extract_ip(clean(r[2]))
-        if not ip: continue
-        trains_with_ip.append({
-            'fzg': fzg,
-            'trainset': clean(r[1]),
-            'ip': ip,
-            'status': r[3],
-            'next_action': clean(r[4]),
-        })
+    for header in ('### 4736 series', '### 4734 series'):
+        hdr, rows = parse_table(md, header)
+        if not hdr: continue
+        i_fzg = col_idx(hdr, 'fzg') or 0
+        i_trainset = col_idx(hdr, 'train')
+        i_ccu = col_idx(hdr, 'ccu')
+        # Nomad status replaced 'Status' on 2026-05-21; accept either name.
+        i_status = col_idx(hdr, 'nomad status')
+        if i_status is None: i_status = col_idx(hdr, 'status')
+        i_stadler = col_idx(hdr, 'stadler')
+        i_next = col_idx(hdr, 'next action')
+        for r in rows:
+            ip = extract_ip(clean(r[i_ccu])) if i_ccu is not None else None
+            if not ip: continue
+            trains_with_ip.append({
+                'fzg': r[i_fzg],
+                'trainset': clean(r[i_trainset]) if i_trainset is not None else '',
+                'ip': ip,
+                'status': r[i_status] if i_status is not None else '',
+                'stadler': r[i_stadler] if i_stadler is not None else '',
+                'next_action': clean(r[i_next]) if i_next is not None else '',
+            })
 
     # Parallel TCP/22 probe
     with ThreadPoolExecutor(max_workers=16) as ex:

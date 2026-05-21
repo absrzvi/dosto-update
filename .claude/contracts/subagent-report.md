@@ -167,9 +167,9 @@ These are the stages a per-train commissioning subagent moves through. Listed in
 | `ap_factory_bypass` | `APPLYING_FIXES` | 180s × N factory APs | LuCI HTTP push for any AP in `RT610LV-…-v1-FD`. Conditional — only fires if stage 11 found factory APs. **MOVED** from after `obn_discover_initial` to before AP firmware push (where it's actually needed: makes factory APs OBN-reachable so the firmware step can hit them). No separate gate — fix-up step. |
 | `push_ap_firmware` | `PUSHING_TO_DEVICES` | 540s × N APs | AP firmware push, single-AP serial. After both `ap_factory_bypass` (so factory APs are now reachable) and `push_switch_firmware` (so the switch fabric is on target firmware first). `current_step` / `total_steps` track per-AP. |
 | `push_ap_config` | `PUSHING_TO_DEVICES` | 180s × N APs | NEW stage — final AP config refresh on Nomad-form APs. Catches APs whose Nomad config went stale post-firmware-push or that need the latest Nomad cert/network bindings. Conditional — only fires if any Nomad AP shows config drift after `push_ap_firmware`. |
-| `final_l2_health_check` | `DIAGNOSING` | 600s | Run `/dosto-l2-health` |
-| `generate_report` | `APPLYING_FIXES` | 60s | Run `/dosto-l2-report` |
 | `done` | `DONE` | — | Terminal stage — emit final report and exit |
+
+> **Removed 2026-05-21:** the prior terminal stages `final_l2_health_check` (Run `/dosto-l2-health`) and `generate_report` (Run `/dosto-l2-report`) are no longer part of the pipeline. `/dosto-l2-health` and `/dosto-l2-report` remain available as optional engineer-invoked skills but don't gate train completion. Subagents emitting either stage ID are accepted but flagged as `schema_version_drift`.
 
 Other subagent types (cabling investigator, etc.) define their own stage IDs without touching this contract. The orchestrator validates against the union of registered stage namespaces — a stage ID not in any registered list is a contract violation.
 

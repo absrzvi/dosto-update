@@ -65,7 +65,7 @@ The full stage list is in [subagent-report.md](subagent-report.md) → "Commissi
 | Response | What the subagent does next |
 |---|---|
 | `wait` | Set `status = BLOCKED`, stop subagent, escalate to Stadler. Train waits for cable fix; nothing further happens autonomously. Human re-runs subagent after Stadler confirms fix. |
-| `partial` | **Recommended default.** Proceed with CCU-local fixes only — OBN patches, train_id template, vlan7. Stop *before* `await_obn_update_c`, `await_obn_update_f`, and `final_l2_health_check`. Re-run discovery on next cycle to see if missing devices have appeared. |
+| `partial` | **Recommended default.** Proceed with CCU-local fixes only — OBN patches, train_id template, vlan7. Stop *before* `await_obn_update_c` and `await_obn_update_f`. Re-run discovery on next cycle to see if missing devices have appeared. |
 | `continue_full` | Accept consequences. Subagent proceeds through every stage, including consist-wide pushes. Missing devices will be in unsynchronised state when they eventually come online. Used rarely — when human knows the missing device is being deliberately omitted, e.g. coach removed from service. |
 
 The `--json` output of `dosto-device-discovery` (per [.claude/skills/dosto-device-discovery/SKILL.md](../skills/dosto-device-discovery/SKILL.md)) already structures the data the orchestrator needs to format this prompt — list of missing devices with their expected switch+port and a Stadler-actionable instruction per device.
