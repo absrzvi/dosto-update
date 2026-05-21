@@ -17,43 +17,35 @@ This skill is the engineer's entry point for a multi-train commissioning day. It
 
 ## Inputs
 
-The skill accepts a flexible argument string. **Each Fzg/train must be paired with a CCU IP using the `@<ip>` suffix** — the skill reconciles supplied IPs against `fleet-status.md` and prompts the engineer when they disagree, fill a missing row, or backfill a missing IP. Common forms:
+The skill accepts a flexible argument string. CCU IPs can be supplied with `@<ip>` or omitted — when omitted, the skill auto-resolves from `fleet-status.md` with a one-line confirmation per train. Common forms:
 
 ```
-/dosto-orchestrate fzg=130@10.179.47.1,132@10.179.10.1,148@10.179.2.1
-/dosto-orchestrate fzg=130@10.179.47.1 fzg=132@10.179.10.1 fzg=148@10.179.2.1
-/dosto-orchestrate trains=4736-102@10.179.47.1,4736-104@10.179.10.1
-/dosto-orchestrate fzg=130@10.179.47.1,132@10.179.10.1 dry-run
-/dosto-orchestrate fzg=130@10.179.47.1,132@10.179.10.1 cycle=3
+/dosto-orchestrate fzg=139,147,148,19,21                                # auto-resolve IPs from fleet-status
+/dosto-orchestrate fzg=130@10.179.47.1,132@10.179.10.1,148@10.179.2.1   # explicit IPs (typo-catch mode)
+/dosto-orchestrate fzg=139,147@10.179.12.1                              # mixed: 139 auto-resolved, 147 explicit
+/dosto-orchestrate trains=4736-102,4736-104                             # train numbers, IPs auto-resolved
+/dosto-orchestrate fzg=130,132 dry-run
+/dosto-orchestrate fzg=130,132 cycle=3
 ```
 
 Recognised tokens:
 
 | Token | Meaning |
 |---|---|
-| `fzg=NN@<ip>` or `fzg=NN@<ip>,NN@<ip>,...` | Fzg ID + CCU IP pairs. The IP is required — see Step 2 for how it's reconciled with `fleet-status.md`. The skill still resolves `train_number` and `consist` from the file. |
-| `trains=NNN@<ip>,...` or `trains=4736-102@<ip>,...` | Alternative form: train numbers + CCU IPs. Skill computes Fzg via per-series formula. |
+| `fzg=NN[@<ip>]` or `fzg=NN[@<ip>],NN[@<ip>],...` | Fzg ID list. `@<ip>` is optional — when omitted the skill looks up the CCU IP from `fleet-status.md` and emits a one-line confirmation (Case E in Step 2). The skill resolves `train_number` and `consist` from the file. |
+| `trains=NNN[@<ip>],...` or `trains=4736-102[@<ip>],...` | Alternative form: train numbers + optional CCU IPs. Skill computes Fzg via per-series formula. |
 | `dry-run` | Pass `--dry-run` to all subagents. Read-only; every per-device skill runs in `--prepare` mode. |
 | `cycle=N` | Override default 5-min digest cadence. Range 1-30 (clamped). |
 | `no-confluence` | Skip Confluence pushes for this run (rare — local-only mode). |
 | `engineer=NAME` | Override the auto-detected engineer name. Used in fleet-status `Last touched` and Confluence banner. |
 
-**Why CCU IP is required, not auto-resolved:** trains move in and out of service, CCUs get re-imaged, and stale `fleet-status.md` rows have caused incorrect-target outages in past sessions. Forcing the engineer to type the IP they're commissioning against is a deliberate friction point — combined with the reconciliation step below, it catches typos *and* drift in one pass.
+**Why `@<ip>` remains supported as opt-in:** trains move in and out of service, CCUs get re-imaged, and stale `fleet-status.md` rows have caused incorrect-target outages in past sessions. The explicit-IP form is the typo-catch / drift-catch mode — use it when you've just re-imaged a CCU or when you're not confident fleet-status is current. The auto-resolve form (no `@<ip>`) is the common case for a returning engineer whose fleet-status rows are already filed correctly; Case E below adds a per-train confirmation that keeps the same safety property with far less typing.
 
 ## Procedure
 
 ### Step 1 — Parse and normalise the train list
 
-Tokenise the argument string. Each `fzg=` / `trains=` token MUST contain `@<ip>` — reject the whole input with a usage error if any pair is missing the `@<ip>` suffix:
-
-```
-ERROR: Fzg <NN> supplied without a CCU IP.
-       Use fzg=<NN>@<ip> (e.g. fzg=132@10.179.10.1).
-       The IP is required so the skill can reconcile it
-       with fleet-status.md before spawning anything.
-```
-
-Validate each IP is a syntactically valid IPv4 address (four dotted octets, each 0-255). Reject malformed IPs at parse time — don't wait until reconciliation.
+Tokenise the argument string. Each `fzg=` / `trains=` token MAY include `@<ip>` (explicit IP) or omit it (auto-resolve from fleet-status in Step 2 Case E). When `@<ip>` is present, validate it's a syntactically valid IPv4 address (four dotted octets, each 0-255). Reject malformed IPs at parse time — don't wait until reconciliation.
 
 For `trains=` form, compute the Fzg via per-series formula:
 
@@ -64,16 +56,17 @@ For `trains=` form, compute the Fzg via per-series formula:
 
 Reject any train number that doesn't match these series (4705 / 4706 are out of scope per CLAUDE.md).
 
-If the engineer supplied both `fzg=` and `trains=`, validate they agree on **both** Fzg and IP per train. Mismatches halt the skill — typo guard.
+If the engineer supplied both `fzg=` and `trains=`, validate they agree on **both** Fzg and (where both are explicit) IP per train. Mismatches halt the skill — typo guard.
 
-The result of this step is a list of `(fzg, supplied_ip)` tuples. Step 2 reconciles them with `fleet-status.md`.
+The result of this step is a list of `(fzg, supplied_ip_or_none)` tuples. Step 2 reconciles them with `fleet-status.md`.
 
 ### Step 2 — Reconcile each (Fzg, IP) against `fleet-status.md`
 
-This is the IP-reconciliation pass. For each `(fzg, supplied_ip)`:
+This is the IP-reconciliation pass. For each `(fzg, supplied_ip_or_none)`:
 
 1. Look up the Fzg row in `fleet-status.md`.
-2. Branch on what's there.
+2. **If `supplied_ip` is None** (engineer omitted `@<ip>`), branch to Case E first.
+3. Otherwise, branch on what's there (Cases A-D).
 
 **Case A — Row exists, CCU IP recorded, matches `supplied_ip`:** ✅ Proceed silently. Track `ip_source = "fleet-status (matched)"` for the plan summary.
 
@@ -120,6 +113,26 @@ Choice [c/a]:
 - `c` → append a new row to the appropriate series section (4736 or 4734), populate Fzg, Train#, CCU IP, set Status=`NOT STARTED`, all other columns = `⬜` or `❓` per the legend, set `Last touched = <today> <engineer initials>`. Mark `ip_source = "supplied (new row created)"`. Then proceed.
 - `a` → exit cleanly.
 
+**Case E — Engineer omitted `@<ip>`, auto-resolve from fleet-status:**
+
+| Fleet-status state | Action |
+|---|---|
+| Row exists with non-`❓` CCU IP | Use that IP. Emit one-line confirmation: `ℹ️  Fzg <NN>: using IP <fleet_ip> from fleet-status (no @<ip> supplied) — correct? [Y/n]` Default Y. Engineer types `n` → halt with usage error asking for explicit `@<ip>`. Mark `ip_source = "fleet-status (auto-resolved)"`. |
+| Row exists with `❓` CCU IP | Halt: `ERROR: Fzg <NN> has no IP recorded in fleet-status — supply explicitly with fzg=<NN>@<ip>`. Cannot proceed without an IP. |
+| No row exists for this Fzg | Halt: `ERROR: Fzg <NN> has no row in fleet-status — supply IP explicitly with fzg=<NN>@<ip> to create the row.` (Drops the engineer into Case D's `[c]/[a]` prompt on retry.) |
+
+When multiple trains need confirmation, batch the prompt into a single block:
+
+```
+ℹ️  Auto-resolved IPs from fleet-status:
+    Fzg 139 → 10.179.24.1   (last touched 2026-05-21 AR)
+    Fzg 147 → 10.179.12.1   (last touched 2026-05-21 AR)
+    Fzg 19  → 10.179.45.1   (last touched 2026-05-21 AR)
+Proceed with these? [Y/n]:
+```
+
+Default Y. Engineer types `n` → halt and ask for explicit `@<ip>` on next invocation.
+
 **After the reconcile loop**, build the full per-train spec:
 
 | Field | Source |
@@ -130,21 +143,78 @@ Choice [c/a]:
 | `consist` | infer from series — `nv6 → 6-car`, `nv4 → 4-car` |
 | `ip_source` | tracked per case above, used in Step 4 plan summary |
 
-**Status: DONE** trains still get the existing skip/include/abort prompt:
+**Status: DONE** trains get a context-aware prompt — read the train's `Next action` column from fleet-status first, then branch:
+
+**Sub-case DONE-1 — Customer-report-only remaining** (Next action contains `customer report only` / `report v1` / `generate_report`):
 
 ```
-⚠️ Fzg <NN> is already DONE in fleet-status.md.
-Including it would re-run all 19 stages on a healthy train.
+⚠️ Fzg <NN> is DONE but has Customer report: ⬜.
+   Next action per fleet-status: <next_action_text>
+   Including will run report generation only (skip stages 1-19, run stage 20).
 
 Options:
-  [s] Skip this train, proceed with the rest
-  [i] Include anyway (re-validates state, won't change anything if truly done)
-  [a] Abort the whole day's plan
+  [Y] Include for report generation
+  [s] Skip
+  [a] Abort
+
+Choice [Y/s/a]:
+```
+
+Default Y — generating a report on a healthy train is the obvious next step.
+
+**Sub-case DONE-2 — Other outstanding items** (Next action contains anything else — e.g. "wait for Stadler", "verify .231"):
+
+```
+⚠️ Fzg <NN> is DONE but has outstanding work: <next_action_text>
+   Including will re-validate state via the full 19-stage pipeline.
+
+Options:
+  [s] Skip this train
+  [i] Include anyway
+  [a] Abort
 
 Choice [s/i/a]:
 ```
 
+**Sub-case DONE-3 — No outstanding work** (Next action is empty or `—`):
+
+```
+⚠️ Fzg <NN> is already DONE with no outstanding work in fleet-status.
+   Including would re-run all 19 stages on a healthy train.
+
+Options:
+  [s] Skip (recommended)
+  [i] Include anyway
+  [a] Abort
+
+Choice [s/i/a]:
+```
+
+Default for DONE-2 and DONE-3 is `s`.
+
 **Surgical-edit discipline when writing to `fleet-status.md`** (per CLAUDE.md Principle 3): in Cases B/C/D the skill modifies **only** the cells it owns for this reconcile (`CCU IP`, and for Case D the entire new row). Engineer hand-edits in other columns (Customer report, Health check date, Stadler cabling notes) MUST survive untouched. Read the file, edit the targeted cells, write back — do not re-render the whole table.
+
+**IP conflict detection across the full file** (after the reconcile loop, before building the per-train spec): for each resolved `ccu_ip`, grep the full `fleet-status.md` for that IP literal. If it appears in any detail-block header (`**CCU:** \`<ip>\``) for a **different** Fzg than the one you've resolved it to, halt with:
+
+```
+⚠️ IP conflict — <ip> appears in multiple places:
+    Fzg <X> (current resolve, at-a-glance row)
+    Fzg <Y> detail block header
+Confirm which train owns this IP before proceeding.
+  [x] Use Fzg <X>, treat Fzg <Y> detail block as stale (engineer cleans up later)
+  [y] Use Fzg <Y> instead (re-prompt at Step 2 for Fzg <X>)
+  [a] Abort
+```
+
+This catches reconciliation drift between at-a-glance rows and detail blocks at reconcile time, not after a worker has been spawned. Confirmed engineer-visible during 2026-05-21 (`10.179.12.1` listed for both Fzg 140 detail block and Fzg 147 at-a-glance row).
+
+**Pending-section cleanup** (post-reconcile, after each train's IP is confirmed): check the `## Pending Fzg assignment` section. If the resolved `ccu_ip` appears in that table, remove that row from Pending (surgical: delete only that one row, preserve all others). Print a one-line note:
+
+```
+ℹ️  Removed 10.179.45.1 from Pending Fzg assignment section (now confirmed to Fzg 19).
+```
+
+This is housekeeping for the morning-brief discovery sweep — once an IP is confirmed assigned, the Pending row is stale.
 
 ### Step 3 — Build the train list array
 
@@ -250,6 +320,16 @@ Rules for the Pre-Flight:
 - Simplicity check is one paragraph: are you taking the simplest path, or deviating? If deviating, name the evidence forcing the deviation.
 - Per-train success criteria MUST be verifiable at end-of-day from skill outputs or fleet-status fields.
 
+**vlan7 IP auto-computation:** the per-train success criteria block MUST list the expected vlan7 IP, computed inline using the canonical formula (no manual math). For each train in the plan, compute:
+
+```python
+octet3 = 128 + (fzg // 2)
+octet4 = (128 if fzg % 2 == 1 else 0) + 2
+expected_vlan7 = f"172.19.{octet3}.{octet4}/17"
+```
+
+Render into the success-criteria block as `vlan7=<expected_vlan7>`. The engineer never has to verify the bit-packing math at pre-flight time. Exception: trains where fleet-status records a non-formula vlan7 (e.g. Fzg 19's `172.19.150.130/17` per Nomad-internal train_id 45 convention) — use the fleet-status value and append `(per detail block convention)`.
+
 Default is **Y** (proceed). Engineer types `n` to abort cleanly.
 
 ### Step 5.5 — Network pre-flight diagnostic (gated dispatch)
@@ -262,36 +342,77 @@ After Step 5's text pre-flight is approved, run a **real network-level diagnosti
 
 1. For each accepted train, in **parallel** (single Agent message with N tool-uses OR direct parallel SSH from the orchestrator session if no Agent fan-out is needed):
    - TCP/22 probe to the CCU (5s timeout) — `reachable: bool`
-   - If reachable: invoke `/dosto-device-discovery <ccu-ip> --json` — returns `{switches_seen, switches_expected, aps_seen, aps_expected, missing: [{kind, slot, expected_switch, expected_port}]}`
+   - If reachable: device count via fping + ARP OUI match (NOT DHCP):
+     ```bash
+     # Compute the management subnet from CCU IP (third octet)
+     fping -a -q -g 10.179.<X>.128 10.179.<X>.255 2>/dev/null   # refresh ARP
+     ip neigh show dev vlan100 | grep -c 'a0:59:3a'             # VDS switches (a0:59:3a OUI)
+     ip neigh show dev vlan100 | grep -c '00:14:5a'             # Westermo APs (00:14:5a OUI)
+     ```
+     DHCP-based discovery (`sudo dhcp-lease-list`) is **wrong** here — VDS switches have 2-minute DHCP lease lifetimes and any that haven't recently renewed are invisible, causing false-FAIL sw=0 readings (observed 2026-05-21). fping wakes the ARP cache, OUI grep counts what's physically reachable. Same ~15s wall-clock, no DHCP timing dependency.
+   - Expected counts: `nv6 → 18 sw + 24 AP`, `nv4 → 12 sw + 16 AP`. Compute from `consist` field.
    - Total wall-clock: ~30–60s for the whole batch regardless of N
-2. Classify each train:
-   - **PASS**: `reachable: true` AND `switches_seen == switches_expected` AND `aps_seen == aps_expected`
-   - **FAIL**: any of: CCU unreachable, missing switches, missing APs
-3. Emit a consolidated result block:
+2. Classify each train into a **three-tier** verdict:
+
+| Condition | Tier |
+|---|---|
+| `reachable: true` AND all devices present | ✅ PASS |
+| `reachable: true` AND 1-2 APs missing on an otherwise healthy train | 🟡 SOFT-WARN |
+| `reachable: true` AND ≥1 switch missing OR ≥3 APs missing (≥20% absent) | 🔴 HARD-FAIL |
+| CCU unreachable on TCP/22 | 🔴 HARD-FAIL |
+
+Soft-warn is for plausible-timing shortfalls (AP mid-reboot, DHCP not yet renewed). Hard-FAIL is for genuinely-can't-proceed states (cable fault, CCU offline, coach powered off). The distinction was added 2026-05-21 after Fzg 147 (1 AP missing) and Fzg 148 (1 sw + 2 APs absent) were over-classified as FAIL alongside genuine unreachables.
+
+3. **Pre-stage fix scripts on every reachable CCU** (Enhancement #8/#12 — workers cannot SCP). For each train classified PASS or SOFT-WARN, in parallel:
+   ```bash
+   scp -i <key> scripts/fix_obn.py scripts/fix_obn_bug8.py scripts/fix_obn_bug9_pysnmp_thread_safety.py developer@<ccu>:/tmp/
+   ssh -i <key> developer@<ccu> "sudo cp /tmp/fix_obn*.py /var/tmp/ && echo STAGED"
+   ```
+   The chroot bind-mounts `/var/tmp/`, NOT `/tmp/` — scripts at `/tmp/` are invisible inside the chroot, so the `cp` to `/var/tmp/` is mandatory. Both paths get the file (host-side via `/tmp`, chroot-side via `/var/tmp`).
+
+   Track `scripts_staged: true/false` per train. If staging fails (network blip, perms denial, etc.) for a train that was PASS, **demote to SOFT-WARN** with reason `script staging failed: <err>` — worker can still start but will need to escalate when it needs the scripts. If staging fails for a SOFT-WARN train, it stays SOFT-WARN with both reasons listed.
+
+   Wall-clock: ~5-10s per CCU in parallel.
+
+4. Emit a consolidated result block:
 
 ```
 ─── Network Pre-Flight Results ──────────────────
 Trains passing pre-flight (N):
-  ✅ Fzg 143 / 4736-115 / 10.179.18.1 — 18/18 sw + 24/24 AP visible
-  ✅ Fzg 144 / 4736-116 / 10.179.16.1 — 18/18 sw + 24/24 AP visible
+  ✅ Fzg 143 / 4736-115 / 10.179.18.1 — 18/18 sw + 24/24 AP visible — scripts staged
+  ✅ Fzg 144 / 4736-116 / 10.179.16.1 — 18/18 sw + 24/24 AP visible — scripts staged
 
-Trains failing pre-flight (M):
-  🔴 Fzg 132 / 4736-104 / 10.179.10.1 — 18/18 sw + 23/24 AP (D4 missing — Stadler cable)
+Soft-warn (will dispatch with note — Gate 5 may fire in Stage 2 if count doesn't improve):
+  🟡 Fzg 147 / 4736-119 / 10.179.12.1 — 18/18 sw + 23/24 AP — 1 AP plausibly mid-reboot — scripts staged
+  🟡 Fzg 148 / 4736-120 / 10.179.2.1 — 17/18 sw + 22/24 AP — E3 coach + 2 APs absent — scripts staged
+
+Hard-FAIL (will NOT dispatch):
+  🔴 Fzg 132 / 4736-104 / 10.179.10.1 — 18/18 sw + 21/24 AP — 3 APs missing (>20% threshold)
   🔴 Fzg 9   / 4734-109 / 10.179.38.1 — UNREACHABLE on TCP/22
+```
 
-Dispatch the 2 passing trains? Failing trains stay in fleet-status as-is.
+5. **Engineer prompt** — only when ≥1 hard-FAIL exists. Soft-warn alone dispatches automatically:
+
+| Pre-flight result | Behaviour |
+|---|---|
+| All trains PASS | Print block + "All N trains passed; dispatching." No prompt. Proceed to Step 6. |
+| Mix of PASS + SOFT-WARN, no HARD-FAIL | Print block + "All N trains passed pre-flight (M with soft warnings — see above). Dispatching." No prompt. Proceed to Step 6. |
+| ≥1 HARD-FAIL | Print block + the prompt below. |
+| All trains HARD-FAIL | Print block + "0 trains passed pre-flight; nothing to dispatch." Exit cleanly. |
+
+Prompt (only when ≥1 hard-FAIL):
+
+```
+Dispatch the N passing + M soft-warn trains?
+Hard-FAIL trains stay in fleet-status as-is.
 [Y/n/all]:
 ```
 
-- `Y` (default) → dispatch only the PASS subset; FAIL trains are skipped this run with a one-line note appended to their fleet-status `Next action` (`pre-flight YYYY-MM-DD: <reason>`)
+- `Y` (default) → dispatch PASS + SOFT-WARN subset; HARD-FAIL trains skipped this run with a one-line note appended to their fleet-status `Next action` (`pre-flight YYYY-MM-DD: <reason>`)
 - `n` → abort the whole orchestration; no workers spawn
-- `all` → dispatch all trains including failing ones; the failing workers will hit Gate 5 (device_count_mismatch) in their Stage 2 as normal — engineer accepts the duplicate prompting
+- `all` → dispatch all trains including HARD-FAIL; those workers will hit Gate 5 (device_count_mismatch) in Stage 2 as normal — engineer accepts the duplicate prompting
 
-**If all trains pass:** still surface the block (one line per train + "All N trains passed; dispatching."), no engineer prompt needed, proceed to Step 6.
-
-**If all trains fail:** surface the block, halt with "0 trains passed pre-flight; nothing to dispatch." No spawn, no fleet-status edit, exit cleanly.
-
-**Logging:** append a JSON line per pre-flight run to `.claude/logs/orchestrate-preflight.jsonl` — `{cycle_id, run_at, trains: [{fzg, ccu_ip, reachable, switches: "n/m", aps: "n/m", verdict: "PASS|FAIL", failure_reason}]}` — useful for diagnosing recurring failures (same train fails pre-flight 3 days in a row → escalate).
+**Logging:** append a JSON line per pre-flight run to `.claude/logs/orchestrate-preflight.jsonl` — `{cycle_id, run_at, trains: [{fzg, ccu_ip, reachable, switches: "n/m", aps: "n/m", verdict: "PASS|SOFT_WARN|HARD_FAIL", failure_reason, scripts_staged}]}` — useful for diagnosing recurring failures (same train fails pre-flight 3 days in a row → escalate).
 
 ### Step 6 — Spawn all train-worker subagents in parallel
 
@@ -300,7 +421,7 @@ Use the `Agent` tool with one tool-use block per train, **all in a single messag
 - `subagent_type: "dosto-train-worker"`
 - `name: "train-fzg-<NN>"` (so you can `SendMessage` it later)
 - `description: "DOSTO per-train worker for Fzg <NN>"`
-- `prompt`: **pointer-not-dump** per the F2 contract — pass Fzg ID, CCU IP, consist, engineer name, dry-run flag, ip_source, and nothing else. The worker reads `fleet-status.md`, `fleet-journal.md`, the four contracts, and the per-device skills itself. Do NOT inline per-train prose, recovery sequences, or historical context — those bloat the worker's context window for its entire lifetime.
+- `prompt`: **pointer-not-dump** per the F2 contract — pass Fzg ID, CCU IP, consist, engineer name, dry-run flag, ip_source, `scripts_staged: true/false` (from Step 5.5 staging result — tells the worker whether `/var/tmp/fix_obn*.py` is guaranteed present or whether it must request the orchestrator to SCP), and nothing else. The worker reads `fleet-status.md`, `fleet-journal.md`, the four contracts, and the per-device skills itself. Do NOT inline per-train prose, recovery sequences, or historical context — those bloat the worker's context window for its entire lifetime.
 
 After spawning, **start the cycle clock**. Cycle 1 runs for `cycle_minutes` (default 5).
 

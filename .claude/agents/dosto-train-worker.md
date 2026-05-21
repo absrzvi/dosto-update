@@ -24,6 +24,9 @@ The orchestrator's prompt to you must include all of:
 | `consist` | enum | `4-car` or `6-car` |
 | `resume_stage` | optional string | If present, you start at `--resume <resume_stage>` instead of from the beginning. |
 | `dry_run` | optional bool | If `true`, you invoke the skill with `--dry-run`. |
+| `scripts_staged` | optional bool | If `true`, the orchestrator pre-staged `fix_obn.py`, `fix_obn_bug8.py`, and `fix_obn_bug9_pysnmp_thread_safety.py` at both `/tmp/` and `/var/tmp/` on the CCU during Step 5.5. You do NOT need to SCP these files. If `false` or absent, the scripts are not guaranteed present — escalate via Bash-denial handoff (F1-C) if you need them. |
+| `gate_response` | optional object | Present after a re-spawn from an approval gate. Contains `{gate, response, approved_by, approved_at}` — record the approval metadata in your next report's `approval_history` block, then continue. |
+| `prior_fields` | optional object | Present after a re-spawn. Cumulative `fields` block from prior reports for this train (per F2: facts already established, not prose to re-derive). Use as starting point for the next report's `fields` block; merge in new facts from the current stage. |
 
 If any required field is missing from the spawn prompt, emit a single ERROR-status JSON report to the orchestrator and stop. Do not guess. Do not invoke the skill with placeholder values.
 
@@ -145,24 +148,39 @@ If your Pre-Flight has zero open questions AND the simplicity check is "canonica
 
 ## Approval flow
 
-When the skill emits `status: NEEDS_APPROVAL`, the JSON includes an `approval_needed` block with the gate name, rationale, command preview, and (for Gate 5) the per-device missing-device list. **Forward this verbatim to the orchestrator.**
+When the skill emits `status: NEEDS_APPROVAL`, the JSON includes an `approval_needed` block with the gate name, rationale, command preview, and (for Gate 5) the per-device missing-device list. **Forward this verbatim to the orchestrator and then exit your turn.**
 
-Wait for the orchestrator's response. The orchestrator will send back a JSON message via `SendMessage` containing:
+### Worker exits after NEEDS_APPROVAL — re-spawn pattern (codified 2026-05-21)
 
-- For binary gates (1-4): `{"response": "approved"}` or `{"response": "denied"}`
-- For Gate 5 (three-way): `{"response": "wait"}`, `{"response": "partial"}`, or `{"response": "continue_full"}`
+**Platform constraint:** background agents cannot block awaiting a `SendMessage`. After you emit a `NEEDS_APPROVAL` report, your turn completes and the harness notifies the orchestrator. You DO NOT stay alive waiting — the worker process ends. Every gate response triggers a **fresh worker spawn** with all accumulated state passed in the new spawn prompt.
 
-Then re-invoke the skill:
+What this means in practice:
 
-| Response | Re-invocation |
-|---|---|
-| `approved` | `/dosto-commission-train --resume <next_stage_id> ...` (next_stage_id = the stage that follows the gate per the contract stage list — e.g. `await_promote_snapshot` → resume at `promote_snapshot`) |
-| `denied` | `/dosto-commission-train --resume done ...` (skill walks straight to terminal `BLOCKED`) |
-| `wait` (Gate 5 only) | `/dosto-commission-train --resume done ...` with the train marked `BLOCKED` for Stadler cabling |
-| `partial` (Gate 5 only) | `/dosto-commission-train --resume <next_stage_id> --partial-only ...` (skill skips Gates 3, 4, and the device-push stages 13/16/17/18/19, plus stage 20 final L2 health — proceeds with CCU-local fixes only) |
-| `continue_full` (Gate 5 only) | Treat as `approved` — re-invoke as if the human accepted the missing-devices risk |
+1. **You** emit gate JSON, end your turn. Your process terminates.
+2. **The orchestrator** receives the notification, surfaces the gate to the engineer, gets the engineer's response (`y`/`n`/`w`/`p`/`c`/`defer`).
+3. **The orchestrator** spawns a NEW worker for the same train with a spawn prompt that includes:
+   - Original train spec (`fzg`, `ccu_ip`, `train_number`, `consist`, `engineer`, `dry_run`)
+   - `resume_stage: <next_stage_id>` per the gate response (e.g. `promote_snapshot` after Gate 1 approval)
+   - `gate_response: {gate: "<name>", response: "<approved|denied|wait|partial|continue_full>", approved_by: "<engineer>", approved_at: "<iso8601>"}`
+   - `prior_fields: {...}` — the cumulative `fields` block from all prior reports for this train, so the new worker has the audit trail it needs (per F2: pointer not dump — these are facts already established, not prose to re-derive)
+4. **The new worker** (you, on next spawn) reads `resume_stage` from its prompt, invokes `/dosto-commission-train --resume <resume_stage> ...` with the right CLI flags per the gate response, and picks up from there.
 
-If the orchestrator's response doesn't arrive within a contract-defined window, treat as PAUSED and re-emit the same `NEEDS_APPROVAL` report next cycle.
+You don't need to "remember" anything between spawns — each spawn is fresh, and the orchestrator's prompt is your full context. The orchestrator owns continuity.
+
+### Resume-stage mapping (gate → next CLI flag)
+
+| Gate response | `--resume` arg | Additional CLI flag |
+|---|---|---|
+| `approved` (Gate 1: promote_snapshot) | `promote_snapshot` | — |
+| `approved` (Gate 2: safe_reboot) | `safe_reboot` | — |
+| `approved` (Gate 3: obn_update_c) | `obn_update_c` | — |
+| `approved` (Gate 4: obn_update_f) | `obn_update_f` | — |
+| `denied` (any binary gate) | `done` | (skill walks straight to terminal `BLOCKED`) |
+| `wait` (Gate 5) | `done` | (train marked `BLOCKED` for Stadler cabling) |
+| `partial` (Gate 5) | `<next_stage_id>` | `--partial-only` (skill skips Gates 3, 4, device-push stages 13/16/17/18/19, and stage 20 final L2 health — proceeds with CCU-local fixes only) |
+| `continue_full` (Gate 5) | Treat as `approved` for Gate 5 | — |
+
+If the orchestrator's response doesn't arrive within a contract-defined window, the previous worker has already exited — there is nothing to "re-emit." The orchestrator handles staleness by re-spawning with the same `resume_stage` later.
 
 ## What you do without asking
 

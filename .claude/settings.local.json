@@ -412,7 +412,28 @@
       "Bash(ping -n 3 10.179.17.1)",
       "Bash(grep -E \"^\\(fix_obn|fix_bug1_regex|fix_obn_bug8|fix_obn_bugs67\\)\\\\.py$\")",
       "Bash(scp -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bugs67.py C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug8.py C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_bug1_regex.py developer@10.179.17.1:/tmp/)",
-      "Bash(scp -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug9.py developer@10.179.17.1:/tmp/fix_obn_bug9.py)"
+      "Bash(scp -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug9.py developer@10.179.17.1:/tmp/fix_obn_bug9.py)",
+      "Bash(git merge *)",
+      "Bash(git stash *)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no scripts/fix_obn.py scripts/fix_obn_bug9.py developer@10.179.45.1:/tmp/)",
+      "Bash(python scripts/dosto_morning_brief.py --timeout 5)",
+      "Bash(echo \"reboot triggered \\(exit $?\\)\")",
+      "Skill(dosto-orchestrate)",
+      "Skill(dosto-orchestrate:*)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py\" \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug8.py\" \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug9_pysnmp_thread_safety.py\" developer@10.179.12.1:/tmp/)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py\" developer@10.179.24.1:/tmp/)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py\" developer@10.179.12.1:/tmp/)",
+      "Skill(dosto-auto-scan)",
+      "Skill(dosto-auto-scan:*)",
+      "Bash(ping -n 3 10.179.24.1)",
+      "Bash(ping -n 3 10.179.12.1)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug9.py\" developer@10.179.24.1:/tmp/)",
+      "Bash(findstr /i \"Control Sheet\")",
+      "Bash(python -c \"import openpyxl; wb = openpyxl.load_workbook\\(r'docs/ND-DEL-OBB-035-CFG-001-01 OBB Fleet Control Sheet 20260211.xlsx', data_only=True\\); [print\\('Sheet:', s\\) for s in wb.sheetnames]\")",
+      "Bash(move \"C:\\\\Users\\\\AbbasRizvi\\\\Documents\\\\dosto-troubleshooting\\\\enhancement-notes-dosto-orchestrate-2026-05-21.md\" \"C:\\\\Users\\\\AbbasRizvi\\\\Documents\\\\dosto-troubleshooting\\\\.archive\\\\enhancement-notes-dosto-orchestrate-2026-05-21-applied.md\")",
+      "PowerShell(New-Item -ItemType Directory -Path '.archive' -Force)",
+      "PowerShell(Move-Item -Path 'enhancement-notes-dosto-orchestrate-2026-05-21.md' -Destination '.archive/enhancement-notes-dosto-orchestrate-2026-05-21-applied.md' -Force)",
+      "Bash(git check-ignore *)"
     ]
   }
 }
