@@ -28,8 +28,8 @@ Subagents and orchestrator run as separate Claude sessions with their own contex
 {
   "schema_version": "1",
   "train": {
-    "fzg": 132,
     "train_number": "4736-104",
+    "fzg": 132,
     "ccu_ip": "10.179.10.1",
     "consist": "6-car"
   },
@@ -74,7 +74,7 @@ Background: on the 2026-05-11 first-run audit, a single worker turn reached ~166
 
 3. **No historical echo in any field.** Reports describe the *current* stage transition. Prior stages, prior verdicts, prior approvals are NOT restated in subsequent reports. `stage.id` tells the orchestrator where you are; that's enough context.
 
-4. **Spawn prompts are pointers, not dumps.** Orchestrators (or whatever spawns the worker) MUST pass: Fzg ID, CCU IP, consist, engineer name, dry-run flag, ip_source — and nothing else. The worker reads `fleet-status.md`, `fleet-journal.md`, and any per-train detail itself. Dumping per-train prose into the spawn prompt costs 2-3k+ tokens per worker, persists for the worker's lifetime, and is forbidden by this rule.
+4. **Spawn prompts are pointers, not dumps.** Orchestrators (or whatever spawns the worker) MUST pass: Train# (primary identifier), CCU IP, consist, engineer name, dry-run flag, ip_source — and nothing else. **Fzg is NOT passed in the spawn prompt** — the worker looks it up from the fleet-status row for the Train# (via `scripts/fleet_status_lookup.py`). If the row's Fzg cell is `❓` or the row is missing, the worker halts with `BLOCKED` + `escalation_reason: known_recipe_failed` and a `next_action` telling the engineer to populate the Fzg in fleet-status. Worker also reads `fleet-status.md`, `fleet-journal.md`, and any per-train detail itself. Dumping per-train prose into the spawn prompt costs 2-3k+ tokens per worker, persists for the worker's lifetime, and is forbidden by this rule.
 
 **The status-ping exception** (formalised here, governed in detail by `dosto-train-worker.md`): if the subagent receives a `SendMessage` whose entire body is the single word `status` (or `status?`, `where are you`), it replies with a one-line summary of `stage.id`, `current_step / total_steps`, and `status` — and ends its turn. It does NOT re-load any contracts, files, or skills, and does NOT emit a full JSON report.
 
@@ -84,8 +84,8 @@ Background: on the 2026-05-11 first-run audit, a single worker turn reached ~166
 
 | Key | Type | Required | Notes |
 |---|---|---|---|
-| `fzg` | integer | yes | Fzg ID from IP-Port-Allocation PDF header |
-| `train_number` | string | yes | e.g. `"4736-104"` or `"4734-120"` |
+| `train_number` | string | yes | **Primary identifier** — Nomad-internal name, e.g. `"4736-104"`, `"4734-120"`, `"4705-103"`, `"4706-101"`. This is what engineers type, what fleet-status rows are keyed by, and what spawn prompts carry. Subagent reads other fields by looking up this row in fleet-status. |
+| `fzg` | integer | yes | ÖBB customer-facing Fzg ID. **Derived** at worker startup by looking up the fleet-status row for `train_number` (via `scripts/fleet_status_lookup.py`). If the row's Fzg cell is `❓` or missing, the worker halts with `BLOCKED` rather than guessing from the per-series formula. Once resolved, the worker echoes it in every report so downstream consumers (vlan7 IP math, switch hostname rendering, log keying) don't need to re-look-it-up. |
 | `ccu_ip` | string | yes | e.g. `"10.179.10.1"` |
 | `consist` | string | yes | `"4-car"` or `"6-car"` |
 
@@ -186,7 +186,7 @@ Mirrors the columns of the `fleet-status.md` table. The orchestrator uses these 
 
 | Key | Type | Example | Maps to fleet-status column |
 |---|---|---|---|
-| `obn_patches` | string\|null | `"8/8 persisted (run4)"`, `"8/8 (not persisted)"`, `"5/8"`, `"0/8 (vanilla)"` | OBN patches |
+| `obn_patches` | string\|null | `"10/10 persisted (run4)"`, `"10/10 (not persisted)"`, `"7/10"`, `"0/10 (vanilla)"` | OBN patches |
 | `switches_v8` | string\|null | `"18/18"`, `"mixed v4/v8"`, `"❓"` | Switches v8 |
 | `aps` | string\|null | `"20/21"`, `"factory (16/16 to bypass)"` | APs |
 | `vlan7_ok` | string\|null | `"✅ 172.19.194.2"`, `"🔴 172.19.215.130 (encodes Fzg 175 — wrong, expected 172.19.193.2)"` | vlan7 ok |
@@ -292,7 +292,7 @@ Default is `[]` for any report that doesn't have new skill output this cycle (e.
 ```json
 {
   "schema_version": "1",
-  "train": {"fzg": 132, "train_number": "4736-104", "ccu_ip": "10.179.10.1", "consist": "6-car"},
+  "train": {"train_number": "4736-104", "fzg": 132, "ccu_ip": "10.179.10.1", "consist": "6-car"},
   "report_time": "2026-05-09T06:51:00Z",
   "elapsed_seconds": 60,
   "status": "DIAGNOSING",
@@ -323,7 +323,7 @@ Default is `[]` for any report that doesn't have new skill output this cycle (e.
 ```json
 {
   "schema_version": "1",
-  "train": {"fzg": 132, "train_number": "4736-104", "ccu_ip": "10.179.10.1", "consist": "6-car"},
+  "train": {"train_number": "4736-104", "fzg": 132, "ccu_ip": "10.179.10.1", "consist": "6-car"},
   "report_time": "2026-05-09T06:55:00Z",
   "elapsed_seconds": 360,
   "status": "NEEDS_APPROVAL",
@@ -359,7 +359,7 @@ Default is `[]` for any report that doesn't have new skill output this cycle (e.
 ```json
 {
   "schema_version": "1",
-  "train": {"fzg": 148, "train_number": "4736-120", "ccu_ip": "10.179.2.1", "consist": "6-car"},
+  "train": {"train_number": "4736-120", "fzg": 148, "ccu_ip": "10.179.2.1", "consist": "6-car"},
   "report_time": "2026-05-09T07:32:00Z",
   "elapsed_seconds": 1620,
   "status": "PUSHING_TO_DEVICES",
@@ -388,7 +388,7 @@ Default is `[]` for any report that doesn't have new skill output this cycle (e.
 ```json
 {
   "schema_version": "1",
-  "train": {"fzg": 132, "train_number": "4736-104", "ccu_ip": "10.179.10.1", "consist": "6-car"},
+  "train": {"train_number": "4736-104", "fzg": 132, "ccu_ip": "10.179.10.1", "consist": "6-car"},
   "report_time": "2026-05-09T07:06:00Z",
   "elapsed_seconds": 1080,
   "status": "DONE",

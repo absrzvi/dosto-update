@@ -1,13 +1,15 @@
 ---
 name: dosto-obn-patches
-description: Verify and apply the 8 known OBN bug fixes on a DOSTO CCU. Reads the running OBN code via SSH, greps for each bug's patch marker, reports what's patched / what's missing, and (in --apply mode) prints the exact recipe to scp the fix scripts and run them inside btrfs ro-toggle. In --persist mode detects whether the CCU has the canonical nd-systemupdate.sh or the fleet-wide .dont rename and prints the matching shell recipe (staging scripts in /var/tmp/, which is bind-mounted into the chroot — /tmp is NOT) to bake patches into a new snapshot. Use whenever you're about to run obn update on a CCU, after every CCU reboot (patches may have been wiped), or to fill in the OBN patches column of fleet-status.md. The skill never edits the CCU directly — the engineer runs the printed recipe.
+description: Verify and apply the 10 known OBN bug fixes on a DOSTO CCU. Reads the running OBN code via SSH, greps for each bug's patch marker, reports what's patched / what's missing, and (in --apply mode) prints the exact recipe to scp the fix scripts and run them inside btrfs ro-toggle. In --persist mode detects whether the CCU has the canonical nd-systemupdate.sh or the fleet-wide .dont rename and prints the matching shell recipe (staging scripts in /var/tmp/, which is bind-mounted into the chroot — /tmp is NOT) to bake patches into a new snapshot. Use whenever you're about to run obn update on a CCU, after every CCU reboot (patches may have been wiped), or to fill in the OBN patches column of fleet-status.md. The skill never edits the CCU directly — the engineer runs the printed recipe.
 ---
 
 # DOSTO OBN Patches — Verify and Apply
 
-The 8 known OBN bugs (documented in [troubleshooting-runbook.md](troubleshooting-runbook.md)) crash or silently corrupt `obn update f all` and `obn update c all`. Without these fixes, partial updates leave the consist in a mixed v3/v4/v8 state which causes RSTP topology storms.
+The 10 known OBN bugs (documented in [troubleshooting-runbook.md](troubleshooting-runbook.md)) crash, hang, or silently corrupt `obn update f all`, `obn update c all`, and `obn report`. Without these fixes, partial updates leave the consist in a mixed v3/v4/v8 state which causes RSTP topology storms — and `obn report` can spin at 100% CPU with 27GB+ RSS when any AP/switch is missing or has a duplicate position (Bug 10).
 
-**Always apply all 8 together.** Partial patches are worse than vanilla — applying only some leaves crash modes open, so an `obn update` run dies mid-way and writes the partial state to the consist.
+**Always apply all 10 together.** Partial patches are worse than vanilla — applying only some leaves crash/hang modes open, so an `obn update` or `obn report` run dies (or hangs forever) mid-way and writes partial state to the consist.
+
+**Hang/leak guarantee.** Bug 10 (BFS guard in `report_dosto_neu.py:number_coaches`) is the only patch that prevents the infinite-loop + unbounded RSS growth in `obn report` when a switch/AP is missing. Bug 9 (pysnmp dispatcher Lock) prevents the parallel-SNMP `IndexError` crash during multi-switch updates. Bugs 2/3/4/7/8 convert `None`/`KeyError` crashes into clean exits. With all 10 present, OBN exits cleanly (zero or non-zero, but bounded) on every known failure mode involving missing or unresponsive devices.
 
 ## When to use
 
@@ -47,8 +49,10 @@ Subagent emits this as one element of `skill_outputs[]`:
     "bug6_count": 0,
     "bug7_count": 0,
     "bug8_count": 0,
+    "bug9_count": 0,
+    "bug10_count": 0,
     "patches_applied_total": 0,
-    "patches_expected_total": 8,
+    "patches_expected_total": 10,
     "is_persisted": false,
     "train_id_template": "{%- set train_id = 132 -%}",
     "train_id_template_consistent": true,
@@ -63,9 +67,9 @@ Subagent emits this as one element of `skill_outputs[]`:
 
 `verdict` semantics:
 - `vanilla` — `patches_applied_total == 0`
-- `partial` — `0 < patches_applied_total < 8`
-- `all_patched` — `patches_applied_total == 8` AND `is_persisted == false`
-- `all_persisted` — `patches_applied_total == 8` AND `is_persisted == true` (btrfs subvol is a `release`-tier `runN`, not the temporary `run` snapshot)
+- `partial` — `0 < patches_applied_total < 10`
+- `all_patched` — `patches_applied_total == 10` AND `is_persisted == false`
+- `all_persisted` — `patches_applied_total == 10` AND `is_persisted == true` (btrfs subvol is a `release`-tier `runN`, not the temporary `run` snapshot)
 
 `is_persisted` is computed from the btrfs subvol path — `/.snapshots/release` or `/.snapshots/runN` (where N > 1) suggests persistence; bare `/.snapshots/run` or `/.snapshots/work` doesn't.
 
@@ -134,20 +138,22 @@ Invocation examples:
 - `/dosto-obn-patches 10.179.10.1 --persist --with-fzg-id 132` → OBN + template `train_id` fix folded into one chroot session
 - `/dosto-obn-patches 10.179.10.1 --persist --with-vlan7 132 --with-fzg-id 132` → all three folded — single-promote pattern (handoff lesson 1)
 
-## The 8 bugs and their grep markers
+## The 10 bugs and their grep markers
 
 The skill detects whether each bug is patched by grepping for a deterministic string the patch inserts into the file. These are the canonical markers:
 
-| # | File | Patch marker (presence = patched) | Source script |
-|---|---|---|---|
-| 1 | `/usr/share/obn/lib/device/vendor/vdsrail.py` | `default image is now` (in a regex line) | `scripts/fix_obn.py` (canonical) or `scripts/fix_bug1_regex.py` (variant) |
-| 2 | `/usr/share/obn/lib/device/vendor/vdsrail.py` | `if not result:` (None guard, appears in 2 polling loops) | `scripts/fix_obn.py` |
-| 3 | `/usr/share/obn/lib/device/snmpdevice.py` | `except KeyError:\n            return {}` | `scripts/fix_obn.py` |
-| 4 | `/usr/share/obn/lib/report/device.py` | `bool(self.firmware) and not self.firmware.endswith` | `scripts/fix_obn.py` |
-| 5 | `/usr/share/obn/cli/update.py` | `Bug 5 fix: pre-populate tftp_allowed ipset` | `scripts/fix_obn.py` |
-| 6 | `/usr/share/obn/lib/tree.py` | `neighbour not in this consist` | `scripts/fix_obn.py` (canonical) or `scripts/fix_obn_bugs67.py` (fallback) |
-| 7 | `/usr/share/obn/lib/device/vendor/vdsrail.py` | `if hostname is not None:` (followed by `self._snmp_set`) | `scripts/fix_obn.py` (canonical) or `scripts/fix_obn_bugs67.py` (fallback) |
-| 8 | `/usr/share/obn/lib/report/device.py` | `bool(self.config) and not self.config.endswith` | `scripts/fix_obn_bug8.py` |
+| # | File | Patch marker (presence = patched) | Source script | Failure mode without patch |
+|---|---|---|---|---|
+| 1 | `/usr/share/obn/lib/device/vendor/vdsrail.py` | `default image is now` (in a regex line) | `scripts/fix_obn.py` (canonical) or `scripts/fix_bug1_regex.py` (variant) | Mis-parsed fw version → bad comparisons |
+| 2 | `/usr/share/obn/lib/device/vendor/vdsrail.py` | `if not result:` (None guard, appears in 2 polling loops) | `scripts/fix_obn.py` | Crash on None SNMP poll |
+| 3 | `/usr/share/obn/lib/device/snmpdevice.py` | `except KeyError:\n            return {}` | `scripts/fix_obn.py` | Uncaught KeyError mid-walk |
+| 4 | `/usr/share/obn/lib/report/device.py` | `bool(self.firmware) and not self.firmware.endswith` | `scripts/fix_obn.py` | `.endswith()` on None crash |
+| 5 | `/usr/share/obn/cli/update.py` | `Bug 5 fix: pre-populate tftp_allowed ipset` | `scripts/fix_obn.py` | Silent partial AP fw batch failure |
+| 6 | `/usr/share/obn/lib/tree.py` | `neighbour not in this consist` | `scripts/fix_obn.py` (canonical) or `scripts/fix_obn_bugs67.py` (fallback) | Cross-consist neighbour leak |
+| 7 | `/usr/share/obn/lib/device/vendor/vdsrail.py` | `if hostname is not None:` (followed by `self._snmp_set`) | `scripts/fix_obn.py` (canonical) or `scripts/fix_obn_bugs67.py` (fallback) | SNMP-set hostname=None crash on reboot path |
+| 8 | `/usr/share/obn/lib/report/device.py` | `bool(self.config) and not self.config.endswith` | `scripts/fix_obn_bug8.py` | `.endswith()` on None config crash |
+| **9** | `/usr/share/obn/lib/device/snmpdevice.py` | `_SNMP_DISPATCH_LOCK` (module-level threading.Lock) | `scripts/fix_obn_bug9_pysnmp_thread_safety.py` | **Parallel `obn update c sw` crashes with `IndexError: pop from empty list`** (race on shared SnmpEngine dispatcher) — Fzg t16/t18 2026-05-20 |
+| **10** | `/usr/share/obn/lib/report/report_dosto_neu.py` | `NDP-PATCH-BUG10-BFS-GUARD` | `scripts/fix_obn_bug10_report_dosto_neu_bfs.py` | **`obn report` infinite loop @ 100% CPU + 27GB RSS leak** when an AP/switch is missing or has duplicate position — Fzg 130 2026-05-12, Fzg 8 2026-05-22 |
 
 ## Procedure
 
@@ -176,6 +182,10 @@ echo "=== Bug 7 (vdsrail reboot hostname) ==="
 sudo grep -c "if hostname is not None:" /usr/share/obn/lib/device/vendor/vdsrail.py
 echo "=== Bug 8 (device.py config None) ==="
 sudo grep -c "bool(self.config) and not self.config.endswith" /usr/share/obn/lib/report/device.py
+echo "=== Bug 9 (snmpdevice.py pysnmp thread-safety Lock) ==="
+sudo grep -c "_SNMP_DISPATCH_LOCK" /usr/share/obn/lib/device/snmpdevice.py
+echo "=== Bug 10 (report_dosto_neu.py BFS hang guard) ==="
+sudo grep -c "NDP-PATCH-BUG10-BFS-GUARD" /usr/share/obn/lib/report/report_dosto_neu.py
 echo "=== btrfs subvol (look for run<N> ===" 
 mount | grep " on / " | head -1
 echo "=== train_id template (should be hardcoded number, NOT 128+train_id) ==="
@@ -199,6 +209,8 @@ Interpret each `grep -c` count:
 - Bug 1: 1+ → patched, 0 → missing
 - Bug 2: 2+ → both polling loops patched, 1 → only one of two patched (bad, partial state), 0 → missing
 - Bugs 3–8: 1+ → patched, 0 → missing
+- Bug 9 (`_SNMP_DISPATCH_LOCK`): 2+ → patched (one at module-level def + one at the `with` site), 1 → partial, 0 → missing
+- Bug 10 (`NDP-PATCH-BUG10-BFS-GUARD`): 1+ → patched, 0 → missing
 
 Print a status table:
 
@@ -213,22 +225,24 @@ Bug | Status        | File
  6  | ✅ PATCHED     | tree.py (cross-consist guard)
  7  | ✅ PATCHED     | vdsrail.py (reboot hostname)
  8  | 🔴 MISSING     | device.py (config None guard)
+ 9  | 🔴 MISSING     | snmpdevice.py (pysnmp thread-safety Lock)
+ 10 | 🔴 MISSING     | report_dosto_neu.py (BFS hang guard)
 
-Verdict: 🔴 5/8 patched, 3 missing/partial — apply needed
+Verdict: 🔴 5/10 patched, 5 missing/partial — apply needed
 btrfs subvolume: <whatever the mount line shows>
 Uptime: <X days>  (recent reboot? then patches may have been wiped from the run<N> snapshot)
 ```
 
 **Verdicts:**
-- ✅ **8/8 patched** → done. Suggest `--persist` only if fleet-status doesn't yet say `persisted`. Otherwise exit clean.
-- 🟡 **8/8 in this snapshot but uptime is fresh** → looks good but verify by running an `obn` command first; some users have seen patches survive in `/usr/share/obn` but lose them on next reboot.
-- 🔴 **<8/8** → recommend `--apply`. Don't proceed past Step 3 of the train-login checklist until 8/8.
+- ✅ **10/10 patched** → done. Suggest `--persist` only if fleet-status doesn't yet say `persisted`. Otherwise exit clean.
+- 🟡 **10/10 in this snapshot but uptime is fresh** → looks good but verify by running an `obn` command first; some users have seen patches survive in `/usr/share/obn` but lose them on next reboot.
+- 🔴 **<10/10** → recommend `--apply`. Don't proceed past Step 3 of the train-login checklist until 10/10. **In particular, never run `obn report` with Bug 10 missing if any device may be offline** — it will hang at 100% CPU and leak RAM until OOM-killed.
 
 Update fleet-status `OBN patches` column accordingly:
-- 8/8 in btrfs `release` snapshot (default GRUB) → `persisted (run<N>)`
-- 8/8 in current state but not yet promoted via `nd-systemupdate.sh shell` → `8/8 (not persisted — will wipe on reboot)`
-- partial → `<N>/8`
-- 0/8 → `0/8 (vanilla)`
+- 10/10 in btrfs `release` snapshot (default GRUB) → `persisted (run<N>)`
+- 10/10 in current state but not yet promoted via `nd-systemupdate.sh shell` → `10/10 (not persisted — will wipe on reboot)`
+- partial → `<N>/10`
+- 0/10 → `0/10 (vanilla)`
 
 ### Cross-checks (always report alongside the bug table)
 
@@ -241,11 +255,11 @@ The `--check` SSH grabs `grep -h "^{%- set train_id" /etc/obn/template/nv6-*.cfg
 | Output | Meaning | Action |
 |---|---|---|
 | (one line, e.g. `{%- set train_id = 132 -%}`) | ✅ hardcoded Fzg, mar5-compliant | OK. Note the value reported. |
-| `{%- set train_id = 128 + train_id -%}` | 🔴 broken formula — same bug that caused Fzg 133 cascade | Fix during `--persist` chroot session. Replace with hardcoded Fzg from the IP-Port-Allocation PDF. |
+| `{%- set train_id = 128 + train_id -%}` | 🔴 broken formula — same bug that caused the 4736-105 (Fzg 133) cascade | Fix during `--persist` chroot session. Replace with hardcoded Fzg from the fleet-status row for the Train# (or, off-line, from the IP-Port-Allocation PDF). |
 | (multiple different lines) | 🔴 inconsistent templates — partial fix from a previous session | Fix all 18 to a single hardcoded Fzg. |
 | (empty) | 🟡 templates may be elsewhere or older format | Verify templates exist; check `nv4-*.cfg` instead. |
 
-Don't suggest auto-applying the fix — the engineer must confirm the right Fzg from the IP-Port-Allocation PDF before any sed replacement. The skill should *report* the finding and *recommend* the fix, not perform it.
+Don't suggest auto-applying the fix — the engineer must confirm the right Fzg from the fleet-status row for the Train# (or, off-line, the IP-Port-Allocation PDF) before any sed replacement. The skill should *report* the finding and *recommend* the fix, not perform it.
 
 #### B. vlan7 IP — decoding back to encoded Fzg
 
@@ -260,7 +274,7 @@ encoded_device = o4 & 0x7F
 
 Compare the encoded Fzg against:
 1. The `train_id` from the template (above) — usually they should match on DOSTO NEU consists, **but not always** (the auto-memory rule explicitly says they can be intentionally decoupled — e.g. box1-t11 / 10.179.11.x has `train_id 11` but cfg files say `131`). Don't flag a mismatch as wrong; flag it as **needs verification against the IP-Port-Allocation PDF**.
-2. The Fzg ID from the IP-Port-Allocation PDF (if the engineer has supplied it via `--fzg <NN>` or named the train).
+2. The Fzg ID from the fleet-status row (looked up by Train# via `scripts/fleet_status_lookup.py`) or, off-line, from the IP-Port-Allocation PDF.
 
 **Cases:**
 
@@ -268,7 +282,7 @@ Compare the encoded Fzg against:
 |---|---|---|
 | ✅ | ✅ | Everything aligned. ✅ all green. |
 | ✅ | ❌ | vlan7 is right; template needs hardcoding to PDF Fzg. Common on freshly-commissioned CCUs. |
-| ❌ | ✅ | **vlan7 is wrong** — template is right but the static vlan7 IP doesn't match the train. Stadler-side reachability broken. → `/dosto-vlan7-config <fzg>` to get fix recipe. |
+| ❌ | ✅ | **vlan7 is wrong** — template is right but the static vlan7 IP doesn't match the train. Stadler-side reachability broken. → `/dosto-vlan7-config <train#>` to get fix recipe. |
 | ❌ | ❌ | Both wrong — full reset needed. Fix template first, vlan7 second, in same chroot session. |
 
 Validated example (2026-05-09, real train):
@@ -351,10 +365,12 @@ scp -i "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh" \
     "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py" \
     "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bugs67.py" \
     "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug8.py" \
+    "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug9_pysnmp_thread_safety.py" \
+    "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug10_report_dosto_neu_bfs.py" \
     "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_bug1_regex.py" \
     developer@<ccu-ip>:/tmp/
 ssh -i "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh" developer@<ccu-ip> \
-    'sudo mv /tmp/fix_obn.py /tmp/fix_obn_bugs67.py /tmp/fix_obn_bug8.py /tmp/fix_bug1_regex.py /var/tmp/ && sudo chmod +x /var/tmp/fix_*.py'
+    'sudo mv /tmp/fix_obn.py /tmp/fix_obn_bugs67.py /tmp/fix_obn_bug8.py /tmp/fix_obn_bug9_pysnmp_thread_safety.py /tmp/fix_obn_bug10_report_dosto_neu_bfs.py /tmp/fix_bug1_regex.py /var/tmp/ && sudo chmod +x /var/tmp/fix_*.py'
 
 # === STEP 2: SSH to the CCU and run them under btrfs ro-toggle ===
 ssh -i "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh" developer@<ccu-ip>
@@ -376,10 +392,16 @@ sudo python3 /var/tmp/fix_bug1_regex.py
 # Always run Bug 8 (not in fix_obn.py):
 sudo python3 /var/tmp/fix_obn_bug8.py
 
+# Bug 9 (pysnmp dispatcher thread-safety — prevents parallel-SNMP IndexError crash):
+sudo python3 /var/tmp/fix_obn_bug9_pysnmp_thread_safety.py
+
+# Bug 10 (report_dosto_neu BFS hang guard — prevents obn report infinite-loop + RSS leak):
+sudo python3 /var/tmp/fix_obn_bug10_report_dosto_neu_bfs.py
+
 # Re-lock root
 sudo btrfs property set / ro true
 
-# === STEP 3: Re-run the skill in --check mode to verify 8/8 ===
+# === STEP 3: Re-run the skill in --check mode to verify 10/10 ===
 exit
 ```
 
@@ -416,6 +438,8 @@ sudo python3 /var/tmp/fix_obn.py
 sudo python3 /var/tmp/fix_obn_bugs67.py     # only if fix_obn.py couldn't apply Bug 6/7
 sudo python3 /var/tmp/fix_bug1_regex.py     # only if fix_obn.py couldn't apply Bug 1
 sudo python3 /var/tmp/fix_obn_bug8.py
+sudo python3 /var/tmp/fix_obn_bug9_pysnmp_thread_safety.py
+sudo python3 /var/tmp/fix_obn_bug10_report_dosto_neu_bfs.py
 
 # 3.5. (ONLY if pre-recipe showed nd_systemupdate_dont_renamed == false —
 #       i.e. <NDSU> was the canonical /usr/sbin/nd-systemupdate.sh)
@@ -424,7 +448,7 @@ sudo python3 /var/tmp/fix_obn_bug8.py
 #      patches on the next 0-4am cycle:
 sudo mv /usr/sbin/nd-systemupdate.sh /usr/sbin/nd-systemupdate.sh.dont
 
-# 4. Verify all 8 markers inside the chroot:
+# 4. Verify all 10 markers inside the chroot:
 sudo grep -c "default image is now"     /usr/share/obn/lib/device/vendor/vdsrail.py
 sudo grep -c "if not result:"           /usr/share/obn/lib/device/vendor/vdsrail.py
 sudo grep -c "except KeyError:"         /usr/share/obn/lib/device/snmpdevice.py
@@ -433,7 +457,9 @@ sudo grep -c "Bug 5 fix:"               /usr/share/obn/cli/update.py
 sudo grep -c "neighbour not in this"    /usr/share/obn/lib/tree.py
 sudo grep -c "if hostname is not None:" /usr/share/obn/lib/device/vendor/vdsrail.py
 sudo grep -c "bool(self.config)"        /usr/share/obn/lib/report/device.py
-# Expected: 1, 2, 1, 1, 1, 1, 1, 1
+sudo grep -c "_SNMP_DISPATCH_LOCK"      /usr/share/obn/lib/device/snmpdevice.py
+sudo grep -c "NDP-PATCH-BUG10-BFS-GUARD" /usr/share/obn/lib/report/report_dosto_neu.py
+# Expected: 1, 2, 1, 1, 1, 1, 1, 1, 2, 1
 
 # 5. Exit the chroot — promotes work → release → new run<N>, sets default GRUB entry
 exit
@@ -481,6 +507,8 @@ sudo python3 /var/tmp/fix_obn.py
 sudo python3 /var/tmp/fix_obn_bugs67.py     # only if fix_obn.py couldn't apply Bug 6/7
 sudo python3 /var/tmp/fix_bug1_regex.py     # only if fix_obn.py couldn't apply Bug 1
 sudo python3 /var/tmp/fix_obn_bug8.py
+sudo python3 /var/tmp/fix_obn_bug9_pysnmp_thread_safety.py
+sudo python3 /var/tmp/fix_obn_bug10_report_dosto_neu_bfs.py
 
 # === STEP 3b: Fzg-ID template fix (folded from dosto-fzg-id-check) ===
 sudo python3 <<'PYEOF'
@@ -529,7 +557,7 @@ sudo mv /usr/sbin/nd-systemupdate.sh /usr/sbin/nd-systemupdate.sh.dont   # (only
 # === STEP 4: Verify all markers inside the chroot ===
 # This step reads the chroot's view of /, which IS the new snapshot in-flight.
 # All paths below are inside the chroot — the live (pre-reboot) filesystem is unchanged.
-# OBN patches (expected counts: 1, 2, 1, 1, 1, 1, 1, 1):
+# OBN patches (expected counts: 1, 2, 1, 1, 1, 1, 1, 1, 2, 1):
 sudo grep -c "default image is now"     /usr/share/obn/lib/device/vendor/vdsrail.py
 sudo grep -c "if not result:"           /usr/share/obn/lib/device/vendor/vdsrail.py
 sudo grep -c "except KeyError:"         /usr/share/obn/lib/device/snmpdevice.py
@@ -538,6 +566,8 @@ sudo grep -c "Bug 5 fix:"               /usr/share/obn/cli/update.py
 sudo grep -c "neighbour not in this"    /usr/share/obn/lib/tree.py
 sudo grep -c "if hostname is not None:" /usr/share/obn/lib/device/vendor/vdsrail.py
 sudo grep -c "bool(self.config)"        /usr/share/obn/lib/report/device.py
+sudo grep -c "_SNMP_DISPATCH_LOCK"      /usr/share/obn/lib/device/snmpdevice.py
+sudo grep -c "NDP-PATCH-BUG10-BFS-GUARD" /usr/share/obn/lib/report/report_dosto_neu.py
 # Fzg-ID template — exactly one unique line, value = <FZG>:
 # (Use glob — template filenames vary across CCUs: nv6-NNN-XX.cfg, nv6-XX-vY.cfg, etc. NEVER hardcode a sample filename.)
 echo "template count:"
@@ -637,7 +667,7 @@ After `--persist` + reboot, the engineer (or `dosto-commission-train` stage 10 `
 
 | Assertion | Probe | Pass criterion |
 |---|---|---|
-| **A. All 8 markers present** | The 8 grep counts from `--check` mode | All 8 expected (1, 2, 1, 1, 1, 1, 1, 1) |
+| **A. All 10 markers present** | The 10 grep counts from `--check` mode | All 10 expected (1, 2, 1, 1, 1, 1, 1, 1, 2, 1) |
 | **B. btrfs subvol promoted** | `sudo btrfs subvolume show /` (compare ID before vs after) | Active subvolume ID changed (folder names recycle — ID is authoritative, handoff lesson 6) |
 | **C. OBN runs cleanly** | `sudo obn discover` exit code | Exit 0, no Traceback / ERROR / Exception in `/var/log/obn/*.log` since reboot |
 | **D. Bug 5 ipset pre-population observable** | `sudo ipset list tftp_allowed \| grep "Number of entries"` after a non-empty discover | Non-zero entry count (post-discover OBN should pre-populate the ipset with target devices) |
@@ -657,7 +687,7 @@ After `--persist` + reboot, the engineer (or `dosto-commission-train` stage 10 `
   "schema_version": "1",
   "verdict": "all_match|markers_only|markers_and_promote_only|runtime_failure",
   "raw": {
-    "input_assertion_a": {"pass": true, "marker_counts": [1, 2, 1, 1, 1, 1, 1, 1]},
+    "input_assertion_a": {"pass": true, "marker_counts": [1, 2, 1, 1, 1, 1, 1, 1, 2, 1]},
     "promote_assertion_b": {"pass": true, "subvol_id_before": 314, "subvol_id_after": 320, "subvol_path": "/.snapshots/run2"},
     "runtime_assertion_c": {"pass": true, "obn_discover_exit": 0, "log_traceback_count": 0, "log_error_count": 0},
     "bug5_assertion_d": {"pass": true, "tftp_allowed_entry_count": 18}

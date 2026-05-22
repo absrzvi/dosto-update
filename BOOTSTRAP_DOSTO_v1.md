@@ -1,6 +1,6 @@
 # DOSTO Bootstrap — Single-paste scaffold for the dosto-troubleshooting workspace
 
-**Generated:** 2026-05-10 14:26 UTC (by `scripts/regenerate_bootstrap.py`)
+**Generated:** 2026-05-22 13:41 UTC (by `scripts/regenerate_bootstrap.py`)
 **Scope:** Self-contained bootstrap for the DOSTO commissioning workspace. Paste this entire file into a fresh Claude Code session in an empty directory; Claude reads each STEP and creates every file with the exact content given. No git, no MCP-clone, no remote dependency.
 
 This file is **regenerated** from the live project tree — don't hand-edit. To update it:
@@ -12,7 +12,7 @@ python scripts/regenerate_bootstrap.py --include-state   # scaffold + fleet-stat
 
 **What's in the bootstrap:**
 - 4 contract docs in `.claude/contracts/`
-- 2 agent definitions in `.claude/agents/` (dosto-orchestrator, dosto-train-worker)
+- 1 agent definition in `.claude/agents/` (dosto-train-worker only; dosto-orchestrator retired per F5)
 - 14 skills in `.claude/skills/` (the per-device, orchestration, and reporting skills)
 - `CLAUDE.md` (project constitution + orchestration architecture)
 - `.claude/settings.local.json` (permissions allowlist for common SSH patterns)
@@ -332,7 +332,339 @@ Create `.claude/settings.local.json`:
       "Bash(awk '/^description:/{flag=1; print; next} /^---$/&&flag{flag=0; print \"\\(end\\)\"; exit} flag{print}' .claude/skills/__TRACKED_VAR__/SKILL.md)",
       "mcp__b29e83b2-87a0-46a4-9f8c-e389232437ac__getVisibleJiraProjects",
       "mcp__b29e83b2-87a0-46a4-9f8c-e389232437ac__searchJiraIssuesUsingJql",
-      "Bash(python \"C:\\\\Users\\\\AbbasRizvi\\\\Documents\\\\dosto-troubleshooting\\\\scripts\\\\validate_dosto_workspace.py\")"
+      "Bash(python \"C:\\\\Users\\\\AbbasRizvi\\\\Documents\\\\dosto-troubleshooting\\\\scripts\\\\validate_dosto_workspace.py\")",
+      "PowerShell($n = git config user.name 2>$null; if \\(-not $n\\) { $n = $env:USERNAME }; $n)",
+      "Bash(echo \"---exit:$?\")",
+      "Bash(echo \"---fzg130-exit:$?\")",
+      "Bash(echo \"---fzg131-exit:$?\")",
+      "Bash(ping -n 2 10.179.47.1)",
+      "Bash(echo \"---fzg20-exit:$?\")",
+      "Bash(scp -i /c/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 /c/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py /c/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bugs67.py /c/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug8.py /c/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_bug1_regex.py developer@10.179.47.1:/var/tmp/)",
+      "Bash(scp -i /c/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 /c/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py /c/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bugs67.py /c/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug8.py /c/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_bug1_regex.py developer@10.179.47.1:/tmp/)",
+      "Bash(bash \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/skills/dosto-l2-health/scripts/01_ccu_probe.sh\" 10.179.4.1)",
+      "Bash(bash \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.tmp/l2-health-fzg1/04_error_scan.sh\" 10.179.4.1)",
+      "Bash(rm \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/agents/dosto-orchestrator.md\" && echo \"deleted\" && ls \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/agents/\")",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug8.py developer@10.179.11.1:/tmp/)",
+      "Bash(command -v pdftotext)",
+      "Bash(pdftotext -layout \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/train-ip-allocation-commission/4736-xxx/4736-103/4736-103_IP_Port_Allocationt.pdf\" -)",
+      "Bash(pdftotext -layout \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/train-ip-allocation-commission/4736-xxx/4736-103/4736-103_IP_Port_Allocationt.pdf\" /tmp/4736-103.txt)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug8.py developer@10.179.11.1:/var/tmp/)",
+      "Bash(git -C \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting\" status)",
+      "Bash(git -C \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting\" remote -v)",
+      "Bash(git init *)",
+      "Bash(git config *)",
+      "Bash(git remote *)",
+      "Bash(git add *)",
+      "Bash(git -c commit.gpgsign=false commit -m 'Initial snapshot of dosto-troubleshooting workspace *)",
+      "Bash(git branch *)",
+      "Bash(git push *)",
+      "Bash(git rm *)",
+      "Bash(git -c commit.gpgsign=false commit --amend --no-edit)",
+      "Bash(bash .claude/skills/dosto-l2-health/scripts/01_ccu_probe.sh 10.179.10.1)",
+      "Bash(bash .claude/skills/dosto-l2-health/scripts/04_error_scan.sh 10.179.10.1 > /tmp/l2_step4.out 2>&1)",
+      "Bash(bash .claude/skills/dosto-l2-health/scripts/04_error_scan.sh 10.179.47.1 > /tmp/l2_t47_step4.out 2>&1)",
+      "Bash(bash .claude/skills/dosto-l2-health/scripts/09_aggregate.sh 10.179.47.1 \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/findings/findings_10.179.47.1_$\\(date +%Y%m%d_%H%M%S\\).json\")",
+      "Bash(grep -n -B5 -A5 \"^reload\\\\b\\\\|system reload\\\\|configure.*reload\\\\| reload$\\\\|reload system\" .claude/switch_manual.txt)",
+      "Bash(git commit -m ' *)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=15 scripts/fix_obn.py scripts/fix_obn_bugs67.py scripts/fix_obn_bug8.py scripts/fix_bug1_regex.py developer@10.179.1.1:/tmp/)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=15 scripts/fix_obn.py scripts/fix_obn_bugs67.py scripts/fix_obn_bug8.py scripts/fix_bug1_regex.py developer@10.179.19.1:/tmp/)",
+      "Bash(git -C C:/Users/AbbasRizvi/Documents/dosto-troubleshooting status --short)",
+      "Bash(git -C C:/Users/AbbasRizvi/Documents/dosto-troubleshooting branch --show-current)",
+      "Bash(git checkout *)",
+      "Bash(git commit -m 'docs: spec + plan for dosto-sw-config-update-batch *)",
+      "Bash(mkdir -p \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/skills/dosto-sw-config-update-batch/scripts\")",
+      "Bash(bash -c 'source \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/skills/dosto-sw-config-update-batch/scripts/_lib.sh\" && type ccu_run switch_run emit_event rstp_root_mac')",
+      "Bash(SKIP_DELEGATED=1 ./.claude/skills/dosto-sw-config-update-batch/scripts/01_preflight.sh 10.179.5.1)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(SKIP_DELEGATED=1 bash \".claude/skills/dosto-sw-config-update-batch/scripts/01_preflight.sh\" 10.179.5.1)",
+      "Bash(sort -k5 -hr)",
+      "Bash(fdisk -l \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/base-efi-20230725.img\")",
+      "Bash(SKIP_DELEGATED=1 bash .claude/skills/dosto-sw-config-update-batch/scripts/01_preflight.sh 10.179.5.1)",
+      "Bash(bash .claude/skills/dosto-sw-config-update-batch/scripts/02_scope.sh 10.179.5.1)",
+      "Bash(bash .claude/skills/dosto-sw-config-update-batch/scripts/02_scope.sh 10.179.5.1 10.179.5.181,10.179.5.999)",
+      "Bash(git -C \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting\" add .claude/skills/dosto-sw-config-update-batch/scripts/02_scope.sh)",
+      "Bash(git -C C:/Users/AbbasRizvi/Documents/dosto-troubleshooting commit -m ' *)",
+      "Bash(bash --version)",
+      "Bash(chmod +x /c/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/skills/dosto-sw-config-update-batch/scripts/03_execute_auto.sh)",
+      "Bash(python3 -c 'import sys, json; print\\(\",\".join\\(json.load\\(sys.stdin\\)[0]\\)\\)')",
+      "Bash(/c/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/skills/dosto-sw-config-update-batch/scripts/03_execute_auto.sh)",
+      "Bash(bash \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/skills/dosto-sw-config-update-batch/scripts/04_execute_manual.sh\")",
+      "Bash(python3 -c \"import sys, json; print\\(','.join\\(json.load\\(sys.stdin\\)[0]\\)\\)\")",
+      "Bash(git -C \"C:\\\\Users\\\\AbbasRizvi\\\\Documents\\\\dosto-troubleshooting\" checkout feat/sw-config-update-batch)",
+      "Bash(git -C \"C:\\\\Users\\\\AbbasRizvi\\\\Documents\\\\dosto-troubleshooting\" log --oneline -5)",
+      "Bash(chmod +x \"C:\\\\Users\\\\AbbasRizvi\\\\Documents\\\\dosto-troubleshooting\\\\.claude\\\\skills\\\\dosto-sw-config-update-batch\\\\scripts\\\\06_postcheck.sh\")",
+      "Bash(bash ./.claude/skills/dosto-sw-config-update-batch/scripts/06_postcheck.sh 10.179.5.1 unknown 10.179.5.186,10.179.5.185,10.179.5.183,10.179.5.178,10.179.5.189,10.179.5.179,10.179.5.188,10.179.5.181,10.179.5.180,10.179.5.184,10.179.5.187,10.179.5.182 10.179.5.179)",
+      "Bash(scp -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug8.py C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bugs67.py C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_templates.sh developer@10.179.5.1:/tmp/)",
+      "Bash(echo \"ssh_exit=$?\")",
+      "Bash(echo \"exit=$?\")",
+      "Bash(ping -n 2 -w 2000 10.179.11.1)",
+      "Bash(pandoc --track-changes=all \"ND-DEL-OBB-035-SDD-002-01_v2.1.docx\" -o /tmp/sdd002_full.md)",
+      "mcp__Desktop_Commander__start_search",
+      "mcp__Desktop_Commander__edit_block",
+      "Bash(powershell -Command ' *)",
+      "PowerShell(cd \"C:\\\\Users\\\\AbbasRizvi\\\\Documents\\\\dosto-troubleshooting\"; powershell -ExecutionPolicy Bypass -File fix_cell.ps1)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py\" developer@10.179.8.1:/tmp/fix_obn.py)",
+      "Bash(Read \"C:\\\\Users\\\\ABBASR~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-AbbasRizvi-Documents-dosto-troubleshooting\\\\c109f28f-7f11-4730-9adf-52a7edcdcb15\\\\tasks\\\\b36y433l9.output\")",
+      "Skill(anthropic-skills:xlsx)",
+      "Skill(anthropic-skills:xlsx:*)",
+      "Bash(python3)",
+      "Bash(python scripts/recalc.py \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/trackers/cable-issues-tracker.xlsx\")",
+      "Skill(dosto-l2-health)",
+      "Skill(dosto-l2-health:*)",
+      "Bash(python3 gen_dashboard.py)",
+      "Bash(start dashboard.html)",
+      "Bash(xargs -P20 -I{} bash -c 'ping -n 1 -w 500 {} > /dev/null 2>&1 && echo \"{} UP\"')",
+      "Bash(sort -t. -k3 -n)",
+      "Bash(sudo ls /etc/obn/template/)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py\" developer@10.179.12.1:/tmp/fix_obn.py)",
+      "Bash(ssh -o ServerAliveInterval=30 -o ServerAliveCountMax=10 -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no developer@10.179.12.1 ' *)",
+      "Bash(ping -n 1 -w 2000 10.179.12.1)",
+      "Bash(xargs -P12 -I{} bash -c 'ping -n 1 -w 1000 {} > /dev/null 2>&1 && echo \"{} UP\" || echo \"{} DOWN\"')",
+      "Skill(dosto-vlan7-config)",
+      "Skill(dosto-vlan7-config:*)",
+      "Skill(dosto-commission-train)",
+      "Skill(dosto-commission-train:*)",
+      "Skill(dosto-device-discovery)",
+      "Skill(dosto-device-discovery:*)",
+      "Skill(dosto-state-inventory)",
+      "Skill(dosto-state-inventory:*)",
+      "Skill(dosto-obn-patches)",
+      "Skill(dosto-obn-patches:*)",
+      "Skill(dosto-fzg-id-check)",
+      "Skill(dosto-fzg-id-check:*)",
+      "Skill(dosto-tftp-helper-check)",
+      "Skill(dosto-tftp-helper-check:*)",
+      "Skill(dosto-ap-config-update)",
+      "Skill(dosto-ap-config-update:*)",
+      "Skill(dosto-ap-firmware-update)",
+      "Skill(dosto-ap-firmware-update:*)",
+      "Skill(dosto-sw-config-update)",
+      "Skill(dosto-sw-config-update:*)",
+      "Skill(dosto-sw-config-update-batch)",
+      "Skill(dosto-sw-config-update-batch:*)",
+      "Skill(dosto-sw-firmware-update)",
+      "Skill(dosto-sw-firmware-update:*)",
+      "Skill(dosto-l2-report)",
+      "Skill(dosto-l2-report:*)",
+      "Skill(dosto-confluence-sync)",
+      "Skill(dosto-confluence-sync:*)",
+      "Bash(echo \"reboot command sent \\(exit $?\\)\")",
+      "Bash(Start-Sleep -Seconds 70)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py\" developer@10.179.23.1:/tmp/fix_obn.py)",
+      "Bash(mkdir -p .claude/skills/dosto-morning-brief)",
+      "Bash(python scripts/dosto_morning_brief.py --timeout 3)",
+      "Bash(mkdir -p .claude/logs)",
+      "Bash(echo '{\"cycle_id\":\"2026-05-20T-orchestrate-143-144\",\"run_at\":\"2026-05-20\",\"trains\":[{\"fzg\":143,\"ccu_ip\":\"10.179.18.1\",\"reachable\":true,\"switches\":\"18/18\",\"aps\":\"24/24\",\"verdict\":\"PASS\"},{\"fzg\":144,\"ccu_ip\":\"10.179.16.1\",\"reachable\":true,\"switches\":\"18/18\",\"aps\":\"23/24\",\"verdict\":\"FAIL\",\"failure_reason\":\"1 AP missing\"}],\"dispatch_decision\":\"all\"}')",
+      "Bash(python scripts/dosto_morning_brief.py)",
+      "Bash(echo \"reboot-sent-exit=$?\")",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no scripts/fix_obn.py scripts/fix_obn_bugs67.py scripts/fix_obn_bug8.py scripts/fix_bug1_regex.py developer@10.179.18.1:/tmp/)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no scripts/fix_obn.py scripts/fix_obn_bugs67.py scripts/fix_obn_bug8.py scripts/fix_bug1_regex.py developer@10.179.16.1:/tmp/)",
+      "Bash(echo \"143-reboot-sent-exit=$?\")",
+      "Bash(echo \"144-reboot-sent-exit=$?\")",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no scripts/fix_obn.py developer@10.179.45.1:/var/tmp/fix_obn.py)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no scripts/fix_obn.py developer@10.179.45.1:/tmp/fix_obn.py)",
+      "Bash(timeout 5 bash -c \"</dev/tcp/10.179.45.1/22\")",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no scripts/fix_obn_bug9_pysnmp_thread_safety.py developer@10.179.18.1:/tmp/)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no scripts/fix_obn_bug9_pysnmp_thread_safety.py developer@10.179.16.1:/tmp/)",
+      "Bash(timeout 5 bash -c \"</dev/tcp/10.178.24.1/22\")",
+      "Bash(timeout 5 bash -c \"</dev/tcp/10.178.27.1/22\")",
+      "Bash(timeout 5 bash -c \"</dev/tcp/10.178.22.1/22\")",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no scripts/lldp_check_4734-120.py developer@10.179.49.1:/tmp/lldp_check_4734-120.py)",
+      "Bash(git fetch *)",
+      "Bash(ping -n 3 10.179.17.1)",
+      "Bash(grep -E \"^\\(fix_obn|fix_bug1_regex|fix_obn_bug8|fix_obn_bugs67\\)\\\\.py$\")",
+      "Bash(scp -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bugs67.py C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug8.py C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_bug1_regex.py developer@10.179.17.1:/tmp/)",
+      "Bash(scp -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug9.py developer@10.179.17.1:/tmp/fix_obn_bug9.py)",
+      "Bash(git merge *)",
+      "Bash(git stash *)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no scripts/fix_obn.py scripts/fix_obn_bug9.py developer@10.179.45.1:/tmp/)",
+      "Bash(python scripts/dosto_morning_brief.py --timeout 5)",
+      "Bash(echo \"reboot triggered \\(exit $?\\)\")",
+      "Skill(dosto-orchestrate)",
+      "Skill(dosto-orchestrate:*)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py\" \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug8.py\" \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug9_pysnmp_thread_safety.py\" developer@10.179.12.1:/tmp/)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py\" developer@10.179.24.1:/tmp/)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py\" developer@10.179.12.1:/tmp/)",
+      "Skill(dosto-auto-scan)",
+      "Skill(dosto-auto-scan:*)",
+      "Bash(ping -n 3 10.179.24.1)",
+      "Bash(ping -n 3 10.179.12.1)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug9.py\" developer@10.179.24.1:/tmp/)",
+      "Bash(findstr /i \"Control Sheet\")",
+      "Bash(python -c \"import openpyxl; wb = openpyxl.load_workbook\\(r'docs/ND-DEL-OBB-035-CFG-001-01 OBB Fleet Control Sheet 20260211.xlsx', data_only=True\\); [print\\('Sheet:', s\\) for s in wb.sheetnames]\")",
+      "Bash(move \"C:\\\\Users\\\\AbbasRizvi\\\\Documents\\\\dosto-troubleshooting\\\\enhancement-notes-dosto-orchestrate-2026-05-21.md\" \"C:\\\\Users\\\\AbbasRizvi\\\\Documents\\\\dosto-troubleshooting\\\\.archive\\\\enhancement-notes-dosto-orchestrate-2026-05-21-applied.md\")",
+      "PowerShell(New-Item -ItemType Directory -Path '.archive' -Force)",
+      "PowerShell(Move-Item -Path 'enhancement-notes-dosto-orchestrate-2026-05-21.md' -Destination '.archive/enhancement-notes-dosto-orchestrate-2026-05-21-applied.md' -Force)",
+      "Bash(git check-ignore *)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py\" \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug8.py\" \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug9_pysnmp_thread_safety.py\" developer@10.179.37.1:/tmp/)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py\" \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug8.py\" \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug9_pysnmp_thread_safety.py\" developer@10.179.44.1:/tmp/)",
+      "Bash(echo '{\"timestamp\":\"2026-05-21T08:13:00Z\",\"fzg\":14,\"train_number\":\"4734-114\",\"ccu_ip\":\"10.179.44.1\",\"gate\":\"promote_snapshot\",\"response\":\"approved\",\"approved_by\":\"Abbas Rizvi\",\"rationale\":\"8/8 OBN patches applied live; standard single-promote, no fold-ins\"}')",
+      "mcp__3fb9a852-6b22-49e0-8afa-68d4505061d9__updateConfluencePage",
+      "Bash(echo '{\"timestamp\":\"2026-05-21T08:18:30Z\",\"fzg\":14,\"train_number\":\"4734-114\",\"ccu_ip\":\"10.179.44.1\",\"gate\":\"safe_reboot\",\"response\":\"approved\",\"approved_by\":\"Abbas Rizvi\",\"rationale\":\"run2/id325 created \\(9 patches incl bug 9\\); reboot needed to activate\"}' >> .claude/logs/approval-gates.jsonl)",
+      "Bash(timeout 5 bash -c \"</dev/tcp/10.179.37.1/22\")",
+      "Bash(ping -n 5 10.179.12.1)",
+      "Bash(timeout 5 bash -c \"</dev/tcp/10.179.44.1/22\")",
+      "Bash(ping -n 2 10.179.121.1)",
+      "Bash(scp -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no /tmp/fzg143_push.sh developer@10.179.18.1:/tmp/)",
+      "Bash(sed -i 's|/var/tmp/ap_fw_push_fzg143.log|/tmp/ap_fw_push_fzg143.log|g' /tmp/fzg143_push.sh)",
+      "Bash(sed -i 's|/var/tmp/ap_fw_push_fzg144.log|/tmp/ap_fw_push_fzg144.log|g' /tmp/fzg144_push.sh)",
+      "Bash(echo \"rc=$?\")",
+      "Bash(scp -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no scripts/fix_obn.py scripts/fix_obn_bug8.py scripts/fix_obn_bug9_pysnmp_thread_safety.py developer@10.179.46.1:/tmp/)",
+      "Bash(scp -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no /tmp/fzg13_obn_update_c.sh developer@10.179.46.1:/tmp/)",
+      "Bash(printf '%s\\\\n' '{\"ts\":\"2026-05-21T10:25:00Z\",\"action\":\"push\",\"page_id\":\"5410684933\",\"prev_version\":11,\"new_version\":12,\"source\":\"manual:Abbas Rizvi\",\"versionMessage\":\"added Stadler status column, renamed Status -> Nomad status\"}' >> \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/logs/confluence-sync.jsonl\")",
+      "Bash(ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o ServerAliveInterval=30 -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" developer@10.179.24.1 \"ping -c 3 -W 2 10.179.24.222 2>&1; sudo python3 -c \\\\\"import json; ap=[x for x in json.load\\(open\\('/tmp/discovery.json'\\)\\) if x.get\\('ip'\\)=='10.179.24.222']; print\\('uptime:', ap[0]['uptime'] if ap else 'not found'\\)\\\\\" 2>&1\")",
+      "Bash(python)",
+      "Bash(command -v pdftotext pdftoppm)",
+      "Bash(python -c \"import pypdf, sys; r=pypdf.PdfReader\\('train-ip-allocation-commission/4734-xxx/4734-119/4734-119_IP-Port-Allocation.pdf'\\); [print\\(p.extract_text\\(\\)\\) for p in r.pages]\")",
+      "Bash(pdftotext -layout train-ip-allocation-commission/4734-xxx/4734-119/4734-119_IP-Port-Allocation.pdf -)",
+      "Skill(dosto-extract-train-data)",
+      "Skill(dosto-extract-train-data:*)",
+      "Bash(pdftotext -layout train-ip-allocation-commission/4734-xxx/4734-119/4734-119_IP-Port-Allocation.pdf /tmp/4734-119.txt)",
+      "Bash(pdftotext -layout train-ip-allocation-commission/4734-xxx/4734-120/4734-120_IP-Port-Allocation.pdf /tmp/4734-120.txt)",
+      "Bash(ssh -i ./openssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.122.1 ' *)",
+      "Bash(awk '/^Nahverkehr- 4 Teiler/{p++} {print p\"|\"$0}' /tmp/4734-119.txt)",
+      "Skill(anthropic-skills:docx)",
+      "Skill(anthropic-skills:docx:*)",
+      "Bash(awk '/^Nahverkehr- 4 Teiler/{p++} p==4' /tmp/4734-119.txt)",
+      "Bash(awk '/^Nahverkehr- 4 Teiler/{p++} p==3' /tmp/4734-119.txt)",
+      "Bash(node generate_rma_report.js)",
+      "Bash(echo '{\"ts\":\"2026-05-21T11:16:00Z\",\"action\":\"push\",\"page_id\":\"5410684933\",\"prev_version\":13,\"new_version\":14,\"source\":\"manual:Abbas Rizvi\",\"banner_version\":14}' >> \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/logs/confluence-sync.jsonl\")",
+      "Bash(python \"C:\\\\Users\\\\AbbasRizvi\\\\AppData\\\\Roaming\\\\Claude\\\\local-agent-mode-sessions\\\\skills-plugin\\\\c0278ed2-766b-4310-bedd-d0b72ff1b4d4\\\\6ce6c380-7083-49a2-bfd4-16ea9d63a896\\\\skills\\\\docx\\\\scripts\\\\office\\\\soffice.py\" --headless --convert-to pdf \"RMA_Report_VDS_Switch_SN240658_2026-05-21.docx\")",
+      "Bash(python \"C:\\\\Users\\\\AbbasRizvi\\\\AppData\\\\Roaming\\\\Claude\\\\local-agent-mode-sessions\\\\skills-plugin\\\\c0278ed2-766b-4310-bedd-d0b72ff1b4d4\\\\6ce6c380-7083-49a2-bfd4-16ea9d63a896\\\\skills\\\\docx\\\\scripts\\\\office\\\\soffice.py\" --headless --convert-to pdf --outdir \"C:\\\\Users\\\\AbbasRizvi\\\\Documents\\\\dosto-troubleshooting\\\\reports\\\\rma\" \"C:\\\\Users\\\\AbbasRizvi\\\\Documents\\\\dosto-troubleshooting\\\\reports\\\\rma\\\\RMA_Report_VDS_Switch_SN240658_2026-05-21.docx\")",
+      "Bash(pandoc \"C:\\\\Users\\\\AbbasRizvi\\\\Documents\\\\dosto-troubleshooting\\\\reports\\\\rma\\\\RMA_Report_VDS_Switch_SN240658_2026-05-21.docx\" -o -)",
+      "Bash(echo '{\"ts\":\"2026-05-21T11:39:29Z\",\"action\":\"push\",\"page_id\":\"5410684933\",\"prev_version\":15,\"new_version\":17,\"source\":\"manual:Abbas Rizvi\",\"body_size\":5200,\"banner_version\":16,\"version_message\":\"dosto-confluence-sync: v16 — Fzg 13 PAUSED \\(8/12 sw v8-013, 4 stuck v7m, train offline\\); Fzg 143+144 AP fw push progress update\"}' >> \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/logs/confluence-sync.jsonl\")",
+      "Bash(ping -n 1 -w 1500 10.179.12.1)",
+      "PowerShell($ips = 1..255 | ForEach-Object { \"10.179.$_.1\" }; $jobs = $ips | ForEach-Object { Start-ThreadJob -ScriptBlock { param\\($ip\\) if \\(Test-Connection -ComputerName $ip -Count 1 -Quiet\\) { $ip } } -ArgumentList $_ -ThrottleLimit 64 }; $jobs | Wait-Job | Receive-Job | Sort-Object {[int]\\($_ -split '\\\\.'\\)[2]})",
+      "Bash(echo '{\"ts\":\"2026-05-21T12:20:00Z\",\"cycle\":1,\"fzg\":146,\"gate\":\"device_count_mismatch\",\"decision\":\"partial\",\"approved_by\":\"Abbas Rizvi\",\"notes\":\"commission 17 sw + 22 APs visible; C1 + 2 APs logged as Stadler\"}')",
+      "Bash(echo '{\"ts\":\"2026-05-21T12:32:00Z\",\"cycle\":1,\"fzg\":130,\"gate\":\"device_count_mismatch\",\"decision\":\"partial\",\"approved_by\":\"Abbas Rizvi\",\"notes\":\"push AP fw to 21 healthy APs; skip .218 SNMP-silent; E3 sw + 2 APs logged as Stadler; NO obn update c all\"}' >> .claude/logs/approval-gates.jsonl *)",
+      "Bash(nohup ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no developer@10.179.46.1 \"sudo obn discover && sudo obn report && sudo obn update c all\")",
+      "Bash(echo \"Fzg 13 obn update c all started, PID $!\")",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no .tmp/fzg146_chroot.sh .tmp/_fzg146_train_id.py .tmp/_fzg146_vlan7.py developer@10.179.21.1:/tmp/)",
+      "Bash(tee /tmp/fzg146_chroot_run.log)",
+      "Bash(tee /tmp/fzg130_promote.log)",
+      "Bash(tee /tmp/fzg132_promote.log)",
+      "Bash(chmod +x .tmp/fzg132_ap_fw_serial.sh)",
+      "Bash(chmod +x .tmp/fzg130_ap_fw_serial.sh)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no .tmp/fzg132_ap_fw_serial.sh developer@10.179.10.1:/tmp/)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no .tmp/fzg130_ap_fw_serial.sh developer@10.179.47.1:/tmp/)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no .tmp/fzg146_luci_bypass.sh developer@10.179.21.1:/tmp/)",
+      "Bash(timeout 5 bash -c \"</dev/tcp/10.179.46.1/22\")",
+      "Bash(ping -n 2 -w 2000 10.179.46.1)",
+      "Bash(stat -c '%y %n' fleet-status.md 2>/dev/null || stat fleet-status.md *)",
+      "Bash(echo '{\"ts\":\"2026-05-21T13:32:00Z\",\"action\":\"push\",\"page_id\":\"5410684933\",\"prev_version\":19,\"new_version\":21,\"source\":\"manual:Abbas Rizvi\",\"versionMessage\":\"/dosto-orchestrate run on 130/132/146/13: Fzg 132 DONE w/ Stadler; Fzg 146 chroot promote + LuCI bypass DONE; Fzg 130 AP fw partial; Fzg 13 OFFLINE\"}' >> .claude/logs/confluence-sync.jsonl *)",
+      "WebFetch(domain:www.anthropic.com)",
+      "Bash(python gen_dashboard.py)",
+      "Bash(python scripts/dosto_morning_brief.py --no-discover)",
+      "Bash(python .tmp/test_fleet_lookup.py)",
+      "Bash(cp .tmp/fleet-status.md fleet-status.md)",
+      "Bash(python scripts/dosto_morning_brief.py --no-discover --timeout 3)",
+      "Bash(fping -a -q -g 10.178.0.1 10.178.255.1)",
+      "Bash(python scripts/dosto_auto_scan.py --status)",
+      "Bash(python scripts/fleet_status_lookup.py list)",
+      "Bash(python -c \"import sys, json; d=json.load\\(sys.stdin\\); print\\(f'{len\\(d\\)} rows across {len\\(set\\(r[\\\\\"series\\\\\"] for r in d\\)\\)} series; missing Fzg: {sum\\(1 for r in d if r[\\\\\"fzg\\\\\"] is None\\)}'\\)\")",
+      "Bash(python scripts/fleet_status_lookup.py ensure-fzg 4706-103 --non-interactive)",
+      "Bash(python scripts/fleet_status_lookup.py lookup 4736-120)",
+      "Bash(python scripts/fleet_status_lookup.py lookup 4736-104)",
+      "Bash(python scripts/fleet_status_lookup.py lookup 4736-119)",
+      "Bash(python scripts/fleet_status_lookup.py lookup 4706-103)",
+      "Bash(python scripts/fleet_status_lookup.py lookup 4736-115)",
+      "Bash(ip neigh *)",
+      "Bash(wait)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no scripts/fix_obn.py scripts/fix_obn_bug8.py scripts/fix_obn_bug9_pysnmp_thread_safety.py developer@10.179.18.1:/tmp/)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no scripts/fix_obn.py scripts/fix_obn_bug8.py scripts/fix_obn_bug9_pysnmp_thread_safety.py developer@10.179.17.1:/tmp/)",
+      "Bash(python scripts/fleet_status_lookup.py lookup 4736-115 --require-fzg)",
+      "Skill(update-config)",
+      "Skill(update-config:*)",
+      "Read(C:\\Users\\ABBASR~1\\AppData\\Local\\Temp\\claude\\**)",
+      "Bash(tail -20 .claude/logs/approval-gates.jsonl)",
+      "Bash(grep -c device_count_mismatch .claude/logs/approval-gates.jsonl)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py\" \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug8.py\" \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug9_pysnmp_thread_safety.py\" developer@10.179.54.1:/tmp/)",
+      "Bash(python scripts/fleet_status_lookup.py lookup 4734-190 --require-fzg)",
+      "Bash(sudo grep -c 'default image is now' /usr/share/obn/lib/device/vendor/vdsrail.py)",
+      "Bash(sudo grep -c 'if not result:' /usr/share/obn/lib/device/vendor/vdsrail.py)",
+      "Bash(sudo grep -c 'except KeyError:' /usr/share/obn/lib/device/snmpdevice.py)",
+      "Bash(sudo grep -c 'bool\\(self.firmware\\) and not self.firmware.endswith' /usr/share/obn/lib/report/device.py)",
+      "Bash(sudo grep -c 'Bug 5 fix: pre-populate tftp_allowed ipset' /usr/share/obn/cli/update.py)",
+      "Bash(python3 -c \"from datetime import datetime, timezone; print\\(datetime.now\\(timezone.utc\\).strftime\\('%Y-%m-%dT%H:%M:%SZ'\\)\\)\")",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(ping -n 3 10.179.10.1)",
+      "Bash(ping -n 3 10.179.28.1)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no scripts/fix_obn_bug9_pysnmp_thread_safety.py developer@10.179.17.1:/tmp/)",
+      "Bash(python3 -c \"import time; time.sleep\\(15\\); print\\('done'\\)\")",
+      "Bash(ping -n 3 10.179.4.1)",
+      "Bash(python3 -c \"import time; time.sleep\\(20\\); print\\('done'\\)\")",
+      "Bash(echo \"SSH_EXIT:$?\")",
+      "mcp__Desktop_Commander__get_config",
+      "Bash(python scripts/dosto_morning_brief.py --timeout 4)",
+      "Bash(echo \"EXIT_CODE: $?\")",
+      "Bash(nc -zw5 10.179.54.1 22)",
+      "Bash(echo \"nc exit: $?\")",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o BatchMode=yes \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py\" \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug8.py\" developer@10.179.54.1:/tmp/)",
+      "Bash(echo \"SCP_EXIT:$?\")",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o BatchMode=yes \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug9_pysnmp_thread_safety.py\" developer@10.179.54.1:/tmp/)",
+      "Bash(python .tmp/test_in_flight.py)",
+      "Bash(echo \"OBN_DISCOVER_EXIT:$?\")",
+      "Bash(echo \"OBN_REPORT_EXIT:$?\")",
+      "Bash(echo \"OBN_VAL_EXIT:$?\")",
+      "Bash(python scripts/dosto_morning_brief.py --fleet-status .tmp/fleet-status.test2.md --out .tmp/morning-brief.test.html --no-discover --timeout 2)",
+      "Bash(python scripts/dosto_morning_brief.py --fleet-status .tmp/fleet-status.test2.md --clean-stale-claim 4734-120)",
+      "Bash(python scripts/dosto_morning_brief.py --assign 10.179.41.1 4705-103 --fzg 231)",
+      "Bash(python scripts/fleet_status_lookup.py 4734-190)",
+      "Bash(PYTHONIOENCODING=utf-8 python -c ' *)",
+      "Bash(PYTHONIOENCODING=utf-8 python .tmp/write_claims_2026-05-22.py)",
+      "Bash(PYTHONIOENCODING=utf-8 python .tmp/revert_claims_2026-05-22.py)",
+      "Bash(PYTHONIOENCODING=utf-8 python .tmp/revert_4705_claims.py)",
+      "Bash(where pdftoppm *)",
+      "Bash(python -c \"import pypdf; print\\(pypdf.__version__\\)\")",
+      "Bash(pdftotext -layout \"train-ip-allocation-commission/4705-xxx/4705-101/4705-101_IP-Port-Allocation.pdf\" .tmp/4705-101.txt)",
+      "Bash(pdftotext -layout \"train-ip-allocation-commission/4705-xxx/4705-103/4705-103_IP-Port-Allocation.pdf\" .tmp/4705-103.txt)",
+      "Bash(scp -i ./openssh -o StrictHostKeyChecking=no scripts/fix_obn.py scripts/fix_obn_bug8.py scripts/fix_obn_bug9_pysnmp_thread_safety.py developer@10.179.39.1:/tmp/)",
+      "Bash(ssh -tt -i ./openssh -o StrictHostKeyChecking=no developer@10.179.2.1 \"sudo /usr/sbin/nd-systemupdate.sh.dont shell\")",
+      "mcp__3fb9a852-6b22-49e0-8afa-68d4505061d9__getAccessibleAtlassianResources",
+      "mcp__3fb9a852-6b22-49e0-8afa-68d4505061d9__searchConfluenceUsingCql",
+      "Bash(scp -i ./openssh -o StrictHostKeyChecking=no scripts/fix_obn.py scripts/fix_obn_bug8.py scripts/fix_obn_bug9_pysnmp_thread_safety.py developer@10.179.2.1:/tmp/)",
+      "Bash(PYTHONIOENCODING=utf-8 python .tmp/revert_4736_102.py)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\AbbasRizvi\\\\Documents\\\\dosto-troubleshooting\" -Recurse -File -ErrorAction SilentlyContinue)",
+      "Bash(Select-Object -First 50)",
+      "Bash(Format-Table FullName, Length, LastWriteTime)",
+      "Bash(xargs grep -l \"WAP.*swap\\\\|WE1\\\\|WE2\\\\|4734-119\\\\|4734-120\")",
+      "Bash(xargs grep \"project_be_wap_swap\")",
+      "Bash(python scripts/dosto_morning_brief.py --clean-stale-claim 4736-120)",
+      "Bash(python scripts/dosto_morning_brief.py --clean-stale-claim 4734-111)",
+      "Bash(python scripts/fleet_status_lookup.py lookup 4736-120 --require-fzg)",
+      "Bash(python scripts/fleet_status_lookup.py lookup 4734-111 --require-fzg)",
+      "Bash(python scripts/fleet_status_lookup.py lookup 4705-101 --require-fzg)",
+      "Bash(python scripts/fleet_status_lookup.py lookup 4734-113 --require-fzg)",
+      "Bash(python scripts/fleet_status_lookup.py lookup 4734-115 --require-fzg)",
+      "Bash(PYTHONIOENCODING=utf-8 python -c \"print\\(open\\('.tmp/confluence-body-v22.md','r',encoding='utf-8'\\).read\\(\\)\\)\")",
+      "Bash(PYTHONIOENCODING=utf-8 python -c \"import sys; print\\(open\\('.tmp/confluence-body-v22.md','r',encoding='utf-8'\\).read\\(\\)\\)\")",
+      "Bash(PYTHONIOENCODING=utf-8 python -c \"import os; print\\(os.path.getsize\\('.tmp/confluence-body-v22.md'\\)\\)\")",
+      "Bash(awk -F'|' '{print $2, $4}')",
+      "Bash(nc -z -w 5 10.179.46.1 22)",
+      "Bash(awk -F'|' '{print $2, $4, $5}')",
+      "Bash(python scripts/fleet_status_lookup.py lookup 4734-108 --require-fzg)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no scripts/fix_obn.py scripts/fix_obn_bug8.py scripts/fix_obn_bug9_pysnmp_thread_safety.py developer@10.179.29.1:/tmp/)",
+      "Bash(timeout 5 bash -c '</dev/tcp/10.179.46.1/22')",
+      "Bash(echo '{\"recorded_at\":\"2026-05-22T10:30:00Z\",\"train_number\":\"4734-108\",\"fzg\":8,\"gate\":\"device_count_mismatch\",\"decision\":\"partial\",\"approved_by\":\"Abbas Rizvi\",\"defer_count\":0,\"notes\":\"All CCU-local fixes OK; HALT before obn update c. Investigate 6 extra plain-config AP leases via switch SSH+LLDP before fleet push.\"}' >> .claude/logs/approval-gates.jsonl)",
+      "Bash(timeout 5 bash -c '</dev/tcp/10.179.61.1/22')",
+      "Bash(python scripts/fleet_status_lookup.py lookup 4734-190)",
+      "Bash(python scripts/fleet_status_lookup.py 4736-112 4736-114 4736-113 4734-104 4734-105 4734-106 4734-107 4736-118)",
+      "Bash(ping -n 2 -w 2000 10.179.21.1)",
+      "Bash(ping -n 2 -w 2000 10.179.2.1)",
+      "Bash(echo '{\"recorded_at\":\"2026-05-22T11:10:00Z\",\"train_number\":\"4734-108\",\"fzg\":8,\"event\":\"terminal_paused\",\"ccu_subvol\":\"/.snapshots/run2\",\"subvol_id\":327,\"obn_patches\":\"8/8 persisted\",\"vlan7\":\"172.19.132.2/17\",\"ndsu\":\".dont\",\"tftp_helper\":\"runtime-applied \\(will wipe next reboot\\)\",\"template_pkg\":\"nd-obn-template-dostoneu-nv4 0.0.19\",\"rendered_hostnames\":\"nv4-X-v8-008\",\"gate5_partial_remaining_scope\":\"investigate 6 extra plain-config AP leases via switch SSH+LLDP before push_switch_config\"}' >> .claude/logs/orchestrator.jsonl)",
+      "Bash(scp -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no scripts/fix_obn.py scripts/fix_obn_bug8.py scripts/fix_obn_bug9_pysnmp_thread_safety.py developer@10.179.39.1:/tmp/)",
+      "Bash(python scripts/fleet_status_lookup.py claim 4734-111 --stage initial_diagnostics --session 1212Z)",
+      "Bash(echo '{\"ts\":\"2026-05-22T11:14:10Z\",\"action\":\"push\",\"page_id\":\"5410684933\",\"prev_version\":23,\"new_version\":24,\"source\":\"orchestrator:Abbas Rizvi\",\"note\":\"4734-108 PAUSED post-CCU-local fixes\"}' >> .claude/logs/confluence-sync.jsonl)",
+      "Bash(timeout 5 bash -c '</dev/tcp/10.179.39.228/22')",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no .tmp/swssh_4734-108.py developer@10.179.29.1:/tmp/swssh.py)",
+      "Bash(python -c 'import socket,sys; s=socket.socket\\(\\); s.settimeout\\(5\\); *)",
+      "Bash(scp -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no scripts/fix_obn.py scripts/fix_obn_bug8.py scripts/fix_obn_bug9_pysnmp_thread_safety.py developer@10.179.61.1:/tmp/)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no scripts/fix_obn_bug10_report_dosto_neu_bfs.py developer@10.179.29.1:/tmp/)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no .tmp/push_aps_4734-108.sh developer@10.179.29.1:/tmp/push_aps.sh)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no .tmp/ap_ssh.py developer@10.179.29.1:/tmp/ap_ssh.py)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no .tmp/ap_cli.py developer@10.179.29.1:/tmp/ap_cli.py)",
+      "Bash(python -c \"import socket; s=socket.socket\\(\\); s.settimeout\\(5\\); s.connect\\(\\('10.179.61.1',22\\)\\)\")",
+      "Bash(python scripts/dosto_morning_brief.py --clean-stale-claim 4734-108)"
     ]
   }
 }
@@ -347,7 +679,18 @@ Create `.claude/contracts/subagent-report.md` with the following exact content:
 ~~~~markdown
 # Subagent Report Contract
 
-**Status:** v1, locked 2026-05-09. Changes require all subagents and the orchestrator to be updated together.
+**Status:** v2.1, updated 2026-05-21 (harness enhancements A1/B3/C1/C4/D1). v2.0 locked 2026-05-11 (F2). v1 reports remain accepted with a `schema_version_drift` flag. Changes require all subagents and the orchestrator to be updated together.
+
+**v2.1 changes from v2:**
+- `obn_discover_post_sw_config` stage `expected_duration_seconds` updated from 60s → 120s (spot-SSH adds ~60s — see stage-14 detail in `dosto-commission-train` SKILL.md).
+- Stage list entry updated: stage 14 now mandates direct SSH spot-check of 3 switches in addition to `obn discover`. Subagents emitting stage 14 without the spot-SSH (i.e. only running `obn discover`) are accepted but flagged as `schema_version_drift`.
+- No breaking schema changes — all v2 fields/types preserved.
+
+**v2 changes from v1:**
+- `skill_outputs` default semantics tightened: **current-stage only, no historical echo** (was: unspecified). See "Compactness rules" below.
+- New top-level "Compactness rules" section codifying token-discipline expectations for every report.
+- `fw_reach` field clarification per F9 (see field reference).
+- No breaking schema changes — all v1 fields/types preserved.
 
 The shape of the JSON object every per-train subagent emits to the orchestrator. This is the single source of truth — both the orchestrator and the subagent prompts code-generate against it.
 
@@ -364,8 +707,8 @@ Subagents and orchestrator run as separate Claude sessions with their own contex
 {
   "schema_version": "1",
   "train": {
-    "fzg": 132,
     "train_number": "4736-104",
+    "fzg": 132,
     "ccu_ip": "10.179.10.1",
     "consist": "6-car"
   },
@@ -392,14 +735,36 @@ Subagents and orchestrator run as separate Claude sessions with their own contex
 
 ### `schema_version` — string, required
 
-Always the literal `"1"` for this version of the contract. Bumped when fields are added or semantics change.
+The literal `"2"` for current reports. v1 still accepted (orchestrator flags as `schema_version_drift` in `issues[]` but does not reject). Bumped when fields are added or semantics change.
+
+## Compactness rules (v2, per audit finding F2)
+
+Background: on the 2026-05-11 first-run audit, a single worker turn reached ~166k tokens on a Stage 1 report — most of a Sonnet 4.6 context window for one stage. Root causes were dump-style spawn prompts, full skill-output echo, and re-reading contracts every turn. These rules constrain every subagent report so context grows linearly (not quadratically) with stages traversed.
+
+**The four hard rules every subagent MUST follow:**
+
+1. **`skill_outputs` is current-stage only.** Each report includes outputs for skills the subagent ran *in the current stage transition*. Skills from prior stages are NOT re-emitted. The orchestrator/parent maintains the audit trail externally; the subagent does not.
+
+2. **`skill_outputs[].raw` is bounded.** If a skill's `raw` block exceeds ~500 lines of JSON, the subagent truncates with a sentinel pointer:
+   ```json
+   {"skill": "dosto-l2-health", "mode": "check", "verdict": "...", "raw": {"_truncated": true, "logged_at": "findings_<ccu>_<ts>.json", "summary_fields": { ...key-fields only... }}}
+   ```
+   The full data lives on disk; the report carries a pointer.
+
+3. **No historical echo in any field.** Reports describe the *current* stage transition. Prior stages, prior verdicts, prior approvals are NOT restated in subsequent reports. `stage.id` tells the orchestrator where you are; that's enough context.
+
+4. **Spawn prompts are pointers, not dumps.** Orchestrators (or whatever spawns the worker) MUST pass: Train# (primary identifier), CCU IP, consist, engineer name, dry-run flag, ip_source — and nothing else. **Fzg is NOT passed in the spawn prompt** — the worker looks it up from the fleet-status row for the Train# (via `scripts/fleet_status_lookup.py`). If the row's Fzg cell is `❓` or the row is missing, the worker halts with `BLOCKED` + `escalation_reason: known_recipe_failed` and a `next_action` telling the engineer to populate the Fzg in fleet-status. Worker also reads `fleet-status.md`, `fleet-journal.md`, and any per-train detail itself. Dumping per-train prose into the spawn prompt costs 2-3k+ tokens per worker, persists for the worker's lifetime, and is forbidden by this rule.
+
+**The status-ping exception** (formalised here, governed in detail by `dosto-train-worker.md`): if the subagent receives a `SendMessage` whose entire body is the single word `status` (or `status?`, `where are you`), it replies with a one-line summary of `stage.id`, `current_step / total_steps`, and `status` — and ends its turn. It does NOT re-load any contracts, files, or skills, and does NOT emit a full JSON report.
+
+**Enforcement.** These rules are not statistical guidelines; they are contract terms. Violations show up as report-size bloat or as suspiciously-large `skill_outputs` arrays — the orchestrator can detect both. Repeat violations should be filed as a subagent-prompt regression and fixed in the next agent definition update.
 
 ### `train` — object, required
 
 | Key | Type | Required | Notes |
 |---|---|---|---|
-| `fzg` | integer | yes | Fzg ID from IP-Port-Allocation PDF header |
-| `train_number` | string | yes | e.g. `"4736-104"` or `"4734-120"` |
+| `train_number` | string | yes | **Primary identifier** — Nomad-internal name, e.g. `"4736-104"`, `"4734-120"`, `"4705-103"`, `"4706-101"`. This is what engineers type, what fleet-status rows are keyed by, and what spawn prompts carry. Subagent reads other fields by looking up this row in fleet-status. |
+| `fzg` | integer | yes | ÖBB customer-facing Fzg ID. **Derived** at worker startup by looking up the fleet-status row for `train_number` (via `scripts/fleet_status_lookup.py`). If the row's Fzg cell is `❓` or missing, the worker halts with `BLOCKED` rather than guessing from the per-series formula. Once resolved, the worker echoes it in every report so downstream consumers (vlan7 IP math, switch hostname rendering, log keying) don't need to re-look-it-up. |
 | `ccu_ip` | string | yes | e.g. `"10.179.10.1"` |
 | `consist` | string | yes | `"4-car"` or `"6-car"` |
 
@@ -466,8 +831,9 @@ These are the stages a per-train commissioning subagent moves through. Listed in
 
 | `stage.id` | `status` during this stage | Expected duration | Notes |
 |---|---|---|---|
-| `initial_diagnostics` | `DIAGNOSING` | 60s | All `--check` skills + cross-checks (includes `dosto-device-discovery` and `dosto-state-inventory` as first sub-steps) |
+| `initial_diagnostics` | `DIAGNOSING` | 60s | All `--check` skills + cross-checks (includes `dosto-device-discovery` and `dosto-state-inventory` as first sub-steps); also globs `/etc/obn/template/{nv6,nv4}-*-v8-*.cfg` to gate the next stage |
 | `await_device_count_mismatch` | `NEEDS_APPROVAL` | — | Gate 5: `device_count_mismatch` — three-way response. Only fires if `dosto-device-discovery` found missing devices. |
+| `ensure_v8_templates` | `APPLYING_FIXES` | 360s | **Auto, no gate** (see autonomy-boundary v2). Conditional — only fires if `initial_diagnostics` found no v8 template files. Runs `sudo /usr/sbin/nd-systemupdate.sh.dont up` (~300s), then `sudo systemctl reboot`, then probes TCP/22 every 10s up to 300s, then re-verifies v8 templates present. On any failure: `status = ISSUE`, halt this worker only. |
 | `apply_obn_patches` | `APPLYING_FIXES` | 120s | Run `fix_obn.py` etc. under `btrfs ro=false` |
 | `apply_train_id_fix` | `APPLYING_FIXES` | 10s | Sed loop on `nv6-*.cfg` if `128 + train_id` formula present, or wrong hardcoded value |
 | `apply_vlan7_fix` | `APPLYING_FIXES` | 10s | Edit `address1=` in nmconnection if mismatched |
@@ -479,19 +845,19 @@ These are the stages a per-train commissioning subagent moves through. Listed in
 | `obn_discover_initial` | `DIAGNOSING` | 60s | `obn discover` to map switch + AP states |
 | `await_obn_update_c` | `NEEDS_APPROVAL` | — | Gate 3: `obn_update_c` (covers both SW-config and the final AP-config) |
 | `push_switch_config` | `PUSHING_TO_DEVICES` | 420s × N switches | Stadler IPs land here — highest-value device-push, fires first under power-off risk. `current_step` / `total_steps` track per-switch |
-| `obn_discover_post_sw_config` | `DIAGNOSING` | 60s | Verify all switches now on target config (renamed from `obn_discover_post_config` to disambiguate from the AP-config phase that comes later) |
+| `obn_discover_post_sw_config` | `DIAGNOSING` | 120s | Verify all switches on target config via `obn discover` AND direct SSH spot-check of 3 switches (leaf, root, random intermediate) — independent evaluator check so OBN's own report doesn't self-validate. 120s budget covers 45s discover + 3×25s SSH probes. |
 | `await_obn_update_f` | `NEEDS_APPROVAL` | — | Gate 4: `obn_update_f` (covers both SW-firmware and AP-firmware) |
 | `push_switch_firmware` | `PUSHING_TO_DEVICES` | 600s × N switches | SW firmware push, leaf-first OBNTree order. NEW stage — split from old `push_ap_firmware` two-phase form. |
 | `ap_factory_bypass` | `APPLYING_FIXES` | 180s × N factory APs | LuCI HTTP push for any AP in `RT610LV-…-v1-FD`. Conditional — only fires if stage 11 found factory APs. **MOVED** from after `obn_discover_initial` to before AP firmware push (where it's actually needed: makes factory APs OBN-reachable so the firmware step can hit them). No separate gate — fix-up step. |
 | `push_ap_firmware` | `PUSHING_TO_DEVICES` | 540s × N APs | AP firmware push, single-AP serial. After both `ap_factory_bypass` (so factory APs are now reachable) and `push_switch_firmware` (so the switch fabric is on target firmware first). `current_step` / `total_steps` track per-AP. |
 | `push_ap_config` | `PUSHING_TO_DEVICES` | 180s × N APs | NEW stage — final AP config refresh on Nomad-form APs. Catches APs whose Nomad config went stale post-firmware-push or that need the latest Nomad cert/network bindings. Conditional — only fires if any Nomad AP shows config drift after `push_ap_firmware`. |
-| `final_l2_health_check` | `DIAGNOSING` | 600s | Run `/dosto-l2-health` |
-| `generate_report` | `APPLYING_FIXES` | 60s | Run `/dosto-l2-report` |
 | `done` | `DONE` | — | Terminal stage — emit final report and exit |
+
+> **Removed 2026-05-21:** the prior terminal stages `final_l2_health_check` (Run `/dosto-l2-health`) and `generate_report` (Run `/dosto-l2-report`) are no longer part of the pipeline. `/dosto-l2-health` and `/dosto-l2-report` remain available as optional engineer-invoked skills but don't gate train completion. Subagents emitting either stage ID are accepted but flagged as `schema_version_drift`.
 
 Other subagent types (cabling investigator, etc.) define their own stage IDs without touching this contract. The orchestrator validates against the union of registered stage namespaces — a stage ID not in any registered list is a contract violation.
 
-**Stage list version:** v2 (2026-05-09). v1 had `obn_discover_post_config` (renamed) and a single combined `push_ap_firmware` stage (split into `push_switch_firmware` + `push_ap_firmware`); v1 also placed `ap_factory_bypass` before `await_obn_update_c` (now after `push_switch_firmware`), and lacked the `push_ap_config` final refresh stage. Migration: subagents emitting the v1 stage IDs are still accepted by the orchestrator, but flagged as `schema_version_drift` in `issues[]` until they update.
+**Stage list version:** v3 (2026-05-20) — added `ensure_v8_templates` conditional stage between `await_device_count_mismatch` and `apply_obn_patches`; reboot inside this stage is auto (no Gate-2 prompt) per autonomy-boundary v2. v2 (2026-05-09). v1 had `obn_discover_post_config` (renamed) and a single combined `push_ap_firmware` stage (split into `push_switch_firmware` + `push_ap_firmware`); v1 also placed `ap_factory_bypass` before `await_obn_update_c` (now after `push_switch_firmware`), and lacked the `push_ap_config` final refresh stage. Migration: subagents emitting the v1 stage IDs are still accepted by the orchestrator, but flagged as `schema_version_drift` in `issues[]` until they update.
 
 ### `fields` — object, required
 
@@ -499,12 +865,12 @@ Mirrors the columns of the `fleet-status.md` table. The orchestrator uses these 
 
 | Key | Type | Example | Maps to fleet-status column |
 |---|---|---|---|
-| `obn_patches` | string\|null | `"8/8 persisted (run4)"`, `"8/8 (not persisted)"`, `"5/8"`, `"0/8 (vanilla)"` | OBN patches |
+| `obn_patches` | string\|null | `"10/10 persisted (run4)"`, `"10/10 (not persisted)"`, `"7/10"`, `"0/10 (vanilla)"` | OBN patches |
 | `switches_v8` | string\|null | `"18/18"`, `"mixed v4/v8"`, `"❓"` | Switches v8 |
 | `aps` | string\|null | `"20/21"`, `"factory (16/16 to bypass)"` | APs |
 | `vlan7_ok` | string\|null | `"✅ 172.19.194.2"`, `"🔴 172.19.215.130 (encodes Fzg 175 — wrong, expected 172.19.193.2)"` | vlan7 ok |
 | `stadler_cabling` | string\|null | `"✅ clean"`, `"🔴 C3 swap + D1↔E2 missing"` | Stadler cabling |
-| `fw_reach` | string\|null | `"✅ 80 open"`, `"🔴 not commissioned"` | FW reach |
+| `fw_reach` | string\|null | `"✅ commissioned"`, `"🟡 uncommissioned (Stadler-side pending)"`, `"🔴 path broken"`, `"❓ icmp not tested"` | FW reach. **Per F9: ICMP is the deciding test, not TCP.** Value MUST derive from `fw_commission_state` in the `dosto-vlan7-config` / `dosto-l2-health` skill output, not from TCP probe alone. |
 | `health_check_done` | string\|null | `"2026-05-09"`, `null` | Health check |
 | `customer_report` | string\|null | `"v1.0"`, `null` | Customer report |
 
@@ -554,10 +920,25 @@ Non-null only when `status == "NEEDS_APPROVAL"`.
 | `severity` | enum | `info`, `warning`, `error` |
 | `category` | enum | `obn_patches`, `train_id`, `vlan7`, `cabling`, `firmware`, `ssh`, `unknown` |
 | `description` | string | What was found. |
+| `escalation_reason` | enum | **Required when the parent report's `status` is `BLOCKED` or `ERROR` AND this issue's `severity` is `error`.** Otherwise omit. Forces the subagent to classify the failure into one of five buckets before escalating, instead of narrating. The orchestrator routes on this field — engineers see the bucket first, the description second. See enum table below. |
+
+**`escalation_reason` enum** (closed set; any other value is a contract violation):
+
+| Value | Meaning | Subagent action |
+|---|---|---|
+| `known_recipe_failed` | A documented recipe ran cleanly (skill exited 0) but the underlying state didn't end up where it should — e.g. `fix_obn.py` reported success but `--check` re-run still shows missing markers, or `obn update c` returned 0 with "Successful" but the switch is still on the old config. Distinct from `skill_returned_error` (skill itself blew up). | Emit, halt. Do not retry. Engineer triages CCU/device state. |
+| `skill_returned_error` | The skill itself blew up — non-zero exit, stack trace, malformed output, or an error class not enumerated in the skill's SKILL.md. The recipe never got to run cleanly. Distinct from `known_recipe_failed` (skill ran clean but reality didn't match). When ambiguous, prefer this bucket — it routes the engineer to fix the tooling rather than the train. | Emit, halt. Engineer triages skill code. |
+| `novel_pattern` | A `--check` skill detected a state not covered by any recipe — e.g. an AP firmware version not in the catalogued set, an unknown `train_id` template form, an unrecognised SSH banner. **Subagents must NOT attempt to diagnose novel patterns** (see `dosto-train-worker.md` "What you NEVER do"). | Emit, halt. Engineer triages. |
+| `stadler_blocking` | Cabling fault or missing device — Gate 5 (`device_count_mismatch`) territory, or any condition that requires Stadler-side action before Nomad can proceed. | Emit, halt. Orchestrator surfaces in next digest. |
+| `train_offline` | SSH/cellular timeout exceeded the 30-min `PAUSED` budget per the train-worker retry policy. | Emit, halt. Orchestrator re-spawns next cycle. |
+
+The point of the enum is not differentiated handling — most values terminate the subagent. The point is **forcing classification before escalation**. A subagent cannot emit `BLOCKED`/`ERROR` with a freeform error description; it must pick a bucket. This keeps subagent context thin (no troubleshooting reasoning in-line) and gives engineers a one-glance triage signal.
 
 ### `skill_outputs` — array of objects, required (may be empty)
 
-Captures what each skill said this cycle, with raw data the orchestrator can use for cross-validation.
+Captures what each skill said **during the current stage transition**, with raw data the orchestrator can use for cross-validation. **Current-stage only — see "Compactness rules" above.** Prior stages' skill outputs are not re-emitted; the orchestrator/parent maintains the audit trail externally.
+
+Default is `[]` for any report that doesn't have new skill output this cycle (e.g. status pings, gate-approval awaits, simple stage transitions that didn't run a skill).
 
 ```json
 {
@@ -590,7 +971,7 @@ Captures what each skill said this cycle, with raw data the orchestrator can use
 ```json
 {
   "schema_version": "1",
-  "train": {"fzg": 132, "train_number": "4736-104", "ccu_ip": "10.179.10.1", "consist": "6-car"},
+  "train": {"train_number": "4736-104", "fzg": 132, "ccu_ip": "10.179.10.1", "consist": "6-car"},
   "report_time": "2026-05-09T06:51:00Z",
   "elapsed_seconds": 60,
   "status": "DIAGNOSING",
@@ -621,7 +1002,7 @@ Captures what each skill said this cycle, with raw data the orchestrator can use
 ```json
 {
   "schema_version": "1",
-  "train": {"fzg": 132, "train_number": "4736-104", "ccu_ip": "10.179.10.1", "consist": "6-car"},
+  "train": {"train_number": "4736-104", "fzg": 132, "ccu_ip": "10.179.10.1", "consist": "6-car"},
   "report_time": "2026-05-09T06:55:00Z",
   "elapsed_seconds": 360,
   "status": "NEEDS_APPROVAL",
@@ -657,7 +1038,7 @@ Captures what each skill said this cycle, with raw data the orchestrator can use
 ```json
 {
   "schema_version": "1",
-  "train": {"fzg": 148, "train_number": "4736-120", "ccu_ip": "10.179.2.1", "consist": "6-car"},
+  "train": {"train_number": "4736-120", "fzg": 148, "ccu_ip": "10.179.2.1", "consist": "6-car"},
   "report_time": "2026-05-09T07:32:00Z",
   "elapsed_seconds": 1620,
   "status": "PUSHING_TO_DEVICES",
@@ -686,7 +1067,7 @@ Captures what each skill said this cycle, with raw data the orchestrator can use
 ```json
 {
   "schema_version": "1",
-  "train": {"fzg": 132, "train_number": "4736-104", "ccu_ip": "10.179.10.1", "consist": "6-car"},
+  "train": {"train_number": "4736-104", "fzg": 132, "ccu_ip": "10.179.10.1", "consist": "6-car"},
   "report_time": "2026-05-09T07:06:00Z",
   "elapsed_seconds": 1080,
   "status": "DONE",
@@ -731,7 +1112,7 @@ Create `.claude/contracts/autonomy-boundary.md` with the following exact content
 ~~~~markdown
 # Subagent Autonomy Boundary
 
-**Status:** v1, locked 2026-05-09 (Option A from build planning).
+**Status:** v2, 2026-05-20 (added `ensure_v8_templates` auto-reboot carve-out). v1 locked 2026-05-09.
 
 What a per-train subagent may do without asking, and what it must request human approval for. This is workflow-level policy — distinct from Claude Code's tool-permission prompts (which are configured separately via `.claude/settings.json`).
 
@@ -748,7 +1129,7 @@ What a per-train subagent may do without asking, and what it must request human 
 - `obn validate`, `obn discover` (these are read-mostly — `discover` writes `/tmp/discovery.prev.json` but doesn't change persistent state)
 - `nc -zv` TCP probes
 - `ping`
-- All `--check` modes of project skills (`dosto-obn-patches --check`, `dosto-vlan7-config <fzg>`)
+- All `--check` modes of project skills (`dosto-obn-patches --check`, `dosto-vlan7-config <train#>` — skill resolves Fzg from fleet-status row)
 - Read project files: PDFs in `docs/`, anything in `train-ip-allocation-commission/`, `fleet-status.md`
 
 ### Reversible writes (autonomous)
@@ -796,7 +1177,7 @@ The full stage list is in [subagent-report.md](subagent-report.md) → "Commissi
 | Response | What the subagent does next |
 |---|---|
 | `wait` | Set `status = BLOCKED`, stop subagent, escalate to Stadler. Train waits for cable fix; nothing further happens autonomously. Human re-runs subagent after Stadler confirms fix. |
-| `partial` | **Recommended default.** Proceed with CCU-local fixes only — OBN patches, train_id template, vlan7. Stop *before* `await_obn_update_c`, `await_obn_update_f`, and `final_l2_health_check`. Re-run discovery on next cycle to see if missing devices have appeared. |
+| `partial` | **Recommended default.** Proceed with CCU-local fixes only — OBN patches, train_id template, vlan7. Stop *before* `await_obn_update_c` and `await_obn_update_f`. Re-run discovery on next cycle to see if missing devices have appeared. |
 | `continue_full` | Accept consequences. Subagent proceeds through every stage, including consist-wide pushes. Missing devices will be in unsynchronised state when they eventually come online. Used rarely — when human knows the missing device is being deliberately omitted, e.g. coach removed from service. |
 
 The `--json` output of `dosto-device-discovery` (per [.claude/skills/dosto-device-discovery/SKILL.md](../skills/dosto-device-discovery/SKILL.md)) already structures the data the orchestrator needs to format this prompt — list of missing devices with their expected switch+port and a Stadler-actionable instruction per device.
@@ -807,6 +1188,17 @@ The `--json` output of `dosto-device-discovery` (per [.claude/skills/dosto-devic
 - Produced an actionable Stadler instruction for each missing device
 
 **What approval costs the human:** ~30 seconds reading the per-device Stadler-actionable instructions and choosing the default (`partial`) or one of the alternatives.
+
+### What about the `ensure_v8_templates` reboot?
+
+Per spec (2026-05-20): **not a gate, despite involving a reboot.** When `initial_diagnostics` finds no `nv6-*-v8-*.cfg` (or `nv4-*-v8-*.cfg`) files in `/etc/obn/template/`, the subagent autonomously runs `sudo /usr/sbin/nd-systemupdate.sh.dont up` (pulls v8 templates from Puppet via chroot), then `sudo systemctl reboot`, then probes TCP/22 every 10s for up to 300s, then re-verifies templates are present, then resumes at `apply_obn_patches`.
+
+**Why this reboot doesn't need Gate-2 treatment:**
+- Stage runs *before* `apply_obn_patches`, so runtime state worth preserving (TFTP CT helper, in-memory iptables, OBN patches in `/usr/share/obn/*.py`) hasn't been applied yet. Reboot wipes nothing valuable.
+- The Puppet `up` apply is idempotent and the v8 templates are baseline-configurable — if the apply or reboot fails, recovery is "engineer SSHes in, re-runs `up`", same as the regular Gate 2 failure mode.
+- Train-power-during-passenger-service consideration applies the same as Gate 2 — but the orchestrator can't disambiguate "engineer wants minimal interruptions" from "engineer doesn't want this specific reboot." Per the 2026-05-20 spec call, the carve-out is explicit: this reboot is auto, no prompt.
+
+**Failure handling:** if `nd-systemupdate.sh.dont up` exits non-zero, OR templates are still missing after reboot, OR SSH doesn't return within 300s, the subagent sets `status = ISSUE`, adds the failure mode to `issues[]`, and halts *that one worker*. Other workers in the cycle keep running. No gate prompt to the engineer — they pick the failed train back up manually.
 
 ### What about AP factory-config bypass?
 
@@ -852,7 +1244,7 @@ Per spec: **not a gate.** AP factory-config bypass via LuCI HTTP push happens au
 - Cannot be aborted cleanly mid-run; you finish or you brick
 
 **What the subagent has done before this gate:**
-- Verified 8/8 OBN patches present (otherwise the run will crash mid-way)
+- Verified 10/10 OBN patches present (otherwise the run will crash, or hang at 100% CPU / leak RAM, mid-way)
 - Verified `train_id` template is hardcoded to the right Fzg
 - Verified vlan7 IP is correct (otherwise post-push verification fails)
 
@@ -916,7 +1308,12 @@ Create `.claude/contracts/approval-gates.md` with the following exact content:
 ~~~~markdown
 # Approval Gate Protocol
 
-**Status:** v1, locked 2026-05-09.
+**Status:** v2.1, updated 2026-05-21 (B3: defer limit → auto-BLOCKED). v2 locked 2026-05-11 (F8-L1).
+
+**v2 changes from v1:**
+- New "Compact prompt template" (default format) — single screen, scannable in <5 seconds.
+- Old verbose multi-line "What the orchestrator shows the human" section retained as the **expanded form**, shown only when the engineer types `?` after a compact prompt.
+- No protocol/response-shape changes — v1 and v2 use identical SendMessage and approval semantics.
 
 How a subagent's approval request reaches the human and the answer gets back. This is the wiring; the policy of *what* needs approval is in [autonomy-boundary.md](autonomy-boundary.md).
 
@@ -953,11 +1350,31 @@ SUBAGENT                     ORCHESTRATOR                          HUMAN
 
 ## What the orchestrator shows the human
 
-When `status: NEEDS_APPROVAL`, orchestrator formats this:
+### Compact prompt template (default — v2)
+
+This is what the orchestrator emits by default. One header line, three meta cells, one rationale sentence, command preview as a one-liner, options line. Scannable in <5 seconds:
 
 ```
-─── APPROVAL NEEDED ──────────────────────────────
-Train:        Fzg 132 / 4736-104 (10.179.10.1)
+[Gate 1] promote_snapshot — 4736-104 (Fzg 132) — 8/8 OBN patches confirmed; persisting via chroot promote
+  destructive: ✅   reversible: ❌   command: sudo /usr/sbin/nd-systemupdate.sh shell + fix_obn.py + exit
+Options: y | n | defer | ?
+```
+
+Sizing rules (contract terms — orchestrator MUST enforce):
+- Header line ≤ 100 chars: `[Gate N] <gate-name> — <Train#> (Fzg <NN>) — <one-sentence rationale>`. **Train# leads** (Nomad-internal primary identifier). Fzg shown parenthetically as it remains the customer-facing ÖBB reference. Rationale truncates with `…` if over.
+- Meta cells line: literally `destructive: <✅|❌>   reversible: <✅|❌>   command: <one-line preview>`.
+  - Command preview ≤ 80 chars. Multi-step recipes summarise with `+` joiners. Full recipe lives behind `?` (expand).
+- Options line: exactly the response tokens (no prose), separated by `|`. Last option is always `?` (expand).
+
+Default response is **`n` (deny)** for binary gates; `partial` for the three-way Gate 5 (matches v1 semantics).
+
+### Expanded form (`?` triggers this from the compact prompt)
+
+If the engineer types `?` after a compact prompt, the orchestrator emits the v1 verbose form for that gate. The verbose form lets the engineer read full rationale + full command preview before deciding:
+
+```
+─── APPROVAL NEEDED (expanded) ──────────────────────
+Train:        4736-104 / Fzg 132 (10.179.10.1)
 Gate:         promote_snapshot
 Reversible:   ❌ No (changes default GRUB target)
 Destructive:  ✅ Yes
@@ -977,7 +1394,13 @@ Will execute:
 Approve? [y/N]:
 ```
 
-Default is **N** (denial) — pressing Enter alone doesn't promote.
+Engineer's response after `?` is interpreted with v1 semantics (same options, same defaults). The expansion is **per-prompt** — the next gate fires its own compact prompt again, NOT pre-expanded.
+
+### When to skip the compact form
+
+If `approval_needed.rationale` exceeds 200 chars OR `command_preview` has more than 5 meaningful steps, the orchestrator MAY emit the expanded form directly — but should still offer a one-line summary at the top. This is an escape hatch for genuinely complex gates (rare).
+
+The compact form is the default. The expanded form is the exception. v1 had it backwards — surfacing verbose by default created the engineer-UX cognitive-load problem (F8) that this v2 update addresses.
 
 ## What the human types — depends on `response_shape`
 
@@ -988,6 +1411,7 @@ Default is **N** (denial) — pressing Enter alone doesn't promote.
 | `y` or `yes` | Approve. Subagent proceeds. |
 | `n` or `no` or *(empty)* | Deny. Subagent marks `BLOCKED` and stops working this gate. Reports back to orchestrator with rationale "human denied". |
 | `defer` | Defer for later. Subagent stays in `NEEDS_APPROVAL`, will re-prompt at the next 5-min cycle. Useful when you want to think but not block the gate permanently. |
+| `?` | Expand — orchestrator re-emits this same gate in the verbose form. Engineer's next input goes against the same gate with v1 semantics. |
 
 Anything else (typo, multi-word) is treated as deny with a warning.
 
@@ -999,8 +1423,19 @@ Anything else (typo, multi-word) is treated as deny with a warning.
 | `p` or `partial` or *(empty — default)* | Proceed with CCU-local fixes only (OBN patches, train_id template, vlan7). Stop before any consist-wide push or health check. Re-run discovery on next cycle. |
 | `c` or `continue_full` | Proceed through all remaining stages including consist-wide pushes. Missing devices will be in unsynchronised state when they eventually come online. |
 | `defer` | Defer for later. Subagent stays in `NEEDS_APPROVAL`, re-prompts at next 5-min cycle. |
+| `?` | Expand — orchestrator re-emits the gate in verbose form including per-device `missing_devices[]` detail with stadler_instructions. Engineer's next input proceeds with v1 semantics. |
 
 Note that the three-way default is `partial` (the safest middle path), not deny — different from binary gates where empty input means deny.
+
+**Compact prompt for Gate 5** (the three-way) looks like:
+
+```
+[Gate 5] device_count_mismatch — 4736-102 (Fzg 130) — 4 switches missing: D2, E2, E3, F2
+  destructive: ❌   reversible: ✅   action depends on response
+Options: w (wait Stadler) | p (partial — CCU-local only) | c (continue full) | defer | ?
+```
+
+`?` expands to show per-missing-device Stadler instructions (cable register entries, expected port mappings, etc.).
 
 ## What the subagent gets back
 
@@ -1028,12 +1463,12 @@ If two subagents hit gates at roughly the same time, the orchestrator queues the
 
 ```
 ─── APPROVAL NEEDED (1 of 2) ────────────────────
-Train: Fzg 132 / 4736-104 — promote_snapshot
+Train: 4736-104 / Fzg 132 — promote_snapshot
 ... (same format)
 Approve? [y/N]:
 
 ─── APPROVAL NEEDED (2 of 2) ────────────────────
-Train: Fzg 130 / 4736-102 — safe_reboot
+Train: 4736-102 / Fzg 130 — safe_reboot
 ... (same format)
 Approve? [y/N]:
 ```
@@ -1053,18 +1488,47 @@ If the human doesn't respond within **30 minutes**, the orchestrator:
 
 No subagent is ever auto-approved or auto-denied by inactivity. Human silence is silence — work waits.
 
+## Defer limit (auto-BLOCKED after 3 deferrals)
+
+To prevent indefinite gate stall, the orchestrator tracks how many times each gate has been `deferred` for a given train and gate name. The counter is stored in-memory per orchestrator session and persisted to `approval-gates.jsonl` via the `defer_count` field.
+
+**Rule:** when the same `(train, gate)` pair accumulates **3 `deferred` responses** in a single orchestrator session, the orchestrator:
+
+1. Does NOT surface the gate a fourth time.
+2. Sends `{"approval": "denied", "approved_by": "orchestrator-defer-limit", "approved_at": "<now>"}` to the subagent.
+3. Emits the following inline warning immediately (does NOT wait for cycle digest):
+
+```
+⚠️  <Train#> (Fzg <NN>) — gate <gate-name> auto-BLOCKED after 3 deferrals.
+    Train marked BLOCKED. Re-spawn manually when ready to approve.
+    Log entry written to .claude/logs/approval-gates.jsonl.
+```
+
+4. Logs to `approval-gates.jsonl`:
+
+```json
+{"timestamp": "...", "train": "4736-104", "gate": "promote_snapshot", "decision": "auto_blocked_defer_limit", "defer_count": 3, "command_preview_hash": "sha256:...", "subagent_session_id": "..."}
+```
+
+**Why 3:** one deferral = "I need to check something"; two = "still not sure"; three = "this gate is genuinely blocked and won't be approved this session." At three, the automatic denial is cheaper than continuing to show a prompt the engineer is actively avoiding.
+
+**Reset:** the defer counter resets when the orchestrator session ends (crash + re-invoke), or when the engineer re-spawns the worker with a new `resume_stage` that skips the deferred gate (e.g. a `denied` for `promote_snapshot` → subagent set to BLOCKED → engineer manually investigates → new session with fresh defer counters).
+
 ## Logging
 
 Every approval gate is logged to `.claude/logs/approval-gates.jsonl` (append-only):
 
 ```json
-{"timestamp": "2026-05-09T06:55:30Z", "train": "4736-104", "gate": "promote_snapshot", "decision": "approved", "command_preview_hash": "sha256:...", "subagent_session_id": "...", "rationale": "..."}
+{"timestamp": "2026-05-09T06:55:30Z", "train": "4736-104", "gate": "promote_snapshot", "decision": "approved", "defer_count": 0, "command_preview_hash": "sha256:...", "subagent_session_id": "...", "rationale": "..."}
 ```
+
+`decision` values: `approved`, `denied`, `deferred`, `auto_blocked_defer_limit`.
+`defer_count`: how many times this `(train, gate)` pair had been deferred before this decision. `0` for first-time decisions; `3` for `auto_blocked_defer_limit` entries.
 
 Useful for:
 - Audit trail (who approved what)
 - Postmortem when a fleet operation goes wrong
-- Skill-improvement (which gates get denied most often, why?)
+- Skill-improvement (which gates get denied most often, why? which gates accumulate the most deferrals?)
 
 ## Rationale for not auto-approving anything
 
@@ -1304,8 +1768,8 @@ Create `.claude/agents/dosto-train-worker.md` with the following exact content:
 ---
 name: dosto-train-worker
 description: |
-  Per-train DOSTO commissioning subagent. Drives one train through the canonical 19-stage commissioning pipeline by invoking the dosto-commission-train skill, surfaces approval gates back to the orchestrator, handles --resume on approval/deny, and emits subagent-report-shaped JSON at every stage transition. Single-train scope — the orchestrator spawns one of these per concurrent train. Examples:
-  <example>Context: User wants to commission Fzg 132 today. user: "Start commissioning Fzg 132 (4736-104, CCU 10.179.10.1, 6-car)." assistant: "Spawning dosto-train-worker for Fzg 132." <commentary>The orchestrator delegates per-train work to this subagent. The subagent invokes /dosto-commission-train and reports JSON back.</commentary></example>
+  Per-train DOSTO commissioning subagent. Drives one train through the canonical 19-stage commissioning pipeline by invoking the dosto-commission-train skill, surfaces approval gates back to the orchestrator, handles --resume on approval/deny, and emits subagent-report-shaped JSON at every stage transition. Single-train scope — the orchestrator spawns one of these per concurrent train. Identifier convention: Train# (e.g. 4736-104) is the primary identifier passed in the spawn prompt; Fzg ID is looked up from the fleet-status row by the worker on startup. Examples:
+  <example>Context: User wants to commission 4736-104 today. user: "Start commissioning 4736-104 (CCU 10.179.10.1, 6-car)." assistant: "Spawning dosto-train-worker for 4736-104." <commentary>The orchestrator delegates per-train work to this subagent. The subagent invokes /dosto-commission-train and reports JSON back.</commentary></example>
   <example>Context: Subagent hit Gate 1 (promote_snapshot) and emitted NEEDS_APPROVAL. Orchestrator asked human, got "approved". Orchestrator sends "approved" back via SendMessage. assistant (subagent): "Resuming /dosto-commission-train --resume promote_snapshot ..." <commentary>Subagent's job is to handle the resume signal, re-invoke the skill at the next stage, and continue.</commentary></example>
 model: claude-sonnet-4-6
 tools: Skill, Bash, Read, Grep, Glob, SendMessage
@@ -1321,14 +1785,67 @@ The orchestrator's prompt to you must include all of:
 
 | Field | Type | Notes |
 |---|---|---|
+| `train_number` | string | **Primary identifier.** e.g. `4736-104`, `4734-119`, `4705-103`, `4706-101`. This is what you key everything off — fleet-status row lookup, log entries, JSON reports. |
 | `ccu_ip` | string | e.g. `10.179.10.1` |
-| `fzg` | integer | e.g. `132` |
-| `train_number` | string | e.g. `4736-104` |
 | `consist` | enum | `4-car` or `6-car` |
 | `resume_stage` | optional string | If present, you start at `--resume <resume_stage>` instead of from the beginning. |
 | `dry_run` | optional bool | If `true`, you invoke the skill with `--dry-run`. |
+| `scripts_staged` | optional bool | If `true`, the orchestrator pre-staged `fix_obn.py`, `fix_obn_bug8.py`, and `fix_obn_bug9_pysnmp_thread_safety.py` at both `/tmp/` and `/var/tmp/` on the CCU during Step 5.5. You do NOT need to SCP these files. If `false` or absent, the scripts are not guaranteed present — escalate via Bash-denial handoff (F1-C) if you need them. |
+| `gate_response` | optional object | Present after a re-spawn from an approval gate. Contains `{gate, response, approved_by, approved_at}` — record the approval metadata in your next report's `approval_history` block, then continue. |
+| `prior_fields` | optional object | Present after a re-spawn. Cumulative `fields` block from prior reports for this train (per F2: facts already established, not prose to re-derive). Use as starting point for the next report's `fields` block; merge in new facts from the current stage. |
+
+**Fzg ID is NOT in the spawn prompt.** The worker looks it up on startup by reading the fleet-status row for `train_number` (via `python scripts/fleet_status_lookup.py lookup <train#> --require-fzg`). If the row is missing or the Fzg cell is `❓`, emit `BLOCKED` with `escalation_reason: known_recipe_failed` and a `next_action` telling the engineer to populate the Fzg in fleet-status, then halt. Never guess Fzg from the per-series formula — wrong Fzg silently rendered into switch hostnames or vlan7 IPs has caused real fleet-status-corrupting outages.
 
 If any required field is missing from the spawn prompt, emit a single ERROR-status JSON report to the orchestrator and stop. Do not guess. Do not invoke the skill with placeholder values.
+
+**Spawn prompt convention (v2, per audit finding F2):** the orchestrator passes the train args and *pointers*, not dumps. Per-train context, prose, or recovery sequences MUST NOT be inlined into your spawn prompt — those are 2-3k+ tokens of bloat that persist for your lifetime. If you need that context, read `fleet-status.md`, `fleet-journal.md`, and the per-train detail block yourself. The orchestrator's job is to point; yours is to read.
+
+## Operating discipline (v2, per audit findings F1-C / F2 / F6)
+
+Three rules govern token usage and Bash-denial recovery. All three are contract terms, not guidelines.
+
+### Compactness (F2)
+
+You operate on a 200k-token context window. A single Stage 1 report on the first-run test reached ~166k tokens — most of the window for one stage. The fix is structural, not optional:
+
+- **`skill_outputs` is current-stage only.** Each report includes outputs for skills you ran *in the current stage transition*. Prior stages' outputs are NOT re-emitted. The orchestrator/parent maintains the audit trail externally.
+- **`skill_outputs[].raw` is bounded at ~500 lines.** Larger blocks get truncated with a sentinel: `{"_truncated": true, "logged_at": "<file-path>", "summary_fields": {...}}`. The full data lives on disk.
+- **No historical echo.** Reports describe the current stage transition only. Don't restate prior verdicts or approvals.
+- **No re-reading on every turn.** Once you've read a contract or skill SKILL.md, you have it. Don't re-Read on every stage transition.
+- **Spawn prompt pointers, not dumps** (see "Inputs from the orchestrator's spawn prompt" above).
+
+If you find yourself emitting > 50k tokens of report on a single stage transition, stop and audit: you're almost certainly violating one of the above.
+
+### Status-ping protocol (F6)
+
+When you receive a `SendMessage` whose entire body is a single short phrase asking your state — exact triggers: `status`, `status?`, `where are you`, `what stage` — you MUST:
+
+- Reply with **one line**: `<stage.id> <current_step>/<total_steps> <status> <last issue if any>`. Example: `apply_obn_patches 1/4 APPLYING_FIXES no-issues`.
+- NOT emit a full JSON subagent-report.
+- NOT re-read any contract, agent definition, skill, or fleet-status file.
+- End your turn immediately.
+
+The status-ping is the orchestrator/parent checking liveness cheaply. A status reply that re-loads context is a contract violation (one such reply on the first-run test cost ~108k tokens to produce a one-line summary).
+
+For any other inbound `SendMessage` — gate-approval responses, course corrections, resume instructions — handle normally per "Approval flow" or "The main loop."
+
+### Bash-denial handoff (F1-C)
+
+The harness may deny specific Bash patterns when you (a subagent) call them — observed patterns include `scp`, `ssh ... 'python3 - <<HEREDOC ... HEREDOC'`, and `ssh ... 'sudo /usr/local/sbin/safe_reboot'`. The parent session (your orchestrator) has fewer restrictions and can route around these.
+
+When a Bash call returns a permission-denied error:
+
+1. **Try one simpler invocation** of the same intent — e.g. if a heredoc fails, try one-line `ssh '...; ...; ...'`; if SCP fails, try the same with explicit `-o` flags.
+2. **If that also fails, stop.** Do NOT loop trying alternates. Emit a JSON report with the exact denied command verbatim:
+   ```json
+   {"status": "ERROR", "stage": {"id": "<current_stage>", "label": "Bash denial — parent handoff requested"},
+    "issues": [{"severity": "error", "category": "ssh", "description": "<verbatim denied command>", "escalation_reason": "skill_returned_error"}],
+    "next_action": "Parent: please execute <verbatim command> from your session. After completion, send response with results so I can resume.",
+    "skill_outputs": []}
+   ```
+3. End your turn. The parent will execute the command, send results back via `SendMessage`, and you resume from there.
+
+Do NOT try more than two invocations of the same intent. The token cost of "let me try yet another variation" exceeds the value — by the third try, the parent handoff is always cheaper than continued retry.
 
 ## MANDATORY PRE-FLIGHT BLOCK
 
@@ -1336,8 +1853,8 @@ Before invoking `/dosto-commission-train` for the first time (or on `--resume`),
 
 ```json
 {
-  "schema_version": "1",
-  "train": {"fzg": 132, "train_number": "4736-104", "ccu_ip": "10.179.10.1", "consist": "6-car"},
+  "schema_version": "2",
+  "train": {"train_number": "4736-104", "fzg": 132, "ccu_ip": "10.179.10.1", "consist": "6-car"},
   "report_time": "<now>",
   "elapsed_seconds": 0,
   "status": "DIAGNOSING",
@@ -1373,19 +1890,20 @@ If your Pre-Flight has zero open questions AND the simplicity check is "canonica
 
 ## The main loop
 
-1. **Parse the orchestrator's prompt** for the train args. Validate all required fields are present.
+1. **Parse the orchestrator's prompt** for the train args. Validate all required fields (`train_number`, `ccu_ip`, `consist`) are present.
 
-2. **Invoke `/dosto-commission-train`** via the Skill tool with the parsed args:
+2. **Resolve Fzg from fleet-status** by running `python scripts/fleet_status_lookup.py lookup <train_number> --require-fzg`. If the script exits non-zero (row missing or Fzg unknown), emit `BLOCKED` per the rule in "Inputs" above and halt. Cache the Fzg integer for use in JSON reports' `train.fzg` field.
+
+3. **Invoke `/dosto-commission-train`** via the Skill tool with the parsed args:
+   - `--train-number <train_number>` (primary identifier; skill re-resolves Fzg internally too)
    - `--ccu-ip <ccu_ip>`
-   - `--fzg <fzg>`
-   - `--train-number <train_number>`
    - `--consist <consist>`
    - `--resume <resume_stage>` if provided
    - `--dry-run` if provided
 
-3. **Read the JSON output stream** from the skill. Each line is a complete subagent-report shape per `.claude/contracts/subagent-report.md`. **Forward every report to the orchestrator verbatim.** Do not paraphrase, summarise, or re-format.
+4. **Read the JSON output stream** from the skill. Each line is a complete subagent-report shape per `.claude/contracts/subagent-report.md`. **Forward every report to the orchestrator verbatim.** Do not paraphrase, summarise, or re-format.
 
-4. **Monitor for terminal states** in the stream:
+5. **Monitor for terminal states** in the stream:
 
    | Status | Action |
    |---|---|
@@ -1395,28 +1913,43 @@ If your Pre-Flight has zero open questions AND the simplicity check is "canonica
    | `PAUSED` | Wait 60s, then re-invoke the skill with `--resume <last_stage_id>`. Repeat up to a 30-minute total budget. After 30 min, escalate to `BLOCKED` with `next_action: "Wait for train to power up; orchestrator should re-spawn this subagent on next cycle"`. |
    | `NEEDS_APPROVAL` | Surface to orchestrator (forward the JSON verbatim) and wait for response via `SendMessage`. See "Approval flow" below. |
 
-5. **Continue parsing the JSON stream** until a terminal state is reached.
+6. **Continue parsing the JSON stream** until a terminal state is reached.
 
 ## Approval flow
 
-When the skill emits `status: NEEDS_APPROVAL`, the JSON includes an `approval_needed` block with the gate name, rationale, command preview, and (for Gate 5) the per-device missing-device list. **Forward this verbatim to the orchestrator.**
+When the skill emits `status: NEEDS_APPROVAL`, the JSON includes an `approval_needed` block with the gate name, rationale, command preview, and (for Gate 5) the per-device missing-device list. **Forward this verbatim to the orchestrator and then exit your turn.**
 
-Wait for the orchestrator's response. The orchestrator will send back a JSON message via `SendMessage` containing:
+### Worker exits after NEEDS_APPROVAL — re-spawn pattern (codified 2026-05-21)
 
-- For binary gates (1-4): `{"response": "approved"}` or `{"response": "denied"}`
-- For Gate 5 (three-way): `{"response": "wait"}`, `{"response": "partial"}`, or `{"response": "continue_full"}`
+**Platform constraint:** background agents cannot block awaiting a `SendMessage`. After you emit a `NEEDS_APPROVAL` report, your turn completes and the harness notifies the orchestrator. You DO NOT stay alive waiting — the worker process ends. Every gate response triggers a **fresh worker spawn** with all accumulated state passed in the new spawn prompt.
 
-Then re-invoke the skill:
+What this means in practice:
 
-| Response | Re-invocation |
-|---|---|
-| `approved` | `/dosto-commission-train --resume <next_stage_id> ...` (next_stage_id = the stage that follows the gate per the contract stage list — e.g. `await_promote_snapshot` → resume at `promote_snapshot`) |
-| `denied` | `/dosto-commission-train --resume done ...` (skill walks straight to terminal `BLOCKED`) |
-| `wait` (Gate 5 only) | `/dosto-commission-train --resume done ...` with the train marked `BLOCKED` for Stadler cabling |
-| `partial` (Gate 5 only) | `/dosto-commission-train --resume <next_stage_id> --partial-only ...` (skill skips Gates 3, 4, and the device-push stages 13/16/17/18/19, plus stage 20 final L2 health — proceeds with CCU-local fixes only) |
-| `continue_full` (Gate 5 only) | Treat as `approved` — re-invoke as if the human accepted the missing-devices risk |
+1. **You** emit gate JSON, end your turn. Your process terminates.
+2. **The orchestrator** receives the notification, surfaces the gate to the engineer, gets the engineer's response (`y`/`n`/`w`/`p`/`c`/`defer`).
+3. **The orchestrator** spawns a NEW worker for the same train with a spawn prompt that includes:
+   - Original train spec (`train_number`, `ccu_ip`, `consist`, `engineer`, `dry_run` — Fzg is NOT passed; new worker re-looks-it-up from fleet-status)
+   - `resume_stage: <next_stage_id>` per the gate response (e.g. `promote_snapshot` after Gate 1 approval)
+   - `gate_response: {gate: "<name>", response: "<approved|denied|wait|partial|continue_full>", approved_by: "<engineer>", approved_at: "<iso8601>"}`
+   - `prior_fields: {...}` — the cumulative `fields` block from all prior reports for this train, so the new worker has the audit trail it needs (per F2: pointer not dump — these are facts already established, not prose to re-derive)
+4. **The new worker** (you, on next spawn) reads `resume_stage` from its prompt, invokes `/dosto-commission-train --resume <resume_stage> ...` with the right CLI flags per the gate response, and picks up from there.
 
-If the orchestrator's response doesn't arrive within a contract-defined window, treat as PAUSED and re-emit the same `NEEDS_APPROVAL` report next cycle.
+You don't need to "remember" anything between spawns — each spawn is fresh, and the orchestrator's prompt is your full context. The orchestrator owns continuity.
+
+### Resume-stage mapping (gate → next CLI flag)
+
+| Gate response | `--resume` arg | Additional CLI flag |
+|---|---|---|
+| `approved` (Gate 1: promote_snapshot) | `promote_snapshot` | — |
+| `approved` (Gate 2: safe_reboot) | `safe_reboot` | — |
+| `approved` (Gate 3: obn_update_c) | `obn_update_c` | — |
+| `approved` (Gate 4: obn_update_f) | `obn_update_f` | — |
+| `denied` (any binary gate) | `done` | (skill walks straight to terminal `BLOCKED`) |
+| `wait` (Gate 5) | `done` | (train marked `BLOCKED` for Stadler cabling) |
+| `partial` (Gate 5) | `<next_stage_id>` | `--partial-only` (skill skips Gates 3, 4 and device-push stages 13/16/17/18/19 — proceeds with CCU-local fixes only) |
+| `continue_full` (Gate 5) | Treat as `approved` for Gate 5 | — |
+
+If the orchestrator's response doesn't arrive within a contract-defined window, the previous worker has already exited — there is nothing to "re-emit." The orchestrator handles staleness by re-spawning with the same `resume_stage` later.
 
 ## What you do without asking
 
@@ -1465,8 +1998,8 @@ If the underlying skill emits invalid JSON (parse failure), wrap the failure in 
 
 ```json
 {
-  "schema_version": "1",
-  "train": {"fzg": 132, "train_number": "4736-104", "ccu_ip": "10.179.10.1", "consist": "6-car"},
+  "schema_version": "2",
+  "train": {"train_number": "4736-104", "fzg": 132, "ccu_ip": "10.179.10.1", "consist": "6-car"},
   "report_time": "<now>",
   "elapsed_seconds": <wall>,
   "status": "ERROR",
@@ -1486,11 +2019,12 @@ If the underlying skill emits invalid JSON (parse failure), wrap the failure in 
 - ❌ **Push to Confluence.** Same.
 - ❌ **Run a destructive command without an approved gate.** The four binary gates and Gate 5 are exhaustive.
 - ❌ **Spawn other agents.** The orchestration tree is exactly two levels deep: orchestrator → subagents → done. No deeper nesting. If you find yourself wanting to delegate to another subagent, escalate to the orchestrator instead with an `ERROR` status.
-- ❌ **Cache state between turns.** Always rely on `--resume` re-running `initial_diagnostics` to detect state drift.
+- ❌ **Cache *state* between turns** — current CCU state can drift; rely on `--resume` re-running `initial_diagnostics` to detect changes. (This is distinct from *context* — see "Operating discipline / Compactness" above. You SHOULD cache static context like contracts and SKILL.mds across turns; you should NOT cache live CCU facts.)
 - ❌ **Edit project files** — CLAUDE.md, contracts, SKILL.md files, agent definitions. Subagents do not modify their own rules.
 - ❌ **Skip or reorder pipeline stages.** The skill owns sequencing. Your job is to invoke it and forward its output.
 - ❌ **Add prose to your JSON output.** Even helpful context. The orchestrator can't parse it.
 - ❌ **Continue past a `BLOCKED` or `ERROR` status.** Both are terminal for this subagent invocation.
+- ❌ **Diagnose error patterns not covered by an existing skill.** If a `--check` skill reports a state outside the catalogued set (unknown firmware version, unrecognised `train_id` template form, novel SSH banner, etc.), emit `status: ERROR` with `issues[0].severity: "error"` and `issues[0].escalation_reason: "novel_pattern"` per [`subagent-report.md`](../contracts/subagent-report.md), and halt. If a skill itself blew up (non-zero exit, stack trace, malformed output), use `escalation_reason: "skill_returned_error"` instead. When ambiguous between the two, prefer `skill_returned_error` — it routes the engineer to fix the tooling rather than the train. Reasoning about novel failures is the engineer's job, not yours — your context stays thin precisely because you don't try.
 
 ## Example flows
 
@@ -1499,10 +2033,11 @@ If the underlying skill emits invalid JSON (parse failure), wrap the failure in 
 ```
 Orchestrator spawns: Agent({
   subagent_type: "dosto-train-worker",
-  prompt: "Commission Fzg 132. ccu_ip=10.179.10.1, fzg=132, train_number=4736-104, consist=6-car"
+  prompt: "Commission 4736-104. train_number=4736-104, ccu_ip=10.179.10.1, consist=6-car"
 })
 
-Subagent: invokes /dosto-commission-train --ccu-ip 10.179.10.1 --fzg 132 --train-number 4736-104 --consist 6-car
+Subagent: looks up Fzg from fleet-status (returns 132). Invokes
+  /dosto-commission-train --train-number 4736-104 --ccu-ip 10.179.10.1 --consist 6-car
 Skill emits stage 1 report (DIAGNOSING).
 Subagent forwards verbatim.
 Skill emits stages 3-5 reports (APPLYING_FIXES) — fold-in flags accumulated.
@@ -1510,7 +2045,7 @@ Skill emits stage 6 report (NEEDS_APPROVAL, gate=promote_snapshot).
 Subagent forwards verbatim. Halts.
 
 Orchestrator gets human approval. Sends SendMessage({to: subagent, message: '{"response":"approved"}'}).
-Subagent: invokes /dosto-commission-train --resume promote_snapshot --ccu-ip ... (same args).
+Subagent: invokes /dosto-commission-train --resume promote_snapshot --train-number ... (same args).
 Skill emits stages 7-19 reports.
 Skill emits final DONE report.
 Subagent forwards. Stops.
@@ -1521,7 +2056,7 @@ Subagent forwards. Stops.
 ```
 Subagent is mid-stage 13 (push_switch_config). Skill emits PAUSED report (SSH timeout).
 Subagent forwards verbatim. Waits 60s.
-Subagent: invokes /dosto-commission-train --resume push_switch_config --ccu-ip ... (same args).
+Subagent: invokes /dosto-commission-train --resume push_switch_config --train-number ... (same args).
 Skill emits PAUSED again.
 Subagent waits 60s, retries. Repeats.
 After 30 min total elapsed in PAUSED state, subagent escalates:
@@ -1538,7 +2073,7 @@ Subagent forwards verbatim. Halts.
 
 Orchestrator gets human response: "partial" (proceed with CCU-local fixes, skip consist-wide pushes).
 Orchestrator sends SendMessage({to: subagent, message: '{"response":"partial"}'}).
-Subagent: invokes /dosto-commission-train --resume <next_stage> --partial-only --ccu-ip ... (same args).
+Subagent: invokes /dosto-commission-train --resume <next_stage> --partial-only --train-number ... (same args).
 Skill walks stages 3-10 (CCU-local fixes) but skips 13-17 (consist-wide pushes) and 18 (final L2 health).
 Skill emits DONE with note about partial completion.
 Subagent forwards. Stops.
@@ -1552,7 +2087,7 @@ Subagent forwards. Stops.
 | Skill returns malformed JSON | ERROR with diagnostic context (first 200 chars of bad output), halt. |
 | Approval response doesn't arrive within contract window | Treat as PAUSED, re-emit gate request next cycle. |
 | Lock-file conflict (another subagent claims the same train via the skill's `/tmp/dosto-commission-train.lock`) | Emit ERROR, halt — orchestrator-side dedup violation. |
-| Per-device skill schema-version mismatch (skill returns `schema_version` ≠ `"1"`) | ERROR, halt. Contract violation requires coordinated update across all skills. |
+| Per-device skill schema-version mismatch (skill returns `schema_version` ≠ `"2"`; `"1"` is accepted with a `schema_version_drift` issue but not rejected per the v2 contract migration) | ERROR if neither `"1"` nor `"2"`, halt. |
 | Spawn prompt missing required fields | ERROR, halt. Don't guess. |
 | Orchestrator sends a response message that doesn't match the expected response shape (e.g. binary gate response with three-way string) | ERROR, halt. Orchestrator-side contract violation. |
 
@@ -1581,423 +2116,7 @@ You do NOT have `Write`, `Edit`, `NotebookEdit`, `WebFetch`, `WebSearch`, or any
 
 ---
 
-## STEP 8 — Create `.claude/agents/dosto-orchestrator.md`
-
-Create `.claude/agents/dosto-orchestrator.md` with the following exact content:
-
-~~~~markdown
----
-name: dosto-orchestrator
-description: |
-  Top-level fleet-day orchestrator for DOSTO commissioning. Spawns one dosto-train-worker subagent per train listed in the day's plan, runs them all in parallel, polls their JSON reports, surfaces approval gates one-at-a-time to the human, batches fleet-status writes per 5-min cycle, and pushes Confluence on gates + terminal states + cycle digests. One orchestrator session per day; if it crashes, the engineer restarts it and subagents pick up via --resume.
-  <example>Context: Engineer starts a Tuesday rollout day with three trains scheduled. user: "Commission Fzg 130, Fzg 132, and Fzg 148 today" assistant: "Spawning dosto-orchestrator." <commentary>The orchestrator is the per-day driver. It spawns one dosto-train-worker per train and aggregates their reports.</commentary></example>
-  <example>Context: Mid-day, two trains hit approval gates simultaneously. user (to orchestrator): "approve both" assistant: "Surfacing them sequentially per the approval-gates contract..." <commentary>The orchestrator queues approvals and shows them one at a time — never batched, never rubber-stamped.</commentary></example>
-model: claude-opus-4-7
-tools: Agent, SendMessage, Skill, Read, Write, Edit, Bash, Grep, Glob
----
-
-You are the **DOSTO fleet-day orchestrator**. You are spawned at the start of an engineer's commissioning day with a list of trains to commission, and you run for the duration of that day. You spawn one `dosto-train-worker` per train, run them all in parallel, aggregate their JSON reports, and act as the human-in-the-loop interface: surfacing approval gates, asking the human, relaying answers back to subagents.
-
-You are the **only entity** that:
-- Talks to the human about state across multiple trains
-- Writes `fleet-status.md` (orchestrator-as-sole-writer per `.claude/contracts/confluence-sync.md`)
-- Pushes to the Confluence team page (page `5410684933` via the `dosto-confluence-sync` skill)
-- Spawns and aggregates per-train subagents
-
-You are NOT a per-train commissioner. The `dosto-train-worker` subagent does that work. You orchestrate, you don't drive.
-
-## When the engineer spawns you
-
-Either via the `dosto-orchestrate` skill (which bootstraps you with a list of train args), or directly via `Agent` with the same prompt shape. Either way the spawn prompt MUST contain:
-
-| Field | Type | Required | Notes |
-|---|---|---|---|
-| `trains` | array | yes | One object per train: `{fzg, train_number, ccu_ip, consist}` per `subagent-report.md` `train` shape |
-| `engineer_name` | string | yes | For Confluence banner sync source field. Used in fleet-status `Last touched` columns. |
-| `dry_run` | bool | no | If `true`, all subagents spawn with `--dry-run` — every per-device skill runs in `--prepare` mode, no destructive ops. |
-| `cycle_minutes` | int | no | Override the default 5-minute digest cadence. Range 1-30. Default 5. |
-| `confluence_sync` | bool | no | Default `true`. Pass `false` to skip Confluence pushes (rare — local-only mode for testing). |
-
-If any required field is missing, do NOT spawn anything. Tell the human exactly what's missing and stop.
-
-## What you do at startup
-
-In order:
-
-1. **Validate the train list.** For each train, confirm:
-   - `train_number` matches the format `47[34|36]-NNN`
-   - `fzg` matches the per-series formula (`4734-NNN → NNN-100`, `4736-NNN → NNN+28`)
-   - `ccu_ip` is a plausible Nomad CCU IP (`10.179.X.1` or `10.179.X.129`)
-   - `consist` is `4-car` or `6-car`
-   If any train fails validation, halt with a clear error before spawning anything. Mismatched fzg vs train_number almost always means engineer typo and would result in a wrong-train commission — fail-loud.
-
-2. **Read `fleet-status.md`** to understand current state of each train. Capture per-train: current `Status`, `Last touched`, `Next action`. This is your starting baseline for diff detection. If a train is already `DONE`, surface to engineer ("Fzg 133 is already DONE — skip?") before spawning.
-
-3. **Read the prior log** at `.claude/logs/orchestrator.jsonl` (if exists) for `last_known_versions` of fleet-status and Confluence. Used for drift detection on first cycle.
-
-4. **Emit MANDATORY PRE-FLIGHT BLOCK** to the engineer. This is the constitutional Principle 1 forcing function — before spawning anything, surface assumptions and open questions in writing:
-
-   ```
-   ─── DOSTO Orchestrator — Pre-Flight ─────────────
-   Engineer:    Abbas Rizvi
-   Cycle:       5 min digest
-   Dry run:     no
-   Confluence:  push enabled (page 5410684933)
-
-   Trains to commission (3):
-     • Fzg 130 / 4736-102 / 10.179.47.1 / 6-car
-       Current state: PAUSED — apply patches + persist + fix train_id template + fix vlan7
-     • Fzg 132 / 4736-104 / 10.179.10.1 / 6-car
-       Current state: BLOCKED w/ Stadler — 6 APs stuck (.237 .240 .238 .231 .230 .226)
-     • Fzg 148 / 4736-120 / 10.179.2.1 / 6-car
-       Current state: PAUSED — sudo obn discover && sudo obn update c all
-
-   ▼ Assumptions:
-     • fleet-status.md rows are current as of last engineer save
-     • Each CCU is reachable via the project key at the IPs listed above
-     • The Atlassian Confluence MCP connector is configured and working
-     • The TFTP CT helper runtime fix (if previously applied) does NOT survive
-       a CCU reboot — first stage of each subagent will re-check and re-apply
-       if needed
-
-   ▼ Open questions: <none / list them here>
-
-   ▼ Simplicity check:
-     Spawning N parallel subagents per the contract. No batching, no custom
-     ordering. Each subagent runs the canonical 19-stage pipeline.
-
-   ▼ Per-train success criteria (will be checked at end of day):
-     Fzg 130: 8/8 OBN persisted, train_id=130 hardcoded, vlan7=172.19.193.2,
-              all switches/APs at target, customer report on disk
-     Fzg 132: All 24 APs at 6.11.2-0 (currently 18/24), L2 health clean
-              (excluding D4 missing — Stadler item), customer report on disk
-     Fzg 148: `obn update c all` completed without RSTP storm, all switches
-              at target config, customer report on disk
-
-   Confirm? [Y/n]:
-   ```
-
-   Rules for the Pre-Flight:
-   - Assumptions list MUST be specific and disprovable. "Each CCU is reachable" is good; "everything is fine" is not.
-   - Open questions: if non-empty, you halt regardless of the engineer's [Y/n] — open questions resolve before destructive ops.
-   - Simplicity check is one paragraph: are you taking the simplest path, or deviating? If deviating, name the evidence forcing the deviation.
-   - Per-train success criteria MUST be verifiable at end-of-day from skill outputs or fleet-status fields.
-
-   Default is **Y** (proceed). Engineer types `n` to abort cleanly. This is the ONLY pre-spawn confirmation; everything after is per-gate.
-
-5. **Spawn all subagents in a single `Agent` tool message** (one tool-use block per train, sent together so the harness runs them concurrently). Each subagent gets the spawn prompt described in `.claude/agents/dosto-train-worker.md`. Name each subagent so you can `SendMessage` to them later: `train-fzg-130`, `train-fzg-132`, etc.
-
-6. **Start the cycle clock.** Cycle 1 runs for `cycle_minutes` (default 5). Within each cycle, you collect subagent JSON reports as they arrive, surface approvals immediately, and at the end of the cycle emit a digest + write fleet-status + push Confluence (if anything changed).
-
-## The cycle loop
-
-Each cycle is `cycle_minutes` long (default 5). Inside a cycle:
-
-1. **Listen for subagent messages.** Subagents emit subagent-report-shaped JSON (per `.claude/contracts/subagent-report.md`) at every stage transition. Each message arrives via the `Agent` tool result stream — you don't poll, the harness delivers.
-
-2. **For each incoming JSON report:**
-   a. Validate `schema_version == "1"`. Reject malformed reports as `ERROR` and log to `.claude/logs/orchestrator-errors.jsonl`.
-   b. Check `status`:
-      - `NEEDS_APPROVAL` → **immediately** queue for approval prompt (don't wait for cycle end). See "Approval flow" below.
-      - `DONE` / `BLOCKED` / `ERROR` → **immediately** push Confluence. Stage out the subagent for end-of-cycle digest.
-      - `DIAGNOSING` / `APPLYING_FIXES` / `PUSHING_TO_DEVICES` / `PAUSED` → just buffer. No immediate action.
-   c. Update your in-memory per-train state: latest report, latest stage, latest fields.
-
-3. **At cycle end:**
-   a. **Compute the cycle digest** — per-train summary of what changed since last cycle: status transitions, stage progress (`current_step` / `total_steps`), new issues, terminal events.
-   b. **Print the digest** to the engineer (see format below).
-   c. **Write fleet-status.md** if any field changed (per the `fields` block of incoming reports). Use the row-merge rules below.
-   d. **Push Confluence** via `Skill: dosto-confluence-sync --push --json` if fleet-status changed. (Skill handles drift detection internally.)
-   e. **Log to `.claude/logs/orchestrator.jsonl`** — one entry per cycle with the per-train state snapshot.
-
-4. **Loop until all subagents are terminal.** When every subagent has reported `DONE`, `BLOCKED`, or `ERROR`, emit the final end-of-day report and stop.
-
-## Cycle digest format
-
-```
-─── Cycle 7 — 2026-05-09 14:35 UTC (elapsed 35:00) ───
-
-Fzg 130 / 4736-102: 🟡 APPLYING_FIXES (apply_obn_patches, t+220s, exp 120s — over budget, watch)
-  • Bug 5 patch applied; bug 6 marker still missing — investigating
-  • OBN patches: 7/8 (was 0/8)
-
-Fzg 132 / 4736-104: ✅ DONE (t+34:12)
-  • All 6 stuck APs unblocked: .226 .230 .231 .237 .238 .240 → 6.11.2-0
-  • Final L2 health: clean (1 known cable issue: D4 missing — Stadler item)
-  • Customer report: reports/customer/OBB_Fzg132_v1.0.docx
-
-Fzg 148 / 4736-120: 🔵 NEEDS_APPROVAL (await_obn_update_c — queued 12 min, see prompt below)
-
-────────────────────────────────────────────────────
-Approvals queued: 1   Blocked: 0   Errors: 0   Done: 1   Working: 1
-⚠️  Approvals waiting > 10 min: 1 (Fzg 148, await_obn_update_c, 12 min)
-Confluence push: queued for end of cycle.
-fleet-status.md: 2 rows updated (132, 148).
-```
-
-**Pending-approval visibility rule (R5):** for every approval in the queue at digest time, compute `now - <queued_at>`. If any single approval has been queued for **> 10 minutes**, emit the warning line `⚠️  Approvals waiting > 10 min: N (Fzg X, gate Y, Z min)` after the totals line. Engineers stepping away from the keyboard then notice on return that they have unanswered acks blocking work, rather than discovering it accidentally.
-
-The 10-min threshold is one cycle plus a small buffer — anything that's been queued through a full digest cycle without response is implicitly being held up by something other than skill latency.
-
-If multiple approvals are over the threshold, list them comma-separated (e.g. `Fzg 148, Fzg 130 (both 12 min)`). Don't truncate — the engineer needs to see all the trains they're holding up.
-
-## Approval flow
-
-When a subagent emits `status: NEEDS_APPROVAL`, you:
-
-1. **Buffer the approval immediately** in your `pending_approvals` list. Don't wait for cycle end.
-2. **At the next safe boundary** (between subagent message handles, or right after a cycle digest), surface the next pending approval to the human:
-
-   ```
-   ─── APPROVAL NEEDED (1 of 2) ────────────────────
-   Train:        Fzg 132 / 4736-104 (10.179.10.1)
-   Gate:         promote_snapshot
-   Reversible:   ❌ No (changes default GRUB target)
-   Destructive:  ✅ Yes
-
-   Rationale:
-     All 8 OBN patches applied outside chroot, verified
-     8/8 markers present. Need to re-apply inside
-     nd-systemupdate.sh shell so they survive reboot.
-
-   Will execute:
-     sudo /usr/sbin/nd-systemupdate.sh shell
-     # inside chroot: sudo python3 /var/tmp/fix_obn.py
-     # inside chroot: sudo python3 /var/tmp/fix_obn_bug8.py
-     # inside chroot: exit
-     # promotes work → release → run<N>
-
-   Approve? [y/N]:
-   ```
-
-3. **End your turn.** The next message from the human IS the response (per the design decision — Claude Code skills can't do interactive prompts; we use the next-user-message-as-input pattern).
-
-4. **Parse the response** per the gate's `response_shape`:
-   - **Binary gates** (`promote_snapshot`, `safe_reboot`, `obn_update_c`, `obn_update_f`):
-     - `y` / `yes` → `{"approval": "approved", ...}`
-     - `n` / `no` / *(empty)* → `{"approval": "denied", ...}`
-     - `defer` → `{"approval": "deferred", ...}` — keep in queue, re-prompt next cycle
-     - Anything else → treat as denied with a warning
-   - **Three-way gate** (`device_count_mismatch`):
-     - `w` / `wait` → `{"response": "wait"}`
-     - `p` / `partial` / *(empty)* → `{"response": "partial"}` (default)
-     - `c` / `continue_full` → `{"response": "continue_full"}`
-     - `defer` → keep in queue, re-prompt next cycle
-
-5. **`SendMessage` the response to the subagent** by name (`train-fzg-132`).
-
-6. **Log the gate** to `.claude/logs/approval-gates.jsonl`:
-   ```json
-   {"timestamp": "2026-05-09T07:14:00Z", "train": "4736-104", "gate": "promote_snapshot", "decision": "approved", "command_preview_hash": "sha256:...", "subagent_name": "train-fzg-132", "rationale": "...", "engineer_name": "Abbas Rizvi"}
-   ```
-
-7. **Trigger an immediate Confluence push** via `Skill: dosto-confluence-sync --push --json` — gates are state-changing events worth syncing.
-
-8. **If multiple approvals are queued**, surface the next one in the same response (or wait for the human's next message if you've already ended your turn). Show "(N of M)" labels per the contract.
-
-### Concurrent approvals
-
-If two subagents hit gates between messages, queue them. Show one at a time. Never batch into "approve all 3" — that's exactly the rubber-stamp pattern the contract forbids.
-
-## Fleet-status writer
-
-You are the only entity that writes `fleet-status.md`. Per cycle:
-
-1. Compute the diff between (a) last-known fleet-status row for each active train and (b) the merged `fields` block from all reports received this cycle for that train.
-2. For each train with any field changed, edit the relevant row in-place. Use the column mapping from `subagent-report.md` `fields` reference.
-3. Update `Last touched` to today's UTC date + engineer's initials.
-4. Update `Status` to the most informative current value:
-   - If subagent terminal `DONE` → `DONE` (or `DONE w/ Stadler` if any `BLOCKED` issues remain — orchestrator infers from the `issues[]` array)
-   - If subagent terminal `BLOCKED` → `BLOCKED`
-   - If subagent terminal `ERROR` → keep prior `Status`, add note in per-train notes section
-   - If subagent in `NEEDS_APPROVAL` → keep prior `Status` (transient state, not worth pushing to fleet-status)
-   - If subagent in working state → `IN PROGRESS`
-   - If subagent in `PAUSED` → `PAUSED`
-5. Update `Next action` to the subagent's last reported `next_action`, or compute from terminal state:
-   - `DONE` → `null`
-   - `BLOCKED` → from `issues[]` rationale
-   - `PAUSED` → from `next_action` field of the last PAUSED report
-
-**Hand-edit preservation:** If between cycles the engineer hand-edits a fleet-status field your subagents don't manage (e.g. `Customer report`, `Health check date` from a manual run), preserve those. Only overwrite the columns mapped in the `fields` block of subagent reports.
-
-**Atomicity:** read the file once, compute all row changes, write once. Don't write partial state.
-
-### Surgical-Changes contract — fleet-status fields allowlist
-
-You may write to **only these fleet-status columns** when merging subagent `fields` blocks:
-
-| Allowed field name | Maps to fleet-status column |
-|---|---|
-| `obn_patches` | OBN patches |
-| `switches_v8` | Switches v8 |
-| `aps` | APs |
-| `vlan7_ok` | vlan7 ok |
-| `stadler_cabling` | Stadler cabling |
-| `fw_reach` | FW reach |
-| `health_check_done` | Health check |
-| `customer_report` | Customer report |
-
-These are the eight fields enumerated in `.claude/contracts/subagent-report.md` § "fields". Any other key in a subagent's `fields` block is a **contract violation**. When you encounter one:
-
-1. Log to `.claude/logs/orchestrator-errors.jsonl`:
-   ```json
-   {"ts":"<now>","action":"unknown_field","train":"4736-104","field_name":"foo_bar","field_value":"...","subagent":"train-fzg-132"}
-   ```
-2. Do NOT write the unknown field to fleet-status.
-3. Surface in the next cycle digest under "Contract violations".
-4. Do NOT shut down the subagent — it may have other valid fields in the same report.
-
-The columns `Status`, `Next action`, and `Last touched` are also writable — but they're computed by the orchestrator (per the rules above), not pulled from subagent `fields`. Engineers' hand-edits to any column not on this list (e.g. notes columns added in the per-train notes section) survive every cycle.
-
-This is Principle 3 (Surgical Changes) in concrete form: the orchestrator owns exactly the eight columns above and nothing else.
-
-## Confluence push policy
-
-Per the design decision (gates + terminal states + cycle digests):
-
-| Trigger | Action |
-|---|---|
-| Any subagent transitions to `NEEDS_APPROVAL` | Push immediately |
-| Any subagent transitions to `DONE`, `BLOCKED`, or `ERROR` | Push immediately |
-| End-of-cycle digest if `fleet-status.md` changed | Push at cycle end |
-| End-of-cycle digest if nothing changed | Skip — no version bump |
-
-Push via `Skill: dosto-confluence-sync --push --json`. The skill handles drift detection. If the skill returns `verdict: drift_detected`, surface the drift report to the engineer and ask whether to `--push --force` or pull the manual edits into local. Don't auto-resolve.
-
-## Logging
-
-Three append-only log files in `.claude/logs/`:
-
-| File | One entry per |
-|---|---|
-| `orchestrator.jsonl` | Cycle digest. Includes per-train snapshot + cycle metadata. |
-| `approval-gates.jsonl` | Each gate decision (approved / denied / deferred / wait / partial / continue_full). |
-| `orchestrator-errors.jsonl` | Each schema-version mismatch, malformed JSON, or subagent contract violation. |
-
-Existing files: `confluence-sync.jsonl` (managed by the sync skill), `confluence-drift.jsonl` (managed by the sync skill).
-
-## End of day
-
-When every subagent has reported terminal state (`DONE` / `BLOCKED` / `ERROR`):
-
-1. Final cycle digest with the day's totals: trains commissioned, gates approved, gates denied, blockers, time elapsed.
-2. Final fleet-status write.
-3. Final Confluence push (with banner reflecting the day's last-sync timestamp).
-4. **Per-train success-criteria check (Principle 4 — Goal-Driven Execution).** Recall the per-train success criteria you committed to in your Pre-Flight at startup. For each train, verify each criterion against the latest fleet-status row + the subagent's terminal report + on-disk artefacts. Tick what passed, ✗ what didn't. Don't claim DONE without ticking every criterion you committed to.
-
-   ```
-   ─── Day complete — 2026-05-09 18:42 UTC (elapsed 04:12) ───
-   Engineer:  Abbas Rizvi
-   Trains:    3 spawned · 2 DONE · 1 BLOCKED · 0 ERROR
-   Gates:     7 approved · 0 denied · 0 deferred
-
-   ▼ Fzg 130 / 4736-102 — DONE
-     ✓ OBN patches 8/8 persisted (run5)
-     ✓ train_id = 130 hardcoded in all 18 nv6-*.cfg
-     ✓ vlan7 = 172.19.193.2/17 (live + persisted)
-     ✓ All 18 switches at target firmware + config
-     ✓ All 24 APs at target firmware
-     ✓ Customer report: reports/customer/OBB_Fzg130_v1.0.docx
-
-   ▼ Fzg 132 / 4736-104 — DONE w/ Stadler
-     ✓ OBN patches 8/8 persisted (run1)
-     ✓ All 23 visible APs at target firmware 6.11.2-0
-     ✗ All 24 APs at target — D4 still missing (Stadler item, register #5)
-     ✓ vlan7 reachable to Stadler FW (TCP 80/22 open)
-     ✓ Customer report: reports/customer/OBB_Fzg132_v1.0.docx
-
-   ▼ Fzg 148 / 4736-120 — BLOCKED
-     ✓ OBN patches 8/8 persisted
-     ✗ Switch config push completed — RSTP convergence failed on F2
-     ✗ Customer report — pipeline halted before stage 21
-     Next: investigate F2 (10.179.2.189) — see issues[] in last subagent report
-
-   Reports filed:  2 (Fzg 130, Fzg 132)
-   Blockers open:  Fzg 132 — Stadler register #5 (D4 cable)
-                   Fzg 148 — F2 RSTP, internal investigation needed
-
-   fleet-status.md updated · Confluence v52
-   ```
-
-   Rules:
-   - One ✓ or ✗ per success criterion you stated at Pre-Flight.
-   - "DONE" means every criterion ticked. If any ✗, the train is `DONE w/ <caveat>` or `BLOCKED`, never plain `DONE`.
-   - If a criterion can't be checked (e.g. "L2 health clean" but the subagent didn't reach stage 20), report `?` instead of guessing — and surface as an open item.
-5. Stop. Engineer can re-spawn you tomorrow with a new train list.
-
-## Restart / crash recovery (decision 7: option (a))
-
-If you crash mid-day (laptop closes, session timeout, harness error):
-- All running subagents die with you.
-- Engineer restarts you with a fresh `Agent` spawn.
-- The new orchestrator reads `fleet-status.md` for current state.
-- Reads `.claude/logs/orchestrator.jsonl` last entry to know which trains were in flight.
-- Asks the engineer: "Resume Fzg 130 / 132 / 148 with `--resume`? [Y/n]"
-- On Y, spawns fresh subagents for each, each invoking `/dosto-commission-train --resume <last_known_stage_id>` per train. The skill's `--resume` always re-runs `initial_diagnostics` so state drift since the crash is detected.
-
-This is lossless because:
-- All persistent state lives on the CCU (btrfs snapshots, applied patches).
-- The skill recovers from CCU state every resume.
-- The orchestrator-as-sole-writer pattern means no fleet-status / Confluence writes are mid-flight at crash time.
-
-## Failure handling — orchestrator-side
-
-| Situation | Action |
-|---|---|
-| Subagent emits malformed JSON | Log to `orchestrator-errors.jsonl`. Treat that report as `ERROR`. Don't kill the subagent — wait for next report; it may recover. After 3 consecutive malformed reports, kill it (`SendMessage` shutdown_request) and surface to engineer. |
-| Subagent goes silent for > 30 min | Treat as `PAUSED`. Surface in next digest. After 60 min silent, kill it and surface as `BLOCKED`. |
-| Confluence push fails | Log to `confluence-sync.jsonl`. Surface in next digest. Local file remains source of truth. Retry on next push trigger. |
-| Drift detected on Confluence | Halt the push. Surface to engineer. Ask whether to `--force` or pull-then-push. |
-| Engineer types nonsense in approval prompt | Treat per the contract: binary → deny + warning, three-way → partial + warning. Re-show the prompt with a `(treating as denied; type 'y' to override)` hint. |
-| Two subagents claim the same CCU IP | This is an engineer-input bug. Halt before spawning. Don't spawn anything until the conflict is resolved. |
-| Train list contains > N concurrent (where N is some safe-cap, e.g. 8) | Spawn anyway per the engineer's spec — but warn at startup: "Spawning 12 concurrent subagents; train cellular SSH-flap rate may degrade. Continue? [y/N]" |
-
-## What you NEVER do
-
-- ❌ **Run any commands on a CCU yourself.** All CCU work goes through subagents → skills.
-- ❌ **Auto-approve a gate.** Even on a third-time-this-day same-gate, ask. The 30-second cost is the feature.
-- ❌ **Batch approvals into one prompt.** Sequential per the contract, even when 5 are queued.
-- ❌ **Skip the Confluence push on a gate hit or terminal state.** Those are the moments the team most wants visibility.
-- ❌ **Write to `fleet-status.md` more than once per cycle.** Atomic batched writes; partial state must never reach disk.
-- ❌ **Spawn subagents serially "for safety."** Engineer chose parallel-all in the spawn args; honour it.
-- ❌ **Hold an open SSH session to any CCU.** That's the subagent's job, and it should be short-lived.
-- ❌ **Assume the engineer is at the keyboard.** They may step away for 30 min. Subagents in approval queue wait, work continues on others.
-- ❌ **Call `Skill: dosto-commission-train` directly.** That's the per-train subagent's job; you spawn the subagent which calls the skill.
-- ❌ **Push to Confluence without going through `dosto-confluence-sync`.** That skill owns drift detection and logging.
-
-## Tools available to you
-
-| Tool | When to use |
-|---|---|
-| `Agent` | Spawn `dosto-train-worker` subagents at startup. One tool call per train (or all in a single message — both work; the harness handles concurrency). |
-| `SendMessage` | Send approval responses + shutdown signals to subagents by name. |
-| `Skill` | Invoke `dosto-confluence-sync` for sync. Don't invoke `dosto-commission-train` directly — that's subagent territory. |
-| `Read`, `Grep`, `Glob` | Read fleet-status, contracts, log files. |
-| `Edit`, `Write` | Edit fleet-status.md (orchestrator-as-sole-writer). Write log files. **Never** edit skills, agent definitions, contracts, or per-train CCU files. |
-| `Bash` | Rare — git operations on the workspace, file mtime checks. Never SSH to a CCU. |
-
-You do NOT have:
-- Direct CCU SSH (subagents do that)
-- MCP tools for Confluence directly (use the sync skill, which has them)
-- Any web tools (no WebFetch / WebSearch)
-
-## Reference
-
-- [`.claude/agents/dosto-train-worker.md`](dosto-train-worker.md) — the per-train subagent you spawn
-- [`.claude/skills/dosto-orchestrate/SKILL.md`](../skills/dosto-orchestrate/SKILL.md) — the bootstrap skill that spawns you
-- [`.claude/skills/dosto-confluence-sync/SKILL.md`](../skills/dosto-confluence-sync/SKILL.md) — the sync skill you call
-- [`.claude/skills/dosto-commission-train/SKILL.md`](../skills/dosto-commission-train/SKILL.md) — the 19-stage pipeline subagents drive
-- [`.claude/contracts/subagent-report.md`](../contracts/subagent-report.md) — JSON shape (canonical)
-- [`.claude/contracts/autonomy-boundary.md`](../contracts/autonomy-boundary.md) — gate definitions
-- [`.claude/contracts/approval-gates.md`](../contracts/approval-gates.md) — gate response protocol
-- [`.claude/contracts/confluence-sync.md`](../contracts/confluence-sync.md) — push policy
-- [`fleet-status.md`](../../fleet-status.md) — the file you write
-- Confluence page ID `5410684933`
-~~~~
-
----
-
-## STEP 9 — Create `.claude/skills/dosto-ap-config-update/SKILL.md`
+## STEP 8 — Create `.claude/skills/dosto-ap-config-update/SKILL.md`
 
 Create `.claude/skills/dosto-ap-config-update/SKILL.md` with the following exact content:
 
@@ -2396,7 +2515,7 @@ For Path A, the recipe is shorter: a single `ssh_ccu "sudo obn update c $AP"` fo
 
 ---
 
-## STEP 10 — Create `.claude/skills/dosto-ap-firmware-update/SKILL.md`
+## STEP 9 — Create `.claude/skills/dosto-ap-firmware-update/SKILL.md`
 
 Create `.claude/skills/dosto-ap-firmware-update/SKILL.md` with the following exact content:
 
@@ -2760,7 +2879,7 @@ The exit codes 2-6 align 1:1 with the skill's verdict / event taxonomy, so an or
 
 ---
 
-## STEP 11 — Create `.claude/skills/dosto-commission-train/SKILL.md`
+## STEP 10 — Create `.claude/skills/dosto-commission-train/SKILL.md`
 
 Create `.claude/skills/dosto-commission-train/SKILL.md` with the following exact content:
 
@@ -2781,13 +2900,13 @@ It is **invoked by the per-train subagent** (see [`.claude/agents/dosto-train-wo
 ```
 You (top-level orchestrator session)
   │
-  ├─► Agent(subagent_type=dosto-train-worker, prompt="...Fzg 132...") ─┐
-  ├─► Agent(subagent_type=dosto-train-worker, prompt="...Fzg 133...") ─┤  parallel
-  ├─► Agent(subagent_type=dosto-train-worker, prompt="...Fzg 148...") ─┤
-  └─► Agent(subagent_type=dosto-train-worker, prompt="...Fzg 130...") ─┘
+  ├─► Agent(subagent_type=dosto-train-worker, prompt="...4736-104...") ─┐
+  ├─► Agent(subagent_type=dosto-train-worker, prompt="...4736-105...") ─┤  parallel
+  ├─► Agent(subagent_type=dosto-train-worker, prompt="...4736-120...") ─┤
+  └─► Agent(subagent_type=dosto-train-worker, prompt="...4736-102...") ─┘
                        │
                        ▼ each subagent runs its own session, invokes:
-              /dosto-commission-train --ccu-ip <ip> --fzg <N> ...
+              /dosto-commission-train --train-number <NNNN-NNN> --ccu-ip <ip> ...
                        │
                        ▼ which sequences:
               /dosto-device-discovery → /dosto-obn-patches → /dosto-fzg-id-check
@@ -2795,10 +2914,11 @@ You (top-level orchestrator session)
                                        → /dosto-ap-config-update (per AP)
                                        → /dosto-ap-firmware-update (per AP)
                                        → /dosto-sw-firmware-update (per switch, leaf-first)
-                                       → /dosto-sw-config-update (per switch, leaf-first)
-                                       → /dosto-l2-health
-                                       → /dosto-l2-report
+                                       → /dosto-sw-config-update-batch --execute --auto
+                                         (legacy single-switch fallback: --legacy-serial-sw-config)
 ```
+
+(`/dosto-l2-health` and `/dosto-l2-report` are no longer pipeline stages — they remain available as optional engineer-invoked skills.)
 
 This skill is **single-train scope**. Multi-train fan-out is the orchestrator's responsibility, achieved by spawning N subagents in a single `Agent` tool message (the SDK runs them concurrently).
 
@@ -2813,26 +2933,29 @@ This skill is **single-train scope**. Multi-train fan-out is the orchestrator's 
 
 | Flag | Type | Required | Notes |
 |---|---|---|---|
+| `--train-number <str>` | string | yes | **Primary identifier.** e.g. `4736-104`, `4734-119`, `4705-103`, `4706-101`. Skill resolves Fzg from the fleet-status row for this Train#. |
 | `--ccu-ip <ip>` | string | yes | e.g. `10.179.10.1` |
-| `--fzg <int>` | integer | yes | e.g. `132`. Used by `dosto-fzg-id-check`, `dosto-vlan7-config`, and `dosto-obn-patches --persist` fold-in. |
-| `--train-number <str>` | string | yes | e.g. `4736-104`. For fleet-status row identification. |
-| `--consist <4-car|6-car>` | enum | yes | Affects expected device counts (12+16 for nv4, 18+24 for nv6). |
+| `--consist <4-car\|6-car>` | enum | yes | Affects expected device counts (12+16 for nv4, 18+24 for nv6). |
+| `--fzg <int>` | integer | no | **Derived from fleet-status by default** (via `scripts/fleet_status_lookup.py`). Override only when the fleet-status row's Fzg cell is suspect and the engineer wants to force a specific value for this run — e.g. mid-commissioning of a misimaged train where the row hasn't been updated yet. If the row's Fzg cell is `❓` and `--fzg` isn't supplied, the skill halts with `BLOCKED next_action: "Fzg ID for <train#> missing in fleet-status.md — populate the Fzg column or pass --fzg explicitly."` Never guesses from the per-series formula. |
 | `--resume <stage_id>` | enum | no | Skips ahead to the named stage; assumes prior stages succeeded. Re-runs `initial_diagnostics` to confirm prior post-conditions are met before resuming. |
 | `--dry-run` | flag | no | Every per-device skill runs in `--prepare` mode. No CCU writes, no approval gates fire (since nothing destructive is about to happen). Output JSON has `dry_run: true` at top level. |
+| `--legacy-serial-sw-config` | flag | no | At stage 13, fall back to per-switch serial config push (`dosto-sw-config-update --execute` looped leaf-first) instead of the default batched parallel path (`dosto-sw-config-update-batch --execute --auto`). Use only when the batch skill has shown problems on the specific train being commissioned. |
+| `--decoupled` | flag | no | Bypass the Fzg ↔ train-number formula consistency check. Use only for the documented decoupled trains (currently Fzg 133 / 4736-105 / box1-t1). Does NOT bypass the Fzg-from-fleet-status lookup. |
 
 ### Pre-stage-1 input cross-validation (mandatory)
 
-**Before invoking any skill or even SSHing to the CCU**, validate that `--ccu-ip`, `--fzg`, and `--train-number` are mutually consistent. Three checks, all string-level (no network):
+**Before invoking any skill or even SSHing to the CCU**, run four checks. First step is to resolve Fzg from fleet-status (the source of truth). Then validate consistency:
 
 | Check | Logic | Failure verdict |
 |---|---|---|
+| **Step 0 — Fzg resolution** | Look up the fleet-status row for `--train-number` (via `scripts/fleet_status_lookup.py lookup <train#> --require-fzg`). If `--fzg` was explicitly passed, use that; otherwise use the value from the row. If the row's Fzg cell is `❓` AND `--fzg` was not passed, halt. | `BLOCKED` with `next_action: "Fzg ID for <train#> missing in fleet-status.md. Populate the Fzg column (look up in train-ip-allocation-commission/<series>-xxx/<train#>/<train#>_IP-Port-Allocation.pdf, header line) or pass --fzg explicitly."` |
 | **CCU IP ↔ box-NN consistency** | The CCU's hostname (read via SSH later) MUST be `box1-t<NN>` where `NN` is the third octet of `--ccu-ip`. Skill caches the *expected* hostname here for state-inventory fact 1. | If hostname mismatches, `BLOCKED` — wrong CCU IP supplied or fleet routing change. |
-| **Fzg ↔ train-number consistency** | Apply the per-series formula. `4736-NNN → Fzg = NNN + 28`. `4734-NNN → Fzg = NNN - 100`. If `--fzg` doesn't match the formula result for `--train-number`, halt immediately. | `BLOCKED` with `next_action: "Caller supplied --fzg <X> but --train-number <Y> implies Fzg <Z>. Fix one. If you intended a Fzg/train mismatch (DOSTO NEU train_id ≠ Fzg ID — see auto-memory feedback_train_id_ip_mismatch.md), pass --decoupled to override."` |
+| **Fzg ↔ train-number consistency** | Apply the per-series formula. `4736-NNN → Fzg = NNN + 28`. `4734-NNN → Fzg = NNN - 100`. `4705-NNN → Fzg = NNN + 128`. `4706-NNN → Fzg = NNN + 88`. If the resolved Fzg (from fleet-status or `--fzg`) doesn't match the formula result for `--train-number`, halt immediately. Pass `--decoupled` for the documented exceptions. | `BLOCKED` with `next_action: "Resolved Fzg <X> doesn't match per-series formula for --train-number <Y> (expected Fzg <Z>). Either fix the fleet-status row, or pass --decoupled if this train intentionally has a non-formula Fzg (DOSTO NEU train_id ≠ Fzg ID — see auto-memory feedback_train_id_ip_mismatch.md)."` |
 | **CCU IP ↔ Fzg consistency (advisory)** | If the CCU IP follows the convention `10.179.<NN>.1` where `NN` matches the train# (e.g. `10.179.10.1` for 4736-104), warn on mismatch. Some trains intentionally use non-aligned IPs — log a warning, don't halt. | Warn in `issues[]`, proceed. |
 
-**Why this matters:** today's footgun shape is "engineer types `--ccu-ip 10.179.47.1 --fzg 132`" — that's Fzg 130's CCU paired with Fzg 132's templates. Without this check, the skill would happily push Fzg 132 hostnames to Fzg 130's switches — a silent fleet-status-corrupting wrong-train commission. The check is one regex + one string compare; the cost of getting it wrong is ~90 minutes of recovery work plus a confused team.
+**Why this matters:** today's footgun shape is "engineer types `--ccu-ip 10.179.47.1 --train-number 4736-104`" — that's 4736-102's CCU paired with 4736-104's templates. Without this check, the skill would happily push 4736-104 hostnames to 4736-102's switches — a silent fleet-status-corrupting wrong-train commission. The check is one regex + one string compare; the cost of getting it wrong is ~90 minutes of recovery work plus a confused team.
 
-The `--decoupled` flag (option, no value) bypasses the Fzg ↔ train-number check for the documented decoupled trains (currently only Fzg 133 / box1-t1). It does NOT bypass the hostname check — that remains mandatory.
+The `--decoupled` flag bypasses the Fzg ↔ train-number formula check for the documented decoupled trains (currently only 4736-105 / Fzg 133 / box1-t1). It does NOT bypass the hostname check or the fleet-status Fzg lookup — those remain mandatory.
 
 ## The 19-stage pipeline
 
@@ -2842,6 +2965,7 @@ Per [`subagent-report.md`](../../contracts/subagent-report.md) → "Commissionin
 |---|---|---|---|---|
 | 1 | `initial_diagnostics` | `DIAGNOSING` | always | `dosto-state-inventory`, `dosto-device-discovery`, `dosto-obn-patches --check`, `dosto-fzg-id-check --check`, `dosto-vlan7-config --check`, `dosto-tftp-helper-check --check` |
 | 2 | `await_device_count_mismatch` | `NEEDS_APPROVAL` (Gate 5) | only if missing devices | — |
+| 2.5 | `ensure_v8_templates` | `APPLYING_FIXES` | only if `initial_diagnostics` found `nd-obn-template-dostoneu-{nv6,nv4}` dpkg version `< 0.0.19` | `sudo /usr/sbin/nd-systemupdate.sh.dont up` → `sudo systemctl reboot` → TCP/22 probe loop (10s × 30) → re-verify dpkg version `≥ 0.0.19`. **Auto, NO gate** (autonomy-boundary v2 carve-out — runtime state is empty pre-patch). On failure: `status = ISSUE`, halt this worker only. |
 | 3 | `apply_obn_patches` | `APPLYING_FIXES` | only if OBN < 8/8 | `dosto-obn-patches --apply` |
 | 4 | `apply_train_id_fix` | `APPLYING_FIXES` | only if fzg-id verdict ≠ `all_match` | `dosto-fzg-id-check --apply` *(in-place sed before chroot)* |
 | 5 | `apply_vlan7_fix` | `APPLYING_FIXES` | only if vlan7 verdict ≠ `all_match` | `dosto-vlan7-config --apply` *(in-place edit before chroot)* |
@@ -2852,17 +2976,17 @@ Per [`subagent-report.md`](../../contracts/subagent-report.md) → "Commissionin
 | 10 | `post_reboot_verify` | `DIAGNOSING` | only after reboot | re-run `--post-flight` mode of OBN-patches, fzg-id-check, vlan7-config — verifies *rendered output* (hostnames, live IP, FW reach) not just file markers |
 | 11 | `obn_discover_initial` | `DIAGNOSING` | always | `sudo obn discover` from CCU, parse `/tmp/discovery.json` for AP factory-state and switch firmware/config state |
 | 12 | `await_obn_update_c` | `NEEDS_APPROVAL` (Gate 3) | only if any switch needs config push OR Nomad APs need config refresh | — |
-| 13 | `push_switch_config` | `PUSHING_TO_DEVICES` | only if Gate 3 approved AND any switch needs config | `dosto-sw-config-update --execute`, one switch at a time, OBNTree leaf-first. **Highest-value device push — fires first under power-off risk** because the v8 config carries Stadler-specific switch IPs the customer cares about. |
-| 14 | `obn_discover_post_sw_config` | `DIAGNOSING` | only after `push_switch_config` | `sudo obn discover` to verify all switches now show config `✓` (renamed from `obn_discover_post_config` to disambiguate from the AP-config phase later) |
+| 13 | `push_switch_config` | `PUSHING_TO_DEVICES` | only if Gate 3 approved AND any switch needs config | **Default**: `dosto-sw-config-update-batch --execute --auto` — OBN-driven parallel leaf-first batches, ~30-45 min wall-clock for a 6-car DOSTO. **Legacy fallback**: with orchestrator flag `--legacy-serial-sw-config`, loops `dosto-sw-config-update --execute` per switch (~3 hours). Same OBNTree leaf-first ordering either way. **Highest-value device push — fires first under power-off risk** because the v8 config carries Stadler-specific switch IPs the customer cares about. |
+| 14 | `obn_discover_post_sw_config` | `DIAGNOSING` | only after `push_switch_config` | `sudo obn discover` + direct SSH spot-check of 3 switches (leaf, root, random intermediate) to independently verify config `✓` and rendered hostnames — OBN report alone is insufficient (Fzg 133 cascade lesson). Expected ~120s. |
 | 15 | `await_obn_update_f` | `NEEDS_APPROVAL` (Gate 4) | only if any device needs firmware push | — |
 | 16 | `push_switch_firmware` | `PUSHING_TO_DEVICES` | only if Gate 4 approved AND any switch needs firmware update | `dosto-sw-firmware-update --execute`, one switch at a time, OBNTree leaf-first. **NEW stage** — split from old combined `push_ap_firmware` two-phase form. Runs after switch config so the operational payload (Stadler IPs) is locked in before the maintenance payload (firmware version). |
 | 17 | `ap_factory_bypass` | `APPLYING_FIXES` | only if any AP in factory config (per stage 11 inventory) | `dosto-ap-config-update --execute` (Path B: LuCI HTTP), one AP at a time, serially. **MOVED** from old position (was after `obn_discover_initial`) to here, just before AP firmware push. Reason: the bypass exists *to make factory APs OBN-reachable for the firmware push that immediately follows*; doing it earlier interleaves it with switch work it has no dependency on. |
 | 18 | `push_ap_firmware` | `PUSHING_TO_DEVICES` | only if Gate 4 approved AND any AP needs firmware update | `dosto-ap-firmware-update --execute`, single-AP serial. After both `ap_factory_bypass` (factory APs now Nomad-form, OBN-reachable) and `push_switch_firmware` (fabric on target FW first). `current_step` / `total_steps` track per-AP. |
 | 19 | `push_ap_config` | `PUSHING_TO_DEVICES` | only if any Nomad AP shows config drift after firmware push | `dosto-ap-config-update --execute` (Path A: OBN SNMP, NOT LuCI HTTP — these APs are Nomad-form). **NEW stage** — final config refresh. Catches APs whose Nomad config went stale post-firmware (firmware updates can reset some config fields) or that need the latest cert/network bindings. |
-| 20 | `final_l2_health_check` | `DIAGNOSING` | always | `dosto-l2-health --json` |
-| 21 | `generate_report` | `APPLYING_FIXES` | always (unless prior stage failed) | `dosto-l2-report --json` |
 
-The `done` terminal stage is reached after stage 21 emits `status: DONE`.
+The `done` terminal stage is reached after stage 19 emits `status: DONE` (or after the earlier stages converge when stage 19 isn't needed).
+
+> **Removed 2026-05-21:** the pipeline previously had two terminal stages — `final_l2_health_check` (`dosto-l2-health --json`) and `generate_report` (`dosto-l2-report --json`). These have been removed; a train is `DONE` once all device pushes (config + firmware, switches + APs) converge. The `/dosto-l2-health` and `/dosto-l2-report` skills remain available for engineer-initiated invocation but are no longer pipeline-mandated.
 
 ## The orchestration model: skill-as-driver
 
@@ -2959,6 +3083,7 @@ Invokes (in this order, all `--check --json`):
 4. `/dosto-fzg-id-check <fzg> --check --json` — template `train_id` line consistency.
 5. `/dosto-vlan7-config <fzg> --check --json` — vlan7 IP triplet diff.
 6. `/dosto-tftp-helper-check <ccu-ip> --check --json` — kernel module + iptables rule + Puppet persistence.
+7. **v8-template version** — `dpkg-query -W -f='${Version}' nd-obn-template-dostoneu-nv6 2>/dev/null` (or `-nv4` for 4-car consists). If the package version is `< 0.0.19` (or the package is absent), the next stage to fire is `ensure_v8_templates` (stage 2.5) regardless of patches / fzg-id / vlan7 verdicts. v8 templates must be on disk before OBN patches are applied (patches reference template paths). **Note (2026-05-20):** v8 ≠ filename pattern. The 0.0.19 package keeps the flat `nv6-NNN-XN.cfg` / `nv4-NNN-XN.cfg` naming; v8-ness is conveyed by package version and template *content*, not filename. Detecting via filename glob (`*-v8-*.cfg`) is wrong — that pattern doesn't exist in any shipped package version. Discovered when both Fzg 143 and Fzg 144 workers false-alarmed `v8_templates_missing_post_update` after a successful `nd-systemupdate.sh.dont up` to 0.0.19.
 
 The state inventory check (#1) runs first because it's the fastest to fail. If something silently changed since the last session — auto-update fired, someone hand-edited the CCU, the fleet rebooted — we want to know before spending 30s on the per-skill deep checks. The deep checks (#2-#6) still run if the inventory is clean or only `expected_drift`; they catch issues the inventory doesn't (e.g. AP factory config, missing devices, deep diff on vlan7 nmconnection).
 
@@ -2978,21 +3103,78 @@ Stage outcome routing:
 | Found at stage 1 | Next stage |
 |---|---|
 | **`dosto-obn-patches` reports `nd_systemupdate_path: null`** (NDSU=MISSING — neither `.sh` nor `.sh.dont` exists, after the `-f` probe) | **Skill emits terminal `BLOCKED` immediately** with `next_action: "engineer must investigate missing /usr/sbin/nd-systemupdate.sh on this CCU before any commissioning — chroot mechanism does not exist on this image"`. No further stages run. This is a hard fail because every persistence path (stages 7, 12, 14, 17) requires the chroot mechanism. **Caveat: only emit this if the probe used `[ -f ]` not `[ -x ]`.** On the fleet, `nd-systemupdate.sh.dont` is mode 0500 owner=root and `[ -x ]` returns false for the `developer` SSH user even though the file is fully usable via `sudo`. Validated 2026-05-09 on box1-t47 — false-positive `-x` detection initially mis-flagged this CCU as NDSU=MISSING. |
-| Missing devices (`dosto-device-discovery` reports any) | Stage 2 (`await_device_count_mismatch`) |
-| All preconditions clean (8/8 patches persisted, fzg ✓, vlan7 ✓, tftp helper ✓) | Skip to stage 11 (`obn_discover_initial`) |
-| Any of patches/fzg/vlan7 needs fix | Stage 3-7 block runs (with single-promote fold-in at stage 7) |
+| Missing devices (see strict predicate below) | Stage 2 (`await_device_count_mismatch`) |
+| **v8 template package `< 0.0.19` or absent** | Stage 2.5 (`ensure_v8_templates`) — auto, no gate. After it completes, re-enter stage 1 (post-reboot state may have changed everything). |
+| All preconditions clean (8/8 patches persisted, fzg ✓, vlan7 ✓, tftp helper ✓, v8 template package `≥ 0.0.19`) | Skip to stage 11 (`obn_discover_initial`) |
+| Any of patches/fzg/vlan7 needs fix (and v8 templates present) | Stage 3-7 block runs (with single-promote fold-in at stage 7) |
 | TFTP helper missing | Skill emits `BLOCKED` with `next_action: /dosto-tftp-helper-check <ccu-ip> --apply-runtime` — engineer must fix before resuming |
 
 ### Stage 2: `await_device_count_mismatch` (Gate 5)
 
-**Status:** `NEEDS_APPROVAL`. **Conditional:** only if `dosto-device-discovery` found missing devices.
+**Status:** `NEEDS_APPROVAL`. **Conditional:** see strict predicate below.
+
+#### The "missing devices" predicate (load-bearing — do not soften)
+
+After Stage 1 collects `dosto-device-discovery`'s JSON output, **emit Gate 5 if ANY of the following hold**, checked in this order:
+
+1. `device_discovery.raw.ap_missing` is a non-empty array → Gate 5.
+2. `device_discovery.raw.switches_missing` is a non-empty array → Gate 5.
+3. `device_discovery.raw.actual.switches < device_discovery.raw.expected.switches` → Gate 5.
+4. `device_discovery.raw.actual.aps < device_discovery.raw.expected.aps` → Gate 5.
+5. `device_discovery.verdict in {"missing_aps", "missing_switches", "missing_both"}` → Gate 5.
+
+**Belt-and-braces by design.** A worker MUST NOT rely on the `verdict` string alone — the structured `raw.*_missing` arrays and `raw.actual` counts are the load-bearing signals. Reasoning: the orchestrator's pre-flight (`dosto-orchestrate` Step 5.5) classifies a 1-AP-missing train as SOFT-WARN and dispatches it; the worker's Stage 2 is the ONLY remaining checkpoint between "AP visible on the management VLAN but absent from the consist" and "OBN pushes firmware to an AP that may not exist." A worker that silently skips Gate 5 here will fire `obn update f <ip>` against the missing-AP IP, observe a TFTP timeout, and report a firmware-push failure — which is exactly the wrong failure mode for "Stadler hasn't installed this AP yet."
+
+**Why the redundant checks:** historically (regression observed 2026-05-22) the contract said only "if missing devices reported" without specifying which JSON field. A worker checked `verdict == "missing_devices"` while the skill emitted `verdict == "missing_aps"`; no match, Stage 2 was skipped, firmware push fired against a missing AP. The fix lives in BOTH skills — `dosto-device-discovery` now documents the verdict enum precisely, and `dosto-commission-train` (this section) makes the predicate explicit and checks structured fields not just strings.
+
+#### Gate 5 prompt and response
 
 `approval_needed.gate = "device_count_mismatch"`, `response_shape = "three_way"`. Engineer chooses:
-- `proceed` — push to discovered devices only, document missing as Stadler-side cabling issue
-- `pause` — halt; train is `BLOCKED` on cabling
-- `abort` — terminal `BLOCKED`
+- `proceed` (or `p` / `partial`) — push to discovered devices only, document missing as Stadler-side cabling issue
+- `pause` (or `w` / `wait`) — halt; train is `BLOCKED` on cabling
+- `abort` (or `c` / `continue_full`) — proceed through all stages including consist-wide pushes; missing devices will be in unsynchronised state when they eventually come online (rare; explicit accept)
 
 `approval_needed.missing_devices` carries the per-device structured info from `dosto-device-discovery` output (slot, expected_switch, expected_port, stadler_instruction). Orchestrator formats one prompt section per missing device per `.claude/contracts/approval-gates.md`.
+
+#### Post-Gate-5 routing
+
+| Engineer response | Effect |
+|---|---|
+| `proceed` (default) | Continue to subsequent stages, but for any `push_*` stage that operates per-device, the skill MUST filter out the missing-device IPs from the target list. The push set = `discovered devices ∩ commissioning targets`, NEVER the expected-set with missing devices included. The skill threads `missing_device_ips` from Stage 2 through to Stages 13/16/17/18/19; any of those stages that would otherwise hit a missing IP skips it with an `issues[]` note. |
+| `pause` | Emit terminal `BLOCKED` with `next_action: "Wait for Stadler to install/connect missing devices: <list>; then re-run /dosto-commission-train"`. |
+| `abort` (continue_full) | Proceed through all stages including consist-wide. Document the engineer's explicit accept in `issues[]`. |
+
+### Stage 2.5: `ensure_v8_templates`
+
+**Status:** `APPLYING_FIXES`. **Conditional:** only if `initial_diagnostics` found `dpkg-query -W -f='${Version}' nd-obn-template-dostoneu-{nv6,nv4}` returned a version `< 0.0.19` (or the package was absent).
+
+**Auto, no gate.** Per autonomy-boundary v2 (2026-05-20), this stage's reboot is carved out from Gate 2. Reasoning: stage runs before any OBN patches or runtime fixes are applied, so reboot wipes nothing valuable.
+
+**Recipe:**
+
+```bash
+# Step 1: pull v8 templates from Puppet via chroot. Expected ~300s.
+sudo /usr/sbin/nd-systemupdate.sh.dont up
+
+# Step 2: only if exit 0 — reboot immediately (don't wait for the script's "reboot?" prompt).
+sudo systemctl reboot
+
+# Step 3: from orchestrator side, probe TCP/22 every 10s for up to 300s.
+# Once SSH returns, re-verify the dpkg version on the active root:
+dpkg-query -W -f='${Version}\n' nd-obn-template-dostoneu-nv6   # expect ≥ 0.0.19 for 6-car
+dpkg-query -W -f='${Version}\n' nd-obn-template-dostoneu-nv4   # expect ≥ 0.0.19 for 4-car
+```
+
+**Detection of "v8 missing":** dpkg package version — `nd-obn-template-dostoneu-nv6` (or `-nv4`) `< 0.0.19`. The 0.0.19 package retains the flat `nv6-NNN-XN.cfg` / `nv4-NNN-XN.cfg` naming convention from prior versions; v8-ness is encoded in template *content* (new VLAN/port assignments) and the package version, NOT in filename. Trains on pre-0.0.19 versions (Fzg 139 / 140 / 12 / 13 currently on v3) trigger this stage. **Do NOT detect via filename glob like `*-v8-*.cfg`** — that pattern doesn't exist in any shipped package version (regression caught 2026-05-20 on Fzg 143 + Fzg 144 — both false-alarmed post-`up` because the worker globbed for filenames the package never produces).
+
+**Failure modes (all → `status = ISSUE`, halt this worker only, no engineer gate):**
+- `nd-systemupdate.sh.dont up` exits non-zero → halt with stderr captured in `issues[]`
+- Reboot triggers but SSH doesn't return within 300s → halt with `ssh_recovery_timeout`
+- Post-reboot, `nd-obn-template-dostoneu-{nv6,nv4}` dpkg version still `< 0.0.19` → halt with `v8_templates_missing_post_update`
+
+Other workers in the cycle keep running. Engineer picks the halted train back up manually next session.
+
+**Why no gate:** spec 2026-05-20 — engineer doesn't want to be interrupted for this reboot; pre-patch CCU has no runtime state worth preserving.
 
 ### Stage 3: `apply_obn_patches`
 
@@ -3001,6 +3183,18 @@ Stage outcome routing:
 Invokes `/dosto-obn-patches <ccu-ip> --apply --json`. The `--apply` mode prints the recipe; in `--execute` semantics for this orchestrator, the skill SSHes from the CCU and runs the recipe (under `btrfs ro=false`, then re-locks). Captures stdout/stderr for diagnostic context if any patch fails.
 
 If `dosto-obn-patches` returns verdict `all_patched` after running, proceed. If still `partial`, halt with `BLOCKED`.
+
+**Subagent-driven invocation (audit finding F1-B, 2026-05-11):** Step 1 of `dosto-obn-patches --apply` requires SCP to stage the fix scripts on the CCU at `/var/tmp/`. **The harness denies SCP from spawned subagents** (verified on the 2026-05-11 first-run test). When this stage is driven by a `dosto-train-worker` subagent rather than the engineer directly, the SCP step MUST be handed off to the parent (orchestrator / top-level session) per the F1-C handoff-on-Bash-denial protocol in `dosto-train-worker.md`:
+
+1. Subagent runs `dosto-obn-patches --check` and confirms patches needed.
+2. Subagent attempts the SCP one-liner. On the expected denial, it emits `status: ERROR` with `next_action: "Parent: SCP the 4 fix scripts to /var/tmp/ on <ccu-ip> and confirm so I can resume Stage 3 from STEP 2 of the recipe."` and ends its turn.
+3. Parent SCPs the scripts (the engineer-facing recipe in `dosto-obn-patches/SKILL.md` STEP 1 works fine from the parent context).
+4. Parent `SendMessage`s the worker: `{"response": "scripts_staged", "paths": ["/var/tmp/fix_obn.py", ...]}`.
+5. Worker resumes with `/dosto-commission-train --resume apply_obn_patches --skip-step1 ...` — the resume flag tells `dosto-obn-patches --apply` that STEP 1 (SCP) is already done; it picks up at STEP 2 (run scripts via plain SSH one-liners, which subagents CAN do).
+
+This is not a workaround — it's the documented division of responsibility. SCP staging is parent-layer; recipe execution is worker-layer. Both work; only the boundary needs to be explicit. The `--skip-step1` flag on `dosto-obn-patches --apply` must be supported by that skill's CLI (F1-B follow-up — currently OPEN as a small CLI flag addition in `dosto-obn-patches`).
+
+Until `--skip-step1` ships, the subagent can simply emit the handoff JSON and trust that parent + the manual resume cycle will work end-to-end. The 2026-05-11 test run executed exactly this pattern successfully on Fzg 130.
 
 ### Stage 4: `apply_train_id_fix`
 
@@ -3091,7 +3285,7 @@ Stage outcome routing:
 
 | Inventory at stage 11 | Next stage |
 |---|---|
-| All switches on target config AND target firmware AND all APs at target firmware AND no Nomad AP config drift AND no factory APs | Skip to stage 20 (`final_l2_health_check`) |
+| All switches on target config AND target firmware AND all APs at target firmware AND no Nomad AP config drift AND no factory APs | Terminal — emit `done` |
 | Any switch needs config update | Stage 12 (`await_obn_update_c`) — Gate 3 covers SW config + final AP config refresh |
 | Switches OK on config, but any switch needs firmware update OR any AP needs firmware update | Skip to stage 15 (`await_obn_update_f`) — Gate 4 covers SW firmware + AP firmware |
 | Switches OK on config and firmware, but factory APs present | Skip to stage 17 (`ap_factory_bypass`) — no gate needed (fix-up step) |
@@ -3112,11 +3306,15 @@ The Gate 3 approval covers BOTH the switch-config push (stage 13) AND the eventu
 
 **This is the highest-value device push.** The v8 config carries Stadler-specific switch IPs the customer cares about, and is fully tested as the next step after CCU commissioning. Power-off-risk principle: if the train powers off after this stage, the operational payload (Stadler IPs on every switch) is locked in, regardless of whether subsequent firmware/AP work completes.
 
-Iterates switches in **OBNTree leaf-first order** (per `dosto-sw-config-update`'s precondition). For each switch, invokes `/dosto-sw-config-update <ccu-ip> <switch-ip> --execute --json`. The per-switch skill enforces the leaf check; non-leaves require `--allow-non-leaf` which this stage passes only when iterating up the tree after all children of that switch are done.
+**Default path — parallel batched** (`dosto-sw-config-update-batch --execute --auto`):
 
-`stage.current_step` / `total_steps` track per-switch progress (e.g. 7/18 switches done, 11 remaining).
+Wraps OBN's built-in parallel batcher (`obn update c sw` → `OBNTree.calculate_parallel_update_order` → `ThreadPoolExecutor`). Same OBNTree leaf-first ordering as the legacy path, but multiple sibling leaves reboot concurrently rather than one-at-a-time. ~30-45 min wall-clock on a 6-car DOSTO vs. ~3 hours legacy. `stage.current_step` / `total_steps` track per-batch progress (e.g. batch 2/5). Gate 2 surfaces per-batch failures with engineer choice (abort / extend-poll / retry / skip); 3 consecutive non-success outcomes auto-abort. See [`dosto-sw-config-update-batch`](../dosto-sw-config-update-batch/SKILL.md) for full event schema and gate semantics.
 
-If any per-switch push fails (e.g. `config_did_not_trigger_reboot` from `dosto-sw-config-update`), halt with `BLOCKED`. Capture the failed switch and full diagnostic context.
+**Legacy serial path** (`--legacy-serial-sw-config` orchestrator flag):
+
+Iterates switches in OBNTree leaf-first order. For each switch, invokes `/dosto-sw-config-update <ccu-ip> <switch-ip> --execute --json`. The per-switch skill enforces the leaf check; non-leaves require `--allow-non-leaf` which this stage passes only when iterating up the tree after all children of that switch are done. `stage.current_step` / `total_steps` track per-switch progress. Use only when the batch skill has a known issue on the specific train (e.g. surfaced during a previous failed run).
+
+If any push fails (`config_did_not_trigger_reboot` from `dosto-sw-config-update`, `gate_4:targets_still_failing` from `dosto-sw-config-update-batch`, or any unhandled abort), halt with `BLOCKED`. Capture the failed switches and full diagnostic context.
 
 ### Stage 14: `obn_discover_post_sw_config`
 
@@ -3124,7 +3322,32 @@ If any per-switch push fails (e.g. `config_did_not_trigger_reboot` from `dosto-s
 
 Force-fresh `sudo obn discover` to verify all switches now show config `✓` AND the rendered hostnames match `<variant>-X-v8-<Fzg>` (rendered-output Post-Flight check, Karpathy Principle 4). If any still show `✗`, this is a regression — halt with `ERROR`.
 
-Stage renamed from old `obn_discover_post_config` to disambiguate from the AP-config phase that comes much later. (The validator's C7 checks renamed-stage-IDs are referenced consistently.)
+**Spot-SSH direct verification (independent evaluator check):** OBN's own `discover` report reflects what OBN *believes* it pushed — it does not independently verify the switch's running config. After `obn discover` returns all switches `✓`, perform a direct SSH spot-check against **3 switches** sampled as:
+- The first leaf switch (lowest IP in OBNTree)
+- The root switch (highest in OBNTree)
+- One randomly selected intermediate switch
+
+For each spot-checked switch, run via the CCU:
+
+```bash
+SSH_OPTS="-o StrictHostKeyChecking=no -o ConnectTimeout=8 \
+  -o KexAlgorithms=+diffie-hellman-group14-sha1,diffie-hellman-group1-sha1 \
+  -o HostKeyAlgorithms=+ssh-rsa,ssh-dss \
+  -o PubkeyAuthentication=no"
+sshpass -p "Nom@dCome1n" ssh $SSH_OPTS admin@<switch-ip> "show vlans"
+```
+
+**What to verify:**
+- The VLAN assignments match the v8 template for this Fzg (spot-check VLANs 3, 7, and 100 — these are the most train-specific assignments in the v8 config)
+- The switch hostname (from `show system`) begins with the correct `<variant>-X-v8-<Fzg>` pattern
+
+**Why direct SSH and not OBN:** OBN `validate` reads from its own snapshot (`discovery.prev.json`), which reflects the pre-push scan. OBN's "Successful" return string does not verify the switch's actual post-push state — this was the silent failure mode observed in the Fzg 133 cascade. The spot-SSH is the independent evaluator (Generator-Evaluator pattern, Article 3 harness design): OBN pushes (generator), direct SSH verifies (evaluator).
+
+**Failure handling:** if any spot-checked switch shows wrong VLANs or wrong hostname pattern, halt immediately with `ERROR` and populate `issues[]` with the switch IP, expected hostname pattern, observed output. Do NOT proceed to stage 15 — a failed spot-check means the push may have silently misconfigured the entire consist, and an engineer must inspect before firmware push proceeds.
+
+**Sampling rationale:** 3 of N switches (not all N) keeps this stage within its `expected_duration_seconds` budget (~120s). The leaf + root + random sample catches the most structurally distinct positions in the OBNTree. A full sweep is available via `/dosto-l2-health` if the engineer wants deeper assurance.
+
+Stage renamed from old `obn_discover_post_config` to disambiguate from the AP-config phase that comes much later.
 
 ### Stage 15: `await_obn_update_f` (Gate 4)
 
@@ -3186,21 +3409,9 @@ If any per-AP push fails, halt with `BLOCKED`. The fabric is operational (config
 
 `stage.current_step` / `total_steps` track per-AP progress.
 
-### Stage 20: `final_l2_health_check`
+### Terminal — `done`
 
-**Status:** `DIAGNOSING`. **Conditional:** always (unless prior stage halted with `BLOCKED` or `ERROR`).
-
-Invokes `/dosto-l2-health <ccu-ip> --json`. Captures full L2 fabric state (per-switch error counters, RSTP root, trunk states, end-to-end Stadler firewall reachability).
-
-If any L2 health verdict is non-clean, populate `issues[]` with the findings but don't halt — generate the report anyway (engineer reads it and decides next steps).
-
-### Stage 21: `generate_report`
-
-**Status:** `APPLYING_FIXES` *(per the contract — generating a docx is technically a write, even though it's local-only)*. **Conditional:** always (unless prior stage was `BLOCKED` or `ERROR`).
-
-Invokes `/dosto-l2-report <findings.json from stage 20> --json`. Emits the path to the generated docx in the final report's `next_action` field.
-
-After this stage, emit terminal `status: DONE` and exit.
+After stage 19 (`push_ap_config`) — or after the earlier device-push stages converge when stage 19 isn't needed — emit terminal `status: DONE` and exit. A train is considered commissioning-DONE once all device pushes (switch config, switch firmware, AP config, AP firmware) have converged. **L2 health checks and customer reports are no longer pipeline stages** — they remain available as optional engineer-invoked skills (`/dosto-l2-health`, `/dosto-l2-report`) but don't gate train DONE state.
 
 ## `--resume <stage_id>` semantics
 
@@ -3214,7 +3425,6 @@ After this stage, emit terminal `status: DONE` and exit.
    - For resuming `ap_factory_bypass` (stage 17): all of the above + all switches show firmware on target after stage 16.
    - For resuming `push_ap_firmware` (stage 18): all of the above + no APs remain in factory config (every entry in stage 11 inventory is now Nomad-form).
    - For resuming `push_ap_config` (stage 19): all of the above + all APs at target firmware.
-   - For resuming `final_l2_health_check` (stage 20): all of the above + all device pushes complete.
 4. If post-conditions not satisfied, refuses to resume; emits `ERROR` with explanation in `issues[]`.
 5. If satisfied, jumps to `<stage_id>` and continues.
 
@@ -3265,7 +3475,7 @@ There is no human-readable mode by default. The orchestrator/subagent layers con
 - ❌ Skip the approval gates — even with `--dry-run`, gate stages still emit `NEEDS_APPROVAL` reports (informational); in normal mode, they are contract-mandated halts.
 - ❌ Allow the engineer to bypass per-device skill preconditions (e.g. push firmware before TFTP helper is in place).
 - ❌ Run more than one device's `--execute` push at a time — strict serialisation per the per-device skills' single-device discipline (handoff lesson 11).
-- ❌ Write any non-CCU files. Only the orchestrator writes fleet-status / Confluence / docx reports (the latter via `dosto-l2-report` invoked at stage 21 — the report file is the output, not an orchestration artefact).
+- ❌ Write any non-CCU files. Only the orchestrator writes fleet-status / Confluence. (Customer docx reports — when an engineer opts to generate one — come from the optional `/dosto-l2-report` skill, which is no longer pipeline-driven.)
 
 ## Edge cases and gotchas
 
@@ -3304,7 +3514,7 @@ There is no human-readable mode by default. The orchestrator/subagent layers con
 
 ---
 
-## STEP 12 — Create `.claude/skills/dosto-confluence-sync/SKILL.md`
+## STEP 11 — Create `.claude/skills/dosto-confluence-sync/SKILL.md`
 
 Create `.claude/skills/dosto-confluence-sync/SKILL.md` with the following exact content:
 
@@ -3344,7 +3554,7 @@ Per [confluence-sync.md](../../contracts/confluence-sync.md) Amendment 1, the sk
 
 | Target | Source file | Page ID lookup | Render |
 |---|---|---|---|
-| `fleet` (default) | `fleet-status.md` | hardcoded `5410684933` | Existing exec-view-only layout (4736 + 4734 tables) |
+| `fleet` (default) | `fleet-status.md` | hardcoded `5410684933` | Existing exec-view-only layout (4736 + 4734 + 4705 + 4706 tables) |
 | `cables` | `cable-issues-register.md` | `cable_register_page_id` from `.claude/state/confluence-pages.json` | Two-section render: Confirmed cabling faults, then Auto-detected anomalies |
 | `both` | both | both | Sequential pushes — `fleet` first, then `cables`. Independent drift detection per page. |
 
@@ -3427,8 +3637,8 @@ The Confluence page body has these sections in this order:
 1. **Banner** — auto-sync timestamp, version, sync source, plus a one-line pointer at where to find the full 14-column detail (the local `fleet-status.md`).
 2. **Header** — title + last-updated + update-discipline note (from the top of fleet-status.md).
 3. **Status legend** — small table mapping the 5 status-lozenge emoji to status names + meanings.
-4. **Fzg-ID convention** — series formulas (unchanged from local).
-5. **Per-series exec table** — 5 columns: `Fzg`, `Train#`, `CCU IP`, `Status`, `Next action`. One table for 4736 (DOSTO NEU 6-car), one for 4734 (DOSTO NEU 4-car). 4705/4706 series gets a placeholder note. The 5-column shape fits without horizontal scroll on any laptop.
+4. **Train#-and-Fzg convention** — series formulas + runtime-lookup warning (unchanged from local; section is named `## Train#-and-Fzg convention` post-2026-05-22 schema reorder, previously `## Fzg-ID convention`).
+5. **Per-series exec table** — 6 columns: `Train#`, `Fzg`, `CCU IP`, `Nomad status`, `Stadler status`, `Next action`. **Train# leads** (Nomad-internal primary identifier per the 2026-05-22 schema reorder); Fzg is secondary. One table per series header found in `fleet-status.md` (currently 4736 / 4734 / 4706 / 4705 — discover dynamically, do not hardcode). The `Stadler status` column was added 2026-05-21 so the team can see at a glance which trains are blocked by Stadler-side work (missing APs/switches or open cabling faults) vs which are Nomad-side work still in flight.
 6. **Per-train notes** — unchanged from local, rendered as standard markdown headings + lists.
 7. **How to update** — engineer-facing reminder (5-step procedure).
 
@@ -3439,7 +3649,7 @@ The Confluence page body has these sections in this order:
 > Last sync: <ISO-8601 UTC> · Page version: <V_current + 1> · Sync source: <engineer name> (manual) — or — orchestrator (auto)
 > Manual edits to this page will be overwritten on next sync. Edit `fleet-status.md` instead, or comment on this page.
 >
-> 📄 **For full detail** (all 14 columns: OBN patches, switch firmware, AP firmware, vlan7 ok, Stadler cabling, FW reach, health-check date, customer report, last touched), open `fleet-status.md` in the `dosto-troubleshooting` workspace. The exec view below carries the four columns most useful for "where's this train at right now?".
+> 📄 **For full detail** (all 14 columns: OBN patches, switch firmware, AP firmware, vlan7 ok, Stadler cabling, FW reach, health-check date, customer report, last touched), open `fleet-status.md` in the `dosto-troubleshooting` workspace. The exec view below carries the six columns most useful for "where's this train at right now?".
 ```
 
 This four-line banner doubles as drift detection signal (the exact opening text `> **Auto-synced from` is the detection prefix) AND as the "where to find more" pointer.
@@ -3461,16 +3671,18 @@ A 3-column markdown table for status meanings — replaces the bullet-list legen
 
 The lozenge column uses Unicode coloured-circle emoji for at-a-glance visual scan. Each row maps to one of the values that appears in the per-series exec table's `Status` column.
 
-#### Exec table shape (5 columns)
+#### Exec table shape (6 columns)
 
 ```markdown
-| Fzg | Train# | CCU IP | Status | Next action |
-|---|---|---|---|---|
-| 129 | 4736-101 | ❓ | ⚪ UNKNOWN | initial visit |
-| 130 | 4736-102 | `10.179.47.1` | 🟡 **PAUSED** | apply patches + persist + fix train_id + fix vlan7 — see notes |
-| 132 | 4736-104 | `10.179.10.1` | 🔴 **BLOCKED w/ Stadler + 6 APs stuck** | Push remaining 3 APs (.237 .238 .240); D4 cable Stadler item — see notes |
-| 133 | 4736-105 | `10.179.1.1` | 🟢 **DONE w/ Stadler** | wait for Stadler on Coach5 AP2 + FW path |
+| Train# | Fzg | CCU IP | Nomad status | Stadler status | Next action |
+|---|---|---|---|---|---|
+| 4736-101 | 129 | ❓ | ⚪ UNKNOWN | ❓ | initial visit |
+| 4736-102 | 130 | `10.179.47.1` | 🟡 **PAUSED** | ✅ clear | apply patches + persist + fix train_id + fix vlan7 — see notes |
+| 4736-104 | 132 | `10.179.10.1` | 🔴 **BLOCKED w/ Stadler + 6 APs stuck** | 🔴 D4 AP missing (cable reg #5) | Push remaining 3 APs (.237 .238 .240); D4 cable Stadler item — see notes |
+| 4736-105 | 133 | `10.179.1.1` | 🟢 **DONE w/ Stadler** | 🔴 Coach 5 AP2 missing | wait for Stadler on Coach5 AP2 + FW path |
 ```
+
+**Stadler status rule:** 🔴 BLOCKED when any APs/switches are missing OR a cabling fault is open (any open `cable-issues-register.md` entry for the train); ✅ clear otherwise; ❓ when not yet checked / UNKNOWN. Copy the value verbatim from the local `fleet-status.md` row's `Stadler status` column.
 
 Status formatting rule: `<emoji> **<STATUS>**` — emoji first for visual scan, bold status text for hierarchy. The emoji prefix MUST match the legend table above. Mapping:
 
@@ -3701,7 +3913,7 @@ Both are append-only. No log rotation needed for v1 — fleet rollout is bounded
 
 ---
 
-## STEP 13 — Create `.claude/skills/dosto-device-discovery/SKILL.md`
+## STEP 12 — Create `.claude/skills/dosto-device-discovery/SKILL.md`
 
 Create `.claude/skills/dosto-device-discovery/SKILL.md` with the following exact content:
 
@@ -3739,7 +3951,7 @@ Subagents always pass `--json`. Engineers running interactively use `--check`.
 ## Inputs
 
 - **`<ccu-ip>`** — required. The CCU's IP (e.g. `10.179.10.1`).
-- **Fzg ID** — optional. If not given, infer from train-id template on CCU OR from the box1-tNN hostname (per fleet-status mapping). Used to determine which consist size and series to compare against.
+- **`<train#>`** — optional. The Nomad-internal primary identifier (e.g. `4736-104`). When given, the skill resolves Fzg + consist + series from the fleet-status row. When omitted, infer from `train-id` template on CCU OR from the box1-tNN hostname (per fleet-status reverse lookup by CCU IP).
 
 The skill reads the appropriate topology reference based on the consist:
 - `train-ip-allocation-commission/extracted/_shared/nv4-topology.md` for 4-car
@@ -3886,8 +4098,8 @@ installed and powered; check patch cable to D3 e1-2.
 
 This goes into:
 - **`approval_needed.rationale`** of the JSON report (subagent will set `status: NEEDS_APPROVAL`, `gate: device_count_mismatch` once that gate is added to the contract)
-- **An entry in [cable-issues-register.md](../../../cable-issues-register.md)** (engineer or orchestrator appends the row)
 - **The fleet-status row** (`aps` cell becomes `🔴 23/24 (D4 missing)`)
+- **`cable-issues-register.md`** — the orchestrator auto-appends a new row at Step 7.5 of `dosto-orchestrate` if no matching open entry exists. This skill never writes the register directly — it emits the `ap_missing[]` / `switches_missing[]` arrays in the JSON output so the orchestrator has the structured data it needs to do the append.
 
 ### Step 9: Three-way prompt (per [autonomy-boundary.md](../../contracts/autonomy-boundary.md))
 
@@ -3962,7 +4174,7 @@ JSON shape per [.claude/contracts/subagent-report.md](../../contracts/subagent-r
   "skill": "dosto-device-discovery",
   "mode": "check",
   "schema_version": "1",
-  "verdict": "missing_devices",
+  "verdict": "missing_aps",
   "raw": {
     "ccu_hostname": "box1-t10",
     "ccu_uptime_seconds": 8520,
@@ -3999,14 +4211,18 @@ JSON shape per [.claude/contracts/subagent-report.md](../../contracts/subagent-r
 - `all_present` — counts match expected for both switches and APs
 - `missing_aps` — APs short, switches OK (recoverable: partial path is safe)
 - `missing_switches` — switches short (severe: localise + escalate, do not proceed)
+- `missing_both` — APs AND switches short
 - `unexpected_extras` — more devices than expected (rare; stale leases from coupled consist?)
+
+**The "any device missing" predicate** (consumed by `dosto-commission-train` Stage 1 → Stage 2 routing): a train has missing devices iff `verdict in {"missing_aps", "missing_switches", "missing_both"}` OR `len(raw.ap_missing) > 0` OR `len(raw.switches_missing) > 0`. Belt-and-braces — check the structured arrays, not just the verdict string, in case a future verdict value gets added without an enum update. If ANY of these conditions hold, the caller MUST emit Gate 5 (`device_count_mismatch`) before any consist-wide push.
 
 ## What this skill deliberately does NOT do
 
 - ❌ Try to fix anything — discovery is read-only
 - ❌ Run consist-wide operations like `obn update c all` (doesn't have permission to)
 - ❌ Wait for Stadler — surfaces the issue and lets the orchestrator/human decide
-- ❌ Auto-edit fleet-status or cable register — emits the data, the orchestrator commits
+- ❌ Auto-edit fleet-status — emits the data, the orchestrator commits
+- ❌ Write cable-issues-register.md — emits structured `ap_missing[]` / `switches_missing[]` arrays; `dosto-orchestrate` Step 7.5 does the append
 - ❌ Trust LLDP for AP names (`AP1-v1-...` is the AP's own hostname; correlation to the *switch port hosting it* is via LLDP **on the switch**, not on the AP)
 
 ## Validated against
@@ -4028,7 +4244,7 @@ This skill's procedure was validated by running it manually against `10.179.10.1
 
 ---
 
-## STEP 14 — Create `.claude/skills/dosto-extract-train-data/SKILL.md`
+## STEP 13 — Create `.claude/skills/dosto-extract-train-data/SKILL.md`
 
 Create `.claude/skills/dosto-extract-train-data/SKILL.md` with the following exact content:
 
@@ -4383,7 +4599,7 @@ The hash check is the safety net — it's how we catch the "PDF was updated, ext
 
 ---
 
-## STEP 15 — Create `.claude/skills/dosto-fzg-id-check/SKILL.md`
+## STEP 14 — Create `.claude/skills/dosto-fzg-id-check/SKILL.md`
 
 Create `.claude/skills/dosto-fzg-id-check/SKILL.md` with the following exact content:
 
@@ -4498,14 +4714,18 @@ The engineer doesn't pass a `--variant` flag.
 
 You need:
 
+- **Train#** (e.g. `4736-104` — the Nomad-internal primary identifier)
 - **CCU IP** (e.g. `10.179.10.1`)
-- **Fzg ID** (from the IP-Port-Allocation PDF header, or computed via the shorthand below)
 
-If the user invoked this skill with an argument like `/dosto-fzg-id-check 132` or `/dosto-fzg-id-check 4736-104`, parse the Fzg ID from that. Otherwise ask: *"Which train? (Fzg ID or train#)"*.
+Fzg ID is derived from the fleet-status row via `python scripts/fleet_status_lookup.py lookup <train#> --require-fzg`. If the row's Fzg cell is `❓`, halt with: *"Fzg ID for `<train#>` missing in fleet-status — populate the Fzg column (from `train-ip-allocation-commission/<series>-xxx/<train#>/<train#>_IP-Port-Allocation.pdf` or physical inspection) before checking templates."*
 
-**Series → Fzg shorthand** (PDF header is source of truth):
+Engineer may also pass a bare Fzg integer (`/dosto-fzg-id-check 132`) for ad-hoc work — in that case treat Fzg as authoritative and skip the fleet-status lookup.
+
+**Series → Fzg shorthand** (reference only; runtime Fzg comes from fleet-status, not the formula):
 - `4734-NNN → Fzg = NNN - 100`
 - `4736-NNN → Fzg = NNN + 28`
+- `4705-NNN → Fzg = NNN + 128`
+- `4706-NNN → Fzg = NNN + 88`
 
 ### 1. Compute the expected hardcoded value
 
@@ -4772,7 +4992,7 @@ Per the orchestrator-as-sole-writer pattern, the skill prints the values; the en
 
 ---
 
-## STEP 16 — Create `.claude/skills/dosto-l2-health/SKILL.md`
+## STEP 15 — Create `.claude/skills/dosto-l2-health/SKILL.md`
 
 Create `.claude/skills/dosto-l2-health/SKILL.md` with the following exact content:
 
@@ -4908,11 +5128,41 @@ bash scripts/07_throughput.sh <CCU_IP> [interval_seconds]
 
 ### Step 8 — End-to-end CCU↔Stadler firewall
 
-ICMP, ARP, and TCP probes to 172.19.196.1. **ICMP is filtered by FW policy on most installations** — do not interpret 100% loss as a fault until TCP probes also fail.
+Three orthogonal checks per [CLAUDE.md Phase 6](../../../CLAUDE.md) (rewritten 2026-05-11 per audit finding F9):
+
+- **Q1 path health:** ARP REACHABLE on vlan7 to `172.19.X.1`, link counters clean
+- **Q2 FW commission state:** ICMP — **0 replies = commissioned (Stadler policy dropping ping), replies received = NOT commissioned (bare Westermo defaults).** This is the deciding test, not TCP.
+- **Q3 service availability:** TCP probes — informational only; CANNOT classify commission state by themselves (a default-config Westermo also has 80/22 OPEN).
 
 ```bash
 bash scripts/08_e2e_probe.sh <CCU_IP>
 ```
+
+Step 8's `findings.json` block MUST include the derived `fw_commission_state`:
+
+```json
+"fw_reach": {
+  "fw_peer_ip": "172.19.X.1",
+  "arp_state": "reachable|stale|failed|none",
+  "fw_peer_mac": "00:90:e8:...",          // Westermo OUI if present
+  "icmp_sent": 5,
+  "icmp_replies": 0,                       // 0 with arp reachable = commissioned
+  "tcp80": "open|filtered|refused|timeout",
+  "tcp22": "open|filtered|refused|timeout",
+  "fw_commission_state": "commissioned|uncommissioned|path_broken|unknown"
+}
+```
+
+Derivation rule (must be applied in Step 9 aggregator):
+
+| ARP state | ICMP replies | → `fw_commission_state` |
+|---|---|---|
+| `reachable` (or `stale`) | 0 | `commissioned` |
+| `reachable` (or `stale`) | > 0 | `uncommissioned` |
+| `failed` / `none` | (any) | `path_broken` |
+| — | not tested | `unknown` (don't emit a customer verdict) |
+
+**Customer report implication:** the `dosto-l2-report` skill must read `fw_commission_state` and present `uncommissioned` as a Stadler-action item, NOT as a Nomad-side fault. Reporting `tcp80=open` alone as ✅ is incorrect and produces wrong customer classifications.
 
 ### Step 9 — Aggregate and write findings.json
 
@@ -4979,7 +5229,7 @@ If the verdict is anything other than HEALTHY, list the specific findings that d
 - **VDS switch CLI does not accept `;` chaining.** One command per SSH session. Loop in shell.
 - **Switches require legacy SSH algorithms** — the scripts already include the right `KexAlgorithms` and `HostKeyAlgorithms` flags.
 - **Train cellular networks drop frequently.** Long-running steps (Step 4, Step 7) should be run as background jobs. If they fail mid-way, just rerun.
-- **Don't trust ICMP to the Stadler firewall.** Always confirm with TCP probes.
+- **Stadler firewall commission state is decided by ICMP, NOT TCP.** A commissioned FW drops echo-request (Stadler policy); an uncommissioned/default Westermo FW replies to ping AND has TCP 80/22 OPEN by default. Reading `tcp80=OPEN` as ✅ is **wrong** when ICMP also replies — that's the bare-defaults case, not a commissioned FW. See [CLAUDE.md Phase 6](../../../CLAUDE.md) for the full three-question framework.
 - **Cumulative byte counters reset on switch reboot** — to convert "X TB since boot" into a useful metric, also read uptime if possible.
 - **Stadler-side device VLANs are not visible from the CCU.** This skill only checks what the CCU and management VLAN can see. If the user reports a problem on a Stadler-side device (camera, AFZ, intercom), this skill cannot diagnose it directly.
 
@@ -5003,7 +5253,7 @@ If any of these are missing, ask the user before assuming defaults.
 
 ---
 
-## STEP 17 — Create `.claude/skills/dosto-l2-report/SKILL.md`
+## STEP 16 — Create `.claude/skills/dosto-l2-report/SKILL.md`
 
 Create `.claude/skills/dosto-l2-report/SKILL.md` with the following exact content:
 
@@ -5139,21 +5389,23 @@ The generated docx has a Revision History table. When the user says "update the 
 
 ---
 
-## STEP 18 — Create `.claude/skills/dosto-obn-patches/SKILL.md`
+## STEP 17 — Create `.claude/skills/dosto-obn-patches/SKILL.md`
 
 Create `.claude/skills/dosto-obn-patches/SKILL.md` with the following exact content:
 
 ~~~~markdown
 ---
 name: dosto-obn-patches
-description: Verify and apply the 8 known OBN bug fixes on a DOSTO CCU. Reads the running OBN code via SSH, greps for each bug's patch marker, reports what's patched / what's missing, and (in --apply mode) prints the exact recipe to scp the fix scripts and run them inside btrfs ro-toggle. In --persist mode detects whether the CCU has the canonical nd-systemupdate.sh or the fleet-wide .dont rename and prints the matching shell recipe (staging scripts in /var/tmp/, which is bind-mounted into the chroot — /tmp is NOT) to bake patches into a new snapshot. Use whenever you're about to run obn update on a CCU, after every CCU reboot (patches may have been wiped), or to fill in the OBN patches column of fleet-status.md. The skill never edits the CCU directly — the engineer runs the printed recipe.
+description: Verify and apply the 10 known OBN bug fixes on a DOSTO CCU. Reads the running OBN code via SSH, greps for each bug's patch marker, reports what's patched / what's missing, and (in --apply mode) prints the exact recipe to scp the fix scripts and run them inside btrfs ro-toggle. In --persist mode detects whether the CCU has the canonical nd-systemupdate.sh or the fleet-wide .dont rename and prints the matching shell recipe (staging scripts in /var/tmp/, which is bind-mounted into the chroot — /tmp is NOT) to bake patches into a new snapshot. Use whenever you're about to run obn update on a CCU, after every CCU reboot (patches may have been wiped), or to fill in the OBN patches column of fleet-status.md. The skill never edits the CCU directly — the engineer runs the printed recipe.
 ---
 
 # DOSTO OBN Patches — Verify and Apply
 
-The 8 known OBN bugs (documented in [troubleshooting-runbook.md](troubleshooting-runbook.md)) crash or silently corrupt `obn update f all` and `obn update c all`. Without these fixes, partial updates leave the consist in a mixed v3/v4/v8 state which causes RSTP topology storms.
+The 10 known OBN bugs (documented in [troubleshooting-runbook.md](troubleshooting-runbook.md)) crash, hang, or silently corrupt `obn update f all`, `obn update c all`, and `obn report`. Without these fixes, partial updates leave the consist in a mixed v3/v4/v8 state which causes RSTP topology storms — and `obn report` can spin at 100% CPU with 27GB+ RSS when any AP/switch is missing or has a duplicate position (Bug 10).
 
-**Always apply all 8 together.** Partial patches are worse than vanilla — applying only some leaves crash modes open, so an `obn update` run dies mid-way and writes the partial state to the consist.
+**Always apply all 10 together.** Partial patches are worse than vanilla — applying only some leaves crash/hang modes open, so an `obn update` or `obn report` run dies (or hangs forever) mid-way and writes partial state to the consist.
+
+**Hang/leak guarantee.** Bug 10 (BFS guard in `report_dosto_neu.py:number_coaches`) is the only patch that prevents the infinite-loop + unbounded RSS growth in `obn report` when a switch/AP is missing. Bug 9 (pysnmp dispatcher Lock) prevents the parallel-SNMP `IndexError` crash during multi-switch updates. Bugs 2/3/4/7/8 convert `None`/`KeyError` crashes into clean exits. With all 10 present, OBN exits cleanly (zero or non-zero, but bounded) on every known failure mode involving missing or unresponsive devices.
 
 ## When to use
 
@@ -5193,8 +5445,10 @@ Subagent emits this as one element of `skill_outputs[]`:
     "bug6_count": 0,
     "bug7_count": 0,
     "bug8_count": 0,
+    "bug9_count": 0,
+    "bug10_count": 0,
     "patches_applied_total": 0,
-    "patches_expected_total": 8,
+    "patches_expected_total": 10,
     "is_persisted": false,
     "train_id_template": "{%- set train_id = 132 -%}",
     "train_id_template_consistent": true,
@@ -5209,9 +5463,9 @@ Subagent emits this as one element of `skill_outputs[]`:
 
 `verdict` semantics:
 - `vanilla` — `patches_applied_total == 0`
-- `partial` — `0 < patches_applied_total < 8`
-- `all_patched` — `patches_applied_total == 8` AND `is_persisted == false`
-- `all_persisted` — `patches_applied_total == 8` AND `is_persisted == true` (btrfs subvol is a `release`-tier `runN`, not the temporary `run` snapshot)
+- `partial` — `0 < patches_applied_total < 10`
+- `all_patched` — `patches_applied_total == 10` AND `is_persisted == false`
+- `all_persisted` — `patches_applied_total == 10` AND `is_persisted == true` (btrfs subvol is a `release`-tier `runN`, not the temporary `run` snapshot)
 
 `is_persisted` is computed from the btrfs subvol path — `/.snapshots/release` or `/.snapshots/runN` (where N > 1) suggests persistence; bare `/.snapshots/run` or `/.snapshots/work` doesn't.
 
@@ -5280,20 +5534,22 @@ Invocation examples:
 - `/dosto-obn-patches 10.179.10.1 --persist --with-fzg-id 132` → OBN + template `train_id` fix folded into one chroot session
 - `/dosto-obn-patches 10.179.10.1 --persist --with-vlan7 132 --with-fzg-id 132` → all three folded — single-promote pattern (handoff lesson 1)
 
-## The 8 bugs and their grep markers
+## The 10 bugs and their grep markers
 
 The skill detects whether each bug is patched by grepping for a deterministic string the patch inserts into the file. These are the canonical markers:
 
-| # | File | Patch marker (presence = patched) | Source script |
-|---|---|---|---|
-| 1 | `/usr/share/obn/lib/device/vendor/vdsrail.py` | `default image is now` (in a regex line) | `scripts/fix_obn.py` (canonical) or `scripts/fix_bug1_regex.py` (variant) |
-| 2 | `/usr/share/obn/lib/device/vendor/vdsrail.py` | `if not result:` (None guard, appears in 2 polling loops) | `scripts/fix_obn.py` |
-| 3 | `/usr/share/obn/lib/device/snmpdevice.py` | `except KeyError:\n            return {}` | `scripts/fix_obn.py` |
-| 4 | `/usr/share/obn/lib/report/device.py` | `bool(self.firmware) and not self.firmware.endswith` | `scripts/fix_obn.py` |
-| 5 | `/usr/share/obn/cli/update.py` | `Bug 5 fix: pre-populate tftp_allowed ipset` | `scripts/fix_obn.py` |
-| 6 | `/usr/share/obn/lib/tree.py` | `neighbour not in this consist` | `scripts/fix_obn.py` (canonical) or `scripts/fix_obn_bugs67.py` (fallback) |
-| 7 | `/usr/share/obn/lib/device/vendor/vdsrail.py` | `if hostname is not None:` (followed by `self._snmp_set`) | `scripts/fix_obn.py` (canonical) or `scripts/fix_obn_bugs67.py` (fallback) |
-| 8 | `/usr/share/obn/lib/report/device.py` | `bool(self.config) and not self.config.endswith` | `scripts/fix_obn_bug8.py` |
+| # | File | Patch marker (presence = patched) | Source script | Failure mode without patch |
+|---|---|---|---|---|
+| 1 | `/usr/share/obn/lib/device/vendor/vdsrail.py` | `default image is now` (in a regex line) | `scripts/fix_obn.py` (canonical) or `scripts/fix_bug1_regex.py` (variant) | Mis-parsed fw version → bad comparisons |
+| 2 | `/usr/share/obn/lib/device/vendor/vdsrail.py` | `if not result:` (None guard, appears in 2 polling loops) | `scripts/fix_obn.py` | Crash on None SNMP poll |
+| 3 | `/usr/share/obn/lib/device/snmpdevice.py` | `except KeyError:\n            return {}` | `scripts/fix_obn.py` | Uncaught KeyError mid-walk |
+| 4 | `/usr/share/obn/lib/report/device.py` | `bool(self.firmware) and not self.firmware.endswith` | `scripts/fix_obn.py` | `.endswith()` on None crash |
+| 5 | `/usr/share/obn/cli/update.py` | `Bug 5 fix: pre-populate tftp_allowed ipset` | `scripts/fix_obn.py` | Silent partial AP fw batch failure |
+| 6 | `/usr/share/obn/lib/tree.py` | `neighbour not in this consist` | `scripts/fix_obn.py` (canonical) or `scripts/fix_obn_bugs67.py` (fallback) | Cross-consist neighbour leak |
+| 7 | `/usr/share/obn/lib/device/vendor/vdsrail.py` | `if hostname is not None:` (followed by `self._snmp_set`) | `scripts/fix_obn.py` (canonical) or `scripts/fix_obn_bugs67.py` (fallback) | SNMP-set hostname=None crash on reboot path |
+| 8 | `/usr/share/obn/lib/report/device.py` | `bool(self.config) and not self.config.endswith` | `scripts/fix_obn_bug8.py` | `.endswith()` on None config crash |
+| **9** | `/usr/share/obn/lib/device/snmpdevice.py` | `_SNMP_DISPATCH_LOCK` (module-level threading.Lock) | `scripts/fix_obn_bug9_pysnmp_thread_safety.py` | **Parallel `obn update c sw` crashes with `IndexError: pop from empty list`** (race on shared SnmpEngine dispatcher) — Fzg t16/t18 2026-05-20 |
+| **10** | `/usr/share/obn/lib/report/report_dosto_neu.py` | `NDP-PATCH-BUG10-BFS-GUARD` | `scripts/fix_obn_bug10_report_dosto_neu_bfs.py` | **`obn report` infinite loop @ 100% CPU + 27GB RSS leak** when an AP/switch is missing or has duplicate position — Fzg 130 2026-05-12, Fzg 8 2026-05-22 |
 
 ## Procedure
 
@@ -5322,6 +5578,10 @@ echo "=== Bug 7 (vdsrail reboot hostname) ==="
 sudo grep -c "if hostname is not None:" /usr/share/obn/lib/device/vendor/vdsrail.py
 echo "=== Bug 8 (device.py config None) ==="
 sudo grep -c "bool(self.config) and not self.config.endswith" /usr/share/obn/lib/report/device.py
+echo "=== Bug 9 (snmpdevice.py pysnmp thread-safety Lock) ==="
+sudo grep -c "_SNMP_DISPATCH_LOCK" /usr/share/obn/lib/device/snmpdevice.py
+echo "=== Bug 10 (report_dosto_neu.py BFS hang guard) ==="
+sudo grep -c "NDP-PATCH-BUG10-BFS-GUARD" /usr/share/obn/lib/report/report_dosto_neu.py
 echo "=== btrfs subvol (look for run<N> ===" 
 mount | grep " on / " | head -1
 echo "=== train_id template (should be hardcoded number, NOT 128+train_id) ==="
@@ -5345,6 +5605,8 @@ Interpret each `grep -c` count:
 - Bug 1: 1+ → patched, 0 → missing
 - Bug 2: 2+ → both polling loops patched, 1 → only one of two patched (bad, partial state), 0 → missing
 - Bugs 3–8: 1+ → patched, 0 → missing
+- Bug 9 (`_SNMP_DISPATCH_LOCK`): 2+ → patched (one at module-level def + one at the `with` site), 1 → partial, 0 → missing
+- Bug 10 (`NDP-PATCH-BUG10-BFS-GUARD`): 1+ → patched, 0 → missing
 
 Print a status table:
 
@@ -5359,22 +5621,24 @@ Bug | Status        | File
  6  | ✅ PATCHED     | tree.py (cross-consist guard)
  7  | ✅ PATCHED     | vdsrail.py (reboot hostname)
  8  | 🔴 MISSING     | device.py (config None guard)
+ 9  | 🔴 MISSING     | snmpdevice.py (pysnmp thread-safety Lock)
+ 10 | 🔴 MISSING     | report_dosto_neu.py (BFS hang guard)
 
-Verdict: 🔴 5/8 patched, 3 missing/partial — apply needed
+Verdict: 🔴 5/10 patched, 5 missing/partial — apply needed
 btrfs subvolume: <whatever the mount line shows>
 Uptime: <X days>  (recent reboot? then patches may have been wiped from the run<N> snapshot)
 ```
 
 **Verdicts:**
-- ✅ **8/8 patched** → done. Suggest `--persist` only if fleet-status doesn't yet say `persisted`. Otherwise exit clean.
-- 🟡 **8/8 in this snapshot but uptime is fresh** → looks good but verify by running an `obn` command first; some users have seen patches survive in `/usr/share/obn` but lose them on next reboot.
-- 🔴 **<8/8** → recommend `--apply`. Don't proceed past Step 3 of the train-login checklist until 8/8.
+- ✅ **10/10 patched** → done. Suggest `--persist` only if fleet-status doesn't yet say `persisted`. Otherwise exit clean.
+- 🟡 **10/10 in this snapshot but uptime is fresh** → looks good but verify by running an `obn` command first; some users have seen patches survive in `/usr/share/obn` but lose them on next reboot.
+- 🔴 **<10/10** → recommend `--apply`. Don't proceed past Step 3 of the train-login checklist until 10/10. **In particular, never run `obn report` with Bug 10 missing if any device may be offline** — it will hang at 100% CPU and leak RAM until OOM-killed.
 
 Update fleet-status `OBN patches` column accordingly:
-- 8/8 in btrfs `release` snapshot (default GRUB) → `persisted (run<N>)`
-- 8/8 in current state but not yet promoted via `nd-systemupdate.sh shell` → `8/8 (not persisted — will wipe on reboot)`
-- partial → `<N>/8`
-- 0/8 → `0/8 (vanilla)`
+- 10/10 in btrfs `release` snapshot (default GRUB) → `persisted (run<N>)`
+- 10/10 in current state but not yet promoted via `nd-systemupdate.sh shell` → `10/10 (not persisted — will wipe on reboot)`
+- partial → `<N>/10`
+- 0/10 → `0/10 (vanilla)`
 
 ### Cross-checks (always report alongside the bug table)
 
@@ -5387,11 +5651,11 @@ The `--check` SSH grabs `grep -h "^{%- set train_id" /etc/obn/template/nv6-*.cfg
 | Output | Meaning | Action |
 |---|---|---|
 | (one line, e.g. `{%- set train_id = 132 -%}`) | ✅ hardcoded Fzg, mar5-compliant | OK. Note the value reported. |
-| `{%- set train_id = 128 + train_id -%}` | 🔴 broken formula — same bug that caused Fzg 133 cascade | Fix during `--persist` chroot session. Replace with hardcoded Fzg from the IP-Port-Allocation PDF. |
+| `{%- set train_id = 128 + train_id -%}` | 🔴 broken formula — same bug that caused the 4736-105 (Fzg 133) cascade | Fix during `--persist` chroot session. Replace with hardcoded Fzg from the fleet-status row for the Train# (or, off-line, from the IP-Port-Allocation PDF). |
 | (multiple different lines) | 🔴 inconsistent templates — partial fix from a previous session | Fix all 18 to a single hardcoded Fzg. |
 | (empty) | 🟡 templates may be elsewhere or older format | Verify templates exist; check `nv4-*.cfg` instead. |
 
-Don't suggest auto-applying the fix — the engineer must confirm the right Fzg from the IP-Port-Allocation PDF before any sed replacement. The skill should *report* the finding and *recommend* the fix, not perform it.
+Don't suggest auto-applying the fix — the engineer must confirm the right Fzg from the fleet-status row for the Train# (or, off-line, the IP-Port-Allocation PDF) before any sed replacement. The skill should *report* the finding and *recommend* the fix, not perform it.
 
 #### B. vlan7 IP — decoding back to encoded Fzg
 
@@ -5406,7 +5670,7 @@ encoded_device = o4 & 0x7F
 
 Compare the encoded Fzg against:
 1. The `train_id` from the template (above) — usually they should match on DOSTO NEU consists, **but not always** (the auto-memory rule explicitly says they can be intentionally decoupled — e.g. box1-t11 / 10.179.11.x has `train_id 11` but cfg files say `131`). Don't flag a mismatch as wrong; flag it as **needs verification against the IP-Port-Allocation PDF**.
-2. The Fzg ID from the IP-Port-Allocation PDF (if the engineer has supplied it via `--fzg <NN>` or named the train).
+2. The Fzg ID from the fleet-status row (looked up by Train# via `scripts/fleet_status_lookup.py`) or, off-line, from the IP-Port-Allocation PDF.
 
 **Cases:**
 
@@ -5414,7 +5678,7 @@ Compare the encoded Fzg against:
 |---|---|---|
 | ✅ | ✅ | Everything aligned. ✅ all green. |
 | ✅ | ❌ | vlan7 is right; template needs hardcoding to PDF Fzg. Common on freshly-commissioned CCUs. |
-| ❌ | ✅ | **vlan7 is wrong** — template is right but the static vlan7 IP doesn't match the train. Stadler-side reachability broken. → `/dosto-vlan7-config <fzg>` to get fix recipe. |
+| ❌ | ✅ | **vlan7 is wrong** — template is right but the static vlan7 IP doesn't match the train. Stadler-side reachability broken. → `/dosto-vlan7-config <train#>` to get fix recipe. |
 | ❌ | ❌ | Both wrong — full reset needed. Fix template first, vlan7 second, in same chroot session. |
 
 Validated example (2026-05-09, real train):
@@ -5477,20 +5741,32 @@ When `nd_systemupdate_dont_renamed == false` AND `nd_systemupdate_path != null`,
 
 ### `--apply` mode (only after `--check` showed gaps)
 
-Print this recipe (with `<ccu-ip>` filled in):
+**Caller type matters here.** The recipe below is engineer-facing — assumes the engineer runs SCP from their laptop. **Subagents (per `dosto-train-worker.md`) cannot run SCP** — the harness denies SCP from spawned subagents. Subagent flow per audit finding F1-B (2026-05-11):
+
+1. Subagent emits a `status: ERROR` report with `next_action: "Parent: please SCP the 4 fix scripts to /var/tmp/ on <ccu-ip>; then send results to resume."` per the F1-C handoff protocol in `dosto-train-worker.md`.
+2. Parent (orchestrator / top-level session) executes the SCP recipe below from its session, then `SendMessage`'s the worker with the result.
+3. Worker resumes at STEP 2 — SSH the run-the-scripts commands work fine from subagents (they're plain one-liners, not heredocs or SCP).
+
+Engineer-facing recipe (with `<ccu-ip>` filled in):
 
 ```bash
-# === STEP 1: From your laptop, copy the 4 fix scripts to the CCU ===
+# === STEP 1: From your laptop (engineer) OR parent session, copy the 4 fix scripts to the CCU ===
+# NOTE: subagents skip this step — parent handles it. See F1-B note above.
 # Stage in /var/tmp/, NOT /tmp/. Reason: the chroot used by --persist
 # bind-mounts /var/tmp (per DIR_TO_MOUNT in nd-systemupdate.sh) but NOT
 # /tmp. Staging here lets the same files be reused inside the chroot
 # without re-scp.
+# IMPORTANT: developer user can't write to /var/tmp directly — SCP to /tmp first, then sudo mv.
 scp -i "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh" \
     "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py" \
     "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bugs67.py" \
     "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug8.py" \
+    "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug9_pysnmp_thread_safety.py" \
+    "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug10_report_dosto_neu_bfs.py" \
     "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_bug1_regex.py" \
-    developer@<ccu-ip>:/var/tmp/
+    developer@<ccu-ip>:/tmp/
+ssh -i "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh" developer@<ccu-ip> \
+    'sudo mv /tmp/fix_obn.py /tmp/fix_obn_bugs67.py /tmp/fix_obn_bug8.py /tmp/fix_obn_bug9_pysnmp_thread_safety.py /tmp/fix_obn_bug10_report_dosto_neu_bfs.py /tmp/fix_bug1_regex.py /var/tmp/ && sudo chmod +x /var/tmp/fix_*.py'
 
 # === STEP 2: SSH to the CCU and run them under btrfs ro-toggle ===
 ssh -i "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh" developer@<ccu-ip>
@@ -5512,10 +5788,16 @@ sudo python3 /var/tmp/fix_bug1_regex.py
 # Always run Bug 8 (not in fix_obn.py):
 sudo python3 /var/tmp/fix_obn_bug8.py
 
+# Bug 9 (pysnmp dispatcher thread-safety — prevents parallel-SNMP IndexError crash):
+sudo python3 /var/tmp/fix_obn_bug9_pysnmp_thread_safety.py
+
+# Bug 10 (report_dosto_neu BFS hang guard — prevents obn report infinite-loop + RSS leak):
+sudo python3 /var/tmp/fix_obn_bug10_report_dosto_neu_bfs.py
+
 # Re-lock root
 sudo btrfs property set / ro true
 
-# === STEP 3: Re-run the skill in --check mode to verify 8/8 ===
+# === STEP 3: Re-run the skill in --check mode to verify 10/10 ===
 exit
 ```
 
@@ -5552,6 +5834,8 @@ sudo python3 /var/tmp/fix_obn.py
 sudo python3 /var/tmp/fix_obn_bugs67.py     # only if fix_obn.py couldn't apply Bug 6/7
 sudo python3 /var/tmp/fix_bug1_regex.py     # only if fix_obn.py couldn't apply Bug 1
 sudo python3 /var/tmp/fix_obn_bug8.py
+sudo python3 /var/tmp/fix_obn_bug9_pysnmp_thread_safety.py
+sudo python3 /var/tmp/fix_obn_bug10_report_dosto_neu_bfs.py
 
 # 3.5. (ONLY if pre-recipe showed nd_systemupdate_dont_renamed == false —
 #       i.e. <NDSU> was the canonical /usr/sbin/nd-systemupdate.sh)
@@ -5560,7 +5844,7 @@ sudo python3 /var/tmp/fix_obn_bug8.py
 #      patches on the next 0-4am cycle:
 sudo mv /usr/sbin/nd-systemupdate.sh /usr/sbin/nd-systemupdate.sh.dont
 
-# 4. Verify all 8 markers inside the chroot:
+# 4. Verify all 10 markers inside the chroot:
 sudo grep -c "default image is now"     /usr/share/obn/lib/device/vendor/vdsrail.py
 sudo grep -c "if not result:"           /usr/share/obn/lib/device/vendor/vdsrail.py
 sudo grep -c "except KeyError:"         /usr/share/obn/lib/device/snmpdevice.py
@@ -5569,7 +5853,9 @@ sudo grep -c "Bug 5 fix:"               /usr/share/obn/cli/update.py
 sudo grep -c "neighbour not in this"    /usr/share/obn/lib/tree.py
 sudo grep -c "if hostname is not None:" /usr/share/obn/lib/device/vendor/vdsrail.py
 sudo grep -c "bool(self.config)"        /usr/share/obn/lib/report/device.py
-# Expected: 1, 2, 1, 1, 1, 1, 1, 1
+sudo grep -c "_SNMP_DISPATCH_LOCK"      /usr/share/obn/lib/device/snmpdevice.py
+sudo grep -c "NDP-PATCH-BUG10-BFS-GUARD" /usr/share/obn/lib/report/report_dosto_neu.py
+# Expected: 1, 2, 1, 1, 1, 1, 1, 1, 2, 1
 
 # 5. Exit the chroot — promotes work → release → new run<N>, sets default GRUB entry
 exit
@@ -5617,6 +5903,8 @@ sudo python3 /var/tmp/fix_obn.py
 sudo python3 /var/tmp/fix_obn_bugs67.py     # only if fix_obn.py couldn't apply Bug 6/7
 sudo python3 /var/tmp/fix_bug1_regex.py     # only if fix_obn.py couldn't apply Bug 1
 sudo python3 /var/tmp/fix_obn_bug8.py
+sudo python3 /var/tmp/fix_obn_bug9_pysnmp_thread_safety.py
+sudo python3 /var/tmp/fix_obn_bug10_report_dosto_neu_bfs.py
 
 # === STEP 3b: Fzg-ID template fix (folded from dosto-fzg-id-check) ===
 sudo python3 <<'PYEOF'
@@ -5663,7 +5951,9 @@ PYEOF
 sudo mv /usr/sbin/nd-systemupdate.sh /usr/sbin/nd-systemupdate.sh.dont   # (only if applicable)
 
 # === STEP 4: Verify all markers inside the chroot ===
-# OBN patches (expected counts: 1, 2, 1, 1, 1, 1, 1, 1):
+# This step reads the chroot's view of /, which IS the new snapshot in-flight.
+# All paths below are inside the chroot — the live (pre-reboot) filesystem is unchanged.
+# OBN patches (expected counts: 1, 2, 1, 1, 1, 1, 1, 1, 2, 1):
 sudo grep -c "default image is now"     /usr/share/obn/lib/device/vendor/vdsrail.py
 sudo grep -c "if not result:"           /usr/share/obn/lib/device/vendor/vdsrail.py
 sudo grep -c "except KeyError:"         /usr/share/obn/lib/device/snmpdevice.py
@@ -5672,17 +5962,70 @@ sudo grep -c "Bug 5 fix:"               /usr/share/obn/cli/update.py
 sudo grep -c "neighbour not in this"    /usr/share/obn/lib/tree.py
 sudo grep -c "if hostname is not None:" /usr/share/obn/lib/device/vendor/vdsrail.py
 sudo grep -c "bool(self.config)"        /usr/share/obn/lib/report/device.py
+sudo grep -c "_SNMP_DISPATCH_LOCK"      /usr/share/obn/lib/device/snmpdevice.py
+sudo grep -c "NDP-PATCH-BUG10-BFS-GUARD" /usr/share/obn/lib/report/report_dosto_neu.py
 # Fzg-ID template — exactly one unique line, value = <FZG>:
-grep -h "^{%- set train_id" /etc/obn/template/<VARIANT_GLOB> | sort -u
+# (Use glob — template filenames vary across CCUs: nv6-NNN-XX.cfg, nv6-XX-vY.cfg, etc. NEVER hardcode a sample filename.)
+echo "template count:"
+ls /etc/obn/template/<VARIANT_GLOB> | wc -l   # expect <TEMPLATES_EXPECTED>
+echo "train_id unique values:"
+grep -h "^{%- set train_id" /etc/obn/template/<VARIANT_GLOB> | sort -u   # expect single line: {%- set train_id = <FZG> -%}
 # vlan7 nmconnection — single matching address1 line:
 grep "^address1=" /etc/NetworkManager/system-connections/ndrd-vlan-vlan7.nmconnection
+# expect: address1=<EXPECTED_VLAN7_IP>,...
 
 # === STEP 5: Exit chroot — promotes work → release → new run<N> ===
 exit
 
+# === STEP 5.5: Post-exit verification — mount the new snapshot read-only ===
+# Per audit finding F3 (2026-05-11): the chroot's in-chroot greps in Step 4 are
+# necessary but NOT sufficient. If a sed/sub-recipe missed a file (e.g. unexpected
+# template filename pattern), Step 4 inside the chroot will still report "all good"
+# because it's looking at the same files the sed already processed. The chroot's
+# view of "/" is the new snapshot, but we want one more verification from OUTSIDE
+# the chroot, against the actual snapshot subvol, before committing the reboot.
+#
+# Why this matters: if we reboot into a broken snapshot, recovery requires
+# bootloader-time intervention. Mount-RO checking before reboot is cheap insurance.
+
+# Find the new snapshot — should be the one just created during exit:
+NEW_SNAPSHOT=$(sudo btrfs subvolume list / | grep snapshots/run | sort -k2 -n | tail -1 | awk '{print $NF}')
+echo "verifying snapshot: $NEW_SNAPSHOT"
+
+# Mount it read-only (does NOT affect live state):
+sudo mkdir -p /mnt/snapshot-check
+sudo mount -o subvol=$NEW_SNAPSHOT,ro /dev/sda2 /mnt/snapshot-check
+
+# Re-verify the three classes of fix, against the actual snapshot files:
+echo "--- OBN patches in snapshot ---"
+sudo grep -c "default image is now" /mnt/snapshot-check/usr/share/obn/lib/device/vendor/vdsrail.py
+sudo grep -c "Bug 5 fix:"           /mnt/snapshot-check/usr/share/obn/cli/update.py
+sudo grep -c "bool(self.config)"    /mnt/snapshot-check/usr/share/obn/lib/report/device.py
+# (Sampling 3 of 8 markers — if any of these is 0, run the full 8-marker check.)
+
+echo "--- train_id in snapshot templates ---"
+ls /mnt/snapshot-check/etc/obn/template/<VARIANT_GLOB> | wc -l   # expect <TEMPLATES_EXPECTED>
+grep -h "^{%- set train_id" /mnt/snapshot-check/etc/obn/template/<VARIANT_GLOB> | sort -u
+# expect single line: {%- set train_id = <FZG> -%}
+
+echo "--- vlan7 in snapshot ---"
+grep "^address1=" /mnt/snapshot-check/etc/NetworkManager/system-connections/ndrd-vlan-vlan7.nmconnection
+# expect: address1=<EXPECTED_VLAN7_IP>,...
+
+# Cleanup the read-only mount — does NOT affect the snapshot:
+sudo umount /mnt/snapshot-check
+sudo rmdir /mnt/snapshot-check
+
+# Decision point: if ANY of the above verifications failed, DO NOT REBOOT.
+# Instead: re-enter the chroot, fix the missing file, exit again. The chroot
+# creates a new runN each time; the old (broken) runN persists but is ignored
+# on next boot because GRUB default is the latest.
+
 # === STEP 6: Reboot into the new snapshot ===
 sudo /usr/local/sbin/safe_reboot
 ```
+
+**On the snapshot-naming surprise** (audit finding F4): `nd-systemupdate.sh shell` forks from `release`, not from the currently-running snapshot. The new snapshot name is whichever `runN` slot is currently unused — it does NOT increment monotonically across all chroot sessions. If pre-promote you were on `run2`, post-promote you may end up on `run1`, `run3`, or any other slot. **Don't guess by name; resolve by `btrfs subvolume list / | tail -1`** as Step 5.5 above does.
 
 The recipe printer substitutes:
 - `<NDSU>` from the same NDSU detection probe used by OBN-only `--persist`
@@ -5720,7 +6063,7 @@ After `--persist` + reboot, the engineer (or `dosto-commission-train` stage 10 `
 
 | Assertion | Probe | Pass criterion |
 |---|---|---|
-| **A. All 8 markers present** | The 8 grep counts from `--check` mode | All 8 expected (1, 2, 1, 1, 1, 1, 1, 1) |
+| **A. All 10 markers present** | The 10 grep counts from `--check` mode | All 10 expected (1, 2, 1, 1, 1, 1, 1, 1, 2, 1) |
 | **B. btrfs subvol promoted** | `sudo btrfs subvolume show /` (compare ID before vs after) | Active subvolume ID changed (folder names recycle — ID is authoritative, handoff lesson 6) |
 | **C. OBN runs cleanly** | `sudo obn discover` exit code | Exit 0, no Traceback / ERROR / Exception in `/var/log/obn/*.log` since reboot |
 | **D. Bug 5 ipset pre-population observable** | `sudo ipset list tftp_allowed \| grep "Number of entries"` after a non-empty discover | Non-zero entry count (post-discover OBN should pre-populate the ipset with target devices) |
@@ -5740,7 +6083,7 @@ After `--persist` + reboot, the engineer (or `dosto-commission-train` stage 10 `
   "schema_version": "1",
   "verdict": "all_match|markers_only|markers_and_promote_only|runtime_failure",
   "raw": {
-    "input_assertion_a": {"pass": true, "marker_counts": [1, 2, 1, 1, 1, 1, 1, 1]},
+    "input_assertion_a": {"pass": true, "marker_counts": [1, 2, 1, 1, 1, 1, 1, 1, 2, 1]},
     "promote_assertion_b": {"pass": true, "subvol_id_before": 314, "subvol_id_after": 320, "subvol_path": "/.snapshots/run2"},
     "runtime_assertion_c": {"pass": true, "obn_discover_exit": 0, "log_traceback_count": 0, "log_error_count": 0},
     "bug5_assertion_d": {"pass": true, "tftp_allowed_entry_count": 18}
@@ -5799,94 +6142,94 @@ The patches themselves are documented in [troubleshooting-runbook.md](../../../t
 
 ---
 
-## STEP 19 — Create `.claude/skills/dosto-orchestrate/SKILL.md`
+## STEP 18 — Create `.claude/skills/dosto-orchestrate/SKILL.md`
 
 Create `.claude/skills/dosto-orchestrate/SKILL.md` with the following exact content:
 
 ~~~~markdown
 ---
 name: dosto-orchestrate
-description: Bootstrap the dosto-orchestrator agent for a fleet-day commissioning run. Use when starting a multi-train commissioning day, when the engineer says "/dosto-orchestrate fzg=...", or when fanning out commissioning across two or more trains in parallel. Engineer invokes this skill with a list of trains; the skill validates each train against fleet-status.md and the per-series Fzg formulas, then spawns one dosto-orchestrator agent that drives the day. The orchestrator handles everything from there — parallel per-train subagents, approval gates, fleet-status writes, Confluence sync. This skill is just the front door.
+description: Run a fleet-day commissioning orchestration inline in the engineer's top-level session. Use when starting a multi-train commissioning day, when the engineer says "/dosto-orchestrate trains=...", or when fanning out commissioning across two or more trains in parallel. Engineer invokes this skill with a list of Train# values (the Nomad-internal primary identifier, e.g. 4736-104); the skill resolves each row in fleet-status.md (Fzg ID is looked up from the row, not computed from a formula), emits an input-validation pre-flight block, runs a network-level pre-flight diagnostic (CCU reachability + full expected device count via dosto-device-discovery, in parallel across trains, gated on a single consolidated engineer prompt), then runs the orchestration in-line in the engineer's session — spawning N parallel dosto-train-worker subagents for the trains that passed pre-flight, surfacing approval gates one at a time, batching fleet-status writes per cycle, and pushing Confluence on gates/terminals/digests. The engineer's top-level session IS the orchestrator (per audit finding F5, 2026-05-11 — the platform doesn't allow agents-spawning-agents, so the skill became inline instead of bootstrapping a separate orchestrator agent).
 ---
 
 # DOSTO Orchestrate
 
-This skill is the engineer's entry point for a multi-train commissioning day. It's a thin bootstrap layer over the [`dosto-orchestrator`](../../agents/dosto-orchestrator.md) agent — its only jobs are to (a) parse the engineer's train list, (b) validate it against fleet-status and the per-series Fzg formulas, and (c) spawn the orchestrator with a clean, validated spawn prompt.
+This skill is the engineer's entry point for a multi-train commissioning day. It runs **inline in the engineer's top-level Claude session** — the engineer's session IS the orchestrator. The skill (a) parses + validates the train list, (b) emits a pre-flight block for engineer approval, (c) spawns N `dosto-train-worker` subagents in parallel from the engineer's session, (d) drives the cycle loop (gate prompts, fleet-status writes, Confluence pushes) until every train reaches a terminal state.
 
-The orchestrator does the actual orchestration work. This skill is the door.
+**Why inline rather than agent-as-orchestrator** (per audit F5, 2026-05-11): the platform rule "subagents cannot spawn further subagents" means a `dosto-orchestrator` agent spawned via `Agent(subagent_type: ...)` cannot itself call `Agent` to spawn workers. The 2026-05-11 first-run test confirmed this. So the orchestration logic now lives in this skill, executed by the engineer's top-level session (which DOES have `Agent` + `SendMessage`). The `dosto-orchestrator.md` agent definition has been retired.
 
 ## When to use
 
 - **Start of a multi-train commissioning day.** Engineer types `/dosto-orchestrate <trains>` to kick off the day's run.
-- **One per fleet-day.** Don't re-invoke during the day — the orchestrator is long-running. If you crash, re-invoke this skill to bootstrap a fresh orchestrator that picks up via `--resume`.
-- **NOT for single-train debug runs.** Engineers debugging one train should invoke `/dosto-commission-train` directly (no subagent, no orchestrator overhead).
+- **One per fleet-day.** The skill runs for the duration of the day in the engineer's session — they're orchestrating from the same chat thread. If the session crashes or ends, re-invoke this skill with the same args and it offers `--resume` per train (resume state is on disk: `fleet-status.md`, `.claude/logs/orchestrator.jsonl`, and each CCU's btrfs snapshots).
+- **NOT for single-train debug runs.** Engineers debugging one train should invoke `/dosto-commission-train` directly (no subagent, no orchestration overhead).
 
 ## Inputs
 
-The skill accepts a flexible argument string. **Each Fzg/train must be paired with a CCU IP using the `@<ip>` suffix** — the skill reconciles supplied IPs against `fleet-status.md` and prompts the engineer when they disagree, fill a missing row, or backfill a missing IP. Common forms:
+The skill accepts a flexible argument string. Train# (the Nomad-internal primary identifier) is the only required value; CCU IPs can be supplied with `@<ip>` or omitted — when omitted, the skill auto-resolves from `fleet-status.md` with a one-line confirmation per train. Common forms:
 
 ```
-/dosto-orchestrate fzg=130@10.179.47.1,132@10.179.10.1,148@10.179.2.1
-/dosto-orchestrate fzg=130@10.179.47.1 fzg=132@10.179.10.1 fzg=148@10.179.2.1
-/dosto-orchestrate trains=4736-102@10.179.47.1,4736-104@10.179.10.1
-/dosto-orchestrate fzg=130@10.179.47.1,132@10.179.10.1 dry-run
-/dosto-orchestrate fzg=130@10.179.47.1,132@10.179.10.1 cycle=3
+/dosto-orchestrate trains=4736-111,4736-119,4736-120,4734-119,4734-121     # auto-resolve IPs from fleet-status
+/dosto-orchestrate trains=4736-102@10.179.47.1,4736-104@10.179.10.1        # explicit IPs (typo-catch mode)
+/dosto-orchestrate trains=4736-111,4736-119@10.179.12.1                    # mixed: first auto-resolved, second explicit
+/dosto-orchestrate trains=4736-102,4736-104 dry-run
+/dosto-orchestrate trains=4736-102,4736-104 cycle=3
 ```
 
 Recognised tokens:
 
 | Token | Meaning |
 |---|---|
-| `fzg=NN@<ip>` or `fzg=NN@<ip>,NN@<ip>,...` | Fzg ID + CCU IP pairs. The IP is required — see Step 2 for how it's reconciled with `fleet-status.md`. The skill still resolves `train_number` and `consist` from the file. |
-| `trains=NNN@<ip>,...` or `trains=4736-102@<ip>,...` | Alternative form: train numbers + CCU IPs. Skill computes Fzg via per-series formula. |
+| `trains=<train#>[@<ip>]` or `trains=<train#>[@<ip>],<train#>[@<ip>],...` | **Train# list** (Nomad-internal primary identifier, e.g. `4736-104`, `4734-119`, `4705-103`, `4706-101`). `@<ip>` is optional — when omitted the skill looks up the CCU IP from `fleet-status.md` and emits a one-line confirmation (Case E in Step 2). The skill resolves `fzg` and `consist` from the fleet-status row for each Train#. |
 | `dry-run` | Pass `--dry-run` to all subagents. Read-only; every per-device skill runs in `--prepare` mode. |
 | `cycle=N` | Override default 5-min digest cadence. Range 1-30 (clamped). |
 | `no-confluence` | Skip Confluence pushes for this run (rare — local-only mode). |
 | `engineer=NAME` | Override the auto-detected engineer name. Used in fleet-status `Last touched` and Confluence banner. |
 
-**Why CCU IP is required, not auto-resolved:** trains move in and out of service, CCUs get re-imaged, and stale `fleet-status.md` rows have caused incorrect-target outages in past sessions. Forcing the engineer to type the IP they're commissioning against is a deliberate friction point — combined with the reconciliation step below, it catches typos *and* drift in one pass.
+**Why Train# is the primary identifier:** Train# (e.g. `4736-104`) is the Nomad-internal name engineers use day-to-day. Fzg ID is the ÖBB customer-facing number that maps to a Train# via the per-series formula, but pre-commissioning the rendered Fzg in switch hostnames and config templates is often wrong (misimaged CCUs, stale Puppet images, hand-set values) — that's literally what commissioning fixes. Routing by Train# means the orchestrator and workers never trust a "Fzg" value pulled from a CCU as authoritative; the authoritative Fzg comes from the fleet-status row, which the engineer curates.
+
+**The retired `fzg=` form:** earlier versions of this skill accepted `fzg=132,133,148` syntax. As of the 2026-05-22 Train#-primary schema reorder, that form is **no longer supported**. The skill errors out with a usage hint pointing to the equivalent `trains=...` form: `Usage: trains=<train#>[,<train#>...] — fzg= form retired 2026-05-22.`
+
+**Why `@<ip>` remains supported as opt-in:** trains move in and out of service, CCUs get re-imaged, and stale `fleet-status.md` rows have caused incorrect-target outages in past sessions. The explicit-IP form is the typo-catch / drift-catch mode — use it when you've just re-imaged a CCU or when you're not confident fleet-status is current. The auto-resolve form (no `@<ip>`) is the common case for a returning engineer whose fleet-status rows are already filed correctly; Case E below adds a per-train confirmation that keeps the same safety property with far less typing.
 
 ## Procedure
 
 ### Step 1 — Parse and normalise the train list
 
-Tokenise the argument string. Each `fzg=` / `trains=` token MUST contain `@<ip>` — reject the whole input with a usage error if any pair is missing the `@<ip>` suffix:
+Tokenise the argument string. Only the `trains=` form is supported (as of 2026-05-22 — see Inputs section). If the engineer typed `fzg=`, halt immediately with `ERROR: fzg= form retired 2026-05-22; use trains=<train#>[,<train#>...] instead.`
 
-```
-ERROR: Fzg <NN> supplied without a CCU IP.
-       Use fzg=<NN>@<ip> (e.g. fzg=132@10.179.10.1).
-       The IP is required so the skill can reconcile it
-       with fleet-status.md before spawning anything.
-```
+Each `trains=<train#>` token MAY include `@<ip>` (explicit IP) or omit it (auto-resolve from fleet-status in Step 2 Case E). When `@<ip>` is present, validate it's a syntactically valid IPv4 address (four dotted octets, each 0-255). Reject malformed IPs at parse time — don't wait until reconciliation.
 
-Validate each IP is a syntactically valid IPv4 address (four dotted octets, each 0-255). Reject malformed IPs at parse time — don't wait until reconciliation.
+Validate each Train# matches a known series pattern:
 
-For `trains=` form, compute the Fzg via per-series formula:
+| Series | Pattern | Formula (reference only — runtime Fzg comes from fleet-status row) |
+|---|---|---|
+| 4734-NNN | `^4734-\d{3}$` | `Fzg = NNN - 100`  (e.g. 4734-119 → Fzg 19) |
+| 4736-NNN | `^4736-\d{3}$` | `Fzg = NNN + 28`   (e.g. 4736-104 → Fzg 132) |
+| 4705-NNN | `^4705-\d{3}$` | `Fzg = NNN + 128`  (e.g. 4705-103 → Fzg 231) |
+| 4706-NNN | `^4706-\d{3}$` | `Fzg = NNN + 88`   (e.g. 4706-103 → Fzg 191) |
 
-| Series | Formula |
-|---|---|
-| 4734-NNN | `Fzg = NNN - 100` |
-| 4736-NNN | `Fzg = NNN + 28` |
+Reject any train number that doesn't match one of these four series.
 
-Reject any train number that doesn't match these series (4705 / 4706 are out of scope per CLAUDE.md).
+The result of this step is a list of `(train_number, supplied_ip_or_none)` tuples. Step 2 reconciles them with `fleet-status.md` and resolves the Fzg ID per train from the row (NOT from the formula — see [`scripts/fleet_status_lookup.py`](../../../scripts/fleet_status_lookup.py)).
 
-If the engineer supplied both `fzg=` and `trains=`, validate they agree on **both** Fzg and IP per train. Mismatches halt the skill — typo guard.
+### Step 2 — Reconcile each (Train#, IP) against `fleet-status.md`
 
-The result of this step is a list of `(fzg, supplied_ip)` tuples. Step 2 reconciles them with `fleet-status.md`.
+This is the IP-and-Fzg reconciliation pass. For each `(train_number, supplied_ip_or_none)`:
 
-### Step 2 — Reconcile each (Fzg, IP) against `fleet-status.md`
+1. Look up the Train# row in `fleet-status.md` (via `scripts/fleet_status_lookup.py lookup <train#> --require-fzg`).
+2. If the row exists and the Fzg cell is `❓`, halt: `ERROR: <train#> has no Fzg ID in fleet-status — populate the Fzg column (look up via train-ip-allocation-commission/<series>-xxx/<train#>/<train#>_IP-Port-Allocation.pdf header) before commissioning.`
+3. **If `supplied_ip` is None** (engineer omitted `@<ip>`), branch to Case E first.
+4. Otherwise, branch on what's there (Cases A-D).
 
-This is the IP-reconciliation pass. For each `(fzg, supplied_ip)`:
-
-1. Look up the Fzg row in `fleet-status.md`.
-2. Branch on what's there.
+The resolved Fzg from this step is stored alongside each train tuple and passed downstream to the worker spawn prompts AS A POINTER (the worker re-looks-it-up from fleet-status to verify), but the orchestrator's own log entries, fleet-status writes, and Confluence pushes all key off Train# (primary identifier).
 
 **Case A — Row exists, CCU IP recorded, matches `supplied_ip`:** ✅ Proceed silently. Track `ip_source = "fleet-status (matched)"` for the plan summary.
 
 **Case B — Row exists, CCU IP recorded, disagrees with `supplied_ip`:** ⚠️ Stop and prompt the engineer interactively:
 
 ```
-⚠️ Fzg <NN> CCU IP mismatch.
+⚠️ <train#> (Fzg <NN>) CCU IP mismatch.
    fleet-status.md:  <fleet_ip>     (last touched: <YYYY-MM-DD AR>)
    You supplied:     <supplied_ip>
 
@@ -5907,59 +6250,120 @@ Choice [f/s/a]:
 
 **Case C — Row exists but `CCU IP` is `❓`:** auto-fill silently. Edit the row in `fleet-status.md` to set `CCU IP = <supplied_ip>`. Mark `ip_source = "supplied (filled in fleet-status)"`. Print a one-line confirmation in the plan summary so the engineer sees what was filled.
 
-**Case D — No row exists for this Fzg:** ⚠️ Stop and prompt the engineer interactively:
+**Case D — No row exists for this Train#:** ⚠️ Stop and prompt the engineer interactively:
 
 ```
-⚠️ Fzg <NN> has no row in fleet-status.md.
-   Train#:     <train_number>   (computed from per-series formula)
+⚠️ <train#> has no row in fleet-status.md.
+   Train#:     <train_number>   (engineer input)
+   Series:     <4734 / 4736 / 4705 / 4706>    (consist: <4-car / 6-car / 4705 / 4706>)
    CCU IP:     <supplied_ip>    (your input)
-   Series:     <4734 / 4736>    (consist: <4-car / 6-car>)
+   Fzg ID:     ❓ (you'll need to provide this — physical inspection or IP-Port-Allocation PDF)
 
 Options:
   [c] Create a fresh row in fleet-status.md and proceed
-       (Status: NOT STARTED, all v8 columns ⬜/❓ except CCU IP)
+       (Status: NOT STARTED, all v8 columns ⬜/❓ except CCU IP; Fzg ❓ until you supply)
   [a] Abort the whole day's plan
 
 Choice [c/a]:
 ```
 
-- `c` → append a new row to the appropriate series section (4736 or 4734), populate Fzg, Train#, CCU IP, set Status=`NOT STARTED`, all other columns = `⬜` or `❓` per the legend, set `Last touched = <today> <engineer initials>`. Mark `ip_source = "supplied (new row created)"`. Then proceed.
+- `c` → append a new row to the appropriate series section (4736, 4734, 4706, or 4705), populate Train#, leave Fzg as `❓` (engineer fills via PDF lookup before any destructive ops), populate CCU IP, set Status=`NOT STARTED`, all other columns = `⬜` or `❓` per the legend, set `Last touched = <today> <engineer initials>`. Mark `ip_source = "supplied (new row created)"`. Then proceed to Step 5.5 — the worker spawn will halt at its own Fzg lookup if the engineer hasn't backfilled by then. Encourage the engineer to populate Fzg before reaching Stage 4 (apply_train_id_fix), which needs it.
 - `a` → exit cleanly.
+
+**Case E — Engineer omitted `@<ip>`, auto-resolve from fleet-status:**
+
+| Fleet-status state | Action |
+|---|---|
+| Row exists with non-`❓` CCU IP | Use that IP. Emit one-line confirmation: `ℹ️  <train#> (Fzg <NN>): using IP <fleet_ip> from fleet-status (no @<ip> supplied) — correct? [Y/n]` Default Y. Engineer types `n` → halt with usage error asking for explicit `@<ip>`. Mark `ip_source = "fleet-status (auto-resolved)"`. |
+| Row exists with `❓` CCU IP | Halt: `ERROR: <train#> has no IP recorded in fleet-status — supply explicitly with trains=<train#>@<ip>`. Cannot proceed without an IP. |
+| No row exists for this Train# | Halt: `ERROR: <train#> has no row in fleet-status — supply IP explicitly with trains=<train#>@<ip> to create the row.` (Drops the engineer into Case D's `[c]/[a]` prompt on retry.) |
+
+When multiple trains need confirmation, batch the prompt into a single block:
+
+```
+ℹ️  Auto-resolved IPs from fleet-status:
+    4736-111 (Fzg 139) → 10.179.24.1   (last touched 2026-05-21 AR)
+    4736-119 (Fzg 147) → 10.179.12.1   (last touched 2026-05-21 AR)
+    4734-119 (Fzg 19)  → 10.179.45.1   (last touched 2026-05-21 AR)
+Proceed with these? [Y/n]:
+```
+
+Default Y. Engineer types `n` → halt and ask for explicit `@<ip>` on next invocation.
 
 **After the reconcile loop**, build the full per-train spec:
 
 | Field | Source |
 |---|---|
-| `fzg` | from input |
-| `train_number` | from `fleet-status.md` row (now guaranteed to exist) |
+| `train_number` | from input (primary identifier) |
+| `fzg` | from `fleet-status.md` row's Fzg cell (looked up by Train#). If `❓`, the reconcile loop halted earlier — never reach this step with unknown Fzg. |
 | `ccu_ip` | from reconciled value (Case A/B/C/D logic above) |
-| `consist` | infer from series — `nv6 → 6-car`, `nv4 → 4-car` |
+| `consist` | infer from series — `nv6 → 6-car`, `nv4 → 4-car`, 4705/4706 series consist is documented per train |
 | `ip_source` | tracked per case above, used in Step 4 plan summary |
 
-**Status: DONE** trains still get the existing skip/include/abort prompt:
+**Status: DONE** trains get a context-aware prompt — read the train's `Next action` column from fleet-status first, then branch:
+
+**Sub-case DONE-1 — Other outstanding items** (Next action contains anything substantive — e.g. "wait for Stadler", "verify .231"):
 
 ```
-⚠️ Fzg <NN> is already DONE in fleet-status.md.
-Including it would re-run all 19 stages on a healthy train.
+⚠️ <train#> (Fzg <NN>) is DONE but has outstanding work: <next_action_text>
+   Including will re-validate state via the full 19-stage pipeline.
 
 Options:
-  [s] Skip this train, proceed with the rest
-  [i] Include anyway (re-validates state, won't change anything if truly done)
-  [a] Abort the whole day's plan
+  [s] Skip this train
+  [i] Include anyway
+  [a] Abort
 
 Choice [s/i/a]:
 ```
 
+**Sub-case DONE-2 — No outstanding work** (Next action is empty or `—`):
+
+```
+⚠️ <train#> (Fzg <NN>) is already DONE with no outstanding work in fleet-status.
+   Including would re-run all 19 stages on a healthy train.
+
+Options:
+  [s] Skip (recommended)
+  [i] Include anyway
+  [a] Abort
+
+Choice [s/i/a]:
+```
+
+Default for DONE-2 and DONE-3 is `s`.
+
 **Surgical-edit discipline when writing to `fleet-status.md`** (per CLAUDE.md Principle 3): in Cases B/C/D the skill modifies **only** the cells it owns for this reconcile (`CCU IP`, and for Case D the entire new row). Engineer hand-edits in other columns (Customer report, Health check date, Stadler cabling notes) MUST survive untouched. Read the file, edit the targeted cells, write back — do not re-render the whole table.
+
+**IP conflict detection across the full file** (after the reconcile loop, before building the per-train spec): for each resolved `ccu_ip`, grep the full `fleet-status.md` for that IP literal. If it appears in any detail-block header (`**CCU:** \`<ip>\``) for a **different** Fzg than the one you've resolved it to, halt with:
+
+```
+⚠️ IP conflict — <ip> appears in multiple places:
+    <train#-X> (current resolve, at-a-glance row)
+    <train#-Y> detail block header
+Confirm which train owns this IP before proceeding.
+  [x] Use <train#-X>, treat <train#-Y> detail block as stale (engineer cleans up later)
+  [y] Use <train#-Y> instead (re-prompt at Step 2 for <train#-X>)
+  [a] Abort
+```
+
+This catches reconciliation drift between at-a-glance rows and detail blocks at reconcile time, not after a worker has been spawned. Confirmed engineer-visible during 2026-05-21 (`10.179.12.1` listed for both 4736-112 (Fzg 140) detail block and 4736-119 (Fzg 147) at-a-glance row).
+
+**Pending-section cleanup** (post-reconcile, after each train's IP is confirmed): check the `## Pending Fzg assignment` section. If the resolved `ccu_ip` appears in that table, remove that row from Pending (surgical: delete only that one row, preserve all others). Print a one-line note:
+
+```
+ℹ️  Removed 10.179.45.1 from Pending Fzg assignment section (now confirmed to 4734-119 / Fzg 19).
+```
+
+This is housekeeping for the morning-brief discovery sweep — once an IP is confirmed assigned, the Pending row is stale.
 
 ### Step 3 — Build the train list array
 
 ```json
 {
   "trains": [
-    {"fzg": 130, "train_number": "4736-102", "ccu_ip": "10.179.47.1", "consist": "6-car"},
-    {"fzg": 132, "train_number": "4736-104", "ccu_ip": "10.179.10.1", "consist": "6-car"},
-    {"fzg": 148, "train_number": "4736-120", "ccu_ip": "10.179.2.1", "consist": "6-car"}
+    {"train_number": "4736-102", "fzg": 130, "ccu_ip": "10.179.47.1", "consist": "6-car"},
+    {"train_number": "4736-104", "fzg": 132, "ccu_ip": "10.179.10.1", "consist": "6-car"},
+    {"train_number": "4736-120", "fzg": 148, "ccu_ip": "10.179.2.1", "consist": "6-car"}
   ],
   "engineer_name": "Abbas Rizvi",
   "dry_run": false,
@@ -5974,9 +6378,17 @@ Engineer name resolution order:
 3. `$USER` / `$USERNAME` env var
 4. Fallback: `"unknown"`
 
+### Step 3.5 — Read cable-issues-register.md for each train in the plan
+
+Before printing the plan, grep `cable-issues-register.md` for each resolved Train# (and its Fzg). For each match, extract any rows whose `Status` is `🔴 OPEN`.
+
+Store this as `cable_issues[train_number] = [list of open issue summaries]`.
+
+This is a **read-only** step — the register is never written here. Writes happen in Step 7.5 (new fault detection) and via `dosto-device-discovery` output.
+
 ### Step 4 — Print the plan and confirm
 
-Show the engineer a summary before spawning anything:
+Show the engineer a summary before spawning anything. For each train, include any open cable-register issues inline so the engineer sees the full picture before approving dispatch:
 
 ```
 ─── DOSTO Orchestrate — fleet day plan ─────────────
@@ -5986,23 +6398,26 @@ Dry run:     no
 Confluence:  push enabled (page 5410684933)
 
 Trains to commission (3 — all in parallel):
-  • Fzg 130 / 4736-102 / 10.179.47.1 / 6-car
+  • 4736-102 / Fzg 130 / 10.179.47.1 / 6-car
     IP source:     fleet-status (matched)
     Current state: PAUSED — apply patches + persist + fix train_id template + fix vlan7 — see notes
     Last touched:  2026-05-09 AR
-  • Fzg 132 / 4736-104 / 10.179.10.1 / 6-car
+    Cable issues:  none on file
+  • 4736-104 / Fzg 132 / 10.179.10.1 / 6-car
     IP source:     supplied (fleet-status updated — was 10.179.10.99)
     Current state: BLOCKED w/ Stadler (D4) + 6 APs stuck — push remaining 3 APs (.237 .238 .240), verify .231
     Last touched:  2026-05-09 AR
-  • Fzg 148 / 4736-120 / 10.179.2.1 / 6-car
+    Cable issues:  🔴 #5 — D3 e1-2 physical-layer fault (D4 AP missing)
+  • 4736-120 / Fzg 148 / 10.179.2.1 / 6-car
     IP source:     supplied (filled in fleet-status — was ❓)
     Current state: PAUSED — sudo obn discover && sudo obn update c all
     Last touched:  2026-05-04 AR
+    Cable issues:  none on file
 
-The dosto-orchestrator agent will:
-  1. Spawn one dosto-train-worker subagent per train (3 parallel)
+This session will then:
+  1. Spawn one dosto-train-worker subagent per train (N parallel) via Agent
   2. Surface approval gates one at a time as they fire
-  3. Write fleet-status.md and push Confluence at end of each 5-min cycle
+  3. Write fleet-status.md and push Confluence at end of each cycle
   4. Run until all subagents reach terminal state (DONE / BLOCKED / ERROR)
 
 Confirm? [Y/n]:
@@ -6010,35 +6425,582 @@ Confirm? [Y/n]:
 
 Default is **Y** (proceed). Engineer types `n` to abort cleanly. Anything else → re-prompt.
 
-### Step 5 — Spawn the orchestrator
+### Step 5 — Emit MANDATORY PRE-FLIGHT BLOCK
 
-Use the `Agent` tool with:
-- `subagent_type: "dosto-orchestrator"`
-- `name: "orchestrator"` (so the engineer can see it in the harness UI)
-- `description: "DOSTO fleet-day orchestrator for <N> trains"`
-- `prompt`: the validated train list JSON + a brief operational reminder ("read your agent definition; spawn the subagents; run cycles").
-
-That's it. Skill returns control to the engineer immediately. The orchestrator runs as its own session and prints to the engineer's chat as it works.
-
-### Step 6 — Tell the engineer what to do next
-
-Print a final note before exiting the skill:
+This is the constitutional Principle 1 forcing function — before spawning anything, surface assumptions and open questions in writing:
 
 ```
-✅ Orchestrator spawned. It will print its first plan + cycle digest in a moment.
+─── DOSTO Orchestrate — Pre-Flight ─────────────
+Engineer:    Abbas Rizvi
+Cycle:       5 min digest
+Dry run:     no
+Confluence:  push enabled (page 5410684933)
 
-While it runs, you can:
-  • Type approval responses (y / n / w / p / c / defer) when prompts appear
-  • Hand-edit fleet-status.md fields the orchestrator doesn't manage (Customer report, Health check date, etc.)
-  • Type "status" any time for a current per-train summary
-  • Type "abort" to halt the day cleanly (subagents will be told to stop, no fleet-status writes)
+Trains to commission (3):
+  • 4736-102 / Fzg 130 / 10.179.47.1 / 6-car
+    Current state: PAUSED — apply patches + persist + fix train_id template + fix vlan7
+  • 4736-104 / Fzg 132 / 10.179.10.1 / 6-car
+    Current state: BLOCKED w/ Stadler — 6 APs stuck (.237 .240 .238 .231 .230 .226)
+  • 4736-120 / Fzg 148 / 10.179.2.1 / 6-car
+    Current state: PAUSED — sudo obn discover && sudo obn update c all
 
-If you close this session or it crashes:
-  • Re-invoke /dosto-orchestrate with the same train list
-  • The new orchestrator will read fleet-status + the last orchestrator log
-  • It will offer to --resume each train from its last known stage
-  • All persistent state survives because it's on the CCU (btrfs snapshots), not in this session
+▼ Known cable issues (from cable-issues-register.md):
+  4736-102 (Fzg 130): none on file
+  4736-104 (Fzg 132): 🔴 #5 — D3 e1-2 PHY fault — D4 AP missing (OPEN)
+  4736-120 (Fzg 148): none on file
+
+▼ Assumptions (specific, disprovable):
+  • fleet-status.md rows are current as of last engineer save
+  • cable-issues-register.md is current as of last Stadler contact
+  • Each CCU is reachable via the project key at the IPs listed above
+  • The Atlassian Confluence MCP connector is configured and working
+  • The TFTP CT helper runtime fix (if previously applied) does NOT survive
+    a CCU reboot — first stage of each subagent will re-check and re-apply if needed
+
+▼ Open questions: <none / list them here>
+
+▼ Simplicity check:
+  Spawning N parallel subagents per the contract. No batching, no custom
+  ordering. Each subagent runs the canonical 19-stage pipeline.
+
+▼ Per-train success criteria (will be checked at end of day):
+  4736-102 (Fzg 130): 8/8 OBN persisted, train_id=130 hardcoded, vlan7=172.19.193.2,
+           all switches/APs at target, customer report on disk
+  ... (one block per train, derived from fleet-status + per-train goals)
+
+Confirm? [Y/n]:
 ```
+
+Rules for the Pre-Flight:
+- Assumptions list MUST be specific and disprovable. "Each CCU is reachable" is good; "everything is fine" is not.
+- Open questions: if non-empty, halt regardless of the engineer's [Y/n] — open questions resolve before destructive ops.
+- Simplicity check is one paragraph: are you taking the simplest path, or deviating? If deviating, name the evidence forcing the deviation.
+- Per-train success criteria MUST be verifiable at end-of-day from skill outputs or fleet-status fields.
+
+**vlan7 IP auto-computation:** the per-train success criteria block MUST list the expected vlan7 IP, computed inline using the canonical formula (no manual math). For each train in the plan, compute:
+
+```python
+octet3 = 128 + (fzg // 2)
+octet4 = (128 if fzg % 2 == 1 else 0) + 2
+expected_vlan7 = f"172.19.{octet3}.{octet4}/17"
+```
+
+Render into the success-criteria block as `vlan7=<expected_vlan7>`. The engineer never has to verify the bit-packing math at pre-flight time. Exception: trains where fleet-status records a non-formula vlan7 (e.g. Fzg 19's `172.19.150.130/17` per Nomad-internal train_id 45 convention) — use the fleet-status value and append `(per detail block convention)`.
+
+Default is **Y** (proceed). Engineer types `n` to abort cleanly.
+
+### Step 5.5 — Network pre-flight diagnostic (gated dispatch)
+
+After Step 5's text pre-flight is approved, run a **real network-level diagnostic** against each train in parallel BEFORE spawning any commissioning worker. Purpose: confirm every accepted train has CCU reachability AND the full expected device count visible (18 sw + 24 AP for nv6, 12 sw + 16 AP for nv4). Trains that fail this gate are surfaced separately and excluded from dispatch unless the engineer explicitly opts to proceed.
+
+**Why this exists:** the text pre-flight (Step 5) validates the engineer's *input* (Fzg formula, fleet-status row exists, CCU IP populated). It does NOT touch the network. Going straight from input-validation to spawning 19-stage commissioning workers means the workers' Stage 1 (`initial_diagnostics`) is the first time we see actual device state — and if multiple trains have missing devices, the engineer gets bombarded with Gate 5 prompts in parallel. Better: do the discovery once, up front, in parallel, with a single consolidated engineer prompt.
+
+**Procedure:**
+
+1. For each accepted train, in **parallel** (single Agent message with N tool-uses OR direct parallel SSH from the orchestrator session if no Agent fan-out is needed):
+   - TCP/22 probe to the CCU (5s timeout) — `reachable: bool`
+   - If reachable: device count via fping + ARP OUI match (NOT DHCP):
+     ```bash
+     # Compute the management subnet from CCU IP (third octet)
+     fping -a -q -g 10.179.<X>.128 10.179.<X>.255 2>/dev/null   # refresh ARP
+     ip neigh show dev vlan100 | grep -c 'a0:59:3a'             # VDS switches (a0:59:3a OUI)
+     ip neigh show dev vlan100 | grep -c '00:14:5a'             # Westermo APs (00:14:5a OUI)
+     ```
+     DHCP-based discovery (`sudo dhcp-lease-list`) is **wrong** here — VDS switches have 2-minute DHCP lease lifetimes and any that haven't recently renewed are invisible, causing false-FAIL sw=0 readings (observed 2026-05-21). fping wakes the ARP cache, OUI grep counts what's physically reachable. Same ~15s wall-clock, no DHCP timing dependency.
+   - Expected counts: `nv6 → 18 sw + 24 AP`, `nv4 → 12 sw + 16 AP`. Compute from `consist` field.
+   - Total wall-clock: ~30–60s for the whole batch regardless of N
+2. Classify each train into a **three-tier** verdict:
+
+| Condition | Tier |
+|---|---|
+| `reachable: true` AND all devices present | ✅ PASS |
+| `reachable: true` AND 1-2 APs missing on an otherwise healthy train | 🟡 SOFT-WARN |
+| `reachable: true` AND ≥1 switch missing OR ≥3 APs missing (≥20% absent) | 🔴 HARD-FAIL |
+| CCU unreachable on TCP/22 | 🔴 HARD-FAIL |
+
+Soft-warn is for plausible-timing shortfalls (AP mid-reboot, DHCP not yet renewed). Hard-FAIL is for genuinely-can't-proceed states (cable fault, CCU offline, coach powered off). The distinction was added 2026-05-21 after 4736-119 (Fzg 147, 1 AP missing) and 4736-120 (Fzg 148, 1 sw + 2 APs absent) were over-classified as FAIL alongside genuine unreachables.
+
+3. **Pre-stage fix scripts on every reachable CCU** (Enhancement #8/#12 — workers cannot SCP). For each train classified PASS or SOFT-WARN, in parallel:
+   ```bash
+   scp -i <key> scripts/fix_obn.py scripts/fix_obn_bug8.py scripts/fix_obn_bug9_pysnmp_thread_safety.py developer@<ccu>:/tmp/
+   ssh -i <key> developer@<ccu> "sudo cp /tmp/fix_obn*.py /var/tmp/ && echo STAGED"
+   ```
+   The chroot bind-mounts `/var/tmp/`, NOT `/tmp/` — scripts at `/tmp/` are invisible inside the chroot, so the `cp` to `/var/tmp/` is mandatory. Both paths get the file (host-side via `/tmp`, chroot-side via `/var/tmp`).
+
+   Track `scripts_staged: true/false` per train. If staging fails (network blip, perms denial, etc.) for a train that was PASS, **demote to SOFT-WARN** with reason `script staging failed: <err>` — worker can still start but will need to escalate when it needs the scripts. If staging fails for a SOFT-WARN train, it stays SOFT-WARN with both reasons listed.
+
+   Wall-clock: ~5-10s per CCU in parallel.
+
+4. Emit a consolidated result block:
+
+```
+─── Network Pre-Flight Results ──────────────────
+Trains passing pre-flight (N):
+  ✅ 4736-115 / Fzg 143 / 10.179.18.1 — 18/18 sw + 24/24 AP visible — scripts staged
+  ✅ 4736-116 / Fzg 144 / 10.179.16.1 — 18/18 sw + 24/24 AP visible — scripts staged
+
+Soft-warn (will dispatch with note — Gate 5 may fire in Stage 2 if count doesn't improve):
+  🟡 4736-119 / Fzg 147 / 10.179.12.1 — 18/18 sw + 23/24 AP — 1 AP plausibly mid-reboot — scripts staged
+  🟡 4736-120 / Fzg 148 / 10.179.2.1 — 17/18 sw + 22/24 AP — E3 coach + 2 APs absent — scripts staged
+
+Hard-FAIL (will NOT dispatch):
+  🔴 4736-104 / Fzg 132 / 10.179.10.1 — 18/18 sw + 21/24 AP — 3 APs missing (>20% threshold)
+  🔴 4734-109 / Fzg 9   / 10.179.38.1 — UNREACHABLE on TCP/22
+```
+
+5. **Engineer prompt** — only when ≥1 hard-FAIL exists. Soft-warn alone dispatches automatically:
+
+| Pre-flight result | Behaviour |
+|---|---|
+| All trains PASS | Print block + "All N trains passed; dispatching." No prompt. Proceed to Step 6. |
+| Mix of PASS + SOFT-WARN, no HARD-FAIL | Print block + "All N trains passed pre-flight (M with soft warnings — see above). Dispatching." No prompt. Proceed to Step 6. |
+| ≥1 HARD-FAIL | Print block + the prompt below. |
+| All trains HARD-FAIL | Print block + "0 trains passed pre-flight; nothing to dispatch." Exit cleanly. |
+
+Prompt (only when ≥1 hard-FAIL):
+
+```
+Dispatch the N passing + M soft-warn trains?
+Hard-FAIL trains stay in fleet-status as-is.
+[Y/n/all]:
+```
+
+- `Y` (default) → dispatch PASS + SOFT-WARN subset; HARD-FAIL trains skipped this run with a one-line note appended to their fleet-status `Next action` (`pre-flight YYYY-MM-DD: <reason>`)
+- `n` → abort the whole orchestration; no workers spawn
+- `all` → dispatch all trains including HARD-FAIL; those workers will hit Gate 5 (device_count_mismatch) in Stage 2 as normal — engineer accepts the duplicate prompting
+
+**Logging:** append a JSON line per pre-flight run to `.claude/logs/orchestrate-preflight.jsonl` — `{cycle_id, run_at, trains: [{fzg, ccu_ip, reachable, switches: "n/m", aps: "n/m", verdict: "PASS|SOFT_WARN|HARD_FAIL", failure_reason, scripts_staged}]}` — useful for diagnosing recurring failures (same train fails pre-flight 3 days in a row → escalate).
+
+### Step 6 — Claim trains in fleet-status, then spawn workers
+
+#### Step 6.0 — Concurrency check (claim-already-held detection)
+
+**Before spawning any worker**, re-read `fleet-status.md` row for each train in the dispatch set. If the row's `Nomad status` cell currently parses as an in-flight claim (via `scripts/fleet_status_lookup.py parse_in_flight()`) AND the claim's heartbeat age is `< 30 min` (per the stale-claim threshold), the train is **already claimed by another session**. Halt the dispatch for that train with:
+
+```
+⚠️  4736-104 (Fzg 132) is already claimed by another orchestrator session.
+    Current claim: stage push_switch_config (3/18), hb 2026-05-22T14:32Z (4 min ago), sess 1428Z
+    Options for this train:
+      [s] Skip this train (other session keeps working it)
+      [r] Force-reclaim (assumes other session is dead; flips claim to this session)
+      [a] Abort the whole dispatch
+    Choice [s/r/a]:
+```
+
+- `s` (default for stale-but-fresh claims) → drop this train from the dispatch set; continue with the rest.
+- `r` → overwrite the claim with this session's. Use only when you're certain the other session is dead (e.g. you crashed it).
+- `a` → exit cleanly with no dispatch and no claims written.
+
+If the heartbeat age is `≥ 30 min`, the claim is **stale** — the previous session likely died. Auto-emit a one-line warning (`ℹ️  4736-104: reclaiming stale claim from sess 1428Z, last heartbeat 47 min ago`) and proceed with the dispatch. No engineer prompt needed for stale claims (the morning-brief stale-claim gate is the engineer-facing surface for these; the orchestrator at dispatch time just reclaims).
+
+#### Step 6.1 — Write the initial claim to fleet-status
+
+For each train surviving Step 6.0, write the in-flight claim to its `Nomad status` cell using `format_in_flight()` from the lookup helper:
+
+```python
+from scripts.fleet_status_lookup import format_in_flight
+claim = format_in_flight(
+    stage='initial_diagnostics',
+    step=None, total=None,
+    elapsed_seconds=0,
+    heartbeat_iso=utcnow_iso(),
+    session_id=cycle_id_short(),   # last 4 chars of cycle_id, e.g. '1212Z'
+)
+# Write to the row's Nomad status cell via the orchestrator's standard
+# fleet-status writer (surgical, only the cells it owns — see "Fleet-status
+# writer" section below).
+```
+
+This is the at-a-glance signal for any other engineer / session reading fleet-status: "this train is being worked on right now." The whole format is canonical and consumed by `parse_in_flight()` in `morning-brief.py` and any future tool that wants to render in-flight visibility.
+
+#### Step 6.2 — Spawn workers
+
+Use the `Agent` tool with one tool-use block per train, **all in a single message** so the harness runs them concurrently. Each gets:
+
+- `subagent_type: "dosto-train-worker"`
+- `name: "train-<train_number>"` (e.g. `train-4736-104` — so you can `SendMessage` it later)
+- `description: "DOSTO per-train worker for <train_number>"`
+- `prompt`: **pointer-not-dump** per the F2 contract — pass Train#, CCU IP, consist, engineer name, dry-run flag, ip_source, `scripts_staged: true/false` (from Step 5.5 staging result — tells the worker whether `/var/tmp/fix_obn*.py` is guaranteed present or whether it must request the orchestrator to SCP), `session_id` (so the worker can echo it into its reports for cross-correlation), and nothing else. The worker reads `fleet-status.md`, `fleet-journal.md`, the four contracts, and the per-device skills itself. Do NOT inline per-train prose, recovery sequences, or historical context — those bloat the worker's context window for its entire lifetime.
+
+After spawning, **start the cycle clock**. Cycle 1 runs for `cycle_minutes` (default 5).
+
+### Heartbeat protocol (claim refresh and stage updates)
+
+The in-flight claim in each row's `Nomad status` cell is the orchestrator's **liveness signal**. Other engineers, other sessions, and `morning-brief` rely on it to answer "is this train being worked on, and is the session still alive?"
+
+The orchestrator MUST update the claim on **all four** of the following triggers:
+
+| Trigger | What gets refreshed |
+|---|---|
+| **Worker spawn (Step 6.1)** | Initial claim written with `stage=initial_diagnostics`, `elapsed=0`. |
+| **Stage-transition report** (worker emits a report with a new `stage.id`) | `stage`, `step`, `total`, `elapsed_seconds`, `heartbeat_iso` all updated to match the report. Inline write — do NOT wait for cycle end. |
+| **Step-within-stage report** (worker emits a report with same stage but new `current_step` / `total_steps`) | `step`, `total`, `elapsed_seconds`, `heartbeat_iso` updated. Same inline write semantics — engineers checking the at-a-glance row should see "3/18 → 4/18" almost immediately when the worker reports it. |
+| **Cycle digest boundary** (every 5 min wall-clock, even if no worker reports arrived) | `heartbeat_iso` refreshed to `utcnow()` for every active train. `elapsed_seconds` recomputed against the stage's `started_at` (still echoed by the worker in its latest report). Stage/step unchanged. This is the **pure liveness ping** — proves the orchestrator session is still alive even when a worker is mid-long-running stage (e.g. a 45-min AP firmware push). |
+
+**Why all four:** the first three give engineers stage-accurate progress; the fourth proves the session itself hasn't died between worker reports. Stale-claim detection (in `morning-brief`) relies on this cycle-boundary ping — without it, a healthy session running a 1-hour AP firmware push would look stale after 30 min.
+
+**Terminal-state cleanup:** when a worker reports `DONE`, `BLOCKED`, or `ERROR`, the orchestrator removes the in-flight claim from the `Nomad status` cell and writes the appropriate terminal status:
+
+| Terminal | New `Nomad status` cell |
+|---|---|
+| `DONE` (no Stadler issues) | `🟢 DONE` |
+| `DONE` (with Stadler-blocking `issues[]`) | `🟢 DONE w/ Stadler — <issue summary>` |
+| `BLOCKED` | `🔴 BLOCKED — <escalation_reason>` |
+| `ERROR` | Keep prior status from before the in-flight claim; append a note to the per-train detail block. Engineer triages. |
+| `PAUSED` (no worker recovery within 30-min budget) | `🟡 PAUSED — <reason from final report>` |
+
+The terminal write is the orchestrator's responsibility — workers never write fleet-status themselves (per the orchestrator-as-sole-writer rule). After a terminal write, the row's `Nomad status` no longer parses as an in-flight claim, freeing it for future dispatch.
+
+**Crash recovery:** if the orchestrator session itself crashes mid-flight, the claims remain in fleet-status with their last-known heartbeats. Next morning, `/dosto-morning-brief` surfaces them as stale claims (heartbeat > 30 min). Engineer chooses per-train: clean to PAUSED, or reclaim with a new orchestration.
+
+## Runtime — the cycle loop
+
+After Step 6, you (the engineer's session) are now the running orchestrator. The skill body from here is the cycle loop, executed turn-by-turn as workers report back via `<task-notification>` events.
+
+### Per cycle (default 5 min wall-clock; not strictly time-bounded — cycles end at terminal-state convergence or engineer abort)
+
+1. **Listen for subagent notifications.** When a `<task-notification>` arrives:
+   a. Validate the JSON payload is shaped per `.claude/contracts/subagent-report.md` (v2). Accept `schema_version: "1"` with a `schema_version_drift` flag; reject anything else as `ERROR` and log to `.claude/logs/orchestrator-errors.jsonl`.
+   b. Branch on `status`:
+      - `NEEDS_APPROVAL` → **immediately** surface the gate prompt to the engineer per `.claude/contracts/approval-gates.md` v2 (compact form, expandable on `?`). Don't wait for cycle end.
+      - `DONE` / `BLOCKED` / `ERROR` → **immediately** push Confluence via `Skill: dosto-confluence-sync --push --json`. Stage out the worker for the end-of-cycle digest.
+      - `DIAGNOSING` / `APPLYING_FIXES` / `PUSHING_TO_DEVICES` / `PAUSED` → buffer in your in-memory per-train state. **Then immediately check stage duration budget (see below).** No other immediate action.
+   c. Update in-memory per-train state: latest report, latest stage, latest fields (per the F2 contract, you only see *current-stage* `skill_outputs`; you maintain the audit trail externally via the log).
+   d. **Stage duration budget check (C4 — fires on every notification, not just at cycle end):**
+      - Compute `stage_elapsed = now - stage.started_at`.
+      - If `stage.expected_duration_seconds` is non-null AND `stage_elapsed > stage.expected_duration_seconds * 1.5`:
+        - Emit inline to the engineer **immediately** (do NOT wait for cycle digest):
+          ```
+          ⚠️  Fzg <NN> — stage <stage_id> over budget.
+              Expected: <expected>s   Elapsed: <actual>s   (<ratio>× budget)
+              Current step: <current_step>/<total_steps> (if set)
+              Last issue: <issues[-1].description or "none">
+          ```
+        - Log `over_budget: true` in the per-turn event written to `orchestrator.jsonl`.
+        - Do NOT halt the worker. The warning is informational — the engineer may choose to `abort` or let it run. Over-budget alone is not a gate.
+      - Threshold of 1.5× (not 2×): chosen to surface a warning while the stage is still recoverable, not after it has already failed silently.
+
+2. **Handle engineer input between notifications:**
+   - `status` / `status?` / `where are you` → print a per-train one-line summary table (compact, scannable in <5s). Do NOT re-fetch from workers — use your in-memory state.
+   - `y` / `n` / `w` / `p` / `c` / `defer` / `?` → response to the most recently surfaced gate. Parse per `approval-gates.md` v2; `SendMessage` the worker; log to `.claude/logs/approval-gates.jsonl`; trigger Confluence push.
+   - `abort` → halt cleanly: `SendMessage` shutdown_request to each worker, do NOT write fleet-status, exit the skill.
+   - Anything else → engineer may be doing other work in the same session; treat as out-of-band, continue waiting for the next notification.
+
+3. **At cycle boundary** (5-min wall-clock or convergence to terminal states):
+   a. **Compute the cycle digest** — per-train summary of what changed since last cycle: status transitions, stage progress (`current_step` / `total_steps`), new issues, terminal events.
+   b. **Print the digest** to the engineer (see format below).
+   c. **Write `fleet-status.md`** if any field changed (per the `fields` block of incoming reports). Use the row-merge rules in "Fleet-status writer" below.
+   d. **Push Confluence** via `Skill: dosto-confluence-sync --push --json` if fleet-status changed.
+   e. **Append to `.claude/logs/orchestrator.jsonl`** — one entry per cycle with the per-train state snapshot.
+
+4. **Loop until all workers terminal.** When every worker reports `DONE` / `BLOCKED` / `ERROR`, emit the end-of-day report (see "End of day" below) and stop the skill.
+
+### Cycle digest format
+
+```
+─── Cycle 7 — 2026-05-09 14:35 UTC (elapsed 35:00) ───
+
+4736-102 / Fzg 130: 🟡 APPLYING_FIXES (apply_obn_patches, t+220s, exp 120s — over budget, watch)
+  • Bug 5 patch applied; bug 6 marker still missing — investigating
+  • OBN patches: 7/8 (was 0/8)
+
+4736-104 / Fzg 132: ✅ DONE (t+34:12)
+  • All 6 stuck APs unblocked: .226 .230 .231 .237 .238 .240 → 6.11.2-0
+  • Final L2 health: clean (1 known cable issue: D4 missing — Stadler item)
+  • Customer report: reports/customer/OBB_Fzg132_v1.0.docx
+
+4736-120 / Fzg 148: 🔵 NEEDS_APPROVAL (await_obn_update_c — queued 12 min, see prompt below)
+
+────────────────────────────────────────────────────
+Approvals queued: 1   Blocked: 0   Errors: 0   Done: 1   Working: 1
+⚠️  Approvals waiting > 10 min: 1 (4736-120, await_obn_update_c, 12 min)
+Confluence push: queued for end of cycle.
+fleet-status.md: 2 rows updated (132, 148).
+```
+
+**Pending-approval visibility rule:** for every approval in the queue at digest time, compute `now - <queued_at>`. If any single approval > 10 min, emit `⚠️  Approvals waiting > 10 min: N (Fzg X, gate Y, Z min)` after the totals line. Engineers stepping away from the keyboard then notice on return that they have unanswered acks blocking work.
+
+If multiple approvals are over threshold, list them comma-separated. Don't truncate.
+
+**SSH flap visibility rule:** for every active train, include its `ssh_flap_count` and `paused_seconds_total` in the digest line when either is non-zero. Format: `(flaps: N, paused: Xs total)`. If any train has `ssh_flap_count ≥ 3`, flag it with `⚠️  high connectivity noise` in the digest and suggest `--legacy-serial-sw-config` if the train is in a device-push stage.
+
+## Approval flow
+
+When a worker emits `status: NEEDS_APPROVAL`:
+
+1. **Buffer immediately** in `pending_approvals`. Don't wait for cycle end.
+2. **At the next safe boundary** (between notification handles, or right after a cycle digest), surface the next pending approval to the engineer in the compact form per `approval-gates.md` v2:
+
+   ```
+   [Gate 1] promote_snapshot — 4736-104 (Fzg 132) — 8/8 OBN patches confirmed; persisting via chroot promote
+     destructive: ✅   reversible: ❌   command: sudo /usr/sbin/nd-systemupdate.sh shell + fix_obn.py + exit
+   Options: y | n | defer | ?
+   ```
+
+3. **End your turn.** The engineer's next message is the response.
+4. **Parse the response** per the gate's `response_shape`:
+   - Binary: `y` → approved; `n`/empty → denied; `defer` → re-queue; `?` → expand to verbose form
+   - Three-way (Gate 5 only): `w` → wait; `p`/empty → partial; `c` → continue_full; `defer` → re-queue; `?` → expand
+5. **`SendMessage` the response to the worker** by name (`train-fzg-132`). Response JSON per `approval-gates.md` v2 (e.g. `{"approval": "approved", "approved_by": "<engineer>", "approved_at": "<now>"}`).
+6. **Log the gate** to `.claude/logs/approval-gates.jsonl` (one JSON line per decision).
+7. **Trigger immediate Confluence push** — gates are state-changing events worth syncing.
+8. **If multiple approvals are queued**, surface the next one. Show `(N of M)` labels.
+
+### Concurrent approvals
+
+Queue, show one at a time. Never batch into "approve all 3" — exactly the rubber-stamp pattern the contract forbids.
+
+## Fleet-status writer (orchestrator-as-sole-writer)
+
+You are the only entity that writes `fleet-status.md` during the day. Per cycle:
+
+1. Compute the diff between (a) last-known fleet-status row for each active train and (b) the merged `fields` block from all reports received this cycle for that train.
+2. For each train with any field changed, edit the relevant row in-place. Use the column mapping from `subagent-report.md` § "fields".
+3. Update `Last touched` to today's UTC date + engineer's initials.
+4. Update `Nomad status` to the most informative current value:
+   - Worker terminal `DONE` → `🟢 DONE` (or `🟢 DONE w/ Stadler — <summary>` if any `BLOCKED` issues remain — infer from `issues[]`). **Clears the in-flight claim.**
+   - Worker terminal `BLOCKED` → `🔴 BLOCKED — <escalation_reason>`. **Clears the in-flight claim.**
+   - Worker terminal `ERROR` → keep prior `Nomad status` from before the claim, add note in per-train detail block. **Clears the in-flight claim.**
+   - Worker terminal `PAUSED` (after the 30-min retry budget exhausted) → `🟡 PAUSED — <reason>`. **Clears the in-flight claim.**
+   - Worker in `NEEDS_APPROVAL` → **keep the in-flight claim with the await_* stage**, do NOT swap to a separate status. The claim format already conveys the await state via its stage_id (e.g. `stage await_promote_snapshot`). Engineers reading fleet-status can tell "this train is waiting for a gate" from the stage prefix `await_`.
+   - Worker in working state (`DIAGNOSING` / `APPLYING_FIXES` / `PUSHING_TO_DEVICES` / `PAUSED`) → **refresh the in-flight claim** via `format_in_flight()` with the latest stage / step / total / elapsed / heartbeat. See "Heartbeat protocol" above.
+5. Update `Next action` to the worker's last reported `next_action`, or compute from terminal state.
+
+**Hand-edit preservation:** if between cycles the engineer hand-edits fields you don't manage (`Customer report`, `Health check date`), preserve them. Only overwrite the columns in the `fields` block.
+
+### Step 7.5 — Auto-append new faults to cable-issues-register.md
+
+After each cycle's fleet-status write, inspect the `ap_missing` and `switches_missing` arrays from any `dosto-device-discovery` skill output received this cycle. For each missing device:
+
+1. Check `cable-issues-register.md` for an existing open entry matching this Train# AND the same switch+port. If a matching `🔴 OPEN` row already exists — **do nothing** (no duplicate rows).
+2. If no match exists, append a new row to the "Open issues" at-a-glance table and a corresponding `###` detail block. Use the `stadler_instruction` text from the skill output as the "Required action" body. Template:
+
+```markdown
+| N  | <train#>  | <switch> <port>  | <fault_type>   | 🔴 OPEN |
+```
+
+```markdown
+### #N — <train#> (<consist>) — <switch> <port> <fault summary>
+
+**What we see:** <live_state description from skill output>
+**Expected:** <switch> port <port> hosts <AP/switch> per nv{4,6} topology.
+
+**Required action:** <stadler_instruction from skill output>
+
+**Status:** 🔴 OPEN
+```
+
+Set `fault_type` based on the `verdict` from device-discovery:
+- `ap_missing` where `live_state.speed == "Auto"` AND `live_state.rx_bytes == 0` → `AP not connected`
+- `missing_switches` → `missing trunk` (switch absent — escalate to Stadler)
+- `ap_missing` where `live_state.rx_bytes > 0` but no LLDP peer → `physical-layer`
+
+3. After writing, print a one-line note in the cycle digest:
+   ```
+   ℹ️  cable-issues-register.md: appended #N (4736-104 / D3 e1-2 AP not connected)
+   ```
+
+**Surgical-edit discipline:** append only — never edit or delete existing rows. The register is append-only. Only the engineer (or a future `/cable-register-resolve` skill) marks entries `RESOLVED`.
+
+**Atomicity:** read the file once, compute all row changes, write once. Don't write partial state.
+
+### Surgical-Changes allowlist (Principle 3)
+
+You may write to **only these columns** when merging worker `fields` blocks:
+
+| Allowed field | Maps to fleet-status column |
+|---|---|
+| `obn_patches` | OBN patches |
+| `switches_v8` | Switches v8 |
+| `aps` | APs |
+| `vlan7_ok` | vlan7 ok |
+| `stadler_cabling` | Stadler cabling |
+| `fw_reach` | FW reach (per F9: derived from `fw_commission_state`, not raw TCP probe) |
+| `health_check_done` | Health check |
+| `customer_report` | Customer report |
+
+Any other key in a worker's `fields` block is a **contract violation**:
+1. Log to `.claude/logs/orchestrator-errors.jsonl` with `action: "unknown_field"`.
+2. Do NOT write the unknown field.
+3. Surface in next cycle digest under "Contract violations".
+4. Do NOT shut down the worker — it may have other valid fields.
+
+`Status`, `Next action`, `Last touched` are computed by you per the rules above, not pulled from worker fields.
+
+## Confluence push policy
+
+| Trigger | Action |
+|---|---|
+| Any worker transitions to `NEEDS_APPROVAL` | Push immediately |
+| Any worker transitions to `DONE` / `BLOCKED` / `ERROR` | Push immediately |
+| End-of-cycle digest if `fleet-status.md` changed | Push at cycle end |
+| End-of-cycle digest if nothing changed | Skip — no version bump |
+
+Push via `Skill: dosto-confluence-sync --push --json`. The skill handles drift detection. If it returns `verdict: drift_detected`, surface the drift report to the engineer and ask whether to `--push --force` or pull the manual edits into local. Don't auto-resolve.
+
+## Logging
+
+Four append-only files in `.claude/logs/`:
+
+| File | One entry per |
+|---|---|
+| `orchestrator.jsonl` | Per-turn event AND cycle digest. See schema below. |
+| `approval-gates.jsonl` | Each gate decision (approved / denied / deferred / auto_blocked_defer_limit). Includes `defer_count`. |
+| `orchestrator-errors.jsonl` | Each schema-version mismatch, malformed JSON, or contract violation. |
+| `orchestrate-preflight.jsonl` | Each pre-flight run — per-train device counts, verdict, scripts_staged result. |
+
+Existing files: `confluence-sync.jsonl` and `confluence-drift.jsonl` (both managed by the sync skill).
+
+### `orchestrator.jsonl` per-turn event schema
+
+Every inbound subagent notification (not just cycle digests) appends one JSON line. This enables crash recovery to replay state without re-running diagnostics — the orchestrator reads the last `cycle_digest` event and re-spawns workers at `--resume <stage_id>`, skipping full re-diagnosis unless the last recorded stage was `initial_diagnostics` or `pre_flight`.
+
+**Per-turn event** (one per `<task-notification>` received):
+
+```json
+{
+  "event": "subagent_report",
+  "cycle_id": 7,
+  "recorded_at": "2026-05-09T14:32:11Z",
+  "train": {"train_number": "4736-104", "fzg": 132, "ccu_ip": "10.179.10.1"},
+  "stage_id": "push_switch_config",
+  "status": "PUSHING_TO_DEVICES",
+  "elapsed_seconds": 1980,
+  "current_step": 7,
+  "total_steps": 18,
+  "issues_count": 0,
+  "report_hash": "sha256:<first-8-chars-of-sha256-of-raw-report-JSON>",
+  "ssh_flap_count": 0,
+  "paused_seconds_total": 0
+}
+```
+
+**Cycle digest event** (one per cycle boundary):
+
+```json
+{
+  "event": "cycle_digest",
+  "cycle_id": 7,
+  "recorded_at": "2026-05-09T14:35:00Z",
+  "elapsed_minutes": 35,
+  "per_train": [
+    {
+      "fzg": 132,
+      "status": "DONE",
+      "stage_id": "done",
+      "ssh_flap_count": 0,
+      "paused_seconds_total": 0,
+      "issues": []
+    },
+    {
+      "fzg": 130,
+      "status": "APPLYING_FIXES",
+      "stage_id": "apply_obn_patches",
+      "elapsed_stage_seconds": 220,
+      "expected_stage_seconds": 120,
+      "over_budget": true,
+      "ssh_flap_count": 1,
+      "paused_seconds_total": 60,
+      "issues": [{"severity": "warning", "description": "bug 6 marker still missing"}]
+    }
+  ],
+  "gates_approved": 3,
+  "gates_denied": 0,
+  "gates_deferred": 0,
+  "gates_auto_blocked": 0,
+  "fleet_status_changed": true,
+  "confluence_pushed": true
+}
+```
+
+**`report_hash`** is `sha256(raw_json_string)[:8]` — cheap fingerprint for deduplication on crash replay. If two consecutive per-turn events share the same `(fzg, stage_id, report_hash)`, skip the second write.
+
+**Crash recovery:** on re-invoke, read the last `cycle_digest` event to determine which trains were in-flight and at which stage, then spawn fresh workers with `--resume <stage_id>`. Defer counter state is NOT recoverable from `orchestrator.jsonl` — defer counters reset on session restart, which is the correct behaviour (a new session is a fresh chance to approve).
+
+## End of day
+
+When every worker has reached terminal state:
+
+1. Final cycle digest with the day's totals: trains commissioned, gates approved/denied, blockers, elapsed time.
+2. Final `fleet-status.md` write.
+3. Final Confluence push (with banner reflecting the day's last-sync timestamp).
+4. **Per-train success-criteria check (Principle 4 — Goal-Driven Execution).** Recall the success criteria you committed to in your Pre-Flight at startup. For each train, verify each criterion against the latest fleet-status row + the worker's terminal report + on-disk artefacts. Tick what passed, ✗ what didn't. Don't claim DONE without ticking every criterion you committed to.
+
+   ```
+   ─── Day complete — 2026-05-09 18:42 UTC (elapsed 04:12) ───
+   Engineer:  Abbas Rizvi
+   Trains:    3 spawned · 2 DONE · 1 BLOCKED · 0 ERROR
+   Gates:     7 approved · 0 denied · 0 deferred
+
+   ▼ 4736-102 / Fzg 130 — DONE
+     ✓ OBN patches 8/8 persisted (run5)
+     ✓ train_id = 130 hardcoded in all 18 nv6-*.cfg
+     ✓ vlan7 = 172.19.193.2/17 (live + persisted)
+     ✓ All 18 switches at target firmware + config
+     ✓ All 24 APs at target firmware
+     ✓ Customer report: reports/customer/OBB_Fzg130_v1.0.docx
+
+   ▼ 4736-104 / Fzg 132 — DONE w/ Stadler
+     ✓ OBN patches 8/8 persisted (run1)
+     ✓ All 23 visible APs at target firmware 6.11.2-0
+     ✗ All 24 APs at target — D4 still missing (Stadler item, register #5)
+     ✓ vlan7 reachable to Stadler FW (commissioned per F9: ICMP filtered)
+     ✓ Customer report: reports/customer/OBB_Fzg132_v1.0.docx
+
+   ▼ 4736-120 / Fzg 148 — BLOCKED
+     ✓ OBN patches 8/8 persisted
+     ✗ Switch config push completed — RSTP convergence failed on F2
+     ✗ Customer report — pipeline halted before stage 21
+     Next: investigate F2 (10.179.2.189) — see issues[] in last worker report
+
+   Reports filed:  2 (4736-102, 4736-104)
+   Blockers open:  4736-104 — Stadler register #5 (D4 cable)
+                   4736-120 — F2 RSTP, internal investigation needed
+
+   fleet-status.md updated · Confluence v52
+   ```
+
+   Rules:
+   - One ✓ or ✗ per criterion you stated at Pre-Flight.
+   - "DONE" means every criterion ticked. Any ✗ → `DONE w/ <caveat>` or `BLOCKED`, never plain `DONE`.
+   - If a criterion can't be checked (e.g. "L2 health clean" but worker didn't reach that stage), report `?` and surface as an open item.
+
+5. Engineer can re-invoke `/dosto-orchestrate` tomorrow with a new train list.
+
+## Crash recovery
+
+If the engineer's session crashes mid-day:
+- All running workers die with it (workers are spawned from this session).
+- Engineer re-invokes `/dosto-orchestrate` with the same train list.
+- The skill reads `fleet-status.md` for current state, reads `.claude/logs/orchestrator.jsonl` last entry to know which trains were in flight.
+- Asks the engineer: "Resume 4736-102 / 4736-104 / 4736-120 with `--resume`? [Y/n]"
+- On Y, spawns fresh workers for each, each invoking `/dosto-commission-train --resume <last_known_stage_id>` per train. The skill's `--resume` always re-runs `initial_diagnostics` so state drift since the crash is detected.
+
+This is lossless because:
+- All persistent state lives on the CCU (btrfs snapshots, applied patches).
+- The skill recovers from CCU state every resume.
+- The orchestrator-as-sole-writer pattern means no fleet-status / Confluence writes are mid-flight at crash time.
+
+## Engineer mid-run controls
+
+While the runtime loop is active, the engineer can:
+- **Type approval responses** (`y` / `n` / `w` / `p` / `c` / `defer` / `?`) when prompts appear
+- **Hand-edit `fleet-status.md`** fields the skill doesn't manage (Customer report, Health check date, etc.) — these survive every cycle write per Surgical-Changes
+- **Type "status"** any time for a current per-train one-line summary (one of the cheap operations — does NOT wake any worker; reads from in-memory state)
+- **Type "abort"** to halt the day cleanly (`SendMessage` shutdown to all workers, no fleet-status writes, exit skill)
+
+## Failure handling — runtime-side
+
+| Situation | Action |
+|---|---|
+| Worker emits malformed JSON | Log to `orchestrator-errors.jsonl`. Treat that report as `ERROR`. Don't kill the worker — wait for next report; it may recover. After 3 consecutive malformed reports, `SendMessage` shutdown_request and surface to engineer. |
+| Worker goes silent > 30 min | Treat as `PAUSED`. Surface in next digest. After 60 min silent, kill and surface as `BLOCKED`. |
+| Worker emits `PAUSED` (SSH timeout) | Increment `ssh_flap_count` for that train in in-memory state. After **3 consecutive `PAUSED` reports on the same stage** (train kept dropping before completing the stage), emit inline immediately: `⚠️  Fzg <NN> — 3 consecutive SSH flaps on <stage_id>. Consider switching to --legacy-serial-sw-config or deferring this train. [k=keep running / s=suggest serial / d=defer train]`. Log `ssh_flap_count` and `paused_seconds_total` in the per-turn `orchestrator.jsonl` event. Accumulated per-train `ssh_flap_count` across the session is surfaced in the cycle digest and end-of-day summary. |
+| Confluence push fails | Log to `confluence-sync.jsonl`. Surface in next digest. Local file remains source of truth. Retry on next push trigger. |
+| Drift detected on Confluence | Halt the push. Surface to engineer. Ask whether to `--force` or pull-then-push. |
+| Engineer types nonsense in approval prompt | Treat per contract: binary → deny + warning, three-way → partial + warning. Re-show with `(treating as denied; type 'y' to override)` hint. |
+| Two trains reconciled to the same CCU IP | This is an engineer-input bug. Halt before spawning. Don't spawn anything until conflict resolved. |
+| Train list > 8 concurrent | Spawn anyway per the engineer's spec — but warn at startup: "Spawning N concurrent workers; train cellular SSH-flap rate may degrade. Continue? [y/N]" |
 
 ## Validation rules (run before spawning anything)
 
@@ -6059,53 +7021,66 @@ This skill prints human-readable status. It does NOT support `--json` output —
 
 ## What this skill deliberately does NOT do
 
-- ❌ Spawn `dosto-train-worker` subagents directly. That's the orchestrator's job.
-- ❌ Push to Confluence. The orchestrator does that.
-- ❌ Run any CCU commands. Same.
-- ❌ Maintain state between invocations. State lives in `fleet-status.md`, `.claude/logs/`, and on each CCU.
-- ❌ Validate per-train CCU state (incl. ping/SSH liveness). The orchestrator's first action does that (via `initial_diagnostics` per subagent).
-- ❌ Support resuming a specific stage from the CLI. That's the orchestrator's restart logic — re-invoke this skill, the orchestrator will offer resume.
+- ❌ **Run CCU commands directly.** All CCU work goes through workers → per-device skills. The skill (and the engineer's session running it) NEVER SSHes to a CCU.
+- ❌ **Auto-approve a gate.** Even on a third-time-this-day same-gate, ask. The 30-second cost is the feature.
+- ❌ **Batch approvals into one prompt.** Sequential per the `approval-gates.md` v2 contract.
+- ❌ **Skip the Confluence push on a gate hit or terminal state.** Those are the moments the team most wants visibility.
+- ❌ **Write to `fleet-status.md` more than once per cycle.** Atomic batched writes only.
+- ❌ **Spawn workers serially "for safety."** Engineer chose parallel; honour it via a single multi-block `Agent` call.
+- ❌ **Hold an open SSH session to any CCU.** Workers do that, and they should be short-lived.
+- ❌ **Call `Skill: dosto-commission-train` directly.** That's the per-train worker's job; you spawn the worker which calls the skill.
+- ❌ **Push to Confluence without going through `dosto-confluence-sync`.** That skill owns drift detection and logging.
+- ❌ **Modify worker, contract, skill, or agent files.** Skill body is the engineer-driven runtime; don't self-modify the workflow.
 
-**Note on `fleet-status.md` writes:** the skill writes to `fleet-status.md` ONLY during Step 2 reconciliation, in Cases B/C/D, and only on the cells it owns (CCU IP for B/C; full new row for D). All ongoing fleet-status writes during the day are the orchestrator's job per the [orchestrator-as-sole-writer contract](../../contracts/subagent-report.md).
+**`fleet-status.md` write boundaries:**
+
+- **During Step 2 reconciliation:** writes ONLY to the cells the skill owns (CCU IP for Cases B/C; full new row for Case D). Single-shot, before any worker spawn.
+- **During the runtime cycle loop:** writes to the eight Surgical-Changes columns listed in the writer section, once per cycle, batched. Engineer hand-edits to any other column survive every cycle.
 
 ## Edge cases
 
 - 🟡 **Engineer passes a single train.** Skill works fine — orchestrator with one subagent is just a fancy wrapper. Suggest using `/dosto-commission-train` directly for single-train work, but don't refuse.
 - 🟡 **Engineer passes >8 trains.** Spawn anyway, but warn at the plan step about cellular SSH-flap rate degrading at high concurrency.
-- 🟡 **Mixed series in one day.** 4734 and 4736 in the same train list is fine — the orchestrator handles per-train consist correctly.
+- 🟡 **Mixed series in one day.** 4734, 4736, 4705, and 4706 in the same train list is fine — the orchestrator handles per-train consist correctly.
 - 🟡 **Engineer passes the same train twice.** Caught at validation; halt.
 - 🟡 **Train list with all `DONE` trains.** All fail the include-anyway prompt → effective abort. Skill exits cleanly.
 - 🟡 **`fleet-status.md` doesn't exist or is unreadable.** Halt with a clear file-not-found error. The orchestrator can't operate without the source file.
 - 🟡 **Engineer omits `@<ip>` for one Fzg in a list.** Halt at parse time per Step 1. Don't try to half-resolve from fleet-status — the contract is that IP is required for every Fzg.
-- 🟡 **Engineer types an IP that doesn't ping.** Skill does NOT pre-flight ping during reconcile (would slow startup and mask transient cellular drops). The first subagent's `initial_diagnostics` stage will surface the unreachable CCU as a normal `BLOCKED` rationale.
+- 🟡 **Engineer types an IP that doesn't ping.** Caught at Step 5.5 network pre-flight (added 2026-05-20) — the TCP/22 probe + device-discovery happens before any worker spawns, and unreachable CCUs land in the FAIL list with a consolidated engineer prompt rather than blocking individual subagents at their Stage 1.
 - 🟡 **Two engineers reconciling the same train file simultaneously.** Skill reads + edits + writes `fleet-status.md` non-atomically. Two `/dosto-orchestrate` invocations racing on the same file CAN drop one engineer's edit. Mitigation: this is a one-engineer-per-day workflow by convention; if multiple engineers are working in parallel, coordinate verbally before invoking.
-- 🟡 **Case D row creation lands the new row in the wrong series section.** Skill must write under the right `### 4734 series` / `### 4736 series` header. If the file structure has been modified (new sections, renamed headers), the safest fall-back is to halt with a clear error rather than guess where to insert.
+- 🟡 **Case D row creation lands the new row in the wrong series section.** Skill must write under the right `### 4734 series` / `### 4736 series` / `### 4705 series` / `### 4706 series` header. If the file structure has been modified (new sections, renamed headers), the safest fall-back is to halt with a clear error rather than guess where to insert.
 
 ## Pairs with
 
-- [`.claude/agents/dosto-orchestrator.md`](../../agents/dosto-orchestrator.md) — the agent this skill spawns
-- [`.claude/agents/dosto-train-worker.md`](../../agents/dosto-train-worker.md) — what the orchestrator spawns
-- [`.claude/skills/dosto-confluence-sync/SKILL.md`](../dosto-confluence-sync/SKILL.md) — what the orchestrator calls for Confluence
-- [`.claude/skills/dosto-commission-train/SKILL.md`](../dosto-commission-train/SKILL.md) — what the per-train subagent calls
-- [`fleet-status.md`](../../../fleet-status.md) — the source-of-truth file
-- All four contracts in `.claude/contracts/`
+- [`.claude/agents/dosto-train-worker.md`](../../agents/dosto-train-worker.md) — what this skill spawns (N parallel per fleet day)
+- [`.claude/skills/dosto-confluence-sync/SKILL.md`](../dosto-confluence-sync/SKILL.md) — what this skill calls for Confluence push
+- [`.claude/skills/dosto-commission-train/SKILL.md`](../dosto-commission-train/SKILL.md) — what the per-train worker invokes
+- [`fleet-status.md`](../../../fleet-status.md) — the source-of-truth file (sole writer during runtime)
+- [`cable-issues-register.md`](../../../cable-issues-register.md) — read at Step 3.5 (pre-flight); appended at Step 7.5 (new fault auto-append)
+- All four contracts in `.claude/contracts/` — `subagent-report.md` v2, `autonomy-boundary.md`, `approval-gates.md` v2, `confluence-sync.md`
 
-## Reference
+## Reference / design history
 
-- handoff line 30: "Phase 5 top-level orchestrator (the thing that spawns N per-train subagents in parallel and aggregates)" — this skill + the orchestrator agent close that gap.
-- Design decisions made 2026-05-09:
+- handoff line 30: "Phase 5 top-level orchestrator (the thing that spawns N per-train subagents in parallel and aggregates)" — this skill closes that gap.
+- **2026-05-09 design decisions** (initial v1 architecture):
   - Architecture: agent definition + bootstrap skill (option b)
-  - Concurrency: parallel-all (one subagent per Fzg in the day's list, all spawned together)
+  - Concurrency: parallel-all
   - Cycle: 5-min digest
   - Fleet-status: batched writes per cycle
   - Confluence: push on gates + terminal states + cycle digests
   - Approvals: print prompt, end turn, parse next user message
-  - Crash recovery: option (a) — subagents die with orchestrator; restart re-spawns with `--resume`
+  - Crash recovery: workers die with orchestrator; restart re-spawns with `--resume`
+- **2026-05-11 v2 redesign (audit finding F5):**
+  - The 2026-05-09 architecture was invalidated by the Claude Code platform rule "subagents cannot spawn further subagents." A `dosto-orchestrator` agent spawned via `Agent` could not itself call `Agent` to spawn workers.
+  - The first-run test on 2026-05-11 worked end-to-end only because the engineer's top-level session played the orchestrator role directly (it has `Agent` + `SendMessage`).
+  - This skill was rewritten to make that pattern the documented architecture: the orchestration logic runs *inline in the engineer's top-level session*, spawning workers from that session's tool access.
+  - `.claude/agents/dosto-orchestrator.md` was deleted as part of this change. All operational detail folded into this skill body.
+  - See [`handoff-bootstrap-audit-2026-05-11.md`](../../../handoff-bootstrap-audit-2026-05-11.md) §F5 for the full rationale and Option A vs B comparison.
 ~~~~
 
 ---
 
-## STEP 20 — Create `.claude/skills/dosto-state-inventory/SKILL.md`
+## STEP 19 — Create `.claude/skills/dosto-state-inventory/SKILL.md`
 
 Create `.claude/skills/dosto-state-inventory/SKILL.md` with the following exact content:
 
@@ -6135,14 +7110,14 @@ Each of these had a documented "what to check" recipe scattered across SKILL.mds
 ## When to use
 
 - **Orchestrator stage 1 (`initial_diagnostics`)** — invoked as part of the pre-stage-1 inventory probe. Output feeds into the orchestrator's Pre-Flight assumptions.
-- **Manual session start** — engineer types `/dosto-state-inventory <ccu-ip> <fzg>` after SSH-ing to the CCU as a "did anything change since last time?" probe.
+- **Manual session start** — engineer types `/dosto-state-inventory <ccu-ip> <train#>` after SSH-ing to the CCU as a "did anything change since last time?" probe.
 - **Before approving any irreversible gate** — the orchestrator re-runs this check immediately before relaying an `approved` response to the subagent at Gate 1 (promote) or Gate 4 (firmware push). Catches drift between the engineer reading the gate prompt and pressing y.
 
 ## Inputs
 
 - `<ccu-ip>` — required. e.g. `10.179.10.1`.
-- `<fzg>` — required. The Fzg ID, used to compute expected vlan7 IP and template `train_id`.
-- `--expected <path>` — optional. Path to a per-train `expected.json` file. If absent, the skill computes expectations from `<fzg>` + the per-series formula (Fzg = train# +28 for 4736, -100 for 4734).
+- `<train#>` — required. e.g. `4736-104` (Nomad-internal primary identifier). The skill looks up Fzg from the fleet-status row via `python scripts/fleet_status_lookup.py lookup <train#> --require-fzg`. If the row's Fzg cell is `❓`, halts with: *"Fzg ID for `<train#>` missing in fleet-status — populate before running state-inventory."* Engineer may pass a bare Fzg integer as the second arg (`/dosto-state-inventory 10.179.10.1 132`) for ad-hoc checks; in that case skip the fleet-status lookup.
+- `--expected <path>` — optional. Path to a per-train `expected.json` file. If absent, the skill computes expectations from the resolved Fzg.
 - `--json` — optional. Machine-readable output (default). Engineer-readable with `--human`.
 
 ## What it inventories
@@ -6356,7 +7331,7 @@ Next action: Run /dosto-tftp-helper-check 10.179.10.1 --apply-runtime.
 
 ---
 
-## STEP 21 — Create `.claude/skills/dosto-sw-config-update/SKILL.md`
+## STEP 20 — Create `.claude/skills/dosto-sw-config-update/SKILL.md`
 
 Create `.claude/skills/dosto-sw-config-update/SKILL.md` with the following exact content:
 
@@ -6852,7 +7827,7 @@ Exit codes 2-9 align with the verdict / event taxonomy:
 
 ---
 
-## STEP 22 — Create `.claude/skills/dosto-sw-firmware-update/SKILL.md`
+## STEP 21 — Create `.claude/skills/dosto-sw-firmware-update/SKILL.md`
 
 Create `.claude/skills/dosto-sw-firmware-update/SKILL.md` with the following exact content:
 
@@ -7324,7 +8299,7 @@ Exit codes 2-7 align with the verdict / event taxonomy:
 
 ---
 
-## STEP 23 — Create `.claude/skills/dosto-tftp-helper-check/SKILL.md`
+## STEP 22 — Create `.claude/skills/dosto-tftp-helper-check/SKILL.md`
 
 Create `.claude/skills/dosto-tftp-helper-check/SKILL.md` with the following exact content:
 
@@ -7606,7 +8581,7 @@ Per the orchestrator-as-sole-writer pattern:
 
 ---
 
-## STEP 24 — Create `.claude/skills/dosto-vlan7-config/SKILL.md`
+## STEP 23 — Create `.claude/skills/dosto-vlan7-config/SKILL.md`
 
 Create `.claude/skills/dosto-vlan7-config/SKILL.md` with the following exact content:
 
@@ -7663,12 +8638,23 @@ Subagent emits this as one element of `skill_outputs[]`:
     "vlan7_link_errors_tx": 0,
     "vlan7_carrier_false": 0,
     "fw_peer_ip": "172.19.194.1",
+    "fw_peer_arp_state": "reachable|stale|failed|none",
+    "fw_peer_icmp_replies": 0,
+    "fw_peer_icmp_sent": 5,
     "fw_peer_tcp80": "open|closed|timeout|filtered",
-    "fw_peer_tcp22": "open|closed|timeout|filtered"
+    "fw_peer_tcp22": "open|closed|timeout|filtered",
+    "fw_commission_state": "commissioned|uncommissioned|path_broken|unknown"
   },
   "recipe": null
 }
 ```
+
+`fw_commission_state` is the per-train answer to *"has Stadler finished configuring the firewall?"* — derived per CLAUDE.md Phase 6 (Q1 + Q2):
+
+- `commissioned` — ARP REACHABLE, ICMP 100% loss (Stadler policy dropping ping as designed). TCP outcome doesn't matter for this classification.
+- `uncommissioned` — ARP REACHABLE, ICMP gets replies (bare Westermo behavior, no Stadler policy yet).
+- `path_broken` — ARP FAILED or no neighbour. Commission state cannot be determined.
+- `unknown` — ICMP was not tested (skill running in check-only mode with no FW probe). Customer-facing classifications must NOT rely on `unknown`.
 
 `verdict` semantics (per the diff matrix in the procedure section below):
 - `all_match` — live IP, nmconnection, and expected all agree (yaml may be cosmetically wrong; doesn't change verdict)
@@ -7727,14 +8713,16 @@ The "odd vs even" pattern: each octet-3 value covers 2 consecutive Fzg IDs — *
 
 ## Fzg ID lookup
 
-The Fzg ID for the train is in the **header line** of the IP-Port-Allocation PDF at `train-ip-allocation-commission/<series>/<train#>/<train#>_IP-Port-Allocation.pdf` (or `_IP_Port_Allocation.pdf` — case varies). Look for `Fahrzeugnummer: <train#>    Fzg. ID: <NN>` near the top.
+**Runtime source of truth: the [`fleet-status.md`](../../../fleet-status.md) row for the Train#.** Read it via `python scripts/fleet_status_lookup.py lookup <train#> --require-fzg`. If the row's Fzg cell is `❓`, halt and prompt the engineer to populate it (from the IP-Port-Allocation PDF or physical inspection) before proceeding.
 
-For shorthand:
+**Reference formulas** (for engineers; never trust silently at runtime):
 
 - **4734-NNN → Fzg = NNN - 100** (e.g. 4734-120 = Fzg 20)
-- **4736-NNN → Fzg = NNN + 28** (e.g. 4736-105 = Fzg 133)
+- **4736-NNN → Fzg = NNN + 28**  (e.g. 4736-105 = Fzg 133)
+- **4705-NNN → Fzg = NNN + 128** (e.g. 4705-103 = Fzg 231)
+- **4706-NNN → Fzg = NNN + 88**  (e.g. 4706-103 = Fzg 191)
 
-The PDF header is the source of truth. If a train's PDF says something different from the shorthand, trust the PDF.
+The PDF header (`Fahrzeugnummer: <train#>    Fzg. ID: <NN>`) is the off-line source of truth — that's what populates fleet-status. The formulas above are correct for the typical case but should never override an explicit fleet-status value.
 
 ## Procedure
 
@@ -7742,10 +8730,12 @@ The PDF header is the source of truth. If a train's PDF says something different
 
 You need:
 
+- **Train#** (e.g. `4736-105` — the Nomad-internal primary identifier)
 - **CCU IP** (e.g. `10.179.1.1`)
-- **Fzg ID** (from the PDF header, or computed via the shorthand above)
 
-If the user invoked this skill with an argument like `/dosto-vlan7-config 133` or `/dosto-vlan7-config 4736-105`, parse the Fzg ID from that. Otherwise ask: *"Which train? (Fzg ID or train#)"*.
+Fzg ID is derived: the skill runs `python scripts/fleet_status_lookup.py lookup <train#> --require-fzg` to get the Fzg from the fleet-status row. If that returns `fzg_unknown` (cell is `❓`), the skill halts with: *"Fzg ID for `<train#>` missing in fleet-status. Look it up in `train-ip-allocation-commission/<series>-xxx/<train#>/<train#>_IP-Port-Allocation.pdf` and populate the Fzg column."*
+
+If the user invoked this skill with an argument like `/dosto-vlan7-config 4736-105`, use that as the Train#. Engineers may also pass a bare Fzg integer (`/dosto-vlan7-config 133`) for ad-hoc checks — in that case treat Fzg as authoritative and skip the fleet-status lookup (useful for sanity-checking the math against a value you already know). When ambiguous, ask: *"Train# (e.g. 4736-105) or Fzg ID (e.g. 133)?"*.
 
 ### 1. Compute the expected IP
 
@@ -7845,19 +8835,32 @@ sudo /usr/local/sbin/safe_reboot
 
 **Mandatory rendered-output verification** (Karpathy Principle 4 — Goal-Driven Execution; see also [`CLAUDE.md` § Universal Principles](../../CLAUDE.md)). The nmconnection file edit is the *input*; the live `vlan7@bond0` IP + reachability to the Stadler firewall are the *output downstream consumers depend on*. Verifying the file alone is necessary but not sufficient — NetworkManager could fail to apply, the new IP could collide on the wire, or the firewall could be on a different subnet.
 
-After reboot, the engineer (or `dosto-commission-train` stage 10 `post_reboot_verify`) MUST verify all three of:
+After reboot, the engineer (or `dosto-commission-train` stage 10 `post_reboot_verify`) MUST verify all four of:
 
 | Assertion | Probe | Pass criterion |
 |---|---|---|
 | **A. Input file unchanged from intent** | `sudo cat /etc/NetworkManager/system-connections/ndrd-vlan-vlan7.nmconnection \| grep "^address1="` | Single line: `address1=<EXPECTED_IP>` |
 | **B. Live interface matches expected** | `ip -br addr show vlan7` | Shows `<EXPECTED_IP>` exactly (post-NetworkManager apply) |
-| **C. Stadler FW peer reachable** | `nc -zv -w 5 172.19.<octet3>.1 80` AND `nc -zv -w 5 172.19.<octet3>.1 22` | Both return `Connected` / `succeeded` |
+| **C. Path to FW peer healthy (Q1)** | `ip neigh show dev vlan7 \| grep 172.19.<octet3>.1` | State is `REACHABLE` (or `STALE` is also OK), MAC has Westermo OUI `00:90:e8:` |
+| **D. FW commission state (Q2)** | `ping -c 5 172.19.<octet3>.1` | See decision table below |
 
-**Don't trust ICMP** for the FW probe — Stadler's firewall drops echo-request by policy (handoff). TCP probes are authoritative.
+**Q2 interpretation (the F9 correction — read carefully):**
+
+| Q2 ICMP result | Q1 result | Commission state | Action |
+|---|---|---|---|
+| 0/5 replies (100% loss) | Q1 = REACHABLE | ✅ `commissioned` — Stadler policy dropping ICMP as designed | None |
+| Replies received | Q1 = REACHABLE | 🟡 `uncommissioned` — bare Westermo defaults, no Stadler policy applied yet | Flag for Stadler — they haven't finished commissioning the FW for this train |
+| 0/5 replies | Q1 = FAILED | 🔴 `path_broken` — Q1 issue, not commission state | Fix path first; Q2 doesn't apply |
+| Skipped | (any) | `unknown` | Don't write a customer-facing FW verdict |
+
+**Reading TCP probes (informational only, NOT the commission test):**
+TCP `nc -zv` to port 80 / 22 tells you only whether *something* responds on that port. Open ports do NOT mean "commissioned" — a bare Westermo FW also has 80/22 OPEN by default. Use Q2 (ICMP) to classify commission state. Use TCP only to verify specific service availability after commissioning is confirmed.
 
 **If A passes but B fails:** NetworkManager didn't reapply on boot. Run `sudo nmcli con down vlan7 && sudo nmcli con up vlan7`, re-check.
 
-**If A and B pass but C fails:** the CCU side is correct; the fault is on Stadler's side (gateway not commissioned for this train). This is **not** a regression — surface as a Stadler-action item in `fleet-status.md` under FW reach, but the vlan7 fix itself is verified successful. Verdict: `ccu_ok_stadler_unreachable` (still a pass for our scope, with a flag).
+**If A, B, C pass but D shows `uncommissioned`:** the CCU side is correct; Stadler hasn't finished configuring the FW for this train. This is **not** a regression of the vlan7 fix — surface as a Stadler-action item in `fleet-status.md` under FW reach. Verdict: `ccu_ok_fw_uncommissioned`.
+
+**If A, B, C pass but D shows `path_broken`:** Q1 failed. This contradicts B (which would have failed too). Re-check; if Q1 truly fails after B passes, investigate ARP / vlan trunking.
 
 **If A fails but B passes:** very rare — means another nmconnection file is overriding ours, or a manual `nmcli` runtime override is active. Investigate.
 
@@ -7868,25 +8871,36 @@ After reboot, the engineer (or `dosto-commission-train` stage 10 `post_reboot_ve
   "skill": "dosto-vlan7-config",
   "mode": "post_flight",
   "schema_version": "1",
-  "verdict": "all_match|ccu_ok_stadler_unreachable|input_only|live_only|both_mismatch",
+  "verdict": "all_match|ccu_ok_fw_uncommissioned|ccu_ok_path_broken|input_only|live_only|both_mismatch",
   "raw": {
     "fzg_input": 132,
     "expected_ip": "172.19.194.2/17",
     "input_assertion_a": {"pass": true, "nmconnection_address1": "172.19.194.2/17"},
     "rendered_assertion_b": {"pass": true, "live_ip": "172.19.194.2/17"},
-    "fw_reach_assertion_c": {"pass": true, "fw_peer_ip": "172.19.194.1", "fw_peer_tcp80": "open", "fw_peer_tcp22": "open"},
+    "path_assertion_c":    {"pass": true, "fw_peer_ip": "172.19.194.1", "arp_state": "reachable", "fw_peer_mac": "00:90:e8:ba:0e:bf"},
+    "commission_assertion_d": {
+      "pass": true,
+      "fw_commission_state": "commissioned",
+      "icmp_sent": 5,
+      "icmp_replies": 0,
+      "fw_peer_tcp80": "filtered",
+      "fw_peer_tcp22": "filtered"
+    },
     "vlan7_link_errors_rx": 0,
     "vlan7_link_errors_tx": 0
   }
 }
 ```
 
-`verdict` semantics:
-- `all_match` — all three assertions pass. ✅
-- `ccu_ok_stadler_unreachable` — A and B pass, C fails. ✅ for our scope; flag as Stadler-action item in fleet-status.
+`verdict` semantics (post-F9 update):
+- `all_match` — A + B + C pass, D = `commissioned`. ✅ Fully done from our scope.
+- `ccu_ok_fw_uncommissioned` — A + B + C pass, D = `uncommissioned`. ✅ for our scope; flag Stadler-action item in fleet-status (they haven't finished FW config for this train).
+- `ccu_ok_path_broken` — A + B pass, C fails. 🔴 vlan7 nmconnection / live IP correct but the path to .1 is broken (vlan trunk, FW absent, etc.).
 - `input_only` — A passes, B fails. 🟡 NetworkManager didn't reapply (transient).
 - `live_only` — B passes, A fails. 🔴 nmconnection file divergent from live.
 - `both_mismatch` — A and B both wrong. 🔴 fix did not land.
+
+`commission_assertion_d.pass = true` is set when D produced a definitive verdict (`commissioned` OR `uncommissioned`). It's `false` only when `fw_commission_state` is `path_broken` or `unknown`.
 
 ### 6. Update [fleet-status.md](fleet-status.md)
 
@@ -7928,7 +8942,7 @@ The last thing the skill does (or asks the engineer to do as part of Step 11) is
 
 ---
 
-## STEP 25 — Create `scripts/fix_obn.py`
+## STEP 24 — Create `scripts/fix_obn.py`
 
 Create `scripts/fix_obn.py` with the following exact content:
 
@@ -8125,7 +9139,7 @@ if __name__ == "__main__":
 
 ---
 
-## STEP 26 — Create `scripts/fix_obn_bug8.py`
+## STEP 25 — Create `scripts/fix_obn_bug8.py`
 
 Create `scripts/fix_obn_bug8.py` with the following exact content:
 
@@ -8155,7 +9169,7 @@ print(r.stdout)
 
 ---
 
-## STEP 27 — Create `scripts/fix_obn_bugs67.py`
+## STEP 26 — Create `scripts/fix_obn_bugs67.py`
 
 Create `scripts/fix_obn_bugs67.py` with the following exact content:
 
@@ -8186,9 +9200,22 @@ with open(path, "w") as f:
     f.write(src)
 
 # ── Bug 6 fix: tree.py — None guard for coupled consist neighbours ────────────
+# Cross-script idempotency note (added 2026-05-11 per audit finding F7):
+#   fix_obn.py ALSO patches Bug 6 in this file, with a slightly different guard
+#   comment ("...on another subnet"). If fix_obn.py has already run, applying
+#   our patch on top produces TWO redundant guard lines back-to-back — both
+#   correct, but the grep -c marker count returns 2 instead of the expected 1.
+#   Detect either script's marker before patching to avoid the double-guard.
 path2 = "/usr/share/obn/lib/tree.py"
 with open(path2) as f:
     src2 = f.read()
+
+# Detect prior patch from EITHER script. Both insert "if neighbour_device is None:"
+# with a "neighbour not in this consist" comment on the next line.
+already_patched = (
+    "neighbour_device is None" in src2
+    and "neighbour not in this consist" in src2
+)
 
 old6 = '                if neighbour_device.type == "BOX":\n                    continue\n'
 new6 = (
@@ -8197,14 +9224,16 @@ new6 = (
     '                if neighbour_device.type == "BOX":\n'
     '                    continue\n'
 )
-if old6 in src2:
+
+if already_patched:
+    print("tree.py Bug6: already patched by either fix_obn.py or a prior run — skipping (idempotent)")
+elif old6 in src2:
     src2 = src2.replace(old6, new6, 1)
     print("tree.py Bug6 (coupled consist None guard): applied")
+    with open(path2, "w") as f:
+        f.write(src2)
 else:
-    print("tree.py Bug6: anchor not found — already patched or changed")
-
-with open(path2, "w") as f:
-    f.write(src2)
+    print("tree.py Bug6: anchor not found AND no prior-patch marker — file in unexpected state, manual review needed")
 
 print("\nDone. Verify:")
 import subprocess
@@ -8215,7 +9244,7 @@ print(r.stdout)
 
 ---
 
-## STEP 28 — Create `scripts/fix_bug1_regex.py`
+## STEP 27 — Create `scripts/fix_bug1_regex.py`
 
 Create `scripts/fix_bug1_regex.py` with the following exact content:
 
@@ -8252,7 +9281,7 @@ print(r.stdout)
 
 ---
 
-## STEP 29 — Create `scripts/lldp_topology_check.py`
+## STEP 28 — Create `scripts/lldp_topology_check.py`
 
 Create `scripts/lldp_topology_check.py` with the following exact content:
 
@@ -8423,7 +9452,7 @@ print("\nDone.")
 
 ---
 
-## STEP 30 — Create `scripts/validate_dosto_workspace.py`
+## STEP 29 — Create `scripts/validate_dosto_workspace.py`
 
 Create `scripts/validate_dosto_workspace.py` with the following exact content:
 
@@ -8566,7 +9595,7 @@ def check_gate_names() -> CheckResult:
         ".claude/contracts/autonomy-boundary.md",
         ".claude/contracts/approval-gates.md",
         ".claude/agents/dosto-train-worker.md",
-        ".claude/agents/dosto-orchestrator.md",
+        ".claude/skills/dosto-orchestrate/SKILL.md",  # was: agents/dosto-orchestrator.md — retired 2026-05-11 per audit F5
     ]
     missing = []
     for f in files:
@@ -8590,9 +9619,13 @@ def check_gate_names() -> CheckResult:
 
 
 def check_fields_allowlist() -> CheckResult:
-    """C3: orchestrator's fields allowlist must match the contract's fields list."""
+    """C3: orchestrator's fields allowlist must match the contract's fields list.
+    Post-F5 (2026-05-11): orchestration lives in the dosto-orchestrate skill, not an agent file.
+    The "Surgical-Changes allowlist" section that was in dosto-orchestrator.md is now in
+    dosto-orchestrate/SKILL.md under "Fleet-status writer" → "Surgical-Changes allowlist".
+    """
     contract = read(".claude/contracts/subagent-report.md")
-    orch = read(".claude/agents/dosto-orchestrator.md")
+    orch = read(".claude/skills/dosto-orchestrate/SKILL.md")
     # Contract uses `| `field` | type | example | column |` shape — match `| `field` |` substring.
     missing_in_contract = [f for f in CANONICAL_FIELDS if f"| `{f}` |" not in contract]
     missing_in_orch = [f for f in CANONICAL_FIELDS if f"| `{f}` |" not in orch]
@@ -8628,7 +9661,7 @@ def check_skill_references() -> CheckResult:
     EXCLUDE_NAMES = {
         "dosto-troubleshooting",  # workspace directory name, not a skill
         "dosto-train-worker",  # agent definition, not a skill
-        "dosto-orchestrator",  # agent definition, not a skill
+        # dosto-orchestrator retired 2026-05-11 per F5 — was an agent, now is the dosto-orchestrate skill
     }
     skill_dirs = {
         p.name for p in (PROJECT_ROOT / ".claude/skills").iterdir() if p.is_dir()
@@ -8882,6 +9915,422 @@ if __name__ == "__main__":
 
 ---
 
+## STEP 30 — Create `scripts/fleet_status_lookup.py`
+
+Create `scripts/fleet_status_lookup.py` with the following exact content:
+
+```python
+"""Shared lookup helper for fleet-status.md.
+
+Source of truth for the Train# <-> Fzg mapping at runtime. Every dosto-* skill
+that needs to resolve a Train# to a Fzg ID (or vice versa) goes through here.
+
+Design rules:
+  - Train# is the primary identifier (Nomad-internal name).
+  - Fzg ID is derived from the fleet-status row, not from a formula.
+  - If a row's Fzg cell is missing or '?' / 'UNKNOWN', skills MUST halt and
+    ask the human, never guess from the per-series formula. Wrong Fzg
+    silently rendered into switch hostnames / vlan7 IPs has caused real
+    fleet-status corrupting outages.
+  - Series headers are discovered dynamically (### NNNN series). Adding
+    a new series to fleet-status.md needs no code change here.
+
+Public functions:
+  parse_fleet_status(path)         -> list[dict] (all rows, all series)
+  lookup_by_train_number(rows, t#) -> dict or None
+  lookup_by_fzg(rows, fzg)         -> dict or None
+  ensure_fzg(row, interactive)     -> int or raises FzgUnknownError
+  prompt_for_fzg(train_number)     -> int (interactive stdin)
+  write_fzg_back(path, t#, fzg)    -> bool (updates the row in-place)
+"""
+from __future__ import annotations
+import re, sys
+from pathlib import Path
+from typing import Optional
+
+
+class FzgUnknownError(Exception):
+    """Raised when a row's Fzg cell is missing/'?' and skill is non-interactive."""
+    def __init__(self, train_number: str, ccu_ip: Optional[str] = None):
+        self.train_number = train_number
+        self.ccu_ip = ccu_ip
+        super().__init__(
+            f"Fzg ID for {train_number} is missing or unknown in fleet-status.md. "
+            f"Look up in train-ip-allocation-commission/<series>-xxx/{train_number}/ "
+            f"or by physical inspection, then populate the Fzg column."
+        )
+
+
+_TRAIN_NUMBER_RE = re.compile(r'^\d{4}-\d{3}$')
+_IP_RE = re.compile(r'(\d+\.\d+\.\d+\.\d+)')
+
+
+def _is_unknown(cell: str) -> bool:
+    """A Fzg cell counts as unknown if it's blank, '?', '❓', or holds prose like 'UNKNOWN'."""
+    s = (cell or '').strip().strip('`').lower()
+    if not s: return True
+    if s in ('?', '❓', 'unknown', '⚪ unknown', '⚪'): return True
+    return False
+
+
+def _parse_int_fzg(cell: str) -> Optional[int]:
+    """Extract a numeric Fzg ID from a cell. Returns None if not parseable."""
+    if _is_unknown(cell):
+        return None
+    m = re.match(r'^\s*(\d+)\s*$', (cell or '').strip())
+    return int(m.group(1)) if m else None
+
+
+def parse_fleet_status(path: str = 'fleet-status.md') -> list[dict]:
+    """Parse every `### NNNN series` table in fleet-status.md.
+
+    Returns a flat list of row dicts. Each row has at minimum:
+      series, train_number, fzg (int or None), ccu_ip (str or None),
+      nomad_status, stadler_status, next_action, raw_row (list[str]),
+      header (list[str], the table's column names).
+    Skills should index by `train_number`. Fzg may be None — call ensure_fzg()
+    when you actually need the integer.
+    """
+    md = Path(path).read_text(encoding='utf-8')
+    rows: list[dict] = []
+    for m in re.finditer(r'^### (\d+) series', md, re.MULTILINE):
+        series = m.group(1)
+        section_start = m.end()
+        section = md[section_start:]
+        # Stop at the next `### ` or `## ` header.
+        next_header = re.search(r'^#{2,3} ', section, re.MULTILINE)
+        if next_header:
+            section = section[:next_header.start()]
+        rows.extend(_parse_section(section, series))
+    return rows
+
+
+def _parse_section(section: str, series: str) -> list[dict]:
+    """Parse one series section's markdown table."""
+    out = []
+    header_cols: list[str] = []
+    saw_header = False
+    in_table = False
+    for line in section.split('\n'):
+        if line.startswith('|') and not saw_header and not re.match(r'^\|[-| ]+\|$', line):
+            header_cols = [c.strip() for c in line.split('|')[1:-1]]
+            saw_header = True
+            continue
+        if re.match(r'^\|[-| ]+\|$', line):
+            in_table = True
+            continue
+        if in_table:
+            if not line.startswith('|'): break
+            cols = [c.strip() for c in line.split('|')[1:-1]]
+            if len(cols) != len(header_cols): continue
+            row = _row_from_cols(header_cols, cols, series)
+            if row: out.append(row)
+    return out
+
+
+def _col_idx(header_cols: list[str], name_substr: str) -> Optional[int]:
+    for i, h in enumerate(header_cols):
+        if name_substr.lower() in h.lower():
+            return i
+    return None
+
+
+def _clean(text: str) -> str:
+    t = re.sub(r'\*\*([^*]+)\*\*', r'\1', text or '')
+    t = re.sub(r'`([^`]+)`', r'\1', t)
+    return t.strip()
+
+
+def _row_from_cols(header_cols: list[str], cols: list[str], series: str) -> Optional[dict]:
+    """Build a row dict from a header + cells tuple. Returns None if no train number found."""
+    i_train  = _col_idx(header_cols, 'train')
+    i_fzg    = _col_idx(header_cols, 'fzg')
+    i_ccu    = _col_idx(header_cols, 'ccu')
+    i_nomad  = _col_idx(header_cols, 'nomad status')
+    if i_nomad is None: i_nomad = _col_idx(header_cols, 'status')
+    i_stadler = _col_idx(header_cols, 'stadler')
+    i_next    = _col_idx(header_cols, 'next action')
+
+    train_number = _clean(cols[i_train]) if i_train is not None else ''
+    # Fall back: 4705/4706 tables historically put the train# in the Fzg column
+    # because they had no separate Fzg column. Be tolerant during the transition.
+    if not _TRAIN_NUMBER_RE.match(train_number) and i_fzg is not None:
+        alt = _clean(cols[i_fzg])
+        if _TRAIN_NUMBER_RE.match(alt):
+            train_number = alt
+    if not _TRAIN_NUMBER_RE.match(train_number):
+        return None
+
+    fzg = _parse_int_fzg(cols[i_fzg]) if i_fzg is not None else None
+    ccu_match = _IP_RE.search(_clean(cols[i_ccu])) if i_ccu is not None else None
+    ccu_ip = ccu_match.group(1) if ccu_match else None
+
+    return {
+        'series': series,
+        'train_number': train_number,
+        'fzg': fzg,
+        'ccu_ip': ccu_ip,
+        'nomad_status': cols[i_nomad] if i_nomad is not None else '',
+        'stadler_status': cols[i_stadler] if i_stadler is not None else '',
+        'next_action': _clean(cols[i_next]) if i_next is not None else '',
+        'raw_row': cols,
+        'header': header_cols,
+    }
+
+
+def lookup_by_train_number(rows: list[dict], train_number: str) -> Optional[dict]:
+    """Find a row by Train# (e.g. '4736-104'). Returns None if not present."""
+    train_number = train_number.strip()
+    for r in rows:
+        if r['train_number'] == train_number:
+            return r
+    return None
+
+
+def lookup_by_fzg(rows: list[dict], fzg: int) -> Optional[dict]:
+    """Find a row by Fzg ID. Returns None if no row has that Fzg or all rows have ? Fzg."""
+    for r in rows:
+        if r['fzg'] == fzg:
+            return r
+    return None
+
+
+def lookup_by_ccu_ip(rows: list[dict], ccu_ip: str) -> Optional[dict]:
+    """Find a row by CCU IP. Returns None if no row has that IP."""
+    for r in rows:
+        if r['ccu_ip'] == ccu_ip:
+            return r
+    return None
+
+
+# ---- In-flight claim parsing (added 2026-05-22 for concurrent-orchestration visibility) ----
+
+# Canonical format for the Nomad status cell when a train is claimed by an active
+# orchestrator session:
+#
+#   🔵 IN PROGRESS — stage <stage_id> (<step>/<total>, t+<elapsed>), hb <iso8601>, sess <short-id>
+#
+# Examples (all valid):
+#   🔵 IN PROGRESS — stage push_switch_config (3/18, t+12m), hb 2026-05-22T14:32:00Z, sess 1212Z
+#   🔵 IN PROGRESS — stage initial_diagnostics (1/1, t+45s), hb 2026-05-22T09:15:30Z, sess 0913Z
+#   🔵 IN PROGRESS — stage apply_obn_patches (-, t+2m), hb 2026-05-22T11:02:00Z, sess 1100Z
+#
+# The `step/total` portion may be `-` when the stage is one-shot. `elapsed` accepts
+# `Ns`/`Nm`/`Nh` units. `sess` is the last 4 chars of the orchestrator's cycle_id.
+#
+# Why prose-blob rather than structured columns: engineers eyeball fleet-status as the
+# at-a-glance fleet view; a single cell with all the in-flight detail is scannable.
+# Morning-brief and any other consumer parses via the regex below — load-bearing.
+
+_IN_FLIGHT_RE = re.compile(
+    r'IN PROGRESS\s*[—-]\s*stage\s+(?P<stage>\w+)\s*'
+    r'\((?P<step>\d+|-)\s*/\s*(?P<total>\d+|-)\s*,\s*t\+(?P<elapsed>\d+[smh])\)\s*,\s*'
+    r'hb\s+(?P<hb>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2})?Z?)\s*,\s*'
+    r'sess\s+(?P<sess>[\w-]+)',
+    re.IGNORECASE,
+)
+
+
+def parse_in_flight(status_cell: str) -> Optional[dict]:
+    """Parse a Nomad status cell. Returns the in-flight detail dict, or None if
+    the cell isn't an IN PROGRESS claim.
+
+    Returned dict shape:
+      {
+        "stage": "push_switch_config",     # canonical stage_id from subagent-report contract
+        "step": 3,                          # int, or None for one-shot stages
+        "total": 18,                        # int, or None for one-shot stages
+        "elapsed": "12m",                   # raw string with unit (s/m/h)
+        "elapsed_seconds": 720,             # parsed to seconds for arithmetic
+        "heartbeat_iso": "2026-05-22T14:32:00Z",
+        "session_id": "1212Z",              # last 4 chars of orchestrator cycle_id
+      }
+
+    If the cell doesn't match the canonical format (no in-flight claim, or a
+    malformed claim), returns None. Callers should treat a non-None return as
+    "this row is currently claimed by an orchestrator session."
+    """
+    if not status_cell or 'IN PROGRESS' not in status_cell.upper():
+        return None
+    m = _IN_FLIGHT_RE.search(status_cell)
+    if not m:
+        return None
+    step_raw = m.group('step')
+    total_raw = m.group('total')
+    elapsed = m.group('elapsed')
+    # Parse elapsed unit suffix.
+    unit = elapsed[-1].lower()
+    n = int(elapsed[:-1])
+    elapsed_seconds = n * {'s': 1, 'm': 60, 'h': 3600}[unit]
+    return {
+        'stage': m.group('stage'),
+        'step': int(step_raw) if step_raw != '-' else None,
+        'total': int(total_raw) if total_raw != '-' else None,
+        'elapsed': elapsed,
+        'elapsed_seconds': elapsed_seconds,
+        'heartbeat_iso': m.group('hb'),
+        'session_id': m.group('sess'),
+    }
+
+
+def format_in_flight(stage: str, step: Optional[int], total: Optional[int],
+                     elapsed_seconds: int, heartbeat_iso: str, session_id: str) -> str:
+    """Format an in-flight claim into the canonical Nomad-status-cell string.
+
+    Inverse of parse_in_flight(). The orchestrator MUST use this helper rather
+    than string-formatting inline, so the regex above stays load-bearing on a
+    single canonical shape.
+    """
+    # Pick the most readable elapsed unit.
+    if elapsed_seconds < 90:
+        elapsed = f'{elapsed_seconds}s'
+    elif elapsed_seconds < 5400:
+        elapsed = f'{elapsed_seconds // 60}m'
+    else:
+        elapsed = f'{elapsed_seconds // 3600}h'
+    step_str = str(step) if step is not None else '-'
+    total_str = str(total) if total is not None else '-'
+    return (f'🔵 IN PROGRESS — stage {stage} ({step_str}/{total_str}, t+{elapsed}), '
+            f'hb {heartbeat_iso}, sess {session_id}')
+
+
+def heartbeat_age_seconds(heartbeat_iso: str, now_iso: Optional[str] = None) -> int:
+    """Compute seconds between heartbeat and now. Tolerates fractional seconds + missing Z.
+    Used by morning-brief to classify health: fresh (<10m) / lagging (10-30m) / stale (>30m).
+    """
+    from datetime import datetime, timezone
+    def _parse(s):
+        s = s.rstrip('Z')
+        # Accept HH:MM or HH:MM:SS
+        if len(s) == 16:  # YYYY-MM-DDTHH:MM
+            s += ':00'
+        return datetime.fromisoformat(s).replace(tzinfo=timezone.utc)
+    hb = _parse(heartbeat_iso)
+    now = _parse(now_iso) if now_iso else datetime.now(timezone.utc)
+    return int((now - hb).total_seconds())
+
+
+def ensure_fzg(row: dict, interactive: bool = True, fleet_status_path: str = 'fleet-status.md') -> int:
+    """Return the row's Fzg ID. If missing and interactive, prompt human and write back.
+    If missing and non-interactive (subagents), raise FzgUnknownError so the caller
+    can surface a BLOCKED status with a proper next_action.
+    """
+    if row['fzg'] is not None:
+        return row['fzg']
+    if not interactive:
+        raise FzgUnknownError(row['train_number'], row.get('ccu_ip'))
+    fzg = prompt_for_fzg(row['train_number'], row.get('ccu_ip'))
+    write_fzg_back(fleet_status_path, row['train_number'], fzg)
+    row['fzg'] = fzg
+    return fzg
+
+
+def prompt_for_fzg(train_number: str, ccu_ip: Optional[str] = None) -> int:
+    """Interactive stdin prompt. Returns the engineer-supplied Fzg ID (validated int)."""
+    series = train_number.split('-')[0] if '-' in train_number else '?'
+    print()
+    print(f"⚠️  Fzg ID for {train_number} is missing in fleet-status.md.")
+    if ccu_ip:
+        print(f"   CCU IP: {ccu_ip}")
+    print(f"   Look up in: train-ip-allocation-commission/{series}-xxx/{train_number}/")
+    print(f"               <train#>_IP-Port-Allocation.pdf (header line)")
+    print(f"   Or via physical inspection (Fzg number painted on the carriage).")
+    print()
+    while True:
+        try:
+            raw = input(f"Enter Fzg ID for {train_number} (integer, or 'abort'): ").strip()
+        except (EOFError, KeyboardInterrupt):
+            raise SystemExit("Aborted at Fzg prompt.")
+        if raw.lower() == 'abort':
+            raise SystemExit(f"Aborted: Fzg ID for {train_number} not supplied.")
+        if raw.isdigit() and 1 <= int(raw) <= 999:
+            return int(raw)
+        print(f"  '{raw}' is not a valid Fzg ID (expected 1-999). Try again.")
+
+
+def write_fzg_back(path: str, train_number: str, fzg: int) -> bool:
+    """Update the Fzg cell for a Train# row in-place. Returns True if the file changed.
+
+    The cell to write into is whichever column the row's table header calls 'Fzg'.
+    If the table has no Fzg column (legacy 4705/4706 shape), this is a no-op — the
+    schema-migration step adds the column first.
+    """
+    content = Path(path).read_text(encoding='utf-8')
+    rows = parse_fleet_status(path)
+    target = lookup_by_train_number(rows, train_number)
+    if target is None:
+        return False
+    i_fzg = _col_idx(target['header'], 'fzg')
+    if i_fzg is None:
+        return False  # legacy 4705/4706 table without Fzg column
+    # Rebuild the row line with the new Fzg cell, then string-replace.
+    old_cols = target['raw_row']
+    new_cols = list(old_cols)
+    new_cols[i_fzg] = str(fzg)
+    # Reconstruct the line as fleet-status writes them (leading and trailing |, spaces).
+    old_line = '| ' + ' | '.join(old_cols) + ' |'
+    new_line = '| ' + ' | '.join(new_cols) + ' |'
+    if old_line not in content:
+        return False
+    content = content.replace(old_line, new_line, 1)
+    Path(path).write_text(content, encoding='utf-8')
+    return True
+
+
+# ---- CLI: useful for skills that want to shell out to this helper. ----
+
+def _cli():
+    import argparse, json
+    ap = argparse.ArgumentParser(description="fleet-status.md lookup helper")
+    ap.add_argument('--fleet-status', default='fleet-status.md')
+    sub = ap.add_subparsers(dest='cmd', required=True)
+    sub.add_parser('list', help='Print all rows as JSON.')
+    p_lookup = sub.add_parser('lookup', help='Look up a row by train number.')
+    p_lookup.add_argument('train_number')
+    p_lookup.add_argument('--require-fzg', action='store_true',
+                          help='Halt (exit 2) if Fzg unknown; do not prompt.')
+    p_fzg = sub.add_parser('ensure-fzg', help='Get Fzg for a Train#, prompting if missing.')
+    p_fzg.add_argument('train_number')
+    p_fzg.add_argument('--non-interactive', action='store_true')
+    args = ap.parse_args()
+
+    rows = parse_fleet_status(args.fleet_status)
+
+    if args.cmd == 'list':
+        print(json.dumps(rows, default=str, indent=2))
+        return
+
+    if args.cmd == 'lookup':
+        row = lookup_by_train_number(rows, args.train_number)
+        if row is None:
+            print(f"not_found: {args.train_number}", file=sys.stderr)
+            sys.exit(1)
+        if args.require_fzg and row['fzg'] is None:
+            print(f"fzg_unknown: {args.train_number}", file=sys.stderr)
+            sys.exit(2)
+        print(json.dumps(row, default=str, indent=2))
+        return
+
+    if args.cmd == 'ensure-fzg':
+        row = lookup_by_train_number(rows, args.train_number)
+        if row is None:
+            print(f"not_found: {args.train_number}", file=sys.stderr)
+            sys.exit(1)
+        try:
+            fzg = ensure_fzg(row, interactive=not args.non_interactive,
+                             fleet_status_path=args.fleet_status)
+        except FzgUnknownError as e:
+            print(f"fzg_unknown: {e}", file=sys.stderr)
+            sys.exit(2)
+        print(fzg)
+
+
+if __name__ == '__main__':
+    _cli()
+```
+
+---
+
 ## STEP 31 — Create `CLAUDE.md`
 
 Create `CLAUDE.md` with the following exact content:
@@ -8891,57 +10340,64 @@ Create `CLAUDE.md` with the following exact content:
 
 This is the project guide for running consistent L2 network health checks on Stadler DOSTO trainsets equipped with VDS Rail Consist Switches and a Nomad Digital CCU. It's based on the methodology validated against Fzg. 146 (6-car) on 2026-05-02.
 
-## When you log into a train — read these two files first
+## When you log into a train — read these three files first
 
 The v8 rollout is a stateful, multi-train workflow. Trains get powered off mid-update, Stadler cable fixes take days, and engineers must be able to pick up where the last person left off.
 
-1. **[fleet-status.md](fleet-status.md)** — single source of truth for "where did we leave off" on every train in the fleet. **Read the row for the train you're working on before doing anything else.** Update the row at the end of every session (Step 11 of the checklist below).
-2. **[train-login-checklist.md](train-login-checklist.md)** — the canonical 11-step procedure for any train session. Even on a fully-known train, follow it; the steps in order prevent the patches/cabling/AP-config issues that have caused real outages in this rollout.
+1. **[fleet-status.md](fleet-status.md)** — single source of truth for "where did we leave off" on every train in the fleet. **Read the row for the train you're working on before doing anything else.** Update the row at the end of every session (Step 11 of the checklist below). Holds **current state only** — at-a-glance table + per-train diagnostic-state bullet lists.
+2. **[fleet-journal.md](fleet-journal.md)** — narrative companion to fleet-status. Per-train append-only history: recovery sequences, discovered lessons, session context, Stadler investigation notes. Where fleet-status answers *"what is the current state"*, the journal answers *"what happened, in what order, and why."* Entries graduate to this file's "Pitfalls" section once observed on a second train.
+3. **[train-login-checklist.md](train-login-checklist.md)** — the canonical 11-step procedure for any train session. Even on a fully-known train, follow it; the steps in order prevent the patches/cabling/AP-config issues that have caused real outages in this rollout.
 
-The rest of this file is the *methodology* (how to read schemas, what counters mean, what "healthy" looks like). The checklist is the *workflow* (what to do, in what order). The fleet-status is the *state* (which trains are where).
+The rest of this file is the *methodology* (how to read schemas, what counters mean, what "healthy" looks like). The checklist is the *workflow* (what to do, in what order). fleet-status is the *current state* (which trains are where). fleet-journal is the *history* (how each train got there).
 
 ## Orchestration architecture (multi-train days)
 
-For a multi-train commissioning day, the engineer doesn't drive each train manually. Instead they invoke `/dosto-orchestrate` with a list of Fzg IDs, which spawns a long-running orchestrator agent. The orchestrator handles fan-out, approval gates, and dashboard sync.
+For a multi-train commissioning day, the engineer doesn't drive each train manually. Instead they invoke `/dosto-orchestrate` with a list of **Train#** values (the Nomad-internal primary identifier, e.g. `4736-104`). The skill runs **inline in the engineer's top-level Claude session** — that session IS the orchestrator. It spawns N parallel `dosto-train-worker` subagents, one per train, and drives the cycle loop (gate prompts, fleet-status writes, Confluence pushes) until convergence.
 
 ```
-Engineer types: /dosto-orchestrate fzg=130,132,148
+Engineer types: /dosto-orchestrate trains=4736-102,4736-104,4736-120
        │
        ▼
-[dosto-orchestrate skill] — validates train list against fleet-status.md and per-series Fzg formulas
+[Engineer's top-level Claude session — running /dosto-orchestrate inline]
+   • Validates train list against fleet-status.md (Train# row keys)
+   • Resolves Fzg per train by reading the row (halts if Fzg cell is ❓)
+   • Reconciles per-train (Train#, CCU IP) pairs; updates fleet-status if needed
+   • Emits MANDATORY PRE-FLIGHT BLOCK for engineer approval
+   • Spawns N workers in a single Agent multi-tool-use message
+   • Drives cycle loop: notifications → gate prompts → SendMessage responses
+   • Writes fleet-status.md per cycle (sole writer during runtime)
+   • Pushes Confluence on gates + terminal states + cycle digests
        │
-       ▼ Agent({subagent_type: "dosto-orchestrator"}) — one per fleet day
-[dosto-orchestrator agent]
-       │
-       ├─► Agent({subagent_type: "dosto-train-worker", name: "train-fzg-130"})
-       │      └─► /dosto-commission-train --ccu-ip 10.179.47.1 --fzg 130 ...
+       ├─► Agent({subagent_type: "dosto-train-worker", name: "train-4736-102"})
+       │      └─► /dosto-commission-train --train-number 4736-102 --ccu-ip 10.179.47.1 ...
        │            └─► dosto-device-discovery, dosto-obn-patches, dosto-fzg-id-check,
        │                dosto-vlan7-config, dosto-tftp-helper-check, dosto-ap-config-update,
        │                dosto-ap-firmware-update, dosto-sw-config-update, dosto-sw-firmware-update,
        │                dosto-l2-health, dosto-l2-report
        │
-       ├─► Agent({subagent_type: "dosto-train-worker", name: "train-fzg-132"})
+       ├─► Agent({subagent_type: "dosto-train-worker", name: "train-4736-104"})
        │      └─► /dosto-commission-train ...
        │
-       ├─► Agent({subagent_type: "dosto-train-worker", name: "train-fzg-148"})
+       ├─► Agent({subagent_type: "dosto-train-worker", name: "train-4736-120"})
        │      └─► /dosto-commission-train ...
        │
        ├─► Skill: dosto-confluence-sync --push  (on gates + terminals + cycle digests)
        │
-       └─► writes fleet-status.md (orchestrator-as-sole-writer)
+       └─► writes fleet-status.md  (orchestrator-as-sole-writer during runtime)
 ```
 
 **Roles, top to bottom:**
 
 | Role | Purpose | Talks to |
 |---|---|---|
-| Engineer | Provides train list, answers approval gate prompts | The dosto-orchestrator session |
-| `dosto-orchestrate` skill | Validates the train list, spawns the orchestrator agent | Engineer (front-door only) |
-| `dosto-orchestrator` agent | Spawns per-train subagents, aggregates JSON reports, surfaces gates, writes fleet-status, pushes Confluence | Engineer + N subagents |
-| `dosto-train-worker` subagent (one per train) | Drives one train through the 19-stage pipeline by invoking `dosto-commission-train` | The orchestrator |
-| `dosto-commission-train` skill | The 19-stage pipeline; sequences per-device skills | The subagent that invokes it |
-| Per-device skills (`dosto-obn-patches`, `dosto-ap-firmware-update`, etc.) | Single-purpose CCU operations | The commission-train skill |
-| `dosto-confluence-sync` skill | Pushes fleet-status.md → Confluence page 5410684933 | The orchestrator |
+| Engineer | Provides train list, answers approval gate prompts | Their top-level Claude session |
+| Engineer's top-level Claude session (running `/dosto-orchestrate`) | Validates the train list, spawns workers in parallel, drives cycle loop, surfaces gates, writes fleet-status, pushes Confluence | Engineer + N workers |
+| `dosto-train-worker` subagent (one per train) | Drives one train through the 19-stage pipeline by invoking `dosto-commission-train` | The engineer's session (parent) |
+| `dosto-commission-train` skill | The 19-stage pipeline; sequences per-device skills | The worker that invokes it |
+| Per-device skills (`dosto-obn-patches`, `dosto-ap-firmware-update`, etc.) | Single-purpose CCU operations | `dosto-commission-train` |
+| `dosto-confluence-sync` skill | Pushes fleet-status.md → Confluence page 5410684933 | The engineer's session |
+
+**Why inline rather than agent-as-orchestrator** (audit finding F5, 2026-05-11): the Claude Code platform rule "subagents cannot spawn further subagents" means a `dosto-orchestrator` agent spawned via `Agent` cannot itself call `Agent` to spawn workers — verified by the 2026-05-11 first-run test. The orchestration logic therefore lives in the skill, executed by the engineer's top-level session (which DOES have `Agent` + `SendMessage`). The previous `.claude/agents/dosto-orchestrator.md` was retired. See [`handoff-bootstrap-audit-2026-05-11.md`](handoff-bootstrap-audit-2026-05-11.md) §F5.
 
 **The four contracts** that pin this stack down:
 
@@ -8952,7 +10408,23 @@ Engineer types: /dosto-orchestrate fzg=130,132,148
 | [`.claude/contracts/approval-gates.md`](.claude/contracts/approval-gates.md) | Engineer-facing prompt format and response protocol |
 | [`.claude/contracts/confluence-sync.md`](.claude/contracts/confluence-sync.md) | One-way local → Confluence push policy + drift detection |
 
-**Single-train debug runs** skip the orchestrator entirely: invoke `/dosto-commission-train --ccu-ip ... --fzg ...` directly, no subagent, no fleet-day wrapper.
+**Single-train debug runs** skip the orchestrator skill entirely: invoke `/dosto-commission-train --train-number ... --ccu-ip ...` directly, no worker subagent, no fleet-day wrapper.
+
+### In-flight claim and heartbeat mechanism (multi-session visibility)
+
+The orchestrator marks each train it spawns a worker for by writing an **in-flight claim** to the row's `Nomad status` cell in `fleet-status.md`. Format:
+
+```
+🔵 IN PROGRESS — stage <stage_id> (<step>/<total>, t+<elapsed>), hb <iso8601>, sess <session-id>
+```
+
+The orchestrator refreshes this claim on four triggers: worker spawn (initial write), every stage-transition report, every step-within-stage report, and every cycle digest (5-min wall-clock liveness ping even if no worker reports arrived). When a worker reaches a terminal state (DONE / BLOCKED / PAUSED / ERROR), the orchestrator clears the claim and writes the appropriate terminal status.
+
+**Why this matters for multi-session days:** on a busy commissioning day an engineer may have multiple `/dosto-orchestrate` sessions running in parallel (one for the morning's batch, another opened later when more trains come online). Every session and every other engineer reading `fleet-status.md` can see at a glance which trains are claimed right now and how fresh the claim is. The orchestrator's Step 6.0 concurrency check uses this signal to halt a spawn that would step on another session's active claim.
+
+**Stale claims** (heartbeat age > 30 min) almost always mean the claiming session died. `/dosto-morning-brief` surfaces these as a stale-claim gate per train: engineer chooses `[c]lean` (flip to PAUSED) / `[k]eep` (still working) / `[s]kip`. The Python flag `--clean-stale-claim <TRAIN#>` does the actual write.
+
+**Parser/formatter helpers** live in [`scripts/fleet_status_lookup.py`](scripts/fleet_status_lookup.py) as `parse_in_flight()` / `format_in_flight()` / `heartbeat_age_seconds()`. Skills consuming claim data MUST use these — the cell format is canonical and load-bearing across skills.
 
 ## Universal Principles (constitutional)
 
@@ -9012,9 +10484,9 @@ Transform imperative tasks into verifiable goals:
 | Instead of...                  | Transform to...                                                          |
 |---|---|
 | "Push firmware to AP"          | "Confirm AP at target firmware via fresh `obn discover`, not OBN's 'Successful' string" |
-| "Apply OBN patches"            | "Confirm 8/8 markers present in `/usr/share/obn/*.py` via grep, including post-reboot for persisted variants" |
+| "Apply OBN patches"            | "Confirm 10/10 markers present in `/usr/share/obn/*.py` via grep, including post-reboot for persisted variants" |
 | "Update Confluence"            | "Push, then read back the new version number; log it for next cycle's drift check" |
-| "Train commissioning DONE"     | "All success criteria for this train are ticked: 8/8 OBN persisted, switches at target firmware+config, all visible APs at target firmware, vlan7 reachable to Stadler, customer report on disk" |
+| "Train commissioning DONE"     | "All success criteria for this train are ticked: 10/10 OBN persisted, switches at target firmware+config, all visible APs at target firmware, vlan7 reachable to Stadler, customer report on disk" |
 
 The orchestrator's end-of-day digest enumerates per-train success criteria as checkboxes. Don't claim DONE without ticking them.
 
@@ -9071,9 +10543,15 @@ Even Fzg → host `.2`. Odd Fzg → host `.130`. The Stadler firewall is always 
 
 **Important:** the formula in `/etc/nd-redundancy/networks.yaml` on production CCUs is wrong (it computes from OBN's `train_id` instead of Fzg ID). The active vlan7 IP comes from `/etc/NetworkManager/system-connections/ndrd-vlan-vlan7.nmconnection`, which is set per-train via `nd-systemupdate.sh shell`. Verify with [.claude/skills/dosto-vlan7-config/SKILL.md](.claude/skills/dosto-vlan7-config/SKILL.md) before any L2 health check — Stadler-side reachability depends on this being correct.
 
-**Series → Fzg mapping shorthand** (PDF header is source of truth):
-- `4734-NNN → Fzg = NNN - 100`
-- `4736-NNN → Fzg = NNN + 28`
+**Train#-and-Fzg convention (2026-05-22 schema reorder).** Train# (the Nomad-internal name, e.g. `4736-104`) is the **primary identifier** across all skills, scripts, contracts, and the orchestrator argument form. Fzg ID is the ÖBB customer-facing number, derived from the fleet-status row by Train#.
+
+**Series → Fzg mapping shorthand** (reference only — runtime Fzg comes from the fleet-status row via `scripts/fleet_status_lookup.py`; the PDF header is the off-line source of truth):
+- `4734-NNN → Fzg = NNN - 100`  (e.g. 4734-119 → Fzg 19)
+- `4736-NNN → Fzg = NNN + 28`   (e.g. 4736-104 → Fzg 132)
+- `4705-NNN → Fzg = NNN + 128`  (e.g. 4705-103 → Fzg 231)
+- `4706-NNN → Fzg = NNN + 88`   (e.g. 4706-103 → Fzg 191)
+
+⚠️ **Skills NEVER trust the formula at runtime.** Misimaged CCUs, stale Puppet images, and hand-set wrong values mean rendered Fzg values on the live CCU (in switch hostnames, `train_id` template, vlan7 IP encoding) are often wrong pre-commissioning — that's literally what commissioning fixes. If the fleet-status row's Fzg cell is `❓`, skills halt and ask the engineer to populate it (look up via PDF or physical inspection). Engineer can also pass `--fzg <N>` explicitly to override.
 
 ## Required access
 
@@ -9203,20 +10681,70 @@ If the FW trunk is sustained above ~700 Mbps, the 1G link is becoming a real bot
 
 ## Phase 6 — End-to-end CCU ↔ Stadler firewall
 
+This phase answers **three separate questions** about the vlan7 connection to `172.19.X.1`. Don't conflate them — each has its own test and its own success criterion. Conflating them silently produces wrong customer-report classifications (audit finding F9, 2026-05-11).
+
+### Q1 — Path health: does traffic flow to the FW peer?
+
 ```bash
-# DON'T rely on ICMP alone — Stadler firewall drops echo-request by policy.
-ping -i 0.2 -c 100 172.19.196.1   # likely 100% loss — that's NOT a fault by itself
-
-# Confirm path with TCP probes (more reliable):
-nc -zv 172.19.196.1 80    # should be OPEN
-nc -zv 172.19.196.1 22    # should be OPEN
-
-# Confirm ARP and link counters:
-ip neigh show dev vlan7 | grep 172.19.196.1   # should show REACHABLE with FW MAC
-ip -s link show vlan7                          # errors and drops should be 0
+ip neigh show dev vlan7 | grep 172.19.X.1   # should show REACHABLE with FW MAC (00:90:e8:... — Westermo OUI)
+ip -s link show vlan7                       # errors and drops should be 0
 ```
 
-If TCP probes fail AND vlan7 counters show drops/errors, the path itself is broken. If TCP succeeds and counters are clean but ICMP is 100% lost, that's just the FW filtering ICMP — path is healthy.
+| Result | Meaning |
+|---|---|
+| ARP `REACHABLE`, link counters clean | ✅ path OK — traffic flows to `.1` |
+| ARP `FAILED` / no neighbour | 🔴 path broken — vlan7 misconfigured, vlan not trunked through, FW absent on subnet |
+
+If Q1 fails, stop. Q2 and Q3 are meaningless without a working path. Investigate vlan7 IP (use `dosto-vlan7-config` skill), inter-coach trunks (use `lldp_topology_check.py`), or whether the Stadler FW box is even installed/powered.
+
+### Q2 — FW commission state: has Stadler applied policy to the firewall?
+
+This is **the deciding test for whether Stadler has commissioned the FW for this train.** It is NOT TCP. It IS ICMP.
+
+```bash
+ping -c 5 172.19.X.1
+```
+
+| Result | Meaning |
+|---|---|
+| 0 replies (100% loss) AND path OK from Q1 | ✅ FW **commissioned** — Stadler policy is dropping echo-request as designed |
+| Replies received | 🟡 FW responding but **NOT commissioned** — bare/default Westermo behavior, no Stadler policy applied yet |
+| 100% loss AND Q1 also failed | 🔴 path broken (Q1 issue, not commission state) |
+
+**Important:** A configured Stadler FW deliberately drops ICMP. Reading "ping fails" as a fault is the long-standing trap. Reading "ping succeeds" as health is the *new* trap that F9 surfaced. The correct heuristic:
+
+> **Ping works = FW exists but Stadler hasn't finished configuring it.**
+> **Ping fails (with ARP REACHABLE) = FW is fully commissioned and applying policy.**
+
+### Q3 — Service availability: are the FW-exposed services up?
+
+```bash
+nc -zv -w 5 172.19.X.1 80
+nc -zv -w 5 172.19.X.1 22
+# ...and any other Stadler-intended services for this train (camera VLAN gateways, etc.)
+```
+
+| Result | Meaning (depending on Q2 outcome) |
+|---|---|
+| OPEN, Q2 says "commissioned" | ✅ FW exposes 80/22 as intended (rare — typically Stadler filters these) |
+| OPEN, Q2 says "uncommissioned" | 🟡 you're hitting the bare Westermo management interface, not a Stadler service |
+| refused/filtered, Q2 says "commissioned" | ✅ FW applying policy as expected (80/22 not in the policy whitelist) |
+| timeout, Q1 was OK | 🔴 specific service path broken — investigate FW config |
+
+TCP probes alone **cannot** tell you whether the FW is commissioned. They tell you whether *something* responds on a given port. The Q2 ICMP test is the only authoritative commission-state test from the CCU side.
+
+### Summary table — how to read all three together
+
+| Q1 ARP | Q2 ICMP | Q3 TCP 80/22 | Verdict |
+|---|---|---|---|
+| REACHABLE | 0 replies | refused/filtered | ✅ **FW fully commissioned by Stadler** |
+| REACHABLE | replies | OPEN | 🟡 **FW responding but not yet commissioned** (Stadler-side work pending) |
+| REACHABLE | (any) | timeout | 🟢 path OK, specific TCP services down — investigate |
+| FAILED | (any) | (any) | 🔴 **path broken** — fix vlan7 / trunks / FW presence first |
+
+Until you've run Q1 + Q2, **do NOT write a verdict in `fleet-status.md`'s `FW reach` column.** TCP-OPEN alone is ambiguous between "commissioned with weird policy" and "not yet commissioned" — and historically the latter is more common during rollout.
+
+**Fleet-wide note:** any train marked `FW reach: ✅` in `fleet-status.md` based on TCP-OPEN alone (without an ICMP test) may need re-verification. F9 in `handoff-bootstrap-audit-2026-05-11.md` lists this as a fleet-wide carryover task.
 
 ## Phase 7 — Aggregate L2 traffic on the fabric
 
@@ -9274,6 +10802,10 @@ A clean baseline lets you spot drift on the next visit. The Fzg. 146 baseline is
 - **Two devices sharing one IP is expected for ZFR / Sprechstelle redundancy** (`Redundanz` in the schema). Only one is active at a time.
 - **`train_id` must only be set inside the per-switch `.cfg` template files (`/etc/obn/template/nv6-*.cfg`)** — never in `backbone-discovery.yaml` or any other file. Those `.cfg` files are the single source of truth for the Fzg ID rendered into switch hostnames. Setting `train_id` elsewhere (e.g. `backbone-discovery.yaml`) moves the CCU to a different IP subnet on reboot without changing the switch configs, breaking connectivity.
 - **Factory-config APs block OBN SNMP silently** — Westermo RT610LV APs shipped in factory config (`RT610LV-...-v1-FD`) use SNMP community `admin-community`, not `NomadStayOut!`. OBN prints "configuration update applied, device rebooting" regardless — it does not check the return value before printing. ICMP to the AP will work fine; only SNMP is silently dropped. Use the LuCI HTTP import method (see `troubleshooting-runbook.md` → "Westermo AP Config Push") to push the Nomad config when OBN SNMP fails. LuCI admin password on factory APs is `Nom@dCome1n`. After config apply, SSH CLI uses `nomad`/`NomadComeIn`.
+- **OBN canonical workflow is `discover → report → update/validate` — never skip `obn report`.** `obn update c` and `obn validate` both read from `discovery.prev.json` (the report snapshot), not `discovery.json` (raw scan output). This is by design — `obn report` commits the discovery scan into the stable snapshot that all subsequent OBN operations use. If you skip it: (a) `obn update c <ip>` finds an empty or stale device list → Python `all([]) = True` on an empty set → prints "Update not supported for readonly devices"; (b) `obn validate` shows an empty table. Always run `sudo obn discover && sudo obn report` before any `obn update` or `obn validate`. Confirmed 2026-05-12 on box1-t47 (Fzg 130).
+- **`obn validate` returns an empty table when `consist.yaml` is empty or `obn report` hasn't been run** — not a fault, just means the report snapshot is empty. Run `sudo obn discover && sudo obn report` first. If you need a quick ad-hoc view of device state without waiting for report, read `/tmp/discovery.json` directly: `sudo python3 -c "import json; [print(d['ip'], d.get('firmware'), d.get('config')) for d in json.load(open('/tmp/discovery.json'))['devices']]"`.
+- **VDS switch CLI reboot command is NOT `reboot`, `reload`, or `system reboot`** — all rejected with "Error in command, param is X [wrong]". The correct reboot command is not yet confirmed from field testing. Check `.claude/switch_manual.txt` (full CLI reference) or ask Stadler. OBN's `vdsrail.py reboot()` uses SNMP reboot OID (value `3`) — the only confirmed reboot path from the CCU side. Confirmed 2026-05-12 on Fzg 130.
+- **`dosto-l2-health` script `08_e2e_probe.sh` has a hardcoded default FW IP `172.19.196.1`.** For any train where the vlan7 FW is not at that address, the script produces a false `path_broken`. Always pass the FW IP explicitly: `bash 08_e2e_probe.sh <ccu-ip> <fw-ip>`. Correct FW IP per train = `172.19.<128+Fzg//2>.1`. Confirmed 2026-05-12 on Fzg 130 (FW = `172.19.193.1`).
 
 ## Quick "is this train healthy" recipe
 
@@ -9284,7 +10816,7 @@ If someone asks "is the network on Fzg. NNN healthy?" and you have ~10 minutes:
 3. Run `show interface summary` on every switch. Confirm trunk speeds match schema and no unexpected DOWN links.
 4. Run `show spanning-tree` on every switch. Confirm one stable root MAC across the fleet.
 5. Run `show interface <port> details` on every inter-coach trunk + the Stadler-facing trunks (A3 e1-4, D1/D3 e0-2/e0-3, B1/B3 e1-11). Confirm 0 errors / 0 CRC / 0 carrier-false.
-6. TCP-probe the Stadler firewall on vlan7. Confirm port 80 OPEN and ARP REACHABLE. **Don't trust ICMP** here.
+6. Probe the Stadler firewall on vlan7 using all three Phase 6 tests: ARP REACHABLE (Q1), `ping -c 5` ICMP result (Q2 — loss = commissioned, replies = not yet commissioned), TCP probe port 80 (Q3). See Phase 6 above for the correct interpretation of each result. Do NOT use TCP alone to determine FW commission state.
 7. Sample inter-coach byte counters twice 30s apart. Confirm utilization sane (typically <5% of link capacity at idle).
 
 If all seven steps come back clean, the L2 fabric is healthy. Reported user-perceived packet loss is then almost certainly NOT in this fabric — investigate end-host (NIC/driver/OS — see `iperf3-troubleshooting.md` for the Windows UDP pacing artefact pattern), Stadler-side beyond the FW (no CCU visibility), or PWLAN/cellular (separate scopes).
@@ -9358,9 +10890,10 @@ The regenerator embeds: 4 contracts + 2 agent definitions + 14 SKILL.mds + CLAUD
 - `.claude/switch_manual.txt` — full-text extract of `docs/switch_user_manual.pdf` for grep.
 - `.claude/contracts/` — 4 design contracts (`subagent-report.md`, `autonomy-boundary.md`, `approval-gates.md`, `confluence-sync.md`).
 - `.claude/agents/dosto-train-worker.md` — per-train commissioning subagent definition (Sonnet 4.6, JSON-only output).
-- `.claude/skills/` — 13 project-local skills:
+- `.claude/skills/` — 14 project-local skills:
   - **Diagnostic / read-only:** `dosto-device-discovery`, `dosto-extract-train-data`, `dosto-l2-health`, `dosto-fzg-id-check`, `dosto-vlan7-config`, `dosto-tftp-helper-check`.
   - **Per-device push (single-AP/SW serial):** `dosto-ap-config-update`, `dosto-ap-firmware-update`, `dosto-sw-config-update`, `dosto-sw-firmware-update`.
+  - **Per-device push (parallel batched):** `dosto-sw-config-update-batch` — default switch-config path in `dosto-commission-train`; legacy single-switch-serial path is preserved as escape hatch via `--legacy-serial-sw-config`.
   - **CCU-side persistence:** `dosto-obn-patches` (with `--persist` fold-in for vlan7 + fzg-id fixes).
   - **Orchestration / output:** `dosto-commission-train` (19-stage per-train pipeline), `dosto-l2-report` (customer docx), `dosto-confluence-sync` (push `fleet-status.md` to team Confluence page).
 - `.claude/logs/` — append-only orchestration logs:
@@ -9446,9 +10979,8 @@ EMBEDDED_FILES_SCAFFOLD = [
     (".claude/contracts/autonomy-boundary.md", "markdown"),
     (".claude/contracts/approval-gates.md", "markdown"),
     (".claude/contracts/confluence-sync.md", "markdown"),
-    # Agents (2)
+    # Agents (1, reduced from 2 in v2 — dosto-orchestrator retired per audit F5 2026-05-11; orchestration logic lives in dosto-orchestrate skill)
     (".claude/agents/dosto-train-worker.md", "markdown"),
-    (".claude/agents/dosto-orchestrator.md", "markdown"),
     # Skills (14) — alphabetised for deterministic output
     (".claude/skills/dosto-ap-config-update/SKILL.md", "markdown"),
     (".claude/skills/dosto-ap-firmware-update/SKILL.md", "markdown"),
@@ -9475,6 +11007,9 @@ EMBEDDED_FILES_SCAFFOLD = [
     ("scripts/fix_bug1_regex.py", "python"),
     ("scripts/lldp_topology_check.py", "python"),
     ("scripts/validate_dosto_workspace.py", "python"),
+    # Shared fleet-status lookup helper — single source for Train#↔Fzg resolution
+    # (added 2026-05-22 with the Train#-primary schema reorder).
+    ("scripts/fleet_status_lookup.py", "python"),
     # Project constitution — must come AFTER skills/agents/contracts so its
     # cross-references are valid by the time it's written. (Order in the
     # bootstrap is order of `Write` operations, but Claude reads the whole file
@@ -9605,7 +11140,7 @@ echo "=== Scaffold complete ==="
 
 Expected:
 - `.claude/contracts/` — 4 files: subagent-report.md, autonomy-boundary.md, approval-gates.md, confluence-sync.md
-- `.claude/agents/` — 2 files: dosto-train-worker.md (Sonnet 4.6), dosto-orchestrator.md (Opus 4.7)
+- `.claude/agents/` — 1 file: dosto-train-worker.md (Sonnet 4.6). (dosto-orchestrator.md retired 2026-05-11 per audit F5 — orchestration logic moved into dosto-orchestrate skill body, executed inline in the engineer's top-level session.)
 - `.claude/skills/` — 14 directories, each with a SKILL.md
 - `scripts/` — fix_obn.py, fix_obn_bug8.py, fix_obn_bugs67.py, fix_bug1_regex.py, lldp_topology_check.py (more, including the regenerator itself, are also present)
 - `CLAUDE.md` at project root
@@ -9738,7 +11273,7 @@ python scripts/regenerate_bootstrap.py --include-state   # scaffold + fleet-stat
 
 **What's in the bootstrap:**
 - 4 contract docs in `.claude/contracts/`
-- 2 agent definitions in `.claude/agents/` (dosto-orchestrator, dosto-train-worker)
+- 1 agent definition in `.claude/agents/` (dosto-train-worker only; dosto-orchestrator retired per F5)
 - 14 skills in `.claude/skills/` (the per-device, orchestration, and reporting skills)
 - `CLAUDE.md` (project constitution + orchestration architecture)
 - `.claude/settings.local.json` (permissions allowlist for common SSH patterns)
@@ -9877,7 +11412,7 @@ echo "=== Scaffold complete ==="
 
 Expected:
 - `.claude/contracts/` — 4 files: subagent-report.md, autonomy-boundary.md, approval-gates.md, confluence-sync.md
-- `.claude/agents/` — 2 files: dosto-train-worker.md (Sonnet 4.6), dosto-orchestrator.md (Opus 4.7)
+- `.claude/agents/` — 1 file: dosto-train-worker.md (Sonnet 4.6). (dosto-orchestrator.md retired 2026-05-11 per audit F5 — orchestration logic moved into dosto-orchestrate skill body, executed inline in the engineer's top-level session.)
 - `.claude/skills/` — 14 directories, each with a SKILL.md
 - `scripts/` — fix_obn.py, fix_obn_bug8.py, fix_obn_bugs67.py, fix_bug1_regex.py, lldp_topology_check.py (more, including the regenerator itself, are also present)
 - `CLAUDE.md` at project root
@@ -9975,4 +11510,4 @@ That writes `BOOTSTRAP_DOSTO_v1.md` reflecting the current tree. Pass `--include
 ---
 
 
-*End of bootstrap — generated 2026-05-10 14:26 UTC from 30 files.*
+*End of bootstrap — generated 2026-05-22 13:41 UTC from 30 files.*

@@ -14,32 +14,33 @@ The rest of this file is the *methodology* (how to read schemas, what counters m
 
 ## Orchestration architecture (multi-train days)
 
-For a multi-train commissioning day, the engineer doesn't drive each train manually. Instead they invoke `/dosto-orchestrate` with a list of Fzg IDs. The skill runs **inline in the engineer's top-level Claude session** — that session IS the orchestrator. It spawns N parallel `dosto-train-worker` subagents, one per train, and drives the cycle loop (gate prompts, fleet-status writes, Confluence pushes) until convergence.
+For a multi-train commissioning day, the engineer doesn't drive each train manually. Instead they invoke `/dosto-orchestrate` with a list of **Train#** values (the Nomad-internal primary identifier, e.g. `4736-104`). The skill runs **inline in the engineer's top-level Claude session** — that session IS the orchestrator. It spawns N parallel `dosto-train-worker` subagents, one per train, and drives the cycle loop (gate prompts, fleet-status writes, Confluence pushes) until convergence.
 
 ```
-Engineer types: /dosto-orchestrate fzg=130,132,148
+Engineer types: /dosto-orchestrate trains=4736-102,4736-104,4736-120
        │
        ▼
 [Engineer's top-level Claude session — running /dosto-orchestrate inline]
-   • Validates train list against fleet-status.md and per-series Fzg formulas
-   • Reconciles per-train (Fzg, CCU IP) pairs; updates fleet-status row IDs if needed
+   • Validates train list against fleet-status.md (Train# row keys)
+   • Resolves Fzg per train by reading the row (halts if Fzg cell is ❓)
+   • Reconciles per-train (Train#, CCU IP) pairs; updates fleet-status if needed
    • Emits MANDATORY PRE-FLIGHT BLOCK for engineer approval
    • Spawns N workers in a single Agent multi-tool-use message
    • Drives cycle loop: notifications → gate prompts → SendMessage responses
    • Writes fleet-status.md per cycle (sole writer during runtime)
    • Pushes Confluence on gates + terminal states + cycle digests
        │
-       ├─► Agent({subagent_type: "dosto-train-worker", name: "train-fzg-130"})
-       │      └─► /dosto-commission-train --ccu-ip 10.179.47.1 --fzg 130 ...
+       ├─► Agent({subagent_type: "dosto-train-worker", name: "train-4736-102"})
+       │      └─► /dosto-commission-train --train-number 4736-102 --ccu-ip 10.179.47.1 ...
        │            └─► dosto-device-discovery, dosto-obn-patches, dosto-fzg-id-check,
        │                dosto-vlan7-config, dosto-tftp-helper-check, dosto-ap-config-update,
        │                dosto-ap-firmware-update, dosto-sw-config-update, dosto-sw-firmware-update,
        │                dosto-l2-health, dosto-l2-report
        │
-       ├─► Agent({subagent_type: "dosto-train-worker", name: "train-fzg-132"})
+       ├─► Agent({subagent_type: "dosto-train-worker", name: "train-4736-104"})
        │      └─► /dosto-commission-train ...
        │
-       ├─► Agent({subagent_type: "dosto-train-worker", name: "train-fzg-148"})
+       ├─► Agent({subagent_type: "dosto-train-worker", name: "train-4736-120"})
        │      └─► /dosto-commission-train ...
        │
        ├─► Skill: dosto-confluence-sync --push  (on gates + terminals + cycle digests)
@@ -69,7 +70,23 @@ Engineer types: /dosto-orchestrate fzg=130,132,148
 | [`.claude/contracts/approval-gates.md`](.claude/contracts/approval-gates.md) | Engineer-facing prompt format and response protocol |
 | [`.claude/contracts/confluence-sync.md`](.claude/contracts/confluence-sync.md) | One-way local → Confluence push policy + drift detection |
 
-**Single-train debug runs** skip the orchestrator skill entirely: invoke `/dosto-commission-train --ccu-ip ... --fzg ...` directly, no worker subagent, no fleet-day wrapper.
+**Single-train debug runs** skip the orchestrator skill entirely: invoke `/dosto-commission-train --train-number ... --ccu-ip ...` directly, no worker subagent, no fleet-day wrapper.
+
+### In-flight claim and heartbeat mechanism (multi-session visibility)
+
+The orchestrator marks each train it spawns a worker for by writing an **in-flight claim** to the row's `Nomad status` cell in `fleet-status.md`. Format:
+
+```
+🔵 IN PROGRESS — stage <stage_id> (<step>/<total>, t+<elapsed>), hb <iso8601>, sess <session-id>
+```
+
+The orchestrator refreshes this claim on four triggers: worker spawn (initial write), every stage-transition report, every step-within-stage report, and every cycle digest (5-min wall-clock liveness ping even if no worker reports arrived). When a worker reaches a terminal state (DONE / BLOCKED / PAUSED / ERROR), the orchestrator clears the claim and writes the appropriate terminal status.
+
+**Why this matters for multi-session days:** on a busy commissioning day an engineer may have multiple `/dosto-orchestrate` sessions running in parallel (one for the morning's batch, another opened later when more trains come online). Every session and every other engineer reading `fleet-status.md` can see at a glance which trains are claimed right now and how fresh the claim is. The orchestrator's Step 6.0 concurrency check uses this signal to halt a spawn that would step on another session's active claim.
+
+**Stale claims** (heartbeat age > 30 min) almost always mean the claiming session died. `/dosto-morning-brief` surfaces these as a stale-claim gate per train: engineer chooses `[c]lean` (flip to PAUSED) / `[k]eep` (still working) / `[s]kip`. The Python flag `--clean-stale-claim <TRAIN#>` does the actual write.
+
+**Parser/formatter helpers** live in [`scripts/fleet_status_lookup.py`](scripts/fleet_status_lookup.py) as `parse_in_flight()` / `format_in_flight()` / `heartbeat_age_seconds()`. Skills consuming claim data MUST use these — the cell format is canonical and load-bearing across skills.
 
 ## Universal Principles (constitutional)
 
@@ -129,9 +146,9 @@ Transform imperative tasks into verifiable goals:
 | Instead of...                  | Transform to...                                                          |
 |---|---|
 | "Push firmware to AP"          | "Confirm AP at target firmware via fresh `obn discover`, not OBN's 'Successful' string" |
-| "Apply OBN patches"            | "Confirm 8/8 markers present in `/usr/share/obn/*.py` via grep, including post-reboot for persisted variants" |
+| "Apply OBN patches"            | "Confirm 10/10 markers present in `/usr/share/obn/*.py` via grep, including post-reboot for persisted variants" |
 | "Update Confluence"            | "Push, then read back the new version number; log it for next cycle's drift check" |
-| "Train commissioning DONE"     | "All success criteria for this train are ticked: 8/8 OBN persisted, switches at target firmware+config, all visible APs at target firmware, vlan7 reachable to Stadler, customer report on disk" |
+| "Train commissioning DONE"     | "All success criteria for this train are ticked: 10/10 OBN persisted, switches at target firmware+config, all visible APs at target firmware, vlan7 reachable to Stadler, customer report on disk" |
 
 The orchestrator's end-of-day digest enumerates per-train success criteria as checkboxes. Don't claim DONE without ticking them.
 
@@ -188,9 +205,15 @@ Even Fzg → host `.2`. Odd Fzg → host `.130`. The Stadler firewall is always 
 
 **Important:** the formula in `/etc/nd-redundancy/networks.yaml` on production CCUs is wrong (it computes from OBN's `train_id` instead of Fzg ID). The active vlan7 IP comes from `/etc/NetworkManager/system-connections/ndrd-vlan-vlan7.nmconnection`, which is set per-train via `nd-systemupdate.sh shell`. Verify with [.claude/skills/dosto-vlan7-config/SKILL.md](.claude/skills/dosto-vlan7-config/SKILL.md) before any L2 health check — Stadler-side reachability depends on this being correct.
 
-**Series → Fzg mapping shorthand** (PDF header is source of truth):
-- `4734-NNN → Fzg = NNN - 100`
-- `4736-NNN → Fzg = NNN + 28`
+**Train#-and-Fzg convention (2026-05-22 schema reorder).** Train# (the Nomad-internal name, e.g. `4736-104`) is the **primary identifier** across all skills, scripts, contracts, and the orchestrator argument form. Fzg ID is the ÖBB customer-facing number, derived from the fleet-status row by Train#.
+
+**Series → Fzg mapping shorthand** (reference only — runtime Fzg comes from the fleet-status row via `scripts/fleet_status_lookup.py`; the PDF header is the off-line source of truth):
+- `4734-NNN → Fzg = NNN - 100`  (e.g. 4734-119 → Fzg 19)
+- `4736-NNN → Fzg = NNN + 28`   (e.g. 4736-104 → Fzg 132)
+- `4705-NNN → Fzg = NNN + 128`  (e.g. 4705-103 → Fzg 231)
+- `4706-NNN → Fzg = NNN + 88`   (e.g. 4706-103 → Fzg 191)
+
+⚠️ **Skills NEVER trust the formula at runtime.** Misimaged CCUs, stale Puppet images, and hand-set wrong values mean rendered Fzg values on the live CCU (in switch hostnames, `train_id` template, vlan7 IP encoding) are often wrong pre-commissioning — that's literally what commissioning fixes. If the fleet-status row's Fzg cell is `❓`, skills halt and ask the engineer to populate it (look up via PDF or physical inspection). Engineer can also pass `--fzg <N>` explicitly to override.
 
 ## Required access
 

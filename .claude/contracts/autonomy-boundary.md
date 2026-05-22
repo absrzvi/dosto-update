@@ -17,7 +17,7 @@ What a per-train subagent may do without asking, and what it must request human 
 - `obn validate`, `obn discover` (these are read-mostly — `discover` writes `/tmp/discovery.prev.json` but doesn't change persistent state)
 - `nc -zv` TCP probes
 - `ping`
-- All `--check` modes of project skills (`dosto-obn-patches --check`, `dosto-vlan7-config <fzg>`)
+- All `--check` modes of project skills (`dosto-obn-patches --check`, `dosto-vlan7-config <train#>` — skill resolves Fzg from fleet-status row)
 - Read project files: PDFs in `docs/`, anything in `train-ip-allocation-commission/`, `fleet-status.md`
 
 ### Reversible writes (autonomous)
@@ -132,7 +132,7 @@ Per spec: **not a gate.** AP factory-config bypass via LuCI HTTP push happens au
 - Cannot be aborted cleanly mid-run; you finish or you brick
 
 **What the subagent has done before this gate:**
-- Verified 8/8 OBN patches present (otherwise the run will crash mid-way)
+- Verified 10/10 OBN patches present (otherwise the run will crash, or hang at 100% CPU / leak RAM, mid-way)
 - Verified `train_id` template is hardcoded to the right Fzg
 - Verified vlan7 IP is correct (otherwise post-push verification fails)
 

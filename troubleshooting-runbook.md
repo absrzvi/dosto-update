@@ -434,7 +434,7 @@ modprobe nf_conntrack_tftp 2>/dev/null
 $IPT -t raw -A PREROUTING -p udp --dport 69 -j CT --helper tftp -m comment --comment "TFTP conntrack helper for in.tftpd"
 ```
 
-**This change must land in the Puppet repo, not as a hand-edit on the live CCU** — otherwise it gets wiped on next btrfs promote (same persistence pattern as our 8 OBN patches).
+**This change must land in the Puppet repo, not as a hand-edit on the live CCU** — otherwise it gets wiped on next btrfs promote (same persistence pattern as our 10 OBN patches).
 
 If you must persist on a single CCU before R&D ships the Puppet fix, do it inside `nd-systemupdate.sh.dont shell` (chroot) — same procedure as for OBN patches.
 

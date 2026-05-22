@@ -43,7 +43,7 @@ sudo dhcp-lease-list  # AUTHORITATIVE current IPs/hostnames for switches and APs
 /dosto-obn-patches <ccu-ip>
 ```
 
-The skill SSHs in, greps all 8 known-bug markers in one round-trip, and returns a status table plus a verdict. **Don't proceed past this step until the verdict is `8/8 patched`.** Partial patches are worse than vanilla — they leave latent crash modes that turn `obn update` into a partial-state writer (RSTP storm risk).
+The skill SSHs in, greps all 10 known-bug markers in one round-trip, and returns a status table plus a verdict. **Don't proceed past this step until the verdict is `10/10 patched`.** Partial patches are worse than vanilla — they leave latent crash/hang modes (Bug 10 is the only patch that prevents the `obn report` 100% CPU + 27GB RSS leak when a device is missing).
 
 If the verdict is 🔴 (any bugs missing), the engineer runs:
 
@@ -59,7 +59,7 @@ To make patches **persist across CCU reboots** (recommended for any train you'll
 /dosto-obn-patches <ccu-ip> --persist
 ```
 
-Prints the `nd-systemupdate.sh shell` recipe to bake patches into a new btrfs snapshot. Reboot via `sudo /usr/local/sbin/safe_reboot` afterwards, then re-run `/dosto-obn-patches <ccu-ip>` to confirm 8/8 markers survived. Update fleet-status `OBN patches` cell to `persisted (run<N>)`.
+Prints the `nd-systemupdate.sh shell` recipe to bake patches into a new btrfs snapshot. Reboot via `sudo /usr/local/sbin/safe_reboot` afterwards, then re-run `/dosto-obn-patches <ccu-ip>` to confirm 10/10 markers survived. Update fleet-status `OBN patches` cell to `persisted (run<N>)`.
 
 Full skill documentation: [.claude/skills/dosto-obn-patches/SKILL.md](.claude/skills/dosto-obn-patches/SKILL.md). Bug catalogue: [troubleshooting-runbook.md](troubleshooting-runbook.md) → "OBN Firmware & Config Update — Known Bugs and Fixes".
 
@@ -220,7 +220,7 @@ This is the difference between a checklist that scales across the team and one t
 - [troubleshooting-runbook.md](troubleshooting-runbook.md) — detailed procedures (LLDP cabling check, OBN bug fixes, AP factory bypass, train_id rules)
 - [cable-issues-register.md](cable-issues-register.md) — fleet-wide cabling fault log
 - [fleet-status.md](fleet-status.md) — **per-train rollout status (read first, update last)**
-- `scripts/fix_obn.py` — patch all 8 OBN bugs (idempotent)
+- `scripts/fix_obn.py` — patches OBN bugs 1–7 (idempotent); plus `fix_obn_bug8.py`, `fix_obn_bug9_pysnmp_thread_safety.py`, `fix_obn_bug10_report_dosto_neu_bfs.py` for the remaining 3 (all 10 needed; 9 prevents parallel-SNMP crash, 10 prevents `obn report` hang+leak)
 - `scripts/lldp_topology_check.py` — verify Stadler trunk cabling
 - `scripts/push_ap_config.sh` / `apply_ap_configs.sh` — AP factory-config bypass
 - `docs/switch_user_manual.pdf` — full VDS switch reference
