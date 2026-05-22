@@ -14,13 +14,13 @@ It is **invoked by the per-train subagent** (see [`.claude/agents/dosto-train-wo
 ```
 You (top-level orchestrator session)
   │
-  ├─► Agent(subagent_type=dosto-train-worker, prompt="...Fzg 132...") ─┐
-  ├─► Agent(subagent_type=dosto-train-worker, prompt="...Fzg 133...") ─┤  parallel
-  ├─► Agent(subagent_type=dosto-train-worker, prompt="...Fzg 148...") ─┤
-  └─► Agent(subagent_type=dosto-train-worker, prompt="...Fzg 130...") ─┘
+  ├─► Agent(subagent_type=dosto-train-worker, prompt="...4736-104...") ─┐
+  ├─► Agent(subagent_type=dosto-train-worker, prompt="...4736-105...") ─┤  parallel
+  ├─► Agent(subagent_type=dosto-train-worker, prompt="...4736-120...") ─┤
+  └─► Agent(subagent_type=dosto-train-worker, prompt="...4736-102...") ─┘
                        │
                        ▼ each subagent runs its own session, invokes:
-              /dosto-commission-train --ccu-ip <ip> --fzg <N> ...
+              /dosto-commission-train --train-number <NNNN-NNN> --ccu-ip <ip> ...
                        │
                        ▼ which sequences:
               /dosto-device-discovery → /dosto-obn-patches → /dosto-fzg-id-check
@@ -47,27 +47,29 @@ This skill is **single-train scope**. Multi-train fan-out is the orchestrator's 
 
 | Flag | Type | Required | Notes |
 |---|---|---|---|
+| `--train-number <str>` | string | yes | **Primary identifier.** e.g. `4736-104`, `4734-119`, `4705-103`, `4706-101`. Skill resolves Fzg from the fleet-status row for this Train#. |
 | `--ccu-ip <ip>` | string | yes | e.g. `10.179.10.1` |
-| `--fzg <int>` | integer | yes | e.g. `132`. Used by `dosto-fzg-id-check`, `dosto-vlan7-config`, and `dosto-obn-patches --persist` fold-in. |
-| `--train-number <str>` | string | yes | e.g. `4736-104`. For fleet-status row identification. |
-| `--consist <4-car|6-car>` | enum | yes | Affects expected device counts (12+16 for nv4, 18+24 for nv6). |
+| `--consist <4-car\|6-car>` | enum | yes | Affects expected device counts (12+16 for nv4, 18+24 for nv6). |
+| `--fzg <int>` | integer | no | **Derived from fleet-status by default** (via `scripts/fleet_status_lookup.py`). Override only when the fleet-status row's Fzg cell is suspect and the engineer wants to force a specific value for this run — e.g. mid-commissioning of a misimaged train where the row hasn't been updated yet. If the row's Fzg cell is `❓` and `--fzg` isn't supplied, the skill halts with `BLOCKED next_action: "Fzg ID for <train#> missing in fleet-status.md — populate the Fzg column or pass --fzg explicitly."` Never guesses from the per-series formula. |
 | `--resume <stage_id>` | enum | no | Skips ahead to the named stage; assumes prior stages succeeded. Re-runs `initial_diagnostics` to confirm prior post-conditions are met before resuming. |
 | `--dry-run` | flag | no | Every per-device skill runs in `--prepare` mode. No CCU writes, no approval gates fire (since nothing destructive is about to happen). Output JSON has `dry_run: true` at top level. |
 | `--legacy-serial-sw-config` | flag | no | At stage 13, fall back to per-switch serial config push (`dosto-sw-config-update --execute` looped leaf-first) instead of the default batched parallel path (`dosto-sw-config-update-batch --execute --auto`). Use only when the batch skill has shown problems on the specific train being commissioned. |
+| `--decoupled` | flag | no | Bypass the Fzg ↔ train-number formula consistency check. Use only for the documented decoupled trains (currently Fzg 133 / 4736-105 / box1-t1). Does NOT bypass the Fzg-from-fleet-status lookup. |
 
 ### Pre-stage-1 input cross-validation (mandatory)
 
-**Before invoking any skill or even SSHing to the CCU**, validate that `--ccu-ip`, `--fzg`, and `--train-number` are mutually consistent. Three checks, all string-level (no network):
+**Before invoking any skill or even SSHing to the CCU**, run four checks. First step is to resolve Fzg from fleet-status (the source of truth). Then validate consistency:
 
 | Check | Logic | Failure verdict |
 |---|---|---|
+| **Step 0 — Fzg resolution** | Look up the fleet-status row for `--train-number` (via `scripts/fleet_status_lookup.py lookup <train#> --require-fzg`). If `--fzg` was explicitly passed, use that; otherwise use the value from the row. If the row's Fzg cell is `❓` AND `--fzg` was not passed, halt. | `BLOCKED` with `next_action: "Fzg ID for <train#> missing in fleet-status.md. Populate the Fzg column (look up in train-ip-allocation-commission/<series>-xxx/<train#>/<train#>_IP-Port-Allocation.pdf, header line) or pass --fzg explicitly."` |
 | **CCU IP ↔ box-NN consistency** | The CCU's hostname (read via SSH later) MUST be `box1-t<NN>` where `NN` is the third octet of `--ccu-ip`. Skill caches the *expected* hostname here for state-inventory fact 1. | If hostname mismatches, `BLOCKED` — wrong CCU IP supplied or fleet routing change. |
-| **Fzg ↔ train-number consistency** | Apply the per-series formula. `4736-NNN → Fzg = NNN + 28`. `4734-NNN → Fzg = NNN - 100`. If `--fzg` doesn't match the formula result for `--train-number`, halt immediately. | `BLOCKED` with `next_action: "Caller supplied --fzg <X> but --train-number <Y> implies Fzg <Z>. Fix one. If you intended a Fzg/train mismatch (DOSTO NEU train_id ≠ Fzg ID — see auto-memory feedback_train_id_ip_mismatch.md), pass --decoupled to override."` |
+| **Fzg ↔ train-number consistency** | Apply the per-series formula. `4736-NNN → Fzg = NNN + 28`. `4734-NNN → Fzg = NNN - 100`. `4705-NNN → Fzg = NNN + 128`. `4706-NNN → Fzg = NNN + 88`. If the resolved Fzg (from fleet-status or `--fzg`) doesn't match the formula result for `--train-number`, halt immediately. Pass `--decoupled` for the documented exceptions. | `BLOCKED` with `next_action: "Resolved Fzg <X> doesn't match per-series formula for --train-number <Y> (expected Fzg <Z>). Either fix the fleet-status row, or pass --decoupled if this train intentionally has a non-formula Fzg (DOSTO NEU train_id ≠ Fzg ID — see auto-memory feedback_train_id_ip_mismatch.md)."` |
 | **CCU IP ↔ Fzg consistency (advisory)** | If the CCU IP follows the convention `10.179.<NN>.1` where `NN` matches the train# (e.g. `10.179.10.1` for 4736-104), warn on mismatch. Some trains intentionally use non-aligned IPs — log a warning, don't halt. | Warn in `issues[]`, proceed. |
 
-**Why this matters:** today's footgun shape is "engineer types `--ccu-ip 10.179.47.1 --fzg 132`" — that's Fzg 130's CCU paired with Fzg 132's templates. Without this check, the skill would happily push Fzg 132 hostnames to Fzg 130's switches — a silent fleet-status-corrupting wrong-train commission. The check is one regex + one string compare; the cost of getting it wrong is ~90 minutes of recovery work plus a confused team.
+**Why this matters:** today's footgun shape is "engineer types `--ccu-ip 10.179.47.1 --train-number 4736-104`" — that's 4736-102's CCU paired with 4736-104's templates. Without this check, the skill would happily push 4736-104 hostnames to 4736-102's switches — a silent fleet-status-corrupting wrong-train commission. The check is one regex + one string compare; the cost of getting it wrong is ~90 minutes of recovery work plus a confused team.
 
-The `--decoupled` flag (option, no value) bypasses the Fzg ↔ train-number check for the documented decoupled trains (currently only Fzg 133 / box1-t1). It does NOT bypass the hostname check — that remains mandatory.
+The `--decoupled` flag bypasses the Fzg ↔ train-number formula check for the documented decoupled trains (currently only 4736-105 / Fzg 133 / box1-t1). It does NOT bypass the hostname check or the fleet-status Fzg lookup — those remain mandatory.
 
 ## The 19-stage pipeline
 
@@ -215,7 +217,7 @@ Stage outcome routing:
 | Found at stage 1 | Next stage |
 |---|---|
 | **`dosto-obn-patches` reports `nd_systemupdate_path: null`** (NDSU=MISSING — neither `.sh` nor `.sh.dont` exists, after the `-f` probe) | **Skill emits terminal `BLOCKED` immediately** with `next_action: "engineer must investigate missing /usr/sbin/nd-systemupdate.sh on this CCU before any commissioning — chroot mechanism does not exist on this image"`. No further stages run. This is a hard fail because every persistence path (stages 7, 12, 14, 17) requires the chroot mechanism. **Caveat: only emit this if the probe used `[ -f ]` not `[ -x ]`.** On the fleet, `nd-systemupdate.sh.dont` is mode 0500 owner=root and `[ -x ]` returns false for the `developer` SSH user even though the file is fully usable via `sudo`. Validated 2026-05-09 on box1-t47 — false-positive `-x` detection initially mis-flagged this CCU as NDSU=MISSING. |
-| Missing devices (`dosto-device-discovery` reports any) | Stage 2 (`await_device_count_mismatch`) |
+| Missing devices (see strict predicate below) | Stage 2 (`await_device_count_mismatch`) |
 | **v8 template package `< 0.0.19` or absent** | Stage 2.5 (`ensure_v8_templates`) — auto, no gate. After it completes, re-enter stage 1 (post-reboot state may have changed everything). |
 | All preconditions clean (8/8 patches persisted, fzg ✓, vlan7 ✓, tftp helper ✓, v8 template package `≥ 0.0.19`) | Skip to stage 11 (`obn_discover_initial`) |
 | Any of patches/fzg/vlan7 needs fix (and v8 templates present) | Stage 3-7 block runs (with single-promote fold-in at stage 7) |
@@ -223,14 +225,38 @@ Stage outcome routing:
 
 ### Stage 2: `await_device_count_mismatch` (Gate 5)
 
-**Status:** `NEEDS_APPROVAL`. **Conditional:** only if `dosto-device-discovery` found missing devices.
+**Status:** `NEEDS_APPROVAL`. **Conditional:** see strict predicate below.
+
+#### The "missing devices" predicate (load-bearing — do not soften)
+
+After Stage 1 collects `dosto-device-discovery`'s JSON output, **emit Gate 5 if ANY of the following hold**, checked in this order:
+
+1. `device_discovery.raw.ap_missing` is a non-empty array → Gate 5.
+2. `device_discovery.raw.switches_missing` is a non-empty array → Gate 5.
+3. `device_discovery.raw.actual.switches < device_discovery.raw.expected.switches` → Gate 5.
+4. `device_discovery.raw.actual.aps < device_discovery.raw.expected.aps` → Gate 5.
+5. `device_discovery.verdict in {"missing_aps", "missing_switches", "missing_both"}` → Gate 5.
+
+**Belt-and-braces by design.** A worker MUST NOT rely on the `verdict` string alone — the structured `raw.*_missing` arrays and `raw.actual` counts are the load-bearing signals. Reasoning: the orchestrator's pre-flight (`dosto-orchestrate` Step 5.5) classifies a 1-AP-missing train as SOFT-WARN and dispatches it; the worker's Stage 2 is the ONLY remaining checkpoint between "AP visible on the management VLAN but absent from the consist" and "OBN pushes firmware to an AP that may not exist." A worker that silently skips Gate 5 here will fire `obn update f <ip>` against the missing-AP IP, observe a TFTP timeout, and report a firmware-push failure — which is exactly the wrong failure mode for "Stadler hasn't installed this AP yet."
+
+**Why the redundant checks:** historically (regression observed 2026-05-22) the contract said only "if missing devices reported" without specifying which JSON field. A worker checked `verdict == "missing_devices"` while the skill emitted `verdict == "missing_aps"`; no match, Stage 2 was skipped, firmware push fired against a missing AP. The fix lives in BOTH skills — `dosto-device-discovery` now documents the verdict enum precisely, and `dosto-commission-train` (this section) makes the predicate explicit and checks structured fields not just strings.
+
+#### Gate 5 prompt and response
 
 `approval_needed.gate = "device_count_mismatch"`, `response_shape = "three_way"`. Engineer chooses:
-- `proceed` — push to discovered devices only, document missing as Stadler-side cabling issue
-- `pause` — halt; train is `BLOCKED` on cabling
-- `abort` — terminal `BLOCKED`
+- `proceed` (or `p` / `partial`) — push to discovered devices only, document missing as Stadler-side cabling issue
+- `pause` (or `w` / `wait`) — halt; train is `BLOCKED` on cabling
+- `abort` (or `c` / `continue_full`) — proceed through all stages including consist-wide pushes; missing devices will be in unsynchronised state when they eventually come online (rare; explicit accept)
 
 `approval_needed.missing_devices` carries the per-device structured info from `dosto-device-discovery` output (slot, expected_switch, expected_port, stadler_instruction). Orchestrator formats one prompt section per missing device per `.claude/contracts/approval-gates.md`.
+
+#### Post-Gate-5 routing
+
+| Engineer response | Effect |
+|---|---|
+| `proceed` (default) | Continue to subsequent stages, but for any `push_*` stage that operates per-device, the skill MUST filter out the missing-device IPs from the target list. The push set = `discovered devices ∩ commissioning targets`, NEVER the expected-set with missing devices included. The skill threads `missing_device_ips` from Stage 2 through to Stages 13/16/17/18/19; any of those stages that would otherwise hit a missing IP skips it with an `issues[]` note. |
+| `pause` | Emit terminal `BLOCKED` with `next_action: "Wait for Stadler to install/connect missing devices: <list>; then re-run /dosto-commission-train"`. |
+| `abort` (continue_full) | Proceed through all stages including consist-wide. Document the engineer's explicit accept in `issues[]`. |
 
 ### Stage 2.5: `ensure_v8_templates`
 

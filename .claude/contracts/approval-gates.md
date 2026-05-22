@@ -47,13 +47,13 @@ SUBAGENT                     ORCHESTRATOR                          HUMAN
 This is what the orchestrator emits by default. One header line, three meta cells, one rationale sentence, command preview as a one-liner, options line. Scannable in <5 seconds:
 
 ```
-[Gate 1] promote_snapshot — Fzg 132 — 8/8 OBN patches confirmed; persisting via chroot promote
+[Gate 1] promote_snapshot — 4736-104 (Fzg 132) — 8/8 OBN patches confirmed; persisting via chroot promote
   destructive: ✅   reversible: ❌   command: sudo /usr/sbin/nd-systemupdate.sh shell + fix_obn.py + exit
 Options: y | n | defer | ?
 ```
 
 Sizing rules (contract terms — orchestrator MUST enforce):
-- Header line ≤ 100 chars: `[Gate N] <gate-name> — Fzg <NN> — <one-sentence rationale>`. Rationale truncates with `…` if over.
+- Header line ≤ 100 chars: `[Gate N] <gate-name> — <Train#> (Fzg <NN>) — <one-sentence rationale>`. **Train# leads** (Nomad-internal primary identifier). Fzg shown parenthetically as it remains the customer-facing ÖBB reference. Rationale truncates with `…` if over.
 - Meta cells line: literally `destructive: <✅|❌>   reversible: <✅|❌>   command: <one-line preview>`.
   - Command preview ≤ 80 chars. Multi-step recipes summarise with `+` joiners. Full recipe lives behind `?` (expand).
 - Options line: exactly the response tokens (no prose), separated by `|`. Last option is always `?` (expand).
@@ -66,7 +66,7 @@ If the engineer types `?` after a compact prompt, the orchestrator emits the v1 
 
 ```
 ─── APPROVAL NEEDED (expanded) ──────────────────────
-Train:        Fzg 132 / 4736-104 (10.179.10.1)
+Train:        4736-104 / Fzg 132 (10.179.10.1)
 Gate:         promote_snapshot
 Reversible:   ❌ No (changes default GRUB target)
 Destructive:  ✅ Yes
@@ -122,7 +122,7 @@ Note that the three-way default is `partial` (the safest middle path), not deny 
 **Compact prompt for Gate 5** (the three-way) looks like:
 
 ```
-[Gate 5] device_count_mismatch — Fzg 130 — 4 switches missing: D2, E2, E3, F2
+[Gate 5] device_count_mismatch — 4736-102 (Fzg 130) — 4 switches missing: D2, E2, E3, F2
   destructive: ❌   reversible: ✅   action depends on response
 Options: w (wait Stadler) | p (partial — CCU-local only) | c (continue full) | defer | ?
 ```
@@ -155,12 +155,12 @@ If two subagents hit gates at roughly the same time, the orchestrator queues the
 
 ```
 ─── APPROVAL NEEDED (1 of 2) ────────────────────
-Train: Fzg 132 / 4736-104 — promote_snapshot
+Train: 4736-104 / Fzg 132 — promote_snapshot
 ... (same format)
 Approve? [y/N]:
 
 ─── APPROVAL NEEDED (2 of 2) ────────────────────
-Train: Fzg 130 / 4736-102 — safe_reboot
+Train: 4736-102 / Fzg 130 — safe_reboot
 ... (same format)
 Approve? [y/N]:
 ```
@@ -191,7 +191,7 @@ To prevent indefinite gate stall, the orchestrator tracks how many times each ga
 3. Emits the following inline warning immediately (does NOT wait for cycle digest):
 
 ```
-⚠️  Fzg <NN> — gate <gate-name> auto-BLOCKED after 3 deferrals.
+⚠️  <Train#> (Fzg <NN>) — gate <gate-name> auto-BLOCKED after 3 deferrals.
     Train marked BLOCKED. Re-spawn manually when ready to approve.
     Log entry written to .claude/logs/approval-gates.jsonl.
 ```

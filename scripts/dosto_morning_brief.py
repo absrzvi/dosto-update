@@ -135,7 +135,8 @@ def stages_remaining(stage: str):
     return STAGES[STAGES.index(stage):]
 
 def recommend(trains):
-    """Pick the train with no gate in next 3 stages. Tie-break: longest runway."""
+    """Pick the train with no gate in next 3 stages. Tie-break: longest runway.
+    Returns (train_number, rationale) — Train# is the recommendation key."""
     candidates = []
     for t in trains:
         upcoming = stages_remaining(t['stage'])[:3]
@@ -149,9 +150,9 @@ def recommend(trains):
     runway, train, upcoming = candidates[0]
     rationale = (f"Next {len(upcoming)} stages ({', '.join(upcoming)}) — "
                  f"no approval gate, {runway} stages to done.")
-    return train['fzg'], rationale
+    return train['train_number'], rationale
 
-def rationale_for(train, recommended_fzg):
+def rationale_for(train, recommended_train):
     stage = train['stage']
     if stage == 'BLOCKED':
         return 'BLOCKED — Stadler-dependent'
@@ -161,7 +162,7 @@ def rationale_for(train, recommended_fzg):
     if not upcoming:
         return 'no upcoming stages'
     gate_in = next((i+1 for i, s in enumerate(upcoming) if s in GATES), None)
-    if train['fzg'] == recommended_fzg:
+    if train['train_number'] == recommended_train:
         return f"✅ {', '.join(upcoming)} — no gate, {len(stages_remaining(stage))} to done"
     if gate_in:
         return f"Gate at step {gate_in} ({upcoming[gate_in-1]}) — needs engineer attention"
@@ -234,28 +235,24 @@ def stage_tag(stage: str) -> str:
         return '<span class="stage-tag unknown">?</span>'
     return f'<span class="stage-tag">{stage}</span>'
 
-PENDING_MARKER = '<!-- pending Fzg assignment (managed by dosto-morning-brief) -->'
-
-def ip_already_known(path: str, ip: str) -> bool:
-    """An IP is 'known' if it appears anywhere in fleet-status.md — either in
-    a series table (assigned) or in the Pending section (skip-listed)."""
-    return ip in Path(path).read_text(encoding='utf-8')
+PENDING_MARKER = '<!-- pending Train# assignment (managed by dosto-morning-brief) -->'
+_TRAIN_NUMBER_RE = re.compile(r'^(\d{4})-\d{3}$')
 
 def append_to_pending(path: str, ip: str):
-    """Add an IP to the 'Pending Fzg assignment' section. Engineer skipped it
+    """Add an IP to the 'Pending Train# assignment' section. Engineer skipped it
     at the prompt; we record it so next morning's brief doesn't re-ask."""
     content = Path(path).read_text(encoding='utf-8')
     today = datetime.now().strftime('%Y-%m-%d')
     if PENDING_MARKER not in content:
         section = (
             f'\n\n{PENDING_MARKER}\n\n'
-            f'## Pending Fzg assignment\n\n'
+            f'## Pending Train# assignment\n\n'
             f'CCU IPs discovered by morning-brief network sweep where the engineer '
-            f'has not yet provided a Fzg ID. These are skip-listed (not re-prompted '
+            f'has not yet provided a Train#. These are skip-listed (not re-prompted '
             f'next run). Hand-edit this section: delete the row and add a proper '
-            f'entry to the 4736 or 4734 series table once you identify the train '
-            f'(physical inspection or cross-ref against `train-ip-allocation-commission/` PDFs — '
-            f'do NOT trust .cfg filenames or switch hostnames since the train_id formula '
+            f'entry to the matching series table once you identify the train '
+            f'(cross-ref against `train-ip-allocation-commission/` PDFs — do NOT '
+            f'trust .cfg filenames or switch hostnames since the train_id formula '
             f'is broken pre-commissioning).\n\n'
             f'| CCU IP | Discovered |\n|---|---|\n'
         )
@@ -264,20 +261,68 @@ def append_to_pending(path: str, ip: str):
     content = content.rstrip() + '\n' + new_row + '\n'
     Path(path).write_text(content, encoding='utf-8')
 
-def assign_to_series(path: str, ip: str, fzg: str, series: str):
-    """Insert a new row into the 4736 or 4734 series table for an engineer-supplied
-    (ip, fzg, series) triplet. Idempotent: skips if a row with this Fzg + IP exists."""
+def clean_stale_claim(path: str, train_number: str) -> tuple[bool, str]:
+    """Flip an in-flight claim back to PAUSED. Used by morning-brief's stale-claim
+    gate after the engineer confirms the orchestrator session is dead.
+
+    Returns (ok, message). `ok=False` if the row isn't actually in-flight (engineer
+    raced with a worker that just terminated) or if the train isn't in fleet-status.
+    """
+    import sys as _sys
+    _sys.path.insert(0, str(Path(__file__).parent))
+    from fleet_status_lookup import parse_fleet_status, lookup_by_train_number, parse_in_flight
+
+    rows = parse_fleet_status(path)
+    target = lookup_by_train_number(rows, train_number)
+    if target is None:
+        return False, f'{train_number} not found in fleet-status'
+    claim = parse_in_flight(target['nomad_status'])
+    if claim is None:
+        return False, f'{train_number} is not currently marked IN PROGRESS (no claim to clean)'
+
+    # Rebuild the row line with the cleaned-up Nomad status cell. Read raw content
+    # and do a literal swap of the old row line for the new one.
+    content = Path(path).read_text(encoding='utf-8')
+    header = target['header']
+    i_nomad = None
+    for i, h in enumerate(header):
+        if 'nomad status' in h.lower() or h.lower() == 'status':
+            i_nomad = i; break
+    if i_nomad is None:
+        return False, f'fleet-status row for {train_number} has no Nomad status column'
+
+    old_cells = list(target['raw_row'])
+    new_cells = list(old_cells)
+    new_cells[i_nomad] = (f'🟡 PAUSED — stale claim auto-cleaned from session {claim["session_id"]} '
+                         f'(stage {claim["stage"]}, last hb {claim["heartbeat_iso"]})')
+    old_line = '| ' + ' | '.join(old_cells) + ' |'
+    new_line = '| ' + ' | '.join(new_cells) + ' |'
+    if old_line not in content:
+        return False, f'could not locate row line for {train_number} (file may have been edited concurrently)'
+    content = content.replace(old_line, new_line, 1)
+    Path(path).write_text(content, encoding='utf-8')
+    return True, f'cleaned: {train_number} → PAUSED (was claimed by sess {claim["session_id"]})'
+
+
+def assign_to_series(path: str, ip: str, train_number: str, fzg: str = None):
+    """Insert a new row into the matching series table for an engineer-supplied
+    (ip, train_number) tuple. Series is derived from the Train# prefix. Fzg is
+    optional — if not supplied, written as `❓` (engineer fills later from PDF).
+    Idempotent: skips if this IP already appears anywhere in the file."""
+    m = _TRAIN_NUMBER_RE.match(train_number)
+    if not m:
+        raise ValueError(f'invalid train#: {train_number!r} (expected NNNN-NNN)')
+    series = m.group(1)
+    if series not in {'4734', '4736', '4705', '4706'}:
+        raise ValueError(f'unknown series: {series}')
     content = Path(path).read_text(encoding='utf-8')
     if ip in content:
         return False
     header = f'### {series} series'
-    idx = content.find(header)
-    if idx == -1:
+    if header not in content:
         raise ValueError(f'series header not found: {header}')
-    # Find the end of this table (first blank line after the table starts).
     lines = content.split('\n')
     start_line = next(i for i, l in enumerate(lines) if l.startswith(header))
-    # Walk forward to find the table, then to the first non-pipe line after rows begin.
     in_table = False
     insert_at = None
     for i in range(start_line, len(lines)):
@@ -289,27 +334,73 @@ def assign_to_series(path: str, ip: str, fzg: str, series: str):
                 break
     if insert_at is None:
         insert_at = len(lines)
-    # Trainset hint: if 4736 series, trainset = fzg - 28; if 4734, trainset = fzg + 100.
-    fzg_i = int(fzg)
-    trainset = f'{series}-{fzg_i - 28:03d}' if series == '4736' else f'{series}-{fzg_i + 100:03d}'
-    new_row = f'| {fzg} | {trainset} | `{ip}` | ⚪ UNKNOWN | ❓ | initial visit |'
+    fzg_cell = str(fzg) if fzg else '❓'
+    new_row = f'| {train_number} | {fzg_cell} | `{ip}` | ⚪ UNKNOWN | ❓ | initial visit |'
     lines.insert(insert_at, new_row)
     Path(path).write_text('\n'.join(lines), encoding='utf-8')
     return True
 
-def render_html(reachable, unreachable, discovered, recommended_fzg, recommended_rationale, would_be_cmd):
+def _render_in_flight_section(in_flight):
+    """Render the 'Currently in flight' HTML section, or empty string if list is empty."""
+    if not in_flight:
+        return ''
+    HEALTH = {
+        'fresh':   ('🟢', '#22c55e', '< 10 min'),
+        'lagging': ('🟡', '#eab308', '10-30 min'),
+        'stale':   ('🔴', '#ef4444', '> 30 min — likely dead session'),
+        'unknown': ('❔', '#94a3b8', 'unparseable heartbeat'),
+    }
+    rows = []
+    for f in in_flight:
+        icon, color, _ = HEALTH[f['health']]
+        step_str = f"{f['step']}/{f['total']}" if f['step'] is not None else '—'
+        age_min = (f['age_seconds'] // 60) if f['age_seconds'] is not None else '?'
+        fzg_str = str(f['fzg']) if f['fzg'] else '❓'
+        rows.append(
+            f'<tr>'
+            f'<td class="mono">{f["train_number"]}</td>'
+            f'<td class="mono center">{fzg_str}</td>'
+            f'<td class="mono">{f["ccu_ip"]}</td>'
+            f'<td><span class="stage-tag">{f["stage"]}</span></td>'
+            f'<td class="mono center">{step_str}</td>'
+            f'<td class="mono">t+{f["elapsed"]}</td>'
+            f'<td><span style="color:{color}">{icon} {age_min}m ago</span></td>'
+            f'<td class="mono small">{f["session_id"]}</td>'
+            f'</tr>'
+        )
+    stale_count = sum(1 for f in in_flight if f['health'] == 'stale')
+    stale_note = (f' &middot; <span style="color:#ef4444;font-weight:600">{stale_count} stale — needs cleanup</span>'
+                  if stale_count else '')
+    return f'''
+<div class="section">
+  <div class="section-header"><h2>🔵 Currently in flight</h2>
+    <span class="count">{len(in_flight)} active{stale_note}</span></div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Train#</th><th>Fzg</th><th>CCU IP</th><th>Stage</th><th>Step</th><th>Elapsed</th><th>Heartbeat</th><th>Session</th></tr></thead>
+    <tbody>{"".join(rows)}</tbody>
+  </table></div>
+  <div class="dry-run-note">
+    Health: 🟢 fresh (&lt; 10 min) &middot; 🟡 lagging (10–30 min) &middot; 🔴 stale (&gt; 30 min — likely dead session, run cleanup).
+  </div>
+</div>
+'''
+
+
+def render_html(reachable, unreachable, discovered, recommended_train, recommended_rationale, would_be_cmd, in_flight=None):
     now = datetime.now().strftime('%Y-%m-%d %H:%M')
     date_str = datetime.now().strftime('%Y-%m-%d')
+    in_flight = in_flight or []
+    in_flight_html = _render_in_flight_section(in_flight)
     rows = []
     for t in reachable:
-        row_cls = 'recommended' if t['fzg'] == recommended_fzg else f'row-{status_class(t["status"])}'
-        rationale = rationale_for(t, recommended_fzg)
-        rec_cell = ('<strong style="color:#22c55e">YES</strong><br>' if t['fzg'] == recommended_fzg else 'no<br>') \
+        row_cls = 'recommended' if t['train_number'] == recommended_train else f'row-{status_class(t["status"])}'
+        rationale = rationale_for(t, recommended_train)
+        rec_cell = ('<strong style="color:#22c55e">YES</strong><br>' if t['train_number'] == recommended_train else 'no<br>') \
                    + f'<span class="small">{rationale}</span>'
         rows.append(
             f'<tr class="{row_cls}">'
-            f'<td class="mono center">{t["fzg"]}</td>'
-            f'<td class="mono">{t["trainset"]}</td>'
+            f'<td class="mono">{t["train_number"]}</td>'
+            f'<td class="mono center">{t["fzg"] if t["fzg"] else "❓"}</td>'
             f'<td class="mono">{t["ip"]}</td>'
             f'<td>{status_badge(t["status"])}</td>'
             f'<td class="small">{t.get("stadler", "")}</td>'
@@ -321,7 +412,7 @@ def render_html(reachable, unreachable, discovered, recommended_fzg, recommended
     rows_html = '\n'.join(rows) or '<tr><td colspan="8" class="small center">No reachable trains.</td></tr>'
 
     if unreachable:
-        un_lines = '<br>'.join(f'Fzg {t["fzg"]} / {t["trainset"]} ({t["ip"]}) — {t["next_action"][:80]}' for t in unreachable)
+        un_lines = '<br>'.join(f'{t["train_number"]} (Fzg {t["fzg"] or "❓"}) ({t["ip"]}) — {t["next_action"][:80]}' for t in unreachable)
     else:
         un_lines = '<em>All known-CCU trains reachable.</em>'
 
@@ -336,14 +427,14 @@ def render_html(reachable, unreachable, discovered, recommended_fzg, recommended
     <h1>DOSTO Morning Brief</h1>
     <div class="subtitle">Dry-run reachability scan &middot; start-first recommendation</div>
   </div>
-  <div class="updated">{now}<br><span style="color:var(--accent)">{len(reachable)} of {reach_total_known} known-CCU trains reachable</span></div>
+  <div class="updated">{now}<br><span style="color:var(--accent)">{len(reachable)} of {reach_total_known} known-CCU trains reachable</span>{(' · <span style="color:#3b82f6">' + str(len(in_flight)) + ' in flight</span>') if in_flight else ''}</div>
 </header>
 <div class="container">
-
+{in_flight_html}
 <div class="section">
   <div class="section-header"><h2>Reachable trains</h2><span class="count">{len(reachable)} online</span></div>
   <div class="table-wrap"><table>
-    <thead><tr><th>Fzg</th><th>Trainset</th><th>CCU IP</th><th>Nomad status</th><th>Stadler status</th><th>Next Action</th><th>Resume Stage</th><th>Recommended?</th></tr></thead>
+    <thead><tr><th>Train#</th><th>Fzg</th><th>CCU IP</th><th>Nomad status</th><th>Stadler status</th><th>Next Action</th><th>Resume Stage</th><th>Recommended?</th></tr></thead>
     <tbody>{rows_html}</tbody>
   </table></div>
 </div>
@@ -353,12 +444,12 @@ def render_html(reachable, unreachable, discovered, recommended_fzg, recommended
     <span class="count">dry run &middot; not invoked</span></div>
   <div class="cmd-block">{would_be_cmd}</div>
   <div class="dry-run-note">
-    {('Recommended start-first: <strong style="color:#22c55e">Fzg ' + str(recommended_fzg) + '</strong> &mdash; ' + recommended_rationale) if recommended_fzg else 'No train eligible for autonomous start-first (all reachable trains hit an approval gate within the next 3 stages or are BLOCKED).'}
+    {('Recommended start-first: <strong style="color:#22c55e">' + str(recommended_train) + '</strong> &mdash; ' + recommended_rationale) if recommended_train else 'No train eligible for autonomous start-first (all reachable trains hit an approval gate within the next 3 stages or are BLOCKED).'}
   </div>
   <div class="dry-run-note">Paste the command above manually to dispatch. This page does not invoke /dosto-orchestrate.</div>
 </div>
 
-{('<div class="section"><div class="section-header"><h2>Discovered CCUs &mdash; awaiting Fzg assignment</h2><span class="count">' + str(len(discovered)) + ' new &middot; gate</span></div><div class="urlist" style="padding:12px 16px;background:var(--surface);border:1px solid #ef444466;border-radius:8px;">' + '<br>'.join(f"<code>{ip}</code> &mdash; <code>python scripts/dosto_morning_brief.py --assign {ip} &lt;FZG&gt; &lt;SERIES&gt;</code> or <code>--skip {ip}</code>" for ip in discovered) + '<br><br><span class="small">Engineer gate: identify Fzg ID via <strong>physical inspection</strong> or <strong>train-ip-allocation-commission/ PDFs</strong>. Do NOT trust .cfg filenames or switch hostnames &mdash; the <code>train_id</code> formula is broken pre-commissioning and renders the wrong Fzg in those names.</span></div></div>') if discovered else ''}
+{('<div class="section"><div class="section-header"><h2>Discovered CCUs &mdash; awaiting Train# assignment</h2><span class="count">' + str(len(discovered)) + ' new &middot; gate</span></div><div class="urlist" style="padding:12px 16px;background:var(--surface);border:1px solid #ef444466;border-radius:8px;">' + '<br>'.join(f"<code>{ip}</code> &mdash; <code>python scripts/dosto_morning_brief.py --assign {ip} &lt;TRAIN#&gt; [--fzg N]</code> or <code>--skip {ip}</code>" for ip in discovered) + '<br><br><span class="small">Engineer gate: identify Train# via <strong>train-ip-allocation-commission/ PDFs</strong> (filename + header <code>Fahrzeugnummer</code>) or physical inspection. Do NOT trust .cfg filenames or switch hostnames &mdash; the <code>train_id</code> formula is broken pre-commissioning and renders the wrong Fzg in those names.</span></div></div>') if discovered else ''}
 
 <details>
   <summary>Unreachable trains ({len(unreachable)} known-CCU, failed TCP/22 probe)</summary>
@@ -374,100 +465,168 @@ def main():
     ap.add_argument('--out', default='morning-brief.html')
     ap.add_argument('--no-discover', action='store_true',
                     help='Skip the 10.179.x.1 discovery sweep')
-    ap.add_argument('--assign', nargs=3, metavar=('IP', 'FZG', 'SERIES'),
-                    help='Assign a discovered IP to a Fzg/series (engineer response to gate). '
-                         'Writes a row to the matching series table. Repeatable via shell loop.')
+    ap.add_argument('--assign', nargs=2, metavar=('IP', 'TRAIN_NUMBER'),
+                    help='Assign a discovered IP to a Train# (engineer response to gate). '
+                         'Series is derived from the Train# prefix. Writes a row to the '
+                         'matching series table with Fzg=❓ unless --fzg is also passed.')
+    ap.add_argument('--fzg', type=int, default=None,
+                    help='Optional Fzg integer for --assign. If omitted, Fzg cell is ❓.')
     ap.add_argument('--skip', metavar='IP',
                     help='Skip-list a discovered IP (append to Pending section, do not re-prompt).')
+    ap.add_argument('--clean-stale-claim', metavar='TRAIN_NUMBER', dest='clean_stale_claim',
+                    help='Flip an in-flight claim back to PAUSED. Used after the engineer '
+                         'confirms the orchestrator session that claimed this train is dead. '
+                         'Surfaced via the stale-claim gate in interactive runs.')
     args = ap.parse_args()
 
     # Subcommands: --assign / --skip are write-only operations invoked by the skill
     # after the engineer answers the per-IP prompt. They short-circuit the brief.
     if args.assign:
-        ip, fzg, series = args.assign
-        ok = assign_to_series(args.fleet_status, ip, fzg, series)
-        print(f'{"assigned" if ok else "already present"}: {ip} -> Fzg {fzg} / {series}')
+        ip, train_number = args.assign
+        ok = assign_to_series(args.fleet_status, ip, train_number, fzg=args.fzg)
+        fzg_part = f' / Fzg {args.fzg}' if args.fzg else ' / Fzg ❓ (fill in later)'
+        print(f'{"assigned" if ok else "already present"}: {ip} -> {train_number}{fzg_part}')
         return
     if args.skip:
         append_to_pending(args.fleet_status, args.skip)
         print(f'skip-listed: {args.skip}')
         return
+    if args.clean_stale_claim:
+        ok, msg = clean_stale_claim(args.fleet_status, args.clean_stale_claim)
+        print(msg)
+        sys.exit(0 if ok else 1)
 
+    # Use the shared lookup helper as the single source for parsing fleet-status.
+    import sys as _sys
+    _sys.path.insert(0, str(Path(__file__).parent))
+    from fleet_status_lookup import parse_fleet_status, parse_in_flight, heartbeat_age_seconds
+
+    rows = parse_fleet_status(args.fleet_status)
+    known_by_ip = {}
+    for r in rows:
+        if not r['ccu_ip']: continue
+        known_by_ip[r['ccu_ip']] = {
+            'train_number': r['train_number'],
+            'fzg': r['fzg'],
+            'ip': r['ccu_ip'],
+            'status': r['nomad_status'],
+            'stadler': r['stadler_status'],
+            'next_action': r['next_action'],
+        }
+
+    # Detect in-flight claims across all rows (independent of reachability — a session
+    # may have claimed a train that's now offline mid-stage; that's still in-flight
+    # data the engineer needs to see).
+    in_flight = []
+    for r in rows:
+        claim = parse_in_flight(r['nomad_status'])
+        if not claim:
+            continue
+        try:
+            age = heartbeat_age_seconds(claim['heartbeat_iso'])
+        except Exception:
+            age = None
+        if age is None:
+            health = 'unknown'
+        elif age < 600:
+            health = 'fresh'   # < 10 min
+        elif age < 1800:
+            health = 'lagging' # 10-30 min
+        else:
+            health = 'stale'   # > 30 min
+        in_flight.append({
+            'train_number': r['train_number'],
+            'fzg': r['fzg'],
+            'ccu_ip': r['ccu_ip'],
+            'stage': claim['stage'],
+            'step': claim['step'],
+            'total': claim['total'],
+            'elapsed': claim['elapsed'],
+            'heartbeat_iso': claim['heartbeat_iso'],
+            'session_id': claim['session_id'],
+            'age_seconds': age,
+            'health': health,
+        })
+
+    # IPs in pending/skip section — known but not yet assigned; don't re-prompt.
     md = Path(args.fleet_status).read_text(encoding='utf-8')
+    pending_ips = set(re.findall(r'10\.179\.\d+\.1', md[md.find('Pending'):] if 'Pending' in md else ''))
 
-    trains_with_ip = []
-    for header in ('### 4736 series', '### 4734 series'):
-        hdr, rows = parse_table(md, header)
-        if not hdr: continue
-        i_fzg = col_idx(hdr, 'fzg') or 0
-        i_trainset = col_idx(hdr, 'train')
-        i_ccu = col_idx(hdr, 'ccu')
-        # Nomad status replaced 'Status' on 2026-05-21; accept either name.
-        i_status = col_idx(hdr, 'nomad status')
-        if i_status is None: i_status = col_idx(hdr, 'status')
-        i_stadler = col_idx(hdr, 'stadler')
-        i_next = col_idx(hdr, 'next action')
-        for r in rows:
-            ip = extract_ip(clean(r[i_ccu])) if i_ccu is not None else None
-            if not ip: continue
-            trains_with_ip.append({
-                'fzg': r[i_fzg],
-                'trainset': clean(r[i_trainset]) if i_trainset is not None else '',
-                'ip': ip,
-                'status': r[i_status] if i_status is not None else '',
-                'stadler': r[i_stadler] if i_stadler is not None else '',
-                'next_action': clean(r[i_next]) if i_next is not None else '',
-            })
+    # Unified sweep: probe all 256 10.179.X.1 addresses in parallel.
+    all_candidates = [f'10.179.{i}.1' for i in range(256)]
+    with ThreadPoolExecutor(max_workers=64) as ex:
+        all_results = list(ex.map(lambda ip: probe_tcp(ip, 22, args.timeout), all_candidates))
 
-    # Parallel TCP/22 probe
-    with ThreadPoolExecutor(max_workers=16) as ex:
-        results = list(ex.map(lambda t: probe_tcp(t['ip'], 22, args.timeout), trains_with_ip))
+    reachable, unreachable, needs_assignment = [], [], []
+    for ip, ok in zip(all_candidates, all_results):
+        if ip in known_by_ip:
+            t = dict(known_by_ip[ip])
+            t['stage'] = infer_stage(t['next_action'])
+            # Skip DONE trains entirely — reachable CCU but nothing to do.
+            if t['status'].startswith('🟢') or 'DONE' in t['status'].upper():
+                continue
+            (reachable if ok else unreachable).append(t)
+        elif ok and ip not in pending_ips and not args.no_discover:
+            needs_assignment.append(ip)
 
-    reachable, unreachable = [], []
-    for t, ok in zip(trains_with_ip, results):
-        t['stage'] = infer_stage(t['next_action'])
-        (reachable if ok else unreachable).append(t)
+    rec_train, rec_rationale = recommend(reachable)
 
-    # Discovery sweep: 10.179.0.1 .. 10.179.255.1, minus already-known IPs.
-    # IPs already in any section of fleet-status.md (series tables OR pending list)
-    # are excluded. New IPs surface as `needs_assignment` for the engineer gate.
-    discovered = []
-    needs_assignment = []
-    if not args.no_discover:
-        fleet_content = Path(args.fleet_status).read_text(encoding='utf-8')
-        candidates = [f'10.179.{i}.1' for i in range(256) if f'10.179.{i}.1' not in fleet_content]
-        with ThreadPoolExecutor(max_workers=64) as ex:
-            disc_results = list(ex.map(lambda ip: probe_tcp(ip, 22, args.timeout), candidates))
-        discovered = [ip for ip, ok in zip(candidates, disc_results) if ok]
-        needs_assignment = discovered[:]  # all discovered are new (already filtered above)
+    train_list = ','.join(t['train_number'] for t in reachable)
+    would_be_cmd = f'/dosto-orchestrate trains={train_list}' if reachable else '(no reachable trains)'
 
-    rec_fzg, rec_rationale = recommend(reachable)
-
-    fzg_list = ','.join(t['fzg'] for t in reachable)
-    would_be_cmd = f'/dosto-orchestrate fzg={fzg_list}' if reachable else '(no reachable trains)'
-
-    html = render_html(reachable, unreachable, needs_assignment, rec_fzg, rec_rationale, would_be_cmd)
+    html = render_html(reachable, unreachable, needs_assignment, rec_train, rec_rationale, would_be_cmd, in_flight)
     out_path = Path(args.out).resolve()
     out_path.write_text(html, encoding='utf-8')
 
     print(f"Written: {out_path}")
     print(f"Would-be command: {would_be_cmd}")
     print()
+    if in_flight:
+        print(f"Currently in flight ({len(in_flight)}):")
+        health_icon = {'fresh': '🟢', 'lagging': '🟡', 'stale': '🔴', 'unknown': '❔'}
+        for f in in_flight:
+            step_str = f"{f['step']}/{f['total']}" if f['step'] is not None else '-/-'
+            age_str = f"{f['age_seconds']//60}m" if f['age_seconds'] is not None else '?'
+            fzg_str = f"Fzg {f['fzg']:>3}" if f['fzg'] else "Fzg ❓ "
+            print(f"  {health_icon[f['health']]} {f['train_number']:<10} ({fzg_str}) stage={f['stage']:<28} {step_str:<7} t+{f['elapsed']:<5} hb={age_str:<5} ago, sess {f['session_id']}")
+        print()
     print(f"Reachable ({len(reachable)}):")
     for t in reachable:
-        marker = ' <- RECOMMENDED' if t['fzg'] == rec_fzg else ''
-        print(f"  Fzg {t['fzg']:>3} / {t['trainset']:<8} ({t['ip']:<14}) stage={t['stage']:<28} next: {t['next_action'][:60]}{marker}")
-    print(f"Unreachable ({len(unreachable)}): {', '.join(t['fzg'] for t in unreachable) or '(none)'}")
+        marker = ' <- RECOMMENDED' if t['train_number'] == rec_train else ''
+        fzg_str = f"Fzg {t['fzg']:>3}" if t['fzg'] else "Fzg ❓ "
+        print(f"  {t['train_number']:<10} ({fzg_str}, {t['ip']:<14}) stage={t['stage']:<28} next: {t['next_action'][:60]}{marker}")
+    print(f"Unreachable ({len(unreachable)}): {', '.join(t['train_number'] for t in unreachable) or '(none)'}")
     if not args.no_discover:
         print(f"Discovered new CCUs not in fleet-status ({len(needs_assignment)}): {', '.join(needs_assignment) or '(none)'}")
         if needs_assignment:
             print()
-            print("===== GATE: Fzg assignment needed =====")
+            print("===== GATE: Train# assignment needed =====")
             print("For each IP, run one of:")
-            print("  python scripts/dosto_morning_brief.py --assign <IP> <FZG> <SERIES>   # e.g. --assign 10.179.17.1 145 4736")
-            print("  python scripts/dosto_morning_brief.py --skip <IP>                    # add to Pending section")
-    if rec_fzg:
-        print(f"\nRecommendation: Fzg {rec_fzg} — {rec_rationale}")
+            print("  python scripts/dosto_morning_brief.py --assign <IP> <TRAIN#> [--fzg N]   # e.g. --assign 10.179.17.1 4706-103 --fzg 191")
+            print("  python scripts/dosto_morning_brief.py --skip <IP>                       # add to Pending section")
+    # Stale-claim gate — surface any IN PROGRESS rows whose heartbeat aged past 30 min.
+    stale_claims = [f for f in in_flight if f['health'] == 'stale']
+    if stale_claims:
+        print()
+        print("===== GATE: stale orchestration claims =====")
+        print(f"Found {len(stale_claims)} train(s) marked IN PROGRESS with heartbeat > 30 min.")
+        print("Likely means the orchestrator session that claimed them is dead.")
+        print()
+        for f in stale_claims:
+            age_min = (f['age_seconds'] // 60) if f['age_seconds'] is not None else '?'
+            fzg_str = f"Fzg {f['fzg']}" if f['fzg'] else "Fzg ❓"
+            print(f"  🔴 {f['train_number']} ({fzg_str}, {f['ccu_ip']}):")
+            print(f"     Claimed by session {f['session_id']} at stage {f['stage']} ({age_min} min ago)")
+            print(f"     Last heartbeat: {f['heartbeat_iso']}")
+        print()
+        print("For each train, decide:")
+        print("  [c]lean: python scripts/dosto_morning_brief.py --clean-stale-claim <TRAIN#>")
+        print("     → flips Nomad status to 🟡 PAUSED with note 'stale claim auto-cleaned from <sess>'")
+        print("  [k]eep: leave as-is (use if you know the session is just slow, not dead)")
+        print("  [s]kip: tomorrow's brief will re-prompt")
+
+    if rec_train:
+        print(f"\nRecommendation: {rec_train} — {rec_rationale}")
     else:
         print("\nNo start-first recommendation: all reachable trains hit a gate or are BLOCKED.")
 

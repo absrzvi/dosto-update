@@ -173,8 +173,11 @@ class AllowlistViolation(Exception):
 def parse_fleet_table(content: str) -> dict:
     """
     Locate the fleet table header and rows. Returns:
-      {"headers": [...], "header_line_idx": N, "rows": [(line_idx, fzg, cells), ...]}
+      {"headers": [...], "header_line_idx": N, "rows": [(line_idx, train_number, cells), ...]}
     Caller passes file content split into lines; we operate on indices.
+
+    Post-2026-05-22 schema: tables are `| Train# | Fzg | CCU IP | ... |`. Rows are keyed
+    by Train# (first cell). Old code keyed by Fzg in col 0 — now Fzg is in col 1.
     """
     lines = content.split("\n")
     headers: list[str] = []
@@ -182,29 +185,31 @@ def parse_fleet_table(content: str) -> dict:
     rows: list[tuple[int, str, list[str]]] = []
 
     for i, line in enumerate(lines):
-        if line.strip().startswith("| Fzg ") and "|" in line[5:]:
+        if line.strip().startswith("| Train#") and "|" in line[6:]:
             headers = [h.strip() for h in line.strip().strip("|").split("|")]
             header_idx = i
             continue
         if header_idx >= 0 and i > header_idx + 1 and line.strip().startswith("|"):
             cells = [c.strip() for c in line.strip().strip("|").split("|")]
-            if cells and cells[0].isdigit():
+            # Train# format is NNNN-NNN (e.g. 4736-104)
+            if cells and re.match(r'^\d{4}-\d{3}$', cells[0]):
                 rows.append((i, cells[0], cells))
-            elif cells and cells[0] in ("---", ""):
+            elif cells and cells[0].startswith("---"):
                 continue
             else:
-                # ran past the table
                 if rows:
                     break
 
     return {"headers": headers, "header_line_idx": header_idx, "rows": rows, "lines": lines}
 
 
-def update_fleet_row(fzg: int, updates: dict, dry_run: bool = False) -> str:
+def update_fleet_row(train_number: str, updates: dict, dry_run: bool = False) -> str:
     """
-    Update allowlisted cells for one Fzg row. Atomic write with mtime guard.
-    Returns one of: 'applied', 'no_changes', 'fzg_not_found',
+    Update allowlisted cells for one Train# row. Atomic write with mtime guard.
+    Returns one of: 'applied', 'no_changes', 'train_not_found',
     'columns_missing', 'conflict', 'allowlist_violation'.
+
+    Post-2026-05-22 schema: row key is Train# (col 0), not Fzg.
     """
     forbidden = set(updates) - ALLOWED_FLEET_COLUMNS
     if forbidden:
@@ -213,7 +218,7 @@ def update_fleet_row(fzg: int, updates: dict, dry_run: bool = False) -> str:
 
     for attempt in range(3):
         if not FLEET_STATUS.exists():
-            return "fzg_not_found"
+            return "train_not_found"
         read_mtime = FLEET_STATUS.stat().st_mtime
         content = FLEET_STATUS.read_text(encoding="utf-8")
         parsed = parse_fleet_table(content)
@@ -222,9 +227,9 @@ def update_fleet_row(fzg: int, updates: dict, dry_run: bool = False) -> str:
         if missing_cols:
             return "columns_missing"
 
-        target_row = next((r for r in parsed["rows"] if r[1] == str(fzg)), None)
+        target_row = next((r for r in parsed["rows"] if r[1] == train_number), None)
         if target_row is None:
-            return "fzg_not_found"
+            return "train_not_found"
 
         line_idx, _, cells = target_row
         new_cells = list(cells)
@@ -418,7 +423,7 @@ def _run_cycle_inner(args) -> dict:
         fleet_updates["Auto-detected issues"] = str(auto_count) if auto_count else "—"
 
     if fleet_updates:
-        write_result = update_fleet_row(args.fzg, fleet_updates, dry_run=args.dry_run)
+        write_result = update_fleet_row(args.train_num, fleet_updates, dry_run=args.dry_run)
         summary["fleet_status_write"] = write_result
     else:
         summary["fleet_status_write"] = "no_updates"
@@ -523,9 +528,12 @@ def cmd_status() -> dict:
 
 def main():
     ap = argparse.ArgumentParser(description="DOSTO auto-scanner (single-train stub)")
-    ap.add_argument("--fzg", type=int, help="Fzg ID to scan")
+    ap.add_argument("--train-num", "--train-number", dest="train_num",
+                    help="Train number, primary identifier (e.g. 4736-104)")
     ap.add_argument("--ccu-ip", help="CCU IP address")
-    ap.add_argument("--train-num", default="(unknown)", help="Train number e.g. 4736-104")
+    ap.add_argument("--fzg", type=int, default=None,
+                    help="Optional Fzg ID override. If omitted, the scanner reads it from "
+                         "the fleet-status row for --train-num.")
     ap.add_argument("--inject-test-signal", help="Test signal spec, e.g. 'missing_ap=.240/lldp=D3.e1-4'")
     ap.add_argument("--dry-run", action="store_true", help="Preview writes without applying")
     ap.add_argument("--status", action="store_true", help="Print scanner state, no probes")
@@ -535,9 +543,20 @@ def main():
     if args.status:
         out = cmd_status()
     else:
-        if args.fzg is None or args.ccu_ip is None:
-            print("error: --fzg and --ccu-ip required (unless --status)", file=sys.stderr)
+        if not args.train_num or args.ccu_ip is None:
+            print("error: --train-num and --ccu-ip required (unless --status)", file=sys.stderr)
             sys.exit(2)
+        # Resolve Fzg from fleet-status if not explicitly passed.
+        if args.fzg is None:
+            try:
+                sys.path.insert(0, str(Path(__file__).parent))
+                from fleet_status_lookup import parse_fleet_status, lookup_by_train_number
+                rows = parse_fleet_status()
+                row = lookup_by_train_number(rows, args.train_num)
+                if row and row['fzg'] is not None:
+                    args.fzg = row['fzg']
+            except Exception:
+                pass
         out = run_cycle(args)
 
     if args.json:

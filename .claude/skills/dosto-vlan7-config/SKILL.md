@@ -125,14 +125,16 @@ The "odd vs even" pattern: each octet-3 value covers 2 consecutive Fzg IDs — *
 
 ## Fzg ID lookup
 
-The Fzg ID for the train is in the **header line** of the IP-Port-Allocation PDF at `train-ip-allocation-commission/<series>/<train#>/<train#>_IP-Port-Allocation.pdf` (or `_IP_Port_Allocation.pdf` — case varies). Look for `Fahrzeugnummer: <train#>    Fzg. ID: <NN>` near the top.
+**Runtime source of truth: the [`fleet-status.md`](../../../fleet-status.md) row for the Train#.** Read it via `python scripts/fleet_status_lookup.py lookup <train#> --require-fzg`. If the row's Fzg cell is `❓`, halt and prompt the engineer to populate it (from the IP-Port-Allocation PDF or physical inspection) before proceeding.
 
-For shorthand:
+**Reference formulas** (for engineers; never trust silently at runtime):
 
 - **4734-NNN → Fzg = NNN - 100** (e.g. 4734-120 = Fzg 20)
-- **4736-NNN → Fzg = NNN + 28** (e.g. 4736-105 = Fzg 133)
+- **4736-NNN → Fzg = NNN + 28**  (e.g. 4736-105 = Fzg 133)
+- **4705-NNN → Fzg = NNN + 128** (e.g. 4705-103 = Fzg 231)
+- **4706-NNN → Fzg = NNN + 88**  (e.g. 4706-103 = Fzg 191)
 
-The PDF header is the source of truth. If a train's PDF says something different from the shorthand, trust the PDF.
+The PDF header (`Fahrzeugnummer: <train#>    Fzg. ID: <NN>`) is the off-line source of truth — that's what populates fleet-status. The formulas above are correct for the typical case but should never override an explicit fleet-status value.
 
 ## Procedure
 
@@ -140,10 +142,12 @@ The PDF header is the source of truth. If a train's PDF says something different
 
 You need:
 
+- **Train#** (e.g. `4736-105` — the Nomad-internal primary identifier)
 - **CCU IP** (e.g. `10.179.1.1`)
-- **Fzg ID** (from the PDF header, or computed via the shorthand above)
 
-If the user invoked this skill with an argument like `/dosto-vlan7-config 133` or `/dosto-vlan7-config 4736-105`, parse the Fzg ID from that. Otherwise ask: *"Which train? (Fzg ID or train#)"*.
+Fzg ID is derived: the skill runs `python scripts/fleet_status_lookup.py lookup <train#> --require-fzg` to get the Fzg from the fleet-status row. If that returns `fzg_unknown` (cell is `❓`), the skill halts with: *"Fzg ID for `<train#>` missing in fleet-status. Look it up in `train-ip-allocation-commission/<series>-xxx/<train#>/<train#>_IP-Port-Allocation.pdf` and populate the Fzg column."*
+
+If the user invoked this skill with an argument like `/dosto-vlan7-config 4736-105`, use that as the Train#. Engineers may also pass a bare Fzg integer (`/dosto-vlan7-config 133`) for ad-hoc checks — in that case treat Fzg as authoritative and skip the fleet-status lookup (useful for sanity-checking the math against a value you already know). When ambiguous, ask: *"Train# (e.g. 4736-105) or Fzg ID (e.g. 133)?"*.
 
 ### 1. Compute the expected IP
 

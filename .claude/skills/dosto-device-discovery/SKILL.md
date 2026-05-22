@@ -31,7 +31,7 @@ Subagents always pass `--json`. Engineers running interactively use `--check`.
 ## Inputs
 
 - **`<ccu-ip>`** — required. The CCU's IP (e.g. `10.179.10.1`).
-- **Fzg ID** — optional. If not given, infer from train-id template on CCU OR from the box1-tNN hostname (per fleet-status mapping). Used to determine which consist size and series to compare against.
+- **`<train#>`** — optional. The Nomad-internal primary identifier (e.g. `4736-104`). When given, the skill resolves Fzg + consist + series from the fleet-status row. When omitted, infer from `train-id` template on CCU OR from the box1-tNN hostname (per fleet-status reverse lookup by CCU IP).
 
 The skill reads the appropriate topology reference based on the consist:
 - `train-ip-allocation-commission/extracted/_shared/nv4-topology.md` for 4-car
@@ -178,8 +178,8 @@ installed and powered; check patch cable to D3 e1-2.
 
 This goes into:
 - **`approval_needed.rationale`** of the JSON report (subagent will set `status: NEEDS_APPROVAL`, `gate: device_count_mismatch` once that gate is added to the contract)
-- **An entry in [cable-issues-register.md](../../../cable-issues-register.md)** (engineer or orchestrator appends the row)
 - **The fleet-status row** (`aps` cell becomes `🔴 23/24 (D4 missing)`)
+- **`cable-issues-register.md`** — the orchestrator auto-appends a new row at Step 7.5 of `dosto-orchestrate` if no matching open entry exists. This skill never writes the register directly — it emits the `ap_missing[]` / `switches_missing[]` arrays in the JSON output so the orchestrator has the structured data it needs to do the append.
 
 ### Step 9: Three-way prompt (per [autonomy-boundary.md](../../contracts/autonomy-boundary.md))
 
@@ -254,7 +254,7 @@ JSON shape per [.claude/contracts/subagent-report.md](../../contracts/subagent-r
   "skill": "dosto-device-discovery",
   "mode": "check",
   "schema_version": "1",
-  "verdict": "missing_devices",
+  "verdict": "missing_aps",
   "raw": {
     "ccu_hostname": "box1-t10",
     "ccu_uptime_seconds": 8520,
@@ -291,14 +291,18 @@ JSON shape per [.claude/contracts/subagent-report.md](../../contracts/subagent-r
 - `all_present` — counts match expected for both switches and APs
 - `missing_aps` — APs short, switches OK (recoverable: partial path is safe)
 - `missing_switches` — switches short (severe: localise + escalate, do not proceed)
+- `missing_both` — APs AND switches short
 - `unexpected_extras` — more devices than expected (rare; stale leases from coupled consist?)
+
+**The "any device missing" predicate** (consumed by `dosto-commission-train` Stage 1 → Stage 2 routing): a train has missing devices iff `verdict in {"missing_aps", "missing_switches", "missing_both"}` OR `len(raw.ap_missing) > 0` OR `len(raw.switches_missing) > 0`. Belt-and-braces — check the structured arrays, not just the verdict string, in case a future verdict value gets added without an enum update. If ANY of these conditions hold, the caller MUST emit Gate 5 (`device_count_mismatch`) before any consist-wide push.
 
 ## What this skill deliberately does NOT do
 
 - ❌ Try to fix anything — discovery is read-only
 - ❌ Run consist-wide operations like `obn update c all` (doesn't have permission to)
 - ❌ Wait for Stadler — surfaces the issue and lets the orchestrator/human decide
-- ❌ Auto-edit fleet-status or cable register — emits the data, the orchestrator commits
+- ❌ Auto-edit fleet-status — emits the data, the orchestrator commits
+- ❌ Write cable-issues-register.md — emits structured `ap_missing[]` / `switches_missing[]` arrays; `dosto-orchestrate` Step 7.5 does the append
 - ❌ Trust LLDP for AP names (`AP1-v1-...` is the AP's own hostname; correlation to the *switch port hosting it* is via LLDP **on the switch**, not on the AP)
 
 ## Validated against

@@ -97,6 +97,9 @@ EMBEDDED_FILES_SCAFFOLD = [
     ("scripts/fix_bug1_regex.py", "python"),
     ("scripts/lldp_topology_check.py", "python"),
     ("scripts/validate_dosto_workspace.py", "python"),
+    # Shared fleet-status lookup helper — single source for Train#↔Fzg resolution
+    # (added 2026-05-22 with the Train#-primary schema reorder).
+    ("scripts/fleet_status_lookup.py", "python"),
     # Project constitution — must come AFTER skills/agents/contracts so its
     # cross-references are valid by the time it's written. (Order in the
     # bootstrap is order of `Write` operations, but Claude reads the whole file

@@ -23,14 +23,14 @@ Each of these had a documented "what to check" recipe scattered across SKILL.mds
 ## When to use
 
 - **Orchestrator stage 1 (`initial_diagnostics`)** — invoked as part of the pre-stage-1 inventory probe. Output feeds into the orchestrator's Pre-Flight assumptions.
-- **Manual session start** — engineer types `/dosto-state-inventory <ccu-ip> <fzg>` after SSH-ing to the CCU as a "did anything change since last time?" probe.
+- **Manual session start** — engineer types `/dosto-state-inventory <ccu-ip> <train#>` after SSH-ing to the CCU as a "did anything change since last time?" probe.
 - **Before approving any irreversible gate** — the orchestrator re-runs this check immediately before relaying an `approved` response to the subagent at Gate 1 (promote) or Gate 4 (firmware push). Catches drift between the engineer reading the gate prompt and pressing y.
 
 ## Inputs
 
 - `<ccu-ip>` — required. e.g. `10.179.10.1`.
-- `<fzg>` — required. The Fzg ID, used to compute expected vlan7 IP and template `train_id`.
-- `--expected <path>` — optional. Path to a per-train `expected.json` file. If absent, the skill computes expectations from `<fzg>` + the per-series formula (Fzg = train# +28 for 4736, -100 for 4734).
+- `<train#>` — required. e.g. `4736-104` (Nomad-internal primary identifier). The skill looks up Fzg from the fleet-status row via `python scripts/fleet_status_lookup.py lookup <train#> --require-fzg`. If the row's Fzg cell is `❓`, halts with: *"Fzg ID for `<train#>` missing in fleet-status — populate before running state-inventory."* Engineer may pass a bare Fzg integer as the second arg (`/dosto-state-inventory 10.179.10.1 132`) for ad-hoc checks; in that case skip the fleet-status lookup.
+- `--expected <path>` — optional. Path to a per-train `expected.json` file. If absent, the skill computes expectations from the resolved Fzg.
 - `--json` — optional. Machine-readable output (default). Engineer-readable with `--human`.
 
 ## What it inventories

@@ -26,7 +26,7 @@ The scanner runs in two tiers per cycle. Tier 1 is cheap (~10s per CCU candidate
 | `transition_offline` — train was reachable, unreachable now | Layer 2 is a no-op (no SSH possible); state-only update of `consecutive_unreachable_scans` in `auto-scan-state.json` |
 | `state_drift` — `dosto-state-inventory` aggregate verdict is `unexpected_drift` since last scan (TFTP helper, btrfs subvol, vlan7 IP, train_id template, NDSU rename) | Drift = something happened, full scan justified |
 | `forced_rescan_24h` — `last_full_diagnostic_utc` for this Fzg is > 24h old | Catches slow-developing CRC trends on otherwise-stable trains |
-| `engineer_force` — `--force-tier-2 <fzg>` flag passed | Manual override |
+| `engineer_force` — `--force-tier-2 <train#>` flag passed | Manual override |
 
 Steady-state on a fully-stable fleet: Tier 1 every cycle (cheap), Tier 2 once per train per day (24h trigger). On a busy commissioning day: Tier 2 fires per-transition (every train that just came online or drifted).
 
@@ -36,7 +36,7 @@ Steady-state on a fully-stable fleet: Tier 1 every cycle (cheap), Tier 2 once pe
 |---|---|---|
 | `--scan` (default) | Run one full Tier-1 + selective Tier-2 cycle. Update files per allowlist. Default invocation from Task Scheduler. | Scheduled cycles |
 | `--dry-run` | Run scan but write outputs to `*.auto-scan.preview` files instead of the real ones. Print a diff. No `auto-scan-state.json` mutation. | Validating before deploying the schedule |
-| `--force-tier-2 <fzg>` | Force Tier-2 for a specific Fzg this cycle even if no trigger fires. Comma-separated for multiple. | Manual investigation |
+| `--force-tier-2 <train#>` | Force Tier-2 for a specific Train# this cycle even if no trigger fires. Comma-separated for multiple. | Manual investigation |
 | `--status` | Read-only: print summary of last cycle (reachable count, active signals, last `transition_*` events). No probes, no writes. | Engineer eyeballing scanner state |
 | `--bootstrap-confluence-cables` | One-time: create the cable-register Confluence page via `createConfluencePage`, store the returned page ID in `.claude/state/confluence-pages.json`, exit. | First-time setup before any cable-register sync push |
 
@@ -149,16 +149,16 @@ Full ownership. Schema per [auto-scanner-boundary.md](../../contracts/auto-scann
 For each candidate CCU IP (known + new from sweep):
 
 1. **Reachability:** TCP `nc -zv -w 5 <ip> 22`. Pass = port open within 5s. Fail = unreachable. ~5s wall time per CCU.
-2. **State inventory** (only if reachability passed): `/dosto-state-inventory <ccu-ip> <fzg> --json`. Returns the 12-fact verdict. ~5s wall time.
+2. **State inventory** (only if reachability passed): `/dosto-state-inventory <ccu-ip> <train#> --json`. Returns the 12-fact verdict. ~5s wall time. The state-inventory skill internally resolves Fzg from the fleet-status row.
 
-If `<fzg>` is not yet known for a discovered CCU IP, the scanner does **not** invoke state-inventory (it requires fzg). The CCU is logged as `unknown_fzg_at_ip: <ip>` in `auto-scan-state.json` and surfaced for engineer triage. Map a Fzg by hand-editing the row in `fleet-status.md`; next cycle picks it up.
+If `<train#>` is not yet known for a discovered CCU IP, the scanner does **not** invoke state-inventory (it requires Train#). The CCU is logged as `unknown_train_at_ip: <ip>` in `auto-scan-state.json` and surfaced for engineer triage. Map a Train# by hand-editing the row in `fleet-status.md`; next cycle picks it up. If the row's Fzg cell is still `❓`, state-inventory will halt at its own Fzg-lookup step until the engineer populates it.
 
 ## Tier-2 detail — what gets diagnosed
 
 For each train where Tier-2 fires:
 
 1. **`/dosto-device-discovery <ccu-ip> --json`** — counts switches/APs vs. expected. Output includes per-missing-device localisation (last LLDP neighbour port).
-2. **`scripts/lldp_topology_check.py --ccu-ip <ip> --fzg <NN> --json`** — verifies inter-coach trunk peers match expected OBNTree topology.
+2. **`scripts/lldp_topology_check.py --ccu-ip <ip> --train-number <NNNN-NNN> --json`** — verifies inter-coach trunk peers match expected OBNTree topology. (Script resolves Fzg from fleet-status row.)
 3. **`/dosto-l2-health <ccu-ip> --stadler-trunks-only --json`** — RX CRC, carrier-false, link-down on Stadler-facing trunks (A3 e1-4, D1/D3 e0-2/e0-3, B1/B3 e1-11). The full L2 sweep takes longer; `--stadler-trunks-only` (skill flag to add — see "Skill changes needed" below) is the cheap subset.
 
 Each skill is invoked with `--json` and the parsed output feeds the signal-classification logic.

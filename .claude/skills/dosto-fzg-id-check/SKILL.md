@@ -108,14 +108,18 @@ The engineer doesn't pass a `--variant` flag.
 
 You need:
 
+- **Train#** (e.g. `4736-104` — the Nomad-internal primary identifier)
 - **CCU IP** (e.g. `10.179.10.1`)
-- **Fzg ID** (from the IP-Port-Allocation PDF header, or computed via the shorthand below)
 
-If the user invoked this skill with an argument like `/dosto-fzg-id-check 132` or `/dosto-fzg-id-check 4736-104`, parse the Fzg ID from that. Otherwise ask: *"Which train? (Fzg ID or train#)"*.
+Fzg ID is derived from the fleet-status row via `python scripts/fleet_status_lookup.py lookup <train#> --require-fzg`. If the row's Fzg cell is `❓`, halt with: *"Fzg ID for `<train#>` missing in fleet-status — populate the Fzg column (from `train-ip-allocation-commission/<series>-xxx/<train#>/<train#>_IP-Port-Allocation.pdf` or physical inspection) before checking templates."*
 
-**Series → Fzg shorthand** (PDF header is source of truth):
+Engineer may also pass a bare Fzg integer (`/dosto-fzg-id-check 132`) for ad-hoc work — in that case treat Fzg as authoritative and skip the fleet-status lookup.
+
+**Series → Fzg shorthand** (reference only; runtime Fzg comes from fleet-status, not the formula):
 - `4734-NNN → Fzg = NNN - 100`
 - `4736-NNN → Fzg = NNN + 28`
+- `4705-NNN → Fzg = NNN + 128`
+- `4706-NNN → Fzg = NNN + 88`
 
 ### 1. Compute the expected hardcoded value
 

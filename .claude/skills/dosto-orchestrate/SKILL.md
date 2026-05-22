@@ -1,6 +1,6 @@
 ---
 name: dosto-orchestrate
-description: Run a fleet-day commissioning orchestration inline in the engineer's top-level session. Use when starting a multi-train commissioning day, when the engineer says "/dosto-orchestrate fzg=...", or when fanning out commissioning across two or more trains in parallel. Engineer invokes this skill with a list of trains; the skill validates each train against fleet-status.md and the per-series Fzg formulas, emits an input-validation pre-flight block, runs a network-level pre-flight diagnostic (CCU reachability + full expected device count via dosto-device-discovery, in parallel across trains, gated on a single consolidated engineer prompt), then runs the orchestration in-line in the engineer's session — spawning N parallel dosto-train-worker subagents for the trains that passed pre-flight, surfacing approval gates one at a time, batching fleet-status writes per cycle, and pushing Confluence on gates/terminals/digests. The engineer's top-level session IS the orchestrator (per audit finding F5, 2026-05-11 — the platform doesn't allow agents-spawning-agents, so the skill became inline instead of bootstrapping a separate orchestrator agent).
+description: Run a fleet-day commissioning orchestration inline in the engineer's top-level session. Use when starting a multi-train commissioning day, when the engineer says "/dosto-orchestrate trains=...", or when fanning out commissioning across two or more trains in parallel. Engineer invokes this skill with a list of Train# values (the Nomad-internal primary identifier, e.g. 4736-104); the skill resolves each row in fleet-status.md (Fzg ID is looked up from the row, not computed from a formula), emits an input-validation pre-flight block, runs a network-level pre-flight diagnostic (CCU reachability + full expected device count via dosto-device-discovery, in parallel across trains, gated on a single consolidated engineer prompt), then runs the orchestration in-line in the engineer's session — spawning N parallel dosto-train-worker subagents for the trains that passed pre-flight, surfacing approval gates one at a time, batching fleet-status writes per cycle, and pushing Confluence on gates/terminals/digests. The engineer's top-level session IS the orchestrator (per audit finding F5, 2026-05-11 — the platform doesn't allow agents-spawning-agents, so the skill became inline instead of bootstrapping a separate orchestrator agent).
 ---
 
 # DOSTO Orchestrate
@@ -17,27 +17,29 @@ This skill is the engineer's entry point for a multi-train commissioning day. It
 
 ## Inputs
 
-The skill accepts a flexible argument string. CCU IPs can be supplied with `@<ip>` or omitted — when omitted, the skill auto-resolves from `fleet-status.md` with a one-line confirmation per train. Common forms:
+The skill accepts a flexible argument string. Train# (the Nomad-internal primary identifier) is the only required value; CCU IPs can be supplied with `@<ip>` or omitted — when omitted, the skill auto-resolves from `fleet-status.md` with a one-line confirmation per train. Common forms:
 
 ```
-/dosto-orchestrate fzg=139,147,148,19,21                                # auto-resolve IPs from fleet-status
-/dosto-orchestrate fzg=130@10.179.47.1,132@10.179.10.1,148@10.179.2.1   # explicit IPs (typo-catch mode)
-/dosto-orchestrate fzg=139,147@10.179.12.1                              # mixed: 139 auto-resolved, 147 explicit
-/dosto-orchestrate trains=4736-102,4736-104                             # train numbers, IPs auto-resolved
-/dosto-orchestrate fzg=130,132 dry-run
-/dosto-orchestrate fzg=130,132 cycle=3
+/dosto-orchestrate trains=4736-111,4736-119,4736-120,4734-119,4734-121     # auto-resolve IPs from fleet-status
+/dosto-orchestrate trains=4736-102@10.179.47.1,4736-104@10.179.10.1        # explicit IPs (typo-catch mode)
+/dosto-orchestrate trains=4736-111,4736-119@10.179.12.1                    # mixed: first auto-resolved, second explicit
+/dosto-orchestrate trains=4736-102,4736-104 dry-run
+/dosto-orchestrate trains=4736-102,4736-104 cycle=3
 ```
 
 Recognised tokens:
 
 | Token | Meaning |
 |---|---|
-| `fzg=NN[@<ip>]` or `fzg=NN[@<ip>],NN[@<ip>],...` | Fzg ID list. `@<ip>` is optional — when omitted the skill looks up the CCU IP from `fleet-status.md` and emits a one-line confirmation (Case E in Step 2). The skill resolves `train_number` and `consist` from the file. |
-| `trains=NNN[@<ip>],...` or `trains=4736-102[@<ip>],...` | Alternative form: train numbers + optional CCU IPs. Skill computes Fzg via per-series formula. |
+| `trains=<train#>[@<ip>]` or `trains=<train#>[@<ip>],<train#>[@<ip>],...` | **Train# list** (Nomad-internal primary identifier, e.g. `4736-104`, `4734-119`, `4705-103`, `4706-101`). `@<ip>` is optional — when omitted the skill looks up the CCU IP from `fleet-status.md` and emits a one-line confirmation (Case E in Step 2). The skill resolves `fzg` and `consist` from the fleet-status row for each Train#. |
 | `dry-run` | Pass `--dry-run` to all subagents. Read-only; every per-device skill runs in `--prepare` mode. |
 | `cycle=N` | Override default 5-min digest cadence. Range 1-30 (clamped). |
 | `no-confluence` | Skip Confluence pushes for this run (rare — local-only mode). |
 | `engineer=NAME` | Override the auto-detected engineer name. Used in fleet-status `Last touched` and Confluence banner. |
+
+**Why Train# is the primary identifier:** Train# (e.g. `4736-104`) is the Nomad-internal name engineers use day-to-day. Fzg ID is the ÖBB customer-facing number that maps to a Train# via the per-series formula, but pre-commissioning the rendered Fzg in switch hostnames and config templates is often wrong (misimaged CCUs, stale Puppet images, hand-set values) — that's literally what commissioning fixes. Routing by Train# means the orchestrator and workers never trust a "Fzg" value pulled from a CCU as authoritative; the authoritative Fzg comes from the fleet-status row, which the engineer curates.
+
+**The retired `fzg=` form:** earlier versions of this skill accepted `fzg=132,133,148` syntax. As of the 2026-05-22 Train#-primary schema reorder, that form is **no longer supported**. The skill errors out with a usage hint pointing to the equivalent `trains=...` form: `Usage: trains=<train#>[,<train#>...] — fzg= form retired 2026-05-22.`
 
 **Why `@<ip>` remains supported as opt-in:** trains move in and out of service, CCUs get re-imaged, and stale `fleet-status.md` rows have caused incorrect-target outages in past sessions. The explicit-IP form is the typo-catch / drift-catch mode — use it when you've just re-imaged a CCU or when you're not confident fleet-status is current. The auto-resolve form (no `@<ip>`) is the common case for a returning engineer whose fleet-status rows are already filed correctly; Case E below adds a per-train confirmation that keeps the same safety property with far less typing.
 
@@ -45,35 +47,40 @@ Recognised tokens:
 
 ### Step 1 — Parse and normalise the train list
 
-Tokenise the argument string. Each `fzg=` / `trains=` token MAY include `@<ip>` (explicit IP) or omit it (auto-resolve from fleet-status in Step 2 Case E). When `@<ip>` is present, validate it's a syntactically valid IPv4 address (four dotted octets, each 0-255). Reject malformed IPs at parse time — don't wait until reconciliation.
+Tokenise the argument string. Only the `trains=` form is supported (as of 2026-05-22 — see Inputs section). If the engineer typed `fzg=`, halt immediately with `ERROR: fzg= form retired 2026-05-22; use trains=<train#>[,<train#>...] instead.`
 
-For `trains=` form, compute the Fzg via per-series formula:
+Each `trains=<train#>` token MAY include `@<ip>` (explicit IP) or omit it (auto-resolve from fleet-status in Step 2 Case E). When `@<ip>` is present, validate it's a syntactically valid IPv4 address (four dotted octets, each 0-255). Reject malformed IPs at parse time — don't wait until reconciliation.
 
-| Series | Formula |
-|---|---|
-| 4734-NNN | `Fzg = NNN - 100` |
-| 4736-NNN | `Fzg = NNN + 28` |
+Validate each Train# matches a known series pattern:
 
-Reject any train number that doesn't match these series (4705 / 4706 are out of scope per CLAUDE.md).
+| Series | Pattern | Formula (reference only — runtime Fzg comes from fleet-status row) |
+|---|---|---|
+| 4734-NNN | `^4734-\d{3}$` | `Fzg = NNN - 100`  (e.g. 4734-119 → Fzg 19) |
+| 4736-NNN | `^4736-\d{3}$` | `Fzg = NNN + 28`   (e.g. 4736-104 → Fzg 132) |
+| 4705-NNN | `^4705-\d{3}$` | `Fzg = NNN + 128`  (e.g. 4705-103 → Fzg 231) |
+| 4706-NNN | `^4706-\d{3}$` | `Fzg = NNN + 88`   (e.g. 4706-103 → Fzg 191) |
 
-If the engineer supplied both `fzg=` and `trains=`, validate they agree on **both** Fzg and (where both are explicit) IP per train. Mismatches halt the skill — typo guard.
+Reject any train number that doesn't match one of these four series.
 
-The result of this step is a list of `(fzg, supplied_ip_or_none)` tuples. Step 2 reconciles them with `fleet-status.md`.
+The result of this step is a list of `(train_number, supplied_ip_or_none)` tuples. Step 2 reconciles them with `fleet-status.md` and resolves the Fzg ID per train from the row (NOT from the formula — see [`scripts/fleet_status_lookup.py`](../../../scripts/fleet_status_lookup.py)).
 
-### Step 2 — Reconcile each (Fzg, IP) against `fleet-status.md`
+### Step 2 — Reconcile each (Train#, IP) against `fleet-status.md`
 
-This is the IP-reconciliation pass. For each `(fzg, supplied_ip_or_none)`:
+This is the IP-and-Fzg reconciliation pass. For each `(train_number, supplied_ip_or_none)`:
 
-1. Look up the Fzg row in `fleet-status.md`.
-2. **If `supplied_ip` is None** (engineer omitted `@<ip>`), branch to Case E first.
-3. Otherwise, branch on what's there (Cases A-D).
+1. Look up the Train# row in `fleet-status.md` (via `scripts/fleet_status_lookup.py lookup <train#> --require-fzg`).
+2. If the row exists and the Fzg cell is `❓`, halt: `ERROR: <train#> has no Fzg ID in fleet-status — populate the Fzg column (look up via train-ip-allocation-commission/<series>-xxx/<train#>/<train#>_IP-Port-Allocation.pdf header) before commissioning.`
+3. **If `supplied_ip` is None** (engineer omitted `@<ip>`), branch to Case E first.
+4. Otherwise, branch on what's there (Cases A-D).
+
+The resolved Fzg from this step is stored alongside each train tuple and passed downstream to the worker spawn prompts AS A POINTER (the worker re-looks-it-up from fleet-status to verify), but the orchestrator's own log entries, fleet-status writes, and Confluence pushes all key off Train# (primary identifier).
 
 **Case A — Row exists, CCU IP recorded, matches `supplied_ip`:** ✅ Proceed silently. Track `ip_source = "fleet-status (matched)"` for the plan summary.
 
 **Case B — Row exists, CCU IP recorded, disagrees with `supplied_ip`:** ⚠️ Stop and prompt the engineer interactively:
 
 ```
-⚠️ Fzg <NN> CCU IP mismatch.
+⚠️ <train#> (Fzg <NN>) CCU IP mismatch.
    fleet-status.md:  <fleet_ip>     (last touched: <YYYY-MM-DD AR>)
    You supplied:     <supplied_ip>
 
@@ -94,40 +101,41 @@ Choice [f/s/a]:
 
 **Case C — Row exists but `CCU IP` is `❓`:** auto-fill silently. Edit the row in `fleet-status.md` to set `CCU IP = <supplied_ip>`. Mark `ip_source = "supplied (filled in fleet-status)"`. Print a one-line confirmation in the plan summary so the engineer sees what was filled.
 
-**Case D — No row exists for this Fzg:** ⚠️ Stop and prompt the engineer interactively:
+**Case D — No row exists for this Train#:** ⚠️ Stop and prompt the engineer interactively:
 
 ```
-⚠️ Fzg <NN> has no row in fleet-status.md.
-   Train#:     <train_number>   (computed from per-series formula)
+⚠️ <train#> has no row in fleet-status.md.
+   Train#:     <train_number>   (engineer input)
+   Series:     <4734 / 4736 / 4705 / 4706>    (consist: <4-car / 6-car / 4705 / 4706>)
    CCU IP:     <supplied_ip>    (your input)
-   Series:     <4734 / 4736>    (consist: <4-car / 6-car>)
+   Fzg ID:     ❓ (you'll need to provide this — physical inspection or IP-Port-Allocation PDF)
 
 Options:
   [c] Create a fresh row in fleet-status.md and proceed
-       (Status: NOT STARTED, all v8 columns ⬜/❓ except CCU IP)
+       (Status: NOT STARTED, all v8 columns ⬜/❓ except CCU IP; Fzg ❓ until you supply)
   [a] Abort the whole day's plan
 
 Choice [c/a]:
 ```
 
-- `c` → append a new row to the appropriate series section (4736 or 4734), populate Fzg, Train#, CCU IP, set Status=`NOT STARTED`, all other columns = `⬜` or `❓` per the legend, set `Last touched = <today> <engineer initials>`. Mark `ip_source = "supplied (new row created)"`. Then proceed.
+- `c` → append a new row to the appropriate series section (4736, 4734, 4706, or 4705), populate Train#, leave Fzg as `❓` (engineer fills via PDF lookup before any destructive ops), populate CCU IP, set Status=`NOT STARTED`, all other columns = `⬜` or `❓` per the legend, set `Last touched = <today> <engineer initials>`. Mark `ip_source = "supplied (new row created)"`. Then proceed to Step 5.5 — the worker spawn will halt at its own Fzg lookup if the engineer hasn't backfilled by then. Encourage the engineer to populate Fzg before reaching Stage 4 (apply_train_id_fix), which needs it.
 - `a` → exit cleanly.
 
 **Case E — Engineer omitted `@<ip>`, auto-resolve from fleet-status:**
 
 | Fleet-status state | Action |
 |---|---|
-| Row exists with non-`❓` CCU IP | Use that IP. Emit one-line confirmation: `ℹ️  Fzg <NN>: using IP <fleet_ip> from fleet-status (no @<ip> supplied) — correct? [Y/n]` Default Y. Engineer types `n` → halt with usage error asking for explicit `@<ip>`. Mark `ip_source = "fleet-status (auto-resolved)"`. |
-| Row exists with `❓` CCU IP | Halt: `ERROR: Fzg <NN> has no IP recorded in fleet-status — supply explicitly with fzg=<NN>@<ip>`. Cannot proceed without an IP. |
-| No row exists for this Fzg | Halt: `ERROR: Fzg <NN> has no row in fleet-status — supply IP explicitly with fzg=<NN>@<ip> to create the row.` (Drops the engineer into Case D's `[c]/[a]` prompt on retry.) |
+| Row exists with non-`❓` CCU IP | Use that IP. Emit one-line confirmation: `ℹ️  <train#> (Fzg <NN>): using IP <fleet_ip> from fleet-status (no @<ip> supplied) — correct? [Y/n]` Default Y. Engineer types `n` → halt with usage error asking for explicit `@<ip>`. Mark `ip_source = "fleet-status (auto-resolved)"`. |
+| Row exists with `❓` CCU IP | Halt: `ERROR: <train#> has no IP recorded in fleet-status — supply explicitly with trains=<train#>@<ip>`. Cannot proceed without an IP. |
+| No row exists for this Train# | Halt: `ERROR: <train#> has no row in fleet-status — supply IP explicitly with trains=<train#>@<ip> to create the row.` (Drops the engineer into Case D's `[c]/[a]` prompt on retry.) |
 
 When multiple trains need confirmation, batch the prompt into a single block:
 
 ```
 ℹ️  Auto-resolved IPs from fleet-status:
-    Fzg 139 → 10.179.24.1   (last touched 2026-05-21 AR)
-    Fzg 147 → 10.179.12.1   (last touched 2026-05-21 AR)
-    Fzg 19  → 10.179.45.1   (last touched 2026-05-21 AR)
+    4736-111 (Fzg 139) → 10.179.24.1   (last touched 2026-05-21 AR)
+    4736-119 (Fzg 147) → 10.179.12.1   (last touched 2026-05-21 AR)
+    4734-119 (Fzg 19)  → 10.179.45.1   (last touched 2026-05-21 AR)
 Proceed with these? [Y/n]:
 ```
 
@@ -137,10 +145,10 @@ Default Y. Engineer types `n` → halt and ask for explicit `@<ip>` on next invo
 
 | Field | Source |
 |---|---|
-| `fzg` | from input |
-| `train_number` | from `fleet-status.md` row (now guaranteed to exist) |
+| `train_number` | from input (primary identifier) |
+| `fzg` | from `fleet-status.md` row's Fzg cell (looked up by Train#). If `❓`, the reconcile loop halted earlier — never reach this step with unknown Fzg. |
 | `ccu_ip` | from reconciled value (Case A/B/C/D logic above) |
-| `consist` | infer from series — `nv6 → 6-car`, `nv4 → 4-car` |
+| `consist` | infer from series — `nv6 → 6-car`, `nv4 → 4-car`, 4705/4706 series consist is documented per train |
 | `ip_source` | tracked per case above, used in Step 4 plan summary |
 
 **Status: DONE** trains get a context-aware prompt — read the train's `Next action` column from fleet-status first, then branch:
@@ -148,7 +156,7 @@ Default Y. Engineer types `n` → halt and ask for explicit `@<ip>` on next invo
 **Sub-case DONE-1 — Other outstanding items** (Next action contains anything substantive — e.g. "wait for Stadler", "verify .231"):
 
 ```
-⚠️ Fzg <NN> is DONE but has outstanding work: <next_action_text>
+⚠️ <train#> (Fzg <NN>) is DONE but has outstanding work: <next_action_text>
    Including will re-validate state via the full 19-stage pipeline.
 
 Options:
@@ -162,7 +170,7 @@ Choice [s/i/a]:
 **Sub-case DONE-2 — No outstanding work** (Next action is empty or `—`):
 
 ```
-⚠️ Fzg <NN> is already DONE with no outstanding work in fleet-status.
+⚠️ <train#> (Fzg <NN>) is already DONE with no outstanding work in fleet-status.
    Including would re-run all 19 stages on a healthy train.
 
 Options:
@@ -181,20 +189,20 @@ Default for DONE-2 and DONE-3 is `s`.
 
 ```
 ⚠️ IP conflict — <ip> appears in multiple places:
-    Fzg <X> (current resolve, at-a-glance row)
-    Fzg <Y> detail block header
+    <train#-X> (current resolve, at-a-glance row)
+    <train#-Y> detail block header
 Confirm which train owns this IP before proceeding.
-  [x] Use Fzg <X>, treat Fzg <Y> detail block as stale (engineer cleans up later)
-  [y] Use Fzg <Y> instead (re-prompt at Step 2 for Fzg <X>)
+  [x] Use <train#-X>, treat <train#-Y> detail block as stale (engineer cleans up later)
+  [y] Use <train#-Y> instead (re-prompt at Step 2 for <train#-X>)
   [a] Abort
 ```
 
-This catches reconciliation drift between at-a-glance rows and detail blocks at reconcile time, not after a worker has been spawned. Confirmed engineer-visible during 2026-05-21 (`10.179.12.1` listed for both Fzg 140 detail block and Fzg 147 at-a-glance row).
+This catches reconciliation drift between at-a-glance rows and detail blocks at reconcile time, not after a worker has been spawned. Confirmed engineer-visible during 2026-05-21 (`10.179.12.1` listed for both 4736-112 (Fzg 140) detail block and 4736-119 (Fzg 147) at-a-glance row).
 
 **Pending-section cleanup** (post-reconcile, after each train's IP is confirmed): check the `## Pending Fzg assignment` section. If the resolved `ccu_ip` appears in that table, remove that row from Pending (surgical: delete only that one row, preserve all others). Print a one-line note:
 
 ```
-ℹ️  Removed 10.179.45.1 from Pending Fzg assignment section (now confirmed to Fzg 19).
+ℹ️  Removed 10.179.45.1 from Pending Fzg assignment section (now confirmed to 4734-119 / Fzg 19).
 ```
 
 This is housekeeping for the morning-brief discovery sweep — once an IP is confirmed assigned, the Pending row is stale.
@@ -204,9 +212,9 @@ This is housekeeping for the morning-brief discovery sweep — once an IP is con
 ```json
 {
   "trains": [
-    {"fzg": 130, "train_number": "4736-102", "ccu_ip": "10.179.47.1", "consist": "6-car"},
-    {"fzg": 132, "train_number": "4736-104", "ccu_ip": "10.179.10.1", "consist": "6-car"},
-    {"fzg": 148, "train_number": "4736-120", "ccu_ip": "10.179.2.1", "consist": "6-car"}
+    {"train_number": "4736-102", "fzg": 130, "ccu_ip": "10.179.47.1", "consist": "6-car"},
+    {"train_number": "4736-104", "fzg": 132, "ccu_ip": "10.179.10.1", "consist": "6-car"},
+    {"train_number": "4736-120", "fzg": 148, "ccu_ip": "10.179.2.1", "consist": "6-car"}
   ],
   "engineer_name": "Abbas Rizvi",
   "dry_run": false,
@@ -221,9 +229,17 @@ Engineer name resolution order:
 3. `$USER` / `$USERNAME` env var
 4. Fallback: `"unknown"`
 
+### Step 3.5 — Read cable-issues-register.md for each train in the plan
+
+Before printing the plan, grep `cable-issues-register.md` for each resolved Train# (and its Fzg). For each match, extract any rows whose `Status` is `🔴 OPEN`.
+
+Store this as `cable_issues[train_number] = [list of open issue summaries]`.
+
+This is a **read-only** step — the register is never written here. Writes happen in Step 7.5 (new fault detection) and via `dosto-device-discovery` output.
+
 ### Step 4 — Print the plan and confirm
 
-Show the engineer a summary before spawning anything:
+Show the engineer a summary before spawning anything. For each train, include any open cable-register issues inline so the engineer sees the full picture before approving dispatch:
 
 ```
 ─── DOSTO Orchestrate — fleet day plan ─────────────
@@ -233,18 +249,21 @@ Dry run:     no
 Confluence:  push enabled (page 5410684933)
 
 Trains to commission (3 — all in parallel):
-  • Fzg 130 / 4736-102 / 10.179.47.1 / 6-car
+  • 4736-102 / Fzg 130 / 10.179.47.1 / 6-car
     IP source:     fleet-status (matched)
     Current state: PAUSED — apply patches + persist + fix train_id template + fix vlan7 — see notes
     Last touched:  2026-05-09 AR
-  • Fzg 132 / 4736-104 / 10.179.10.1 / 6-car
+    Cable issues:  none on file
+  • 4736-104 / Fzg 132 / 10.179.10.1 / 6-car
     IP source:     supplied (fleet-status updated — was 10.179.10.99)
     Current state: BLOCKED w/ Stadler (D4) + 6 APs stuck — push remaining 3 APs (.237 .238 .240), verify .231
     Last touched:  2026-05-09 AR
-  • Fzg 148 / 4736-120 / 10.179.2.1 / 6-car
+    Cable issues:  🔴 #5 — D3 e1-2 physical-layer fault (D4 AP missing)
+  • 4736-120 / Fzg 148 / 10.179.2.1 / 6-car
     IP source:     supplied (filled in fleet-status — was ❓)
     Current state: PAUSED — sudo obn discover && sudo obn update c all
     Last touched:  2026-05-04 AR
+    Cable issues:  none on file
 
 This session will then:
   1. Spawn one dosto-train-worker subagent per train (N parallel) via Agent
@@ -269,15 +288,21 @@ Dry run:     no
 Confluence:  push enabled (page 5410684933)
 
 Trains to commission (3):
-  • Fzg 130 / 4736-102 / 10.179.47.1 / 6-car
+  • 4736-102 / Fzg 130 / 10.179.47.1 / 6-car
     Current state: PAUSED — apply patches + persist + fix train_id template + fix vlan7
-  • Fzg 132 / 4736-104 / 10.179.10.1 / 6-car
+  • 4736-104 / Fzg 132 / 10.179.10.1 / 6-car
     Current state: BLOCKED w/ Stadler — 6 APs stuck (.237 .240 .238 .231 .230 .226)
-  • Fzg 148 / 4736-120 / 10.179.2.1 / 6-car
+  • 4736-120 / Fzg 148 / 10.179.2.1 / 6-car
     Current state: PAUSED — sudo obn discover && sudo obn update c all
+
+▼ Known cable issues (from cable-issues-register.md):
+  4736-102 (Fzg 130): none on file
+  4736-104 (Fzg 132): 🔴 #5 — D3 e1-2 PHY fault — D4 AP missing (OPEN)
+  4736-120 (Fzg 148): none on file
 
 ▼ Assumptions (specific, disprovable):
   • fleet-status.md rows are current as of last engineer save
+  • cable-issues-register.md is current as of last Stadler contact
   • Each CCU is reachable via the project key at the IPs listed above
   • The Atlassian Confluence MCP connector is configured and working
   • The TFTP CT helper runtime fix (if previously applied) does NOT survive
@@ -290,7 +315,7 @@ Trains to commission (3):
   ordering. Each subagent runs the canonical 19-stage pipeline.
 
 ▼ Per-train success criteria (will be checked at end of day):
-  Fzg 130: 8/8 OBN persisted, train_id=130 hardcoded, vlan7=172.19.193.2,
+  4736-102 (Fzg 130): 8/8 OBN persisted, train_id=130 hardcoded, vlan7=172.19.193.2,
            all switches/APs at target, customer report on disk
   ... (one block per train, derived from fleet-status + per-train goals)
 
@@ -344,7 +369,7 @@ After Step 5's text pre-flight is approved, run a **real network-level diagnosti
 | `reachable: true` AND ≥1 switch missing OR ≥3 APs missing (≥20% absent) | 🔴 HARD-FAIL |
 | CCU unreachable on TCP/22 | 🔴 HARD-FAIL |
 
-Soft-warn is for plausible-timing shortfalls (AP mid-reboot, DHCP not yet renewed). Hard-FAIL is for genuinely-can't-proceed states (cable fault, CCU offline, coach powered off). The distinction was added 2026-05-21 after Fzg 147 (1 AP missing) and Fzg 148 (1 sw + 2 APs absent) were over-classified as FAIL alongside genuine unreachables.
+Soft-warn is for plausible-timing shortfalls (AP mid-reboot, DHCP not yet renewed). Hard-FAIL is for genuinely-can't-proceed states (cable fault, CCU offline, coach powered off). The distinction was added 2026-05-21 after 4736-119 (Fzg 147, 1 AP missing) and 4736-120 (Fzg 148, 1 sw + 2 APs absent) were over-classified as FAIL alongside genuine unreachables.
 
 3. **Pre-stage fix scripts on every reachable CCU** (Enhancement #8/#12 — workers cannot SCP). For each train classified PASS or SOFT-WARN, in parallel:
    ```bash
@@ -362,16 +387,16 @@ Soft-warn is for plausible-timing shortfalls (AP mid-reboot, DHCP not yet renewe
 ```
 ─── Network Pre-Flight Results ──────────────────
 Trains passing pre-flight (N):
-  ✅ Fzg 143 / 4736-115 / 10.179.18.1 — 18/18 sw + 24/24 AP visible — scripts staged
-  ✅ Fzg 144 / 4736-116 / 10.179.16.1 — 18/18 sw + 24/24 AP visible — scripts staged
+  ✅ 4736-115 / Fzg 143 / 10.179.18.1 — 18/18 sw + 24/24 AP visible — scripts staged
+  ✅ 4736-116 / Fzg 144 / 10.179.16.1 — 18/18 sw + 24/24 AP visible — scripts staged
 
 Soft-warn (will dispatch with note — Gate 5 may fire in Stage 2 if count doesn't improve):
-  🟡 Fzg 147 / 4736-119 / 10.179.12.1 — 18/18 sw + 23/24 AP — 1 AP plausibly mid-reboot — scripts staged
-  🟡 Fzg 148 / 4736-120 / 10.179.2.1 — 17/18 sw + 22/24 AP — E3 coach + 2 APs absent — scripts staged
+  🟡 4736-119 / Fzg 147 / 10.179.12.1 — 18/18 sw + 23/24 AP — 1 AP plausibly mid-reboot — scripts staged
+  🟡 4736-120 / Fzg 148 / 10.179.2.1 — 17/18 sw + 22/24 AP — E3 coach + 2 APs absent — scripts staged
 
 Hard-FAIL (will NOT dispatch):
-  🔴 Fzg 132 / 4736-104 / 10.179.10.1 — 18/18 sw + 21/24 AP — 3 APs missing (>20% threshold)
-  🔴 Fzg 9   / 4734-109 / 10.179.38.1 — UNREACHABLE on TCP/22
+  🔴 4736-104 / Fzg 132 / 10.179.10.1 — 18/18 sw + 21/24 AP — 3 APs missing (>20% threshold)
+  🔴 4734-109 / Fzg 9   / 10.179.38.1 — UNREACHABLE on TCP/22
 ```
 
 5. **Engineer prompt** — only when ≥1 hard-FAIL exists. Soft-warn alone dispatches automatically:
@@ -397,16 +422,87 @@ Hard-FAIL trains stay in fleet-status as-is.
 
 **Logging:** append a JSON line per pre-flight run to `.claude/logs/orchestrate-preflight.jsonl` — `{cycle_id, run_at, trains: [{fzg, ccu_ip, reachable, switches: "n/m", aps: "n/m", verdict: "PASS|SOFT_WARN|HARD_FAIL", failure_reason, scripts_staged}]}` — useful for diagnosing recurring failures (same train fails pre-flight 3 days in a row → escalate).
 
-### Step 6 — Spawn all train-worker subagents in parallel
+### Step 6 — Claim trains in fleet-status, then spawn workers
+
+#### Step 6.0 — Concurrency check (claim-already-held detection)
+
+**Before spawning any worker**, re-read `fleet-status.md` row for each train in the dispatch set. If the row's `Nomad status` cell currently parses as an in-flight claim (via `scripts/fleet_status_lookup.py parse_in_flight()`) AND the claim's heartbeat age is `< 30 min` (per the stale-claim threshold), the train is **already claimed by another session**. Halt the dispatch for that train with:
+
+```
+⚠️  4736-104 (Fzg 132) is already claimed by another orchestrator session.
+    Current claim: stage push_switch_config (3/18), hb 2026-05-22T14:32Z (4 min ago), sess 1428Z
+    Options for this train:
+      [s] Skip this train (other session keeps working it)
+      [r] Force-reclaim (assumes other session is dead; flips claim to this session)
+      [a] Abort the whole dispatch
+    Choice [s/r/a]:
+```
+
+- `s` (default for stale-but-fresh claims) → drop this train from the dispatch set; continue with the rest.
+- `r` → overwrite the claim with this session's. Use only when you're certain the other session is dead (e.g. you crashed it).
+- `a` → exit cleanly with no dispatch and no claims written.
+
+If the heartbeat age is `≥ 30 min`, the claim is **stale** — the previous session likely died. Auto-emit a one-line warning (`ℹ️  4736-104: reclaiming stale claim from sess 1428Z, last heartbeat 47 min ago`) and proceed with the dispatch. No engineer prompt needed for stale claims (the morning-brief stale-claim gate is the engineer-facing surface for these; the orchestrator at dispatch time just reclaims).
+
+#### Step 6.1 — Write the initial claim to fleet-status
+
+For each train surviving Step 6.0, write the in-flight claim to its `Nomad status` cell using `format_in_flight()` from the lookup helper:
+
+```python
+from scripts.fleet_status_lookup import format_in_flight
+claim = format_in_flight(
+    stage='initial_diagnostics',
+    step=None, total=None,
+    elapsed_seconds=0,
+    heartbeat_iso=utcnow_iso(),
+    session_id=cycle_id_short(),   # last 4 chars of cycle_id, e.g. '1212Z'
+)
+# Write to the row's Nomad status cell via the orchestrator's standard
+# fleet-status writer (surgical, only the cells it owns — see "Fleet-status
+# writer" section below).
+```
+
+This is the at-a-glance signal for any other engineer / session reading fleet-status: "this train is being worked on right now." The whole format is canonical and consumed by `parse_in_flight()` in `morning-brief.py` and any future tool that wants to render in-flight visibility.
+
+#### Step 6.2 — Spawn workers
 
 Use the `Agent` tool with one tool-use block per train, **all in a single message** so the harness runs them concurrently. Each gets:
 
 - `subagent_type: "dosto-train-worker"`
-- `name: "train-fzg-<NN>"` (so you can `SendMessage` it later)
-- `description: "DOSTO per-train worker for Fzg <NN>"`
-- `prompt`: **pointer-not-dump** per the F2 contract — pass Fzg ID, CCU IP, consist, engineer name, dry-run flag, ip_source, `scripts_staged: true/false` (from Step 5.5 staging result — tells the worker whether `/var/tmp/fix_obn*.py` is guaranteed present or whether it must request the orchestrator to SCP), and nothing else. The worker reads `fleet-status.md`, `fleet-journal.md`, the four contracts, and the per-device skills itself. Do NOT inline per-train prose, recovery sequences, or historical context — those bloat the worker's context window for its entire lifetime.
+- `name: "train-<train_number>"` (e.g. `train-4736-104` — so you can `SendMessage` it later)
+- `description: "DOSTO per-train worker for <train_number>"`
+- `prompt`: **pointer-not-dump** per the F2 contract — pass Train#, CCU IP, consist, engineer name, dry-run flag, ip_source, `scripts_staged: true/false` (from Step 5.5 staging result — tells the worker whether `/var/tmp/fix_obn*.py` is guaranteed present or whether it must request the orchestrator to SCP), `session_id` (so the worker can echo it into its reports for cross-correlation), and nothing else. The worker reads `fleet-status.md`, `fleet-journal.md`, the four contracts, and the per-device skills itself. Do NOT inline per-train prose, recovery sequences, or historical context — those bloat the worker's context window for its entire lifetime.
 
 After spawning, **start the cycle clock**. Cycle 1 runs for `cycle_minutes` (default 5).
+
+### Heartbeat protocol (claim refresh and stage updates)
+
+The in-flight claim in each row's `Nomad status` cell is the orchestrator's **liveness signal**. Other engineers, other sessions, and `morning-brief` rely on it to answer "is this train being worked on, and is the session still alive?"
+
+The orchestrator MUST update the claim on **all four** of the following triggers:
+
+| Trigger | What gets refreshed |
+|---|---|
+| **Worker spawn (Step 6.1)** | Initial claim written with `stage=initial_diagnostics`, `elapsed=0`. |
+| **Stage-transition report** (worker emits a report with a new `stage.id`) | `stage`, `step`, `total`, `elapsed_seconds`, `heartbeat_iso` all updated to match the report. Inline write — do NOT wait for cycle end. |
+| **Step-within-stage report** (worker emits a report with same stage but new `current_step` / `total_steps`) | `step`, `total`, `elapsed_seconds`, `heartbeat_iso` updated. Same inline write semantics — engineers checking the at-a-glance row should see "3/18 → 4/18" almost immediately when the worker reports it. |
+| **Cycle digest boundary** (every 5 min wall-clock, even if no worker reports arrived) | `heartbeat_iso` refreshed to `utcnow()` for every active train. `elapsed_seconds` recomputed against the stage's `started_at` (still echoed by the worker in its latest report). Stage/step unchanged. This is the **pure liveness ping** — proves the orchestrator session is still alive even when a worker is mid-long-running stage (e.g. a 45-min AP firmware push). |
+
+**Why all four:** the first three give engineers stage-accurate progress; the fourth proves the session itself hasn't died between worker reports. Stale-claim detection (in `morning-brief`) relies on this cycle-boundary ping — without it, a healthy session running a 1-hour AP firmware push would look stale after 30 min.
+
+**Terminal-state cleanup:** when a worker reports `DONE`, `BLOCKED`, or `ERROR`, the orchestrator removes the in-flight claim from the `Nomad status` cell and writes the appropriate terminal status:
+
+| Terminal | New `Nomad status` cell |
+|---|---|
+| `DONE` (no Stadler issues) | `🟢 DONE` |
+| `DONE` (with Stadler-blocking `issues[]`) | `🟢 DONE w/ Stadler — <issue summary>` |
+| `BLOCKED` | `🔴 BLOCKED — <escalation_reason>` |
+| `ERROR` | Keep prior status from before the in-flight claim; append a note to the per-train detail block. Engineer triages. |
+| `PAUSED` (no worker recovery within 30-min budget) | `🟡 PAUSED — <reason from final report>` |
+
+The terminal write is the orchestrator's responsibility — workers never write fleet-status themselves (per the orchestrator-as-sole-writer rule). After a terminal write, the row's `Nomad status` no longer parses as an in-flight claim, freeing it for future dispatch.
+
+**Crash recovery:** if the orchestrator session itself crashes mid-flight, the claims remain in fleet-status with their last-known heartbeats. Next morning, `/dosto-morning-brief` surfaces them as stale claims (heartbeat > 30 min). Engineer chooses per-train: clean to PAUSED, or reclaim with a new orchestration.
 
 ## Runtime — the cycle loop
 
@@ -455,20 +551,20 @@ After Step 6, you (the engineer's session) are now the running orchestrator. The
 ```
 ─── Cycle 7 — 2026-05-09 14:35 UTC (elapsed 35:00) ───
 
-Fzg 130 / 4736-102: 🟡 APPLYING_FIXES (apply_obn_patches, t+220s, exp 120s — over budget, watch)
+4736-102 / Fzg 130: 🟡 APPLYING_FIXES (apply_obn_patches, t+220s, exp 120s — over budget, watch)
   • Bug 5 patch applied; bug 6 marker still missing — investigating
   • OBN patches: 7/8 (was 0/8)
 
-Fzg 132 / 4736-104: ✅ DONE (t+34:12)
+4736-104 / Fzg 132: ✅ DONE (t+34:12)
   • All 6 stuck APs unblocked: .226 .230 .231 .237 .238 .240 → 6.11.2-0
   • Final L2 health: clean (1 known cable issue: D4 missing — Stadler item)
   • Customer report: reports/customer/OBB_Fzg132_v1.0.docx
 
-Fzg 148 / 4736-120: 🔵 NEEDS_APPROVAL (await_obn_update_c — queued 12 min, see prompt below)
+4736-120 / Fzg 148: 🔵 NEEDS_APPROVAL (await_obn_update_c — queued 12 min, see prompt below)
 
 ────────────────────────────────────────────────────
 Approvals queued: 1   Blocked: 0   Errors: 0   Done: 1   Working: 1
-⚠️  Approvals waiting > 10 min: 1 (Fzg 148, await_obn_update_c, 12 min)
+⚠️  Approvals waiting > 10 min: 1 (4736-120, await_obn_update_c, 12 min)
 Confluence push: queued for end of cycle.
 fleet-status.md: 2 rows updated (132, 148).
 ```
@@ -487,7 +583,7 @@ When a worker emits `status: NEEDS_APPROVAL`:
 2. **At the next safe boundary** (between notification handles, or right after a cycle digest), surface the next pending approval to the engineer in the compact form per `approval-gates.md` v2:
 
    ```
-   [Gate 1] promote_snapshot — Fzg 132 — 8/8 OBN patches confirmed; persisting via chroot promote
+   [Gate 1] promote_snapshot — 4736-104 (Fzg 132) — 8/8 OBN patches confirmed; persisting via chroot promote
      destructive: ✅   reversible: ❌   command: sudo /usr/sbin/nd-systemupdate.sh shell + fix_obn.py + exit
    Options: y | n | defer | ?
    ```
@@ -512,16 +608,50 @@ You are the only entity that writes `fleet-status.md` during the day. Per cycle:
 1. Compute the diff between (a) last-known fleet-status row for each active train and (b) the merged `fields` block from all reports received this cycle for that train.
 2. For each train with any field changed, edit the relevant row in-place. Use the column mapping from `subagent-report.md` § "fields".
 3. Update `Last touched` to today's UTC date + engineer's initials.
-4. Update `Status` to the most informative current value:
-   - Worker terminal `DONE` → `DONE` (or `DONE w/ Stadler` if any `BLOCKED` issues remain — infer from `issues[]`)
-   - Worker terminal `BLOCKED` → `BLOCKED`
-   - Worker terminal `ERROR` → keep prior `Status`, add note in per-train detail block
-   - Worker in `NEEDS_APPROVAL` → keep prior `Status` (transient state, not worth pushing to fleet-status)
-   - Worker in working state → `IN PROGRESS`
-   - Worker in `PAUSED` → `PAUSED`
+4. Update `Nomad status` to the most informative current value:
+   - Worker terminal `DONE` → `🟢 DONE` (or `🟢 DONE w/ Stadler — <summary>` if any `BLOCKED` issues remain — infer from `issues[]`). **Clears the in-flight claim.**
+   - Worker terminal `BLOCKED` → `🔴 BLOCKED — <escalation_reason>`. **Clears the in-flight claim.**
+   - Worker terminal `ERROR` → keep prior `Nomad status` from before the claim, add note in per-train detail block. **Clears the in-flight claim.**
+   - Worker terminal `PAUSED` (after the 30-min retry budget exhausted) → `🟡 PAUSED — <reason>`. **Clears the in-flight claim.**
+   - Worker in `NEEDS_APPROVAL` → **keep the in-flight claim with the await_* stage**, do NOT swap to a separate status. The claim format already conveys the await state via its stage_id (e.g. `stage await_promote_snapshot`). Engineers reading fleet-status can tell "this train is waiting for a gate" from the stage prefix `await_`.
+   - Worker in working state (`DIAGNOSING` / `APPLYING_FIXES` / `PUSHING_TO_DEVICES` / `PAUSED`) → **refresh the in-flight claim** via `format_in_flight()` with the latest stage / step / total / elapsed / heartbeat. See "Heartbeat protocol" above.
 5. Update `Next action` to the worker's last reported `next_action`, or compute from terminal state.
 
 **Hand-edit preservation:** if between cycles the engineer hand-edits fields you don't manage (`Customer report`, `Health check date`), preserve them. Only overwrite the columns in the `fields` block.
+
+### Step 7.5 — Auto-append new faults to cable-issues-register.md
+
+After each cycle's fleet-status write, inspect the `ap_missing` and `switches_missing` arrays from any `dosto-device-discovery` skill output received this cycle. For each missing device:
+
+1. Check `cable-issues-register.md` for an existing open entry matching this Train# AND the same switch+port. If a matching `🔴 OPEN` row already exists — **do nothing** (no duplicate rows).
+2. If no match exists, append a new row to the "Open issues" at-a-glance table and a corresponding `###` detail block. Use the `stadler_instruction` text from the skill output as the "Required action" body. Template:
+
+```markdown
+| N  | <train#>  | <switch> <port>  | <fault_type>   | 🔴 OPEN |
+```
+
+```markdown
+### #N — <train#> (<consist>) — <switch> <port> <fault summary>
+
+**What we see:** <live_state description from skill output>
+**Expected:** <switch> port <port> hosts <AP/switch> per nv{4,6} topology.
+
+**Required action:** <stadler_instruction from skill output>
+
+**Status:** 🔴 OPEN
+```
+
+Set `fault_type` based on the `verdict` from device-discovery:
+- `ap_missing` where `live_state.speed == "Auto"` AND `live_state.rx_bytes == 0` → `AP not connected`
+- `missing_switches` → `missing trunk` (switch absent — escalate to Stadler)
+- `ap_missing` where `live_state.rx_bytes > 0` but no LLDP peer → `physical-layer`
+
+3. After writing, print a one-line note in the cycle digest:
+   ```
+   ℹ️  cable-issues-register.md: appended #N (4736-104 / D3 e1-2 AP not connected)
+   ```
+
+**Surgical-edit discipline:** append only — never edit or delete existing rows. The register is append-only. Only the engineer (or a future `/cable-register-resolve` skill) marks entries `RESOLVED`.
 
 **Atomicity:** read the file once, compute all row changes, write once. Don't write partial state.
 
@@ -583,7 +713,7 @@ Every inbound subagent notification (not just cycle digests) appends one JSON li
   "event": "subagent_report",
   "cycle_id": 7,
   "recorded_at": "2026-05-09T14:32:11Z",
-  "train": {"fzg": 132, "train_number": "4736-104", "ccu_ip": "10.179.10.1"},
+  "train": {"train_number": "4736-104", "fzg": 132, "ccu_ip": "10.179.10.1"},
   "stage_id": "push_switch_config",
   "status": "PUSHING_TO_DEVICES",
   "elapsed_seconds": 1980,
@@ -653,7 +783,7 @@ When every worker has reached terminal state:
    Trains:    3 spawned · 2 DONE · 1 BLOCKED · 0 ERROR
    Gates:     7 approved · 0 denied · 0 deferred
 
-   ▼ Fzg 130 / 4736-102 — DONE
+   ▼ 4736-102 / Fzg 130 — DONE
      ✓ OBN patches 8/8 persisted (run5)
      ✓ train_id = 130 hardcoded in all 18 nv6-*.cfg
      ✓ vlan7 = 172.19.193.2/17 (live + persisted)
@@ -661,22 +791,22 @@ When every worker has reached terminal state:
      ✓ All 24 APs at target firmware
      ✓ Customer report: reports/customer/OBB_Fzg130_v1.0.docx
 
-   ▼ Fzg 132 / 4736-104 — DONE w/ Stadler
+   ▼ 4736-104 / Fzg 132 — DONE w/ Stadler
      ✓ OBN patches 8/8 persisted (run1)
      ✓ All 23 visible APs at target firmware 6.11.2-0
      ✗ All 24 APs at target — D4 still missing (Stadler item, register #5)
      ✓ vlan7 reachable to Stadler FW (commissioned per F9: ICMP filtered)
      ✓ Customer report: reports/customer/OBB_Fzg132_v1.0.docx
 
-   ▼ Fzg 148 / 4736-120 — BLOCKED
+   ▼ 4736-120 / Fzg 148 — BLOCKED
      ✓ OBN patches 8/8 persisted
      ✗ Switch config push completed — RSTP convergence failed on F2
      ✗ Customer report — pipeline halted before stage 21
      Next: investigate F2 (10.179.2.189) — see issues[] in last worker report
 
-   Reports filed:  2 (Fzg 130, Fzg 132)
-   Blockers open:  Fzg 132 — Stadler register #5 (D4 cable)
-                   Fzg 148 — F2 RSTP, internal investigation needed
+   Reports filed:  2 (4736-102, 4736-104)
+   Blockers open:  4736-104 — Stadler register #5 (D4 cable)
+                   4736-120 — F2 RSTP, internal investigation needed
 
    fleet-status.md updated · Confluence v52
    ```
@@ -694,7 +824,7 @@ If the engineer's session crashes mid-day:
 - All running workers die with it (workers are spawned from this session).
 - Engineer re-invokes `/dosto-orchestrate` with the same train list.
 - The skill reads `fleet-status.md` for current state, reads `.claude/logs/orchestrator.jsonl` last entry to know which trains were in flight.
-- Asks the engineer: "Resume Fzg 130 / 132 / 148 with `--resume`? [Y/n]"
+- Asks the engineer: "Resume 4736-102 / 4736-104 / 4736-120 with `--resume`? [Y/n]"
 - On Y, spawns fresh workers for each, each invoking `/dosto-commission-train --resume <last_known_stage_id>` per train. The skill's `--resume` always re-runs `initial_diagnostics` so state drift since the crash is detected.
 
 This is lossless because:
@@ -762,14 +892,14 @@ This skill prints human-readable status. It does NOT support `--json` output —
 
 - 🟡 **Engineer passes a single train.** Skill works fine — orchestrator with one subagent is just a fancy wrapper. Suggest using `/dosto-commission-train` directly for single-train work, but don't refuse.
 - 🟡 **Engineer passes >8 trains.** Spawn anyway, but warn at the plan step about cellular SSH-flap rate degrading at high concurrency.
-- 🟡 **Mixed series in one day.** 4734 and 4736 in the same train list is fine — the orchestrator handles per-train consist correctly.
+- 🟡 **Mixed series in one day.** 4734, 4736, 4705, and 4706 in the same train list is fine — the orchestrator handles per-train consist correctly.
 - 🟡 **Engineer passes the same train twice.** Caught at validation; halt.
 - 🟡 **Train list with all `DONE` trains.** All fail the include-anyway prompt → effective abort. Skill exits cleanly.
 - 🟡 **`fleet-status.md` doesn't exist or is unreadable.** Halt with a clear file-not-found error. The orchestrator can't operate without the source file.
 - 🟡 **Engineer omits `@<ip>` for one Fzg in a list.** Halt at parse time per Step 1. Don't try to half-resolve from fleet-status — the contract is that IP is required for every Fzg.
 - 🟡 **Engineer types an IP that doesn't ping.** Caught at Step 5.5 network pre-flight (added 2026-05-20) — the TCP/22 probe + device-discovery happens before any worker spawns, and unreachable CCUs land in the FAIL list with a consolidated engineer prompt rather than blocking individual subagents at their Stage 1.
 - 🟡 **Two engineers reconciling the same train file simultaneously.** Skill reads + edits + writes `fleet-status.md` non-atomically. Two `/dosto-orchestrate` invocations racing on the same file CAN drop one engineer's edit. Mitigation: this is a one-engineer-per-day workflow by convention; if multiple engineers are working in parallel, coordinate verbally before invoking.
-- 🟡 **Case D row creation lands the new row in the wrong series section.** Skill must write under the right `### 4734 series` / `### 4736 series` header. If the file structure has been modified (new sections, renamed headers), the safest fall-back is to halt with a clear error rather than guess where to insert.
+- 🟡 **Case D row creation lands the new row in the wrong series section.** Skill must write under the right `### 4734 series` / `### 4736 series` / `### 4705 series` / `### 4706 series` header. If the file structure has been modified (new sections, renamed headers), the safest fall-back is to halt with a clear error rather than guess where to insert.
 
 ## Pairs with
 
@@ -777,6 +907,7 @@ This skill prints human-readable status. It does NOT support `--json` output —
 - [`.claude/skills/dosto-confluence-sync/SKILL.md`](../dosto-confluence-sync/SKILL.md) — what this skill calls for Confluence push
 - [`.claude/skills/dosto-commission-train/SKILL.md`](../dosto-commission-train/SKILL.md) — what the per-train worker invokes
 - [`fleet-status.md`](../../../fleet-status.md) — the source-of-truth file (sole writer during runtime)
+- [`cable-issues-register.md`](../../../cable-issues-register.md) — read at Step 3.5 (pre-flight); appended at Step 7.5 (new fault auto-append)
 - All four contracts in `.claude/contracts/` — `subagent-report.md` v2, `autonomy-boundary.md`, `approval-gates.md` v2, `confluence-sync.md`
 
 ## Reference / design history

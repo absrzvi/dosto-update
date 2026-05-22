@@ -25,8 +25,10 @@ def parse_table(text, header):
                 rows.append(cols)
     return rows
 
-rows_4736 = parse_table(md, '### 4736 series')
-rows_4734 = parse_table(md, '### 4734 series')
+# Discover all `### NNNN series` headers dynamically so future series (4705/4706/etc.) appear
+# without a code edit. Order is preserved from fleet-status.md so the dashboard layout matches.
+series_headers = re.findall(r'^### (\d+) series', md, re.MULTILINE)
+rows_by_series = {s: parse_table(md, f'### {s} series') for s in series_headers}
 
 def status_class(status_cell):
     s = status_cell.lower()
@@ -59,11 +61,12 @@ def status_badge(status_cell):
     return f'<span class="badge" style="background:{color}">{label}</span>'
 
 def fleet_row_html(cols):
-    fzg        = cols[0]
-    trainset   = cols[1]
+    # Schema (2026-05-22 reorder): Train# | Fzg | CCU IP | Nomad status | Stadler status | Next action
+    train_num  = cols[0]
+    fzg        = cols[1]
     ccu        = clean(cols[2]) if len(cols) > 2 else ''
     status_cell= cols[3]        if len(cols) > 3 else ''
-    next_action= clean(cols[4]) if len(cols) > 4 else ''
+    next_action= clean(cols[5]) if len(cols) > 5 else (clean(cols[4]) if len(cols) > 4 else '')
     badge = status_badge(status_cell)
     if ccu in ('', '❓', '?'):
         ccu_display = '<span style="color:#475569">—</span>'
@@ -71,8 +74,8 @@ def fleet_row_html(cols):
         ccu_display = f'<span class="mono">{ccu}</span>'
     return (
         f'<tr class="row-{status_class(status_cell)}">'
+        f'<td class="mono">{train_num}</td>'
         f'<td class="mono center">{fzg}</td>'
-        f'<td class="mono">{trainset}</td>'
         f'<td>{ccu_display}</td>'
         f'<td>{badge}</td>'
         f'<td class="small">{next_action}</td>'
@@ -117,7 +120,7 @@ def issue_row_html(row):
         f'</tr>'
     )
 
-all_fleet = rows_4736 + rows_4734
+all_fleet = [r for rows in rows_by_series.values() for r in rows]
 stat_counts = {k: 0 for k in STATUS_LABELS}
 for r in all_fleet:
     stat_counts[status_class(r[3] if len(r) > 3 else '')] += 1
@@ -125,9 +128,18 @@ for r in all_fleet:
 open_issues = int((cable_rows['Status'] == 'OPEN').sum())
 now = datetime.now().strftime('%Y-%m-%d %H:%M')
 
-fleet_4736_html = '\n'.join(fleet_row_html(r) for r in rows_4736)
-fleet_4734_html = '\n'.join(fleet_row_html(r) for r in rows_4734)
-cable_html      = '\n'.join(issue_row_html(r) for _, r in cable_rows.iterrows())
+# One <section> per series, in fleet-status.md order.
+fleet_sections_html = '\n'.join(
+    f'''<div class="section">
+  <div class="section-header"><h2>{series} Series</h2><span class="count">{len(rows)} trains</span></div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Train#</th><th>Fzg</th><th>CCU IP</th><th>Status</th><th>Next Action</th></tr></thead>
+    <tbody>{chr(10).join(fleet_row_html(r) for r in rows)}</tbody>
+  </table></div>
+</div>'''
+    for series, rows in rows_by_series.items()
+)
+cable_html = '\n'.join(issue_row_html(r) for _, r in cable_rows.iterrows())
 
 CSS = """
   :root {
@@ -200,24 +212,10 @@ html_parts = [
   <div class="stat-card"><div class="num" style="color:#fb923c">{open_issues}</div><div class="lbl">Cable Issues Open</div></div>
 </div>''',
 
-    # Fleet side by side
+    # Fleet side by side — one section per series, dynamic.
     '<div class="two-col">',
 
-    f'''<div class="section">
-  <div class="section-header"><h2>4736 Series</h2><span class="count">{len(rows_4736)} trains</span></div>
-  <div class="table-wrap"><table>
-    <thead><tr><th>Fzg</th><th>Trainset</th><th>CCU IP</th><th>Status</th><th>Next Action</th></tr></thead>
-    <tbody>{fleet_4736_html}</tbody>
-  </table></div>
-</div>''',
-
-    f'''<div class="section">
-  <div class="section-header"><h2>4734 Series</h2><span class="count">{len(rows_4734)} trains</span></div>
-  <div class="table-wrap"><table>
-    <thead><tr><th>Fzg</th><th>Trainset</th><th>CCU IP</th><th>Status</th><th>Next Action</th></tr></thead>
-    <tbody>{fleet_4734_html}</tbody>
-  </table></div>
-</div>''',
+    fleet_sections_html,
 
     '</div>',  # .two-col
 

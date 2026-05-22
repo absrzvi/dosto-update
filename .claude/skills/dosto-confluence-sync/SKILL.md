@@ -33,7 +33,7 @@ Per [confluence-sync.md](../../contracts/confluence-sync.md) Amendment 1, the sk
 
 | Target | Source file | Page ID lookup | Render |
 |---|---|---|---|
-| `fleet` (default) | `fleet-status.md` | hardcoded `5410684933` | Existing exec-view-only layout (4736 + 4734 tables) |
+| `fleet` (default) | `fleet-status.md` | hardcoded `5410684933` | Existing exec-view-only layout (4736 + 4734 + 4705 + 4706 tables) |
 | `cables` | `cable-issues-register.md` | `cable_register_page_id` from `.claude/state/confluence-pages.json` | Two-section render: Confirmed cabling faults, then Auto-detected anomalies |
 | `both` | both | both | Sequential pushes — `fleet` first, then `cables`. Independent drift detection per page. |
 
@@ -116,8 +116,8 @@ The Confluence page body has these sections in this order:
 1. **Banner** — auto-sync timestamp, version, sync source, plus a one-line pointer at where to find the full 14-column detail (the local `fleet-status.md`).
 2. **Header** — title + last-updated + update-discipline note (from the top of fleet-status.md).
 3. **Status legend** — small table mapping the 5 status-lozenge emoji to status names + meanings.
-4. **Fzg-ID convention** — series formulas (unchanged from local).
-5. **Per-series exec table** — 6 columns: `Fzg`, `Train#`, `CCU IP`, `Nomad status`, `Stadler status`, `Next action`. One table for 4736 (DOSTO NEU 6-car), one for 4734 (DOSTO NEU 4-car). 4705/4706 series gets a placeholder note. The `Stadler status` column was added 2026-05-21 so the team can see at a glance which trains are blocked by Stadler-side work (missing APs/switches or open cabling faults) vs which are Nomad-side work still in flight.
+4. **Train#-and-Fzg convention** — series formulas + runtime-lookup warning (unchanged from local; section is named `## Train#-and-Fzg convention` post-2026-05-22 schema reorder, previously `## Fzg-ID convention`).
+5. **Per-series exec table** — 6 columns: `Train#`, `Fzg`, `CCU IP`, `Nomad status`, `Stadler status`, `Next action`. **Train# leads** (Nomad-internal primary identifier per the 2026-05-22 schema reorder); Fzg is secondary. One table per series header found in `fleet-status.md` (currently 4736 / 4734 / 4706 / 4705 — discover dynamically, do not hardcode). The `Stadler status` column was added 2026-05-21 so the team can see at a glance which trains are blocked by Stadler-side work (missing APs/switches or open cabling faults) vs which are Nomad-side work still in flight.
 6. **Per-train notes** — unchanged from local, rendered as standard markdown headings + lists.
 7. **How to update** — engineer-facing reminder (5-step procedure).
 
@@ -153,12 +153,12 @@ The lozenge column uses Unicode coloured-circle emoji for at-a-glance visual sca
 #### Exec table shape (6 columns)
 
 ```markdown
-| Fzg | Train# | CCU IP | Nomad status | Stadler status | Next action |
+| Train# | Fzg | CCU IP | Nomad status | Stadler status | Next action |
 |---|---|---|---|---|---|
-| 129 | 4736-101 | ❓ | ⚪ UNKNOWN | ❓ | initial visit |
-| 130 | 4736-102 | `10.179.47.1` | 🟡 **PAUSED** | ✅ clear | apply patches + persist + fix train_id + fix vlan7 — see notes |
-| 132 | 4736-104 | `10.179.10.1` | 🔴 **BLOCKED w/ Stadler + 6 APs stuck** | 🔴 D4 AP missing (cable reg #5) | Push remaining 3 APs (.237 .238 .240); D4 cable Stadler item — see notes |
-| 133 | 4736-105 | `10.179.1.1` | 🟢 **DONE w/ Stadler** | 🔴 Coach 5 AP2 missing | wait for Stadler on Coach5 AP2 + FW path |
+| 4736-101 | 129 | ❓ | ⚪ UNKNOWN | ❓ | initial visit |
+| 4736-102 | 130 | `10.179.47.1` | 🟡 **PAUSED** | ✅ clear | apply patches + persist + fix train_id + fix vlan7 — see notes |
+| 4736-104 | 132 | `10.179.10.1` | 🔴 **BLOCKED w/ Stadler + 6 APs stuck** | 🔴 D4 AP missing (cable reg #5) | Push remaining 3 APs (.237 .238 .240); D4 cable Stadler item — see notes |
+| 4736-105 | 133 | `10.179.1.1` | 🟢 **DONE w/ Stadler** | 🔴 Coach 5 AP2 missing | wait for Stadler on Coach5 AP2 + FW path |
 ```
 
 **Stadler status rule:** 🔴 BLOCKED when any APs/switches are missing OR a cabling fault is open (any open `cable-issues-register.md` entry for the train); ✅ clear otherwise; ❓ when not yet checked / UNKNOWN. Copy the value verbatim from the local `fleet-status.md` row's `Stadler status` column.
