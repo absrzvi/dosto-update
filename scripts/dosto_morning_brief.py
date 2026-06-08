@@ -191,6 +191,11 @@ thead tr { background:var(--surface2); }
 thead th { padding:10px 14px; text-align:left; font-size:11px; text-transform:uppercase;
            letter-spacing:.06em; color:var(--text-muted); font-weight:600;
            white-space:nowrap; border-bottom:1px solid var(--border); }
+table.sortable thead th { cursor:pointer; user-select:none; position:relative; padding-right:24px; }
+table.sortable thead th:hover { color:var(--accent); }
+table.sortable thead th::after { content:'\\2195'; position:absolute; right:8px; opacity:.35; font-size:10px; }
+table.sortable thead th.sort-asc::after  { content:'\\25B2'; opacity:1; color:var(--accent); }
+table.sortable thead th.sort-desc::after { content:'\\25BC'; opacity:1; color:var(--accent); }
 tbody tr { border-bottom:1px solid var(--border); transition:background .1s; }
 tbody tr:last-child { border-bottom:none; }
 tbody tr:hover { background:var(--surface2); }
@@ -261,12 +266,34 @@ def append_to_pending(path: str, ip: str):
     content = content.rstrip() + '\n' + new_row + '\n'
     Path(path).write_text(content, encoding='utf-8')
 
+# A Nomad-status cell is "claimed" iff it carries the 🔵 IN PROGRESS lozenge,
+# whether or not the trailing text matches the canonical format_in_flight() shape.
+# parse_in_flight() (canonical regex) deliberately returns None for hand-written
+# prose claims like "🔵 IN PROGRESS — sess 0900Z: CCU work done; ..." — but the
+# stale-claim cleaner must still flip those, otherwise it silently no-ops on the
+# exact rows an engineer most needs cleaned (regression observed 2026-06-08 on
+# 4734-109 / 4734-115). We therefore match on the lozenge, not the full format.
+_IN_PROGRESS_LOZENGE_RE = re.compile(r'🔵\s*IN\s*PROGRESS', re.IGNORECASE)
+# Best-effort session-id grab for non-canonical claims, so the PAUSED note can
+# still name the dead session.
+_SESS_RE = re.compile(r'\bsess(?:ion)?\s+([\w-]+)', re.IGNORECASE)
+
+
 def clean_stale_claim(path: str, train_number: str) -> tuple[bool, str]:
     """Flip an in-flight claim back to PAUSED. Used by morning-brief's stale-claim
     gate after the engineer confirms the orchestrator session is dead.
 
-    Returns (ok, message). `ok=False` if the row isn't actually in-flight (engineer
-    raced with a worker that just terminated) or if the train isn't in fleet-status.
+    Matches ANY cell carrying the 🔵 IN PROGRESS lozenge — canonical
+    format_in_flight() claims AND hand-written prose claims alike. Canonical
+    claims yield a rich PAUSED note (stage + heartbeat); prose claims yield a
+    best-effort note tagged 'non-canonical claim'.
+
+    Returns (ok, message). `ok=False` (and the CLI exits non-zero) when the row
+    is genuinely NOT in-flight, the train isn't in fleet-status, or the row line
+    couldn't be located for the swap. Critically, `ok=False` is never paired with
+    a 'cleaned' message — a false-success print here makes the engineer believe a
+    claim is gone when it isn't, so next morning's brief and orchestrate Step 6.0
+    keep tripping over it.
     """
     import sys as _sys
     _sys.path.insert(0, str(Path(__file__).parent))
@@ -276,9 +303,23 @@ def clean_stale_claim(path: str, train_number: str) -> tuple[bool, str]:
     target = lookup_by_train_number(rows, train_number)
     if target is None:
         return False, f'{train_number} not found in fleet-status'
-    claim = parse_in_flight(target['nomad_status'])
-    if claim is None:
-        return False, f'{train_number} is not currently marked IN PROGRESS (no claim to clean)'
+
+    cell = target['nomad_status']
+    if not _IN_PROGRESS_LOZENGE_RE.search(cell):
+        return False, f'{train_number} is not currently marked 🔵 IN PROGRESS (no claim to clean)'
+
+    # Prefer the canonical parse (rich note); fall back to a best-effort prose grab.
+    claim = parse_in_flight(cell)
+    if claim is not None:
+        note = (f'🟡 PAUSED — stale claim auto-cleaned from session {claim["session_id"]} '
+                f'(stage {claim["stage"]}, last hb {claim["heartbeat_iso"]})')
+        sess_part = f'sess {claim["session_id"]}'
+    else:
+        m = _SESS_RE.search(cell)
+        sess = m.group(1) if m else 'unknown'
+        note = (f'🟡 PAUSED — stale claim auto-cleaned from session {sess} '
+                f'(non-canonical claim; original text could not be parsed by parse_in_flight)')
+        sess_part = f'sess {sess} (non-canonical)'
 
     # Rebuild the row line with the cleaned-up Nomad status cell. Read raw content
     # and do a literal swap of the old row line for the new one.
@@ -293,15 +334,14 @@ def clean_stale_claim(path: str, train_number: str) -> tuple[bool, str]:
 
     old_cells = list(target['raw_row'])
     new_cells = list(old_cells)
-    new_cells[i_nomad] = (f'🟡 PAUSED — stale claim auto-cleaned from session {claim["session_id"]} '
-                         f'(stage {claim["stage"]}, last hb {claim["heartbeat_iso"]})')
+    new_cells[i_nomad] = note
     old_line = '| ' + ' | '.join(old_cells) + ' |'
     new_line = '| ' + ' | '.join(new_cells) + ' |'
     if old_line not in content:
         return False, f'could not locate row line for {train_number} (file may have been edited concurrently)'
     content = content.replace(old_line, new_line, 1)
     Path(path).write_text(content, encoding='utf-8')
-    return True, f'cleaned: {train_number} → PAUSED (was claimed by sess {claim["session_id"]})'
+    return True, f'cleaned: {train_number} → PAUSED (was claimed by {sess_part})'
 
 
 def assign_to_series(path: str, ip: str, train_number: str, fzg: str = None):
@@ -375,7 +415,7 @@ def _render_in_flight_section(in_flight):
 <div class="section">
   <div class="section-header"><h2>🔵 Currently in flight</h2>
     <span class="count">{len(in_flight)} active{stale_note}</span></div>
-  <div class="table-wrap"><table>
+  <div class="table-wrap"><table class="sortable">
     <thead><tr><th>Train#</th><th>Fzg</th><th>CCU IP</th><th>Stage</th><th>Step</th><th>Elapsed</th><th>Heartbeat</th><th>Session</th></tr></thead>
     <tbody>{"".join(rows)}</tbody>
   </table></div>
@@ -433,7 +473,7 @@ def render_html(reachable, unreachable, discovered, recommended_train, recommend
 {in_flight_html}
 <div class="section">
   <div class="section-header"><h2>Reachable trains</h2><span class="count">{len(reachable)} online</span></div>
-  <div class="table-wrap"><table>
+  <div class="table-wrap"><table class="sortable">
     <thead><tr><th>Train#</th><th>Fzg</th><th>CCU IP</th><th>Nomad status</th><th>Stadler status</th><th>Next Action</th><th>Resume Stage</th><th>Recommended?</th></tr></thead>
     <tbody>{rows_html}</tbody>
   </table></div>
@@ -456,7 +496,49 @@ def render_html(reachable, unreachable, discovered, recommended_train, recommend
   <div class="urlist">{un_lines}</div>
 </details>
 
-</div></body></html>"""
+</div>
+<script>
+(function() {{
+  function cellKey(td) {{
+    if (td.dataset.sort !== undefined) return td.dataset.sort;
+    return (td.textContent || '').trim();
+  }}
+  function ipKey(s) {{
+    var m = s.match(/(\\d+)\\.(\\d+)\\.(\\d+)\\.(\\d+)/);
+    if (!m) return null;
+    return ((+m[1])*16777216 + (+m[2])*65536 + (+m[3])*256 + (+m[4]));
+  }}
+  function numKey(s) {{
+    var m = s.match(/-?\\d+(?:\\.\\d+)?/);
+    return m ? parseFloat(m[0]) : null;
+  }}
+  function compare(a, b) {{
+    var ipA = ipKey(a), ipB = ipKey(b);
+    if (ipA !== null && ipB !== null) return ipA - ipB;
+    var nA = numKey(a), nB = numKey(b);
+    if (nA !== null && nB !== null) return nA - nB;
+    return a.localeCompare(b, undefined, {{numeric:true, sensitivity:'base'}});
+  }}
+  document.querySelectorAll('table.sortable').forEach(function(table) {{
+    var ths = table.querySelectorAll('thead th');
+    ths.forEach(function(th, idx) {{
+      th.addEventListener('click', function() {{
+        var asc = !th.classList.contains('sort-asc');
+        ths.forEach(function(o) {{ o.classList.remove('sort-asc','sort-desc'); }});
+        th.classList.add(asc ? 'sort-asc' : 'sort-desc');
+        var tbody = table.tBodies[0];
+        var rows = Array.from(tbody.rows);
+        rows.sort(function(r1, r2) {{
+          var c = compare(cellKey(r1.cells[idx]), cellKey(r2.cells[idx]));
+          return asc ? c : -c;
+        }});
+        rows.forEach(function(r) {{ tbody.appendChild(r); }});
+      }});
+    }});
+  }});
+}})();
+</script>
+</body></html>"""
 
 def main():
     ap = argparse.ArgumentParser()
@@ -562,17 +644,15 @@ def main():
         if ip in known_by_ip:
             t = dict(known_by_ip[ip])
             t['stage'] = infer_stage(t['next_action'])
-            # Skip DONE trains entirely — reachable CCU but nothing to do.
-            if t['status'].startswith('🟢') or 'DONE' in t['status'].upper():
-                continue
             (reachable if ok else unreachable).append(t)
         elif ok and ip not in pending_ips and not args.no_discover:
             needs_assignment.append(ip)
 
     rec_train, rec_rationale = recommend(reachable)
 
-    train_list = ','.join(t['train_number'] for t in reachable)
-    would_be_cmd = f'/dosto-orchestrate trains={train_list}' if reachable else '(no reachable trains)'
+    dispatchable = [t for t in reachable if not (t['status'].startswith('🟢') or 'DONE' in t['status'].upper())]
+    train_list = ','.join(t['train_number'] for t in dispatchable)
+    would_be_cmd = f'/dosto-orchestrate trains={train_list}' if dispatchable else '(no reachable trains)'
 
     html = render_html(reachable, unreachable, needs_assignment, rec_train, rec_rationale, would_be_cmd, in_flight)
     out_path = Path(args.out).resolve()
