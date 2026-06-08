@@ -31,7 +31,7 @@ The skill verifies all of these before any push:
 
 Without TFTP helper, even a single push can fail at the data-return-flow stage. Without OBN patches (specifically Bug 5 — pre-populated `tftp_allowed` ipset), the push itself drops below 100% reliability and Bugs 4/8 expose crash paths in the report layer. Without Nomad SNMP responding, the AP is in factory config — `dosto-ap-config-update` runs first; do not push firmware to a factory-config AP, the SSH credentials and config layout are wrong.
 
-**Why "trust obn discover, not standalone snmpget":** validated 2026-05-09 on Fzg 132 / box1-t10 — `snmpget -v2c -c NomadStayOut! -t 3 -r 1 <ap-ip>` timed out on a known-Nomad AP (.226) that `obn discover` had successfully polled 30 seconds earlier. OBN's SNMP library evidently uses different timing/retry parameters than vanilla `snmpget`. Treating the standalone probe as authoritative produced a false `ap_in_factory_config` verdict and would have aborted a legitimate push. The fix: read the AP's row from `/tmp/discovery.json` (refreshed via `sudo obn discover`); if `.config` matches the Nomad form `AP[1-4]m?-v1-...` and `.firmware` is non-null, the AP is reachable enough for OBN to push. Only fall back to `snmpget` when discover.json has no recent entry for the AP.
+**Why "trust obn discover, not standalone snmpget":** observed 2026-05-09 on Fzg 132 / box1-t10 — `snmpget -v2c -c NomadStayOut! -t 3 -r 1 <ap-ip>` timed out on a known-Nomad AP (.226) that `obn discover` had successfully polled 30 seconds earlier. **Root cause corrected 2026-06-08: that probe used the WRONG SNMP form.** AP SNMP is **v3 / user `admin` / authPriv / SHA / AES, passphrase `NomadStayOut!`** — `NomadStayOut!` is the v3 passphrase, NOT a v2c community, so `-v2c -c NomadStayOut!` ALWAYS times out (it was never an OBN-timing quirk). The correct probe `snmpget -v3 -u admin -l authPriv -a SHA -A NomadStayOut! -x AES -X NomadStayOut!` works reliably (verified fleet-wide 2026-06-08). **The "trust obn discover" guidance still stands** as the primary signal (it's the cleanest source and avoids ad-hoc SNMP entirely), but the fallback probe below now uses the correct v3 form. The fix: read the AP's row from `/tmp/discovery.json` (refreshed via `sudo obn discover`); if `.config` matches the Nomad form `AP[1-4]m?-v1-...` and `.firmware` is non-null, the AP is reachable enough for OBN to push. Only fall back to the v3 `snmpget` when discover.json has no recent entry for the AP.
 
 ## Output modes
 
@@ -72,7 +72,7 @@ Both modes support `--json` for machine-readable output. In `--execute` mode, JS
 `verdict` semantics:
 
 - `ready_to_push` — preconditions ✅, current ≠ target, no staged image. Standard fresh push path.
-- `partial_flash_detected` 🟡 — current ≠ target BUT staged == target. A previous flash uploaded but didn't activate. Force-second-reboot resolves it; no fresh push needed. Skill recommends Gate-3-style flow (engineer ack to reboot) rather than re-pushing.
+- `partial_flash_detected` 🟡 — current ≠ target BUT staged == target. A previous flash uploaded but didn't activate. **First check uptime (lesson 18):** if the AP's uptime is LOW (recently rebooted), it is case (a) slow-but-fine — it is mid-activation; just re-validate after a short wait, do NOT re-push. If uptime is LARGE/unchanged (never rebooted), it is case (b) genuine hang — a retry of `obn update f` sometimes succeeds (the RT-610 flash trigger is flaky); the skill recommends one retry, then escalate. Do not force a bare `ssh reboot` as the fix — a plain reboot on a case-(b) AP just boots the old image again (proven 4736-109 .226).
 - `already_at_target` ✅ — current == target. No-op.
 - `preconditions_unmet` 🔴 — TFTP helper or OBN patches not in good state. Fix those first.
 - `ap_in_factory_config` 🔴 — SNMP doesn't respond. Run `dosto-ap-config-update` first.
@@ -157,7 +157,7 @@ Failure-mode events:
 
 ### Stage details
 
-**`pre_check`** — Run all five preconditions in one SSH heredoc to the CCU. AP-reachability check uses fresh `sudo obn discover` + `jq` parse of `/tmp/discovery.json`, NOT standalone `snmpget`. The standalone probe times out on Nomad APs that OBN's own SNMP library can poll (validated 2026-05-09 on Fzg 132 / box1-t10 — false-positive `ap_in_factory_config` on AP .226). Pass criterion: discover.json has the AP with `config` matching `^AP[1-4]m?-v1-` (Nomad form) AND non-null `firmware`. If the AP is missing from discover.json entirely, fall back to `snmpget -v2c -c NomadStayOut! -t 8 -r 2` with longer timeout/retry as a second-chance check before aborting. If any precondition fails, emit `aborted` with `reason: "preconditions_unmet:<which>"` and exit. No further state.
+**`pre_check`** — Run all five preconditions in one SSH heredoc to the CCU. AP-reachability check uses fresh `sudo obn discover` + `jq` parse of `/tmp/discovery.json`, NOT standalone `snmpget` (cleanest source; avoids ad-hoc SNMP). The earlier "standalone snmpget times out" observation was a WRONG-cred bug, not OBN timing — the probe was `-v2c -c NomadStayOut!` but AP SNMP is v3/admin/authPriv (corrected 2026-06-08). Pass criterion: discover.json has the AP with `config` matching `^AP[1-4]m?-v1-` (Nomad form) AND non-null `firmware`. If the AP is missing from discover.json entirely, fall back to `snmpget -v3 -u admin -l authPriv -a SHA -A NomadStayOut! -x AES -X NomadStayOut! -t 8 -r 2` (v3, longer timeout/retry) as a second-chance check before aborting. If any precondition fails, emit `aborted` with `reason: "preconditions_unmet:<which>"` and exit. No further state.
 
 **`push` (Gate 1)** — Emit `gate_1_awaiting_ack` with the exact command. Wait for ack. On ack, run `sudo obn update f <ap-ip>` over SSH from the CCU. Capture stdout/stderr. Emit `push_command_returned` with the captured "Successful: ..." line (or whatever OBN said). Note: even an exit-code-zero "Successful" line does NOT mean the push worked — the next stage verifies that.
 
@@ -165,9 +165,15 @@ Failure-mode events:
 
 **`stuck_recover`** (only after Gate 2 ack) — Run `sshpass -p NomadComeIn ssh -o StrictHostKeyChecking=no nomad@<ap-ip> reboot` (Nomad-config AP credentials). Sleep 90s (handoff lesson 13). Re-enter `push` *exactly once*. If `verify_rrq` fails again after the recovery push, emit `aborted` with `reason: "stuck_state_recovery_failed"` — do not loop further; this is engineer territory.
 
-**`poll_completion`** — Loop: every 90s (lesson 15: faster polling is wasted SNMP storm), run `sudo obn discover` and parse the AP's firmware version. Emit `polling_completion` event with `current_firmware`, `staged_firmware`, `poll_count`, `elapsed_seconds`. Loop until either:
+**`poll_completion`** — Loop: every 90s (lesson 15: faster polling is wasted SNMP storm), run `sudo obn discover` and parse the AP's firmware version **AND its uptime**. Emit `polling_completion` event with `current_firmware`, `staged_firmware`, `uptime`, `poll_count`, `elapsed_seconds`. Loop until either:
 - `current_firmware == target_firmware` → emit `completed` and exit successfully, OR
 - `elapsed_seconds >= 900` (15 min) → emit `gate_3_awaiting_ack` with the current/staged/target tuple.
+
+**The uptime signal (lesson 18, proven 4736-109 2026-06-08).** The RT-610 flash→reboot→SNMP-re-report cycle can take **well over 5 min** — sometimes longer than an impatient poll. Two distinct outcomes hide behind "firmware OID still shows old version":
+- **(a) slow-but-fine:** the AP DID flash and reboot; `obn discover` just read the old version mid-cycle. Tell-tale: the AP's **uptime has RESET to a low value** (e.g. .236 came back at uptime 312s on the new firmware). This is NOT a failure — wait one more poll and it flips to target. The biggest real-world error is counting these as "stuck" and re-pushing a healthy AP.
+- **(b) genuine hang:** the AP ACK'd `rpcFwFlash=2` but never rebooted — **uptime is unchanged / large** (e.g. .226 at uptime 21668s, still old fw). This is a real RT-610 flash-trigger hang.
+
+So `poll_completion` MUST track uptime alongside firmware: a **reset uptime with old fw = case (a), keep polling**; **unchanged large uptime past the budget = case (b), genuine stuck.** Never declare "stuck" without confirming the AP did NOT reboot. The matching OBN-side fix is **bug #11** (`fix_obn_bug11_westermo_fw_verify.py`): it polls `rpcFwFlash` + uptime inside `set_firmware_version` so OBN itself returns the right boolean (True on reboot/nop, False only on a real -1/-2 or a no-reboot timeout) instead of trusting the SET echo. With bug #11 applied, `obn update f` blocks ~up to 10 min doing this correctly rather than returning instantly.
 
 **`gate_3_awaiting_ack`** — Engineer chooses:
 - `force-reboot` → run `sshpass -p NomadComeIn ssh nomad@<ap-ip> reboot`, sleep 90s, re-enter `poll_completion` once with a 5-min budget. (Force-reboot helps when staged_firmware == target_firmware but current didn't activate — handoff lesson 16.)
@@ -228,8 +234,9 @@ ssh_ccu() { ssh -i "$KEY" developer@$CCU "$@"; }
 echo "[1/5] Pre-check: TFTP helper, OBN patches, AP reachability via obn discover..."
 ssh_ccu 'lsmod | grep -q nf_conntrack_tftp && echo "tftp_helper:OK" || { echo "tftp_helper:MISSING — abort"; exit 2; }'
 ssh_ccu "sudo ipset list tftp_allowed | grep -q '$AP' && echo 'ipset:OK' || echo 'ipset:NOT_LISTED — Bug 5 patch not active'"
-# Trust obn discover, NOT standalone snmpget — `snmpget -v2c -c NomadStayOut!` times out on
-# Nomad APs even when OBN is successfully polling them via SNMP (validated 2026-05-09 on Fzg 132).
+# Trust obn discover as the primary signal. NOTE: `snmpget -v2c -c NomadStayOut!` times out because
+# it's the WRONG form — AP SNMP is v3/admin/authPriv/SHA/AES, NomadStayOut! is the v3 passphrase not a
+# community (corrected 2026-06-08). Correct probe: snmpget -v3 -u admin -l authPriv -a SHA -A NomadStayOut! -x AES -X NomadStayOut!
 # Pass if discover.json has the AP with Nomad-form config and non-null firmware.
 ssh_ccu "sudo obn discover >/dev/null 2>&1; sudo jq -r '.[] | select(.ip==\"$AP\") | [.config // \"null\", .firmware // \"null\"] | @tsv' /tmp/discovery.json" | \
   awk -F'\t' '
@@ -334,7 +341,7 @@ The exit codes 2-6 align 1:1 with the skill's verdict / event taxonomy, so an or
 - 🟡 **Lesson 17**: `/var/log/obn/*.log` does not capture in.tftpd activity. The skill captures both OBN log + journal in its diagnostic output.
 - 🟡 **AP credentials depend on config state.** Nomad-config APs use SSH `nomad/NomadComeIn`; factory APs use LuCI HTTP `admin/Nom@dCome1n` (skill aborts before reaching the latter — factory APs are out of scope here).
 - 🟡 **`ssh nomad@<ap-ip> reboot` returns the SSH connection cleanly before the AP's network stack tears down.** Don't assume connection-close means the reboot started; sleep the full 90s.
-- 🟡 **Standalone `snmpget` is unreliable on Nomad APs.** OBN's SNMP library polls them fine; vanilla `snmpget -v2c -c NomadStayOut! -t 3 -r 1` times out. The precondition uses `obn discover` + jq parse of `/tmp/discovery.json` as the primary AP-reachability signal, only falling back to `snmpget -t 8 -r 2` when discover.json has no recent entry. Validated 2026-05-09 on Fzg 132 — false-positive `ap_in_factory_config` on AP .226 with the standalone-only probe.
+- 🟡 **Use the correct AP SNMP form.** AP SNMP = **v3, user `admin`, authPriv, SHA auth, AES priv, passphrase `NomadStayOut!`**. The old `snmpget -v2c -c NomadStayOut! -t 3 -r 1` ALWAYS times out — that's a wrong-cred bug (NomadStayOut! is the v3 passphrase, not a v2c community), NOT an "OBN polls differently" quirk (corrected 2026-06-08; was misattributed on Fzg 132). The precondition still uses `obn discover` + jq parse of `/tmp/discovery.json` as the primary AP-reachability signal (cleanest); only fall back to `snmpget -v3 -u admin -l authPriv -a SHA -A NomadStayOut! -x AES -X NomadStayOut! -t 8 -r 2` when discover.json has no recent entry. ⚠️ Switches differ: SW SNMP user is `snmpadmin` (not `admin`); APs use `admin`. NomadComeIn is the SSH/GUI password, never SNMP.
 - 🟡 **`journalctl --since` rejects ISO-8601 with `+HH:MM` offset.** Don't use `date --iso-8601=seconds` (produces `2026-05-09T15:42:18+00:00` → `Failed to parse timestamp`). Use `date +"%Y-%m-%d %H:%M:%S"` (produces `2026-05-09 15:42:18` → parses fine). Validated 2026-05-09 on box1-t10.
 
 ## Pairs with

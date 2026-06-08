@@ -34,8 +34,11 @@ This is **config push only**. Firmware push is [`dosto-ap-firmware-update`](../d
 Before deciding which execution path to take, the skill probes the AP's current state. Three SSH commands run from the CCU, in sequence:
 
 ```bash
-# A. SNMP probe with Nomad community
-snmpget -v2c -c NomadStayOut! -t 3 -r 1 <ap-ip> .1.3.6.1.2.1.1.1.0
+# A. SNMP probe with Nomad SNMPv3 credentials
+#    AP SNMP is v3 / user=admin / SHA auth / AES priv / authPriv, passphrase NomadStayOut! (auth AND priv).
+#    NOT v2c-community — `-v2c -c NomadStayOut!` ALWAYS times out (NomadStayOut! is the v3 passphrase, not a community).
+#    Verified live fleet-wide 2026-06-08. (NomadComeIn is the SSH/GUI password, never an SNMP credential.)
+snmpget -v3 -u admin -l authPriv -a SHA -A NomadStayOut! -x AES -X NomadStayOut! -t 3 -r 1 <ap-ip> .1.3.6.1.2.1.1.1.0
 #   exit 0 + value → ap_config_state = "nomad"
 #   timeout/error  → likely factory; verify with B
 
@@ -212,10 +215,11 @@ Expect HTTP 200. **Connection-close after the apply call is normal** (the AP sta
 
 **`verify_reboot`** — Same as Path A: ICMP poll until down then up. Budget: 5 min.
 
-**`verify_nomad`** — **Prefer SNMP over LuCI** (runbook quirk 3 — LuCI password may have changed post-apply, but the new SNMP community `NomadStayOut!` is deterministic):
+**`verify_nomad`** — **Prefer SNMP over LuCI** (runbook quirk 3 — LuCI password may have changed post-apply, but the SNMPv3 identity `admin`/`NomadStayOut!` is deterministic):
 
 ```bash
-snmpget -v2c -c NomadStayOut! -t 3 -r 1 <ap-ip> .1.3.6.1.2.1.1.1.0
+# AP SNMP = v3, user=admin, authPriv, SHA/AES, passphrase NomadStayOut! (NOT v2c-community — that times out).
+snmpget -v3 -u admin -l authPriv -a SHA -A NomadStayOut! -x AES -X NomadStayOut! -t 3 -r 1 <ap-ip> .1.3.6.1.2.1.1.1.0
 ```
 
 If exit 0 with a `sysDescr` value: emit `snmp_verify_ok`, then `completed`.
@@ -236,7 +240,7 @@ Path B (LuCI HTTP) — 5 commands, all via curl from CCU:
 - `curl -X POST .../cgi-bin/luci/admin/system/flashops -F config=@<cfg>` — upload
 - `curl -X POST .../cgi-bin/luci/admin/rpc -d '{"key":"rpcCfgApply","value":1}'` — apply
 - `ping -c 1 -W 2 <ap-ip>` — reboot detection (loop)
-- `snmpget -v2c -c NomadStayOut! ...` — Nomad-config verification
+- `snmpget -v3 -u admin -l authPriv -a SHA -A NomadStayOut! -x AES -X NomadStayOut! ...` — Nomad-config verification (v3, NOT v2c)
 
 No batch flags. No `obn update c all`. No glob form.
 
@@ -311,7 +315,7 @@ echo "  AP back up."
 
 # === STEP 5: VERIFY NOMAD CONFIG ===
 echo "[5/5] Verifying Nomad config via SNMP..."
-ssh_ccu "snmpget -v2c -c NomadStayOut! -t 3 -r 1 $AP .1.3.6.1.2.1.1.1.0" \
+ssh_ccu "snmpget -v3 -u admin -l authPriv -a SHA -A NomadStayOut! -x AES -X NomadStayOut! -t 3 -r 1 $AP .1.3.6.1.2.1.1.1.0" \
   && { echo "✅ AP $AP now on Nomad config"; exit 0; } \
   || { echo "🔴 SNMP verify failed — check LuCI title manually"; exit 12; }
 ```
