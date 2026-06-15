@@ -170,6 +170,10 @@ This is a workflow extension, not part of the original four. Applied to our stac
 
 When in doubt, prefer serial — but document the reason. Default-parallel should be the goal once evidence supports it.
 
+### Written comms rule (Jira / Confluence / email)
+
+Anything written to an external audience — Jira tickets and comments, Confluence pages, email — must be **professional, concise, and warm**: no emoticons or emoji, no walls of text. Lead with the ask in 1–2 lines; use short numbered lists; put deep technical detail in a linked doc or attachment, never in the comment body. (Lesson from RD-12433, 2026-06-09: a long ticket body got "i'm not going to read this huge wall of text" from R&D.)
+
 ## Architecture cheat-sheet
 
 A typical DOSTO consist has:

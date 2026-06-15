@@ -1,15 +1,15 @@
 ---
 name: dosto-obn-patches
-description: Verify and apply the 10 known OBN bug fixes on a DOSTO CCU. Reads the running OBN code via SSH, greps for each bug's patch marker, reports what's patched / what's missing, and (in --apply mode) prints the exact recipe to scp the fix scripts and run them inside btrfs ro-toggle. In --persist mode detects whether the CCU has the canonical nd-systemupdate.sh or the fleet-wide .dont rename and prints the matching shell recipe (staging scripts in /var/tmp/, which is bind-mounted into the chroot — /tmp is NOT) to bake patches into a new snapshot. Use whenever you're about to run obn update on a CCU, after every CCU reboot (patches may have been wiped), or to fill in the OBN patches column of fleet-status.md. The skill never edits the CCU directly — the engineer runs the printed recipe.
+description: Verify and apply the 11 known OBN bug fixes on a DOSTO CCU. Reads the running OBN code via SSH, greps for each bug's patch marker, reports what's patched / what's missing, and (in --apply mode) prints the exact recipe to scp the fix scripts and run them inside btrfs ro-toggle. In --persist mode detects whether the CCU has the canonical nd-systemupdate.sh or the fleet-wide .dont rename and prints the matching shell recipe (staging scripts in /var/tmp/, which is bind-mounted into the chroot — /tmp is NOT) to bake patches into a new snapshot. Use whenever you're about to run obn update on a CCU, after every CCU reboot (patches may have been wiped), or to fill in the OBN patches column of fleet-status.md. The skill never edits the CCU directly — the engineer runs the printed recipe.
 ---
 
 # DOSTO OBN Patches — Verify and Apply
 
-The 10 known OBN bugs (documented in [troubleshooting-runbook.md](troubleshooting-runbook.md)) crash, hang, or silently corrupt `obn update f all`, `obn update c all`, and `obn report`. Without these fixes, partial updates leave the consist in a mixed v3/v4/v8 state which causes RSTP topology storms — and `obn report` can spin at 100% CPU with 27GB+ RSS when any AP/switch is missing or has a duplicate position (Bug 10).
+The 11 known OBN bugs (documented in [troubleshooting-runbook.md](troubleshooting-runbook.md)) crash, hang, or silently corrupt `obn update f all`, `obn update c all`, and `obn report`. Without these fixes, partial updates leave the consist in a mixed v3/v4/v8 state which causes RSTP topology storms — and `obn report` can spin at 100% CPU with 27GB+ RSS when any AP/switch is missing or has a duplicate position (Bug 10).
 
-**Always apply all 10 together.** Partial patches are worse than vanilla — applying only some leaves crash/hang modes open, so an `obn update` or `obn report` run dies (or hangs forever) mid-way and writes partial state to the consist.
+**Always apply all 11 together.** Partial patches are worse than vanilla — applying only some leaves crash/hang modes open, so an `obn update` or `obn report` run dies (or hangs forever) mid-way and writes partial state to the consist.
 
-**Hang/leak guarantee.** Bug 10 (BFS guard in `report_dosto_neu.py:number_coaches`) is the only patch that prevents the infinite-loop + unbounded RSS growth in `obn report` when a switch/AP is missing. Bug 9 (pysnmp dispatcher Lock) prevents the parallel-SNMP `IndexError` crash during multi-switch updates. Bugs 2/3/4/7/8 convert `None`/`KeyError` crashes into clean exits. With all 10 present, OBN exits cleanly (zero or non-zero, but bounded) on every known failure mode involving missing or unresponsive devices.
+**Hang/leak guarantee.** Bug 10 (BFS guard in `report_dosto_neu.py:number_coaches`) is the only patch that prevents the infinite-loop + unbounded RSS growth in `obn report` when a switch/AP is missing. Bug 9 (pysnmp dispatcher Lock) prevents the parallel-SNMP `IndexError` crash during multi-switch updates. Bugs 2/3/4/7/8 convert `None`/`KeyError` crashes into clean exits. With all 11 present, OBN exits cleanly (zero or non-zero, but bounded) on every known failure mode involving missing or unresponsive devices.
 
 ## When to use
 
@@ -51,8 +51,9 @@ Subagent emits this as one element of `skill_outputs[]`:
     "bug8_count": 0,
     "bug9_count": 0,
     "bug10_count": 0,
+    "bug11_count": 0,
     "patches_applied_total": 0,
-    "patches_expected_total": 10,
+    "patches_expected_total": 11,
     "is_persisted": false,
     "train_id_template": "{%- set train_id = 132 -%}",
     "train_id_template_consistent": true,
@@ -67,9 +68,9 @@ Subagent emits this as one element of `skill_outputs[]`:
 
 `verdict` semantics:
 - `vanilla` — `patches_applied_total == 0`
-- `partial` — `0 < patches_applied_total < 10`
-- `all_patched` — `patches_applied_total == 10` AND `is_persisted == false`
-- `all_persisted` — `patches_applied_total == 10` AND `is_persisted == true` (btrfs subvol is a `release`-tier `runN`, not the temporary `run` snapshot)
+- `partial` — `0 < patches_applied_total < 11`
+- `all_patched` — `patches_applied_total == 11` AND `is_persisted == false`
+- `all_persisted` — `patches_applied_total == 11` AND `is_persisted == true` (btrfs subvol is a `release`-tier `runN`, not the temporary `run` snapshot)
 
 `is_persisted` is computed from the btrfs subvol path — `/.snapshots/release` or `/.snapshots/runN` (where N > 1) suggests persistence; bare `/.snapshots/run` or `/.snapshots/work` doesn't.
 
@@ -138,7 +139,7 @@ Invocation examples:
 - `/dosto-obn-patches 10.179.10.1 --persist --with-fzg-id 132` → OBN + template `train_id` fix folded into one chroot session
 - `/dosto-obn-patches 10.179.10.1 --persist --with-vlan7 132 --with-fzg-id 132` → all three folded — single-promote pattern (handoff lesson 1)
 
-## The 10 bugs and their grep markers
+## The 11 bugs and their grep markers
 
 The skill detects whether each bug is patched by grepping for a deterministic string the patch inserts into the file. These are the canonical markers:
 
@@ -154,6 +155,9 @@ The skill detects whether each bug is patched by grepping for a deterministic st
 | 8 | `/usr/share/obn/lib/report/device.py` | `bool(self.config) and not self.config.endswith` | `scripts/fix_obn_bug8.py` | `.endswith()` on None config crash |
 | **9** | `/usr/share/obn/lib/device/snmpdevice.py` | `_SNMP_DISPATCH_LOCK` (module-level threading.Lock) | `scripts/fix_obn_bug9_pysnmp_thread_safety.py` | **Parallel `obn update c sw` crashes with `IndexError: pop from empty list`** (race on shared SnmpEngine dispatcher) — Fzg t16/t18 2026-05-20 |
 | **10** | `/usr/share/obn/lib/report/report_dosto_neu.py` | `NDP-PATCH-BUG10-BFS-GUARD` | `scripts/fix_obn_bug10_report_dosto_neu_bfs.py` | **`obn report` infinite loop @ 100% CPU + 27GB RSS leak** when an AP/switch is missing or has duplicate position — Fzg 130 2026-05-12, Fzg 8 2026-05-22 |
+| **11** | `/usr/share/obn/lib/device/vendor/westermo.py` | `NDP-PATCH-BUG11-FW-VERIFY` | `scripts/fix_obn_bug11_westermo_fw_verify.py` | **AP firmware update reports SUCCESS without verifying activation.** `set_firmware_version` checks only the SNMP SET echo of `rpcFwFlash` (always 2) → declares success the instant the flash is triggered, before any download/flash/reboot. Per WESTERMO-SW6-MIB, rpcFwFlash read-back is a status field (flash(2)=writing, downloadError(-1), flashError(-2), nop(0)=done) that OBN never reads. Result: APs stuck on old fw (RT-610 flash-trigger hang) are recorded as updated. Fix polls rpcFwFlash + uptime up to ~10 min: True on reboot(uptime reset)/nop(0), False on -1/-2 or no-reboot timeout. Proven 4736-109 2026-06-08. |
+
+> **Note (2026-06-08):** the bug count is now **11**. Bug 11 is the AP-firmware activation-verify fix. It is NOT yet upstreamed by R&D and NOT yet live-validated end-to-end across a full consist (single-AP confirmed on 4736-109 .236 → activated; .226-class hangs correctly reported as failure). Headings below still say "10" in places — treat as 11 until they're swept.
 
 ## Procedure
 
@@ -186,6 +190,8 @@ echo "=== Bug 9 (snmpdevice.py pysnmp thread-safety Lock) ==="
 sudo grep -c "_SNMP_DISPATCH_LOCK" /usr/share/obn/lib/device/snmpdevice.py
 echo "=== Bug 10 (report_dosto_neu.py BFS hang guard) ==="
 sudo grep -c "NDP-PATCH-BUG10-BFS-GUARD" /usr/share/obn/lib/report/report_dosto_neu.py
+echo "=== Bug 11 (westermo.py AP firmware activation verify) ==="
+sudo grep -c "NDP-PATCH-BUG11-FW-VERIFY" /usr/share/obn/lib/device/vendor/westermo.py
 echo "=== btrfs subvol (look for run<N> ===" 
 mount | grep " on / " | head -1
 echo "=== train_id template (should be hardcoded number, NOT 128+train_id) ==="
@@ -211,6 +217,7 @@ Interpret each `grep -c` count:
 - Bugs 3–8: 1+ → patched, 0 → missing
 - Bug 9 (`_SNMP_DISPATCH_LOCK`): 2+ → patched (one at module-level def + one at the `with` site), 1 → partial, 0 → missing
 - Bug 10 (`NDP-PATCH-BUG10-BFS-GUARD`): 1+ → patched, 0 → missing
+- Bug 11 (`NDP-PATCH-BUG11-FW-VERIFY`): 1+ → patched, 0 → missing
 
 Print a status table:
 
@@ -234,13 +241,13 @@ Uptime: <X days>  (recent reboot? then patches may have been wiped from the run<
 ```
 
 **Verdicts:**
-- ✅ **10/10 patched** → done. Suggest `--persist` only if fleet-status doesn't yet say `persisted`. Otherwise exit clean.
-- 🟡 **10/10 in this snapshot but uptime is fresh** → looks good but verify by running an `obn` command first; some users have seen patches survive in `/usr/share/obn` but lose them on next reboot.
-- 🔴 **<10/10** → recommend `--apply`. Don't proceed past Step 3 of the train-login checklist until 10/10. **In particular, never run `obn report` with Bug 10 missing if any device may be offline** — it will hang at 100% CPU and leak RAM until OOM-killed.
+- ✅ **11/11 patched** → done. Suggest `--persist` only if fleet-status doesn't yet say `persisted`. Otherwise exit clean.
+- 🟡 **11/11 in this snapshot but uptime is fresh** → looks good but verify by running an `obn` command first; some users have seen patches survive in `/usr/share/obn` but lose them on next reboot.
+- 🔴 **<11/11** → recommend `--apply`. Don't proceed past Step 3 of the train-login checklist until 11/11. **In particular, never run `obn report` with Bug 10 missing if any device may be offline** — it will hang at 100% CPU and leak RAM until OOM-killed.
 
 Update fleet-status `OBN patches` column accordingly:
-- 10/10 in btrfs `release` snapshot (default GRUB) → `persisted (run<N>)`
-- 10/10 in current state but not yet promoted via `nd-systemupdate.sh shell` → `10/10 (not persisted — will wipe on reboot)`
+- 11/11 in btrfs `release` snapshot (default GRUB) → `persisted (run<N>)`
+- 11/11 in current state but not yet promoted via `nd-systemupdate.sh shell` → `11/11 (not persisted — will wipe on reboot)`
 - partial → `<N>/10`
 - 0/10 → `0/10 (vanilla)`
 
@@ -367,10 +374,11 @@ scp -i "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh" \
     "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug8.py" \
     "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug9_pysnmp_thread_safety.py" \
     "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug10_report_dosto_neu_bfs.py" \
+    "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug11_westermo_fw_verify.py" \
     "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_bug1_regex.py" \
     developer@<ccu-ip>:/tmp/
 ssh -i "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh" developer@<ccu-ip> \
-    'sudo mv /tmp/fix_obn.py /tmp/fix_obn_bugs67.py /tmp/fix_obn_bug8.py /tmp/fix_obn_bug9_pysnmp_thread_safety.py /tmp/fix_obn_bug10_report_dosto_neu_bfs.py /tmp/fix_bug1_regex.py /var/tmp/ && sudo chmod +x /var/tmp/fix_*.py'
+    'sudo mv /tmp/fix_obn.py /tmp/fix_obn_bugs67.py /tmp/fix_obn_bug8.py /tmp/fix_obn_bug9_pysnmp_thread_safety.py /tmp/fix_obn_bug10_report_dosto_neu_bfs.py /tmp/fix_obn_bug11_westermo_fw_verify.py /tmp/fix_bug1_regex.py /var/tmp/ && sudo chmod +x /var/tmp/fix_*.py'
 
 # === STEP 2: SSH to the CCU and run them under btrfs ro-toggle ===
 ssh -i "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh" developer@<ccu-ip>
@@ -398,10 +406,14 @@ sudo python3 /var/tmp/fix_obn_bug9_pysnmp_thread_safety.py
 # Bug 10 (report_dosto_neu BFS hang guard — prevents obn report infinite-loop + RSS leak):
 sudo python3 /var/tmp/fix_obn_bug10_report_dosto_neu_bfs.py
 
+# Bug 11 (westermo AP firmware activation verify — makes obn update f verify the flash
+# instead of trusting the SET echo; returns False on a real hang instead of false success):
+sudo python3 /var/tmp/fix_obn_bug11_westermo_fw_verify.py
+
 # Re-lock root
 sudo btrfs property set / ro true
 
-# === STEP 3: Re-run the skill in --check mode to verify 10/10 ===
+# === STEP 3: Re-run the skill in --check mode to verify 11/11 ===
 exit
 ```
 
@@ -448,7 +460,7 @@ sudo python3 /var/tmp/fix_obn_bug10_report_dosto_neu_bfs.py
 #      patches on the next 0-4am cycle:
 sudo mv /usr/sbin/nd-systemupdate.sh /usr/sbin/nd-systemupdate.sh.dont
 
-# 4. Verify all 10 markers inside the chroot:
+# 4. Verify all 11 markers inside the chroot:
 sudo grep -c "default image is now"     /usr/share/obn/lib/device/vendor/vdsrail.py
 sudo grep -c "if not result:"           /usr/share/obn/lib/device/vendor/vdsrail.py
 sudo grep -c "except KeyError:"         /usr/share/obn/lib/device/snmpdevice.py
