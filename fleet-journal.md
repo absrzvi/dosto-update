@@ -112,6 +112,27 @@ CCU `10.179.11.1` unreachable (ping + ssh timeout) at attempt time. Fzg 130 on t
 
 *(Journal entries to be migrated. Current state: BLOCKED on cable register #1.)*
 
+### Fzg 9 — 4734-109
+
+#### 2026-06-17 — AR — A1 switch replaced by Stadler + commissioned; cable reg #10 closed; OBN tree.py Bug 6 found unpatched on 2.2.23
+
+**Session goal.** Train listed as "Termin with Stadler to update switch config." On login, discovered the real change: **Stadler had physically replaced the faulty/mis-cabled A1 switch** (the long-standing reg #10 coupler cable swap). So the session became "commission the replacement A1," not "wait for re-cable."
+
+**What changed.**
+- New A1 = chassis `a0:59:3a:d0:c1:c0`, DHCP `.186`, came up on **factory config** `dosto-000000000000-v1-FD`, firmware already `7.4.2`. Cabling now **correct** (live LLDP): A1 e0-0 → Fzg9 A3, e0-1 → Fzg9 G1, e0-2 → Fzg15 A3 (front coupler). This is the exact as-designed A-head from reg #10's expected end-state.
+- Old A1 (`a0:59:3a:d0:8f:a0`, hand-corrected in-band 2026-06-08) is now an isolated spare hanging off A3 e0-2 (coupler trunk, VLAN 5/15 only, no vlan100). No fabric/IP clash — confirmed it holds no vlan100 lease.
+- Applied runtime TFTP conntrack helper (wiped by CCU's earlier reboot).
+- `obn update c .186` → RRQ seen ~5s, switch rebooted (uptime 7 min, new lease), hostname adopted `nv4-A1-v8-009`, config persisted. **12/12 switches now `nv4-X-v8-009`.** RSTP single-root G1 (`a0:59:3a:d0:43:a0`) unchanged + fully converged (all A3 ports FWD).
+
+**What we learned.**
+- `obn update c` first crashed: `AttributeError: 'NoneType' object has no attribute 'type'` at `tree.py:34` in `OBNTree.create_tree`. Cause = the Fzg-15 coupler neighbour (`d0:93:80`) isn't in OBN's own device list → `next(..., None)` → `.type` deref. This is **Bug 6 (cross-consist tree guard)** — and it was **absent** on this nd-obn 2.2.23 CCU, contradicting the "2.2.23 ships bugs 1–10 native" assumption. Applied canonical `if neighbour_device is None: continue` guard at runtime (backup `tree.py.pre-bug6`); push then worked.
+- The skill's `verify_reboot_started` 75s ICMP window can false-negative — the reboot was fast enough that ICMP didn't visibly drop, but uptime + new lease + new hostname prove it cycled. Trust the post-state (hostname/uptime), not just the ICMP-drop window.
+
+**What's next.**
+- OBN `tree.py` Bug 6 patch is **runtime-only** — wiped on next reboot. If this train (or any coupled 2.2.23 train) needs `obn` ops again, re-apply or persist via NDSU chroot. Worth confirming fleet-wide whether 2.2.23 actually ships this guard.
+- L2 health check + customer report deferred (engineer chose commission+verify only). Run `/dosto-l2-health 10.179.38.1` when a deliverable is wanted.
+- Old A1 spare on A3 e0-2 — Stadler to remove or retain.
+
 ### Fzg 19 — 4734-119
 
 #### 2026-05-21 — AR — Customer B&E WAP1/WAP2 swap report investigated; no Nomad-side fault
@@ -153,6 +174,26 @@ Same investigation as Fzg 19 (see entry above). AP→switch-port mapping on Fzg 
 
 **Next.** No fleet-status flip yet; defer further work on this train until the bootstrap-audit fixes land. Current state in fleet-status remains `⚪ UNKNOWN`.
 
+### Fzg 23 — 4734-123 (CCU box1-t67 @ 10.179.67.1)
+
+#### 2026-06-09 — AR — New train discovered on morning-brief auto-sweep; identity confirmed, CCU dropped mid-inventory
+
+**Session goal.** `/dosto-morning-brief` reachability sweep flagged `10.179.67.1` as a CCU on TCP/22 not present in fleet-status. Engineer chose to assign rather than skip; logged in to identify it.
+
+**Identity — confirmed from convergent markers** (didn't trust any single field; an unvisited CCU can carry a wrong rendered train_id):
+
+- Hostname `box1-t67`, bond0 `10.179.67.1/25`, vlan100 `10.179.67.129/25`.
+- vlan7 live `172.19.139.130/17` → octet3 139 = 128 + Fzg//2 and **odd host (.130)** → **Fzg 23**. (Distinct from Fzg 22 / 4734-122, whose vlan7 is the even-host `172.19.139.2` — same octet3, different host bit.)
+- **nv4 4-Teiler**: coaches A/B/E/G, 12 VDS switches all `nv4-*-v8-023`, 16 APs all Nomad form (`AP*-v1-*`, none factory `RT610LV`).
+- Series formula 4734-NNN = Fzg+100 → **Train# 4734-123**. No existing fleet-status row, no allocation PDF folder → genuinely fresh train.
+- Assigned via `dosto_morning_brief.py --assign 10.179.67.1 4734-123 --fzg 23`. New row added: `⚪ UNKNOWN / initial visit`.
+
+**State inventory — INCOMPLETE.** Started `/dosto-state-inventory`; **CCU went offline mid-probe (~08:30Z)** — both bond0 and vlan100 timed out, stayed dark through a ~5-min poll. Classic cellular/consist drop, not us (every read prior was read-only and succeeded). Got facts 1–3 + 8; pending facts 4–12 (OBN patch count, NDSU filename, train_id template form, vlan7 nmconnection, TFTP module/helper/ipset).
+
+**Notable.** Switches already render `-v8-023` correctly (train_id resolves to 23), yet the nv4 `.cfg` templates are **Form-2** (formula-based train_id, no `{%- set train_id = 23 -%}` directive). Couldn't confirm fact-7 form before the drop — open question whether it's Form-1-with-directive or sourced elsewhere. Commissioning will likely need the Form-1 directive added to all 12 nv4-*.cfg (cf. [feedback_nv4_form1_directive_required](../.claude/projects/C--Users-AbbasRizvi-Documents-dosto-troubleshooting/memory/feedback_nv4_form1_directive_required.md)).
+
+**Next.** Re-run `/dosto-state-inventory 10.179.67.1 4734-123` when online to finish the 12-fact baseline; drop the IP-Port-Allocation PDF into `train-ip-allocation-commission/4734-xxx/4734-123/`. Train stays `⚪ UNKNOWN`.
+
 ---
 
 ## How to add an entry
@@ -161,3 +202,51 @@ Same investigation as Fzg 19 (see entry above). AP→switch-port mapping on Fzg 
 2. Insert a new dated `### YYYY-MM-DD — <initials> — <one-line summary>` header **at the top** of that train's section.
 3. Keep it to *what changed / what we learned / what's next*. Cross-reference handoff docs for architectural findings rather than duplicating.
 4. Update `fleet-status.md`'s per-train row only for state changes; the journal does not replace the table.
+
+---
+
+## Fzg 138 — 4736-110 (CCU box1-t23 @ 10.179.23.1)
+
+### 2026-06-03 — AR — Crew report: no Wi-Fi signal in both Führerstände → root cause = wrong/foreign device on A3 e0-4 (front-cab AP3 position)
+
+**Symptom:** crew report no signal in the cab at both ends. Read-only investigation from CCU.
+
+**What was ruled out:**
+- All other APs healthy: `obn validate -t ap` = 23 present, all firmware 6.11.2-0 ✓ + config ✓. (Train power-cycled mid-investigation; AP IPs rotated — IPs below are post-cycle.)
+- `/etc/obn/coach_ap_mappings.yaml` showing all radios `updown: DOWN` is a **red herring** — read only by report.py for a report "floor" label, not radio control. Stale 2024 default.
+- Radio band plan is **correct per template** (`~/Documents/nomad-obn-template-nv6/src/etc/obn/rules.yaml`): plain coaches AP1/AP4=2.4GHz, AP2/AP3=5GHz; m-variant coaches (4/5/6) mirror it AP1/AP4=5GHz, AP2/AP3=2.4GHz. Live cab APs all match. NOT the Fzg 19/20 m-variant divergence.
+- TX power: all cab APs `cfgWlanDevPower=15` dBm, antenna 6 dBi, country DE → ~21 dBm EIRP. 2.4GHz already at ETSI 20dBm ceiling; 5GHz ch36/44 has only ~2dB legal headroom. Power bump NOT the fix.
+
+**Root cause — front-cab AP3 (Coach 1, position A3, config AP3-v1, 5GHz/5220):**
+- Expected MAC `00:14:5a:04:6a:ba` (Westermo) is **absent everywhere** — no DHCP lease, no vlan100 ARP, not on switch A3.
+- Switch A3 = `10.179.23.179` (fingerprinted: e1-4 multi-VLAN Stadler trunk). Per nv6-topology, AP3 → **A3 e0-4**.
+- A3 **e0-4 is link UP, 1000/Full, 0 errors/CRC/carrier** — port + cable healthy. RX 3289 / TX 18638.
+- **MAC learned on e0-4 is `14:4f:d7:da:77:48`** (OUI 14:4f:d7 = HP/AzureWave, NOT Westermo 00:14:5a). VLAN PVID 1, trunk allows 100,10,20,30,31,131,150,1 (correct AP trunk).
+- **LLDP resolves it: SysName `iobtester-HP-El...` (HP EliteBook) — an ÖBB tester's / commissioning laptop** patched into the AP3 port. The real front-cab AP3 was unplugged to make room for it. NOT a hardware fault or wrong-AP swap — a left-behind test connection. (`show lldp neighbours`: e1-2→AP4-v1 ✅, e0-0/e0-1→nv6-A1/A2-v8-138 ✅, e1-4→firewall ✅, e0-4→iobtester laptop ✗.)
+- Control: sibling front-cab AP4 on A3 e1-2 (.223) alive & on Nomad config → switch/uplink/power all fine.
+
+**Conclusion:** front-cab AP3 was disconnected and a tester's HP laptop occupies its port (A3 e0-4). Front cab loses its 5GHz/5220 cell → "no signal." Resolution: reconnect AP3, unplug the laptop — a field action, likely doable by whoever is on the train now.
+
+**Field action required:**
+1. At Coach A / front cab, unplug the `iobtester` HP EliteBook from switch A3 port e0-4 and reconnect front-cab AP3 (Westermo RT610LV, MAC `00:14:5a:04:6a:ba`).
+3. Rear cab (Coach B/6): all 4 APs present + correctly configured per plan; if signal still weak there, it's RF/antenna/coverage (physical), not network.
+
+**Optimisation note (post-restore):** only safe RF lever is moving 5GHz cab APs to a DFS channel (5470–5725, ch100+, 30dBm ETSI ceiling) then raising power — channel-plan change w/ DFS consideration, not a bare power bump. 2.4GHz already maxed.
+
+### 2026-06-18 — AR — Ignition logger hardened + repeatable Vign-collapse fault captured
+
+**Context:** train kept going dark for long stretches (NMS "last message" red; e.g. 06-17 last msg 08:30 CEST). A persistent CMM Vign poller (`vign-logger.service`, installed 2026-06-16) is the only record that survives a power-down — `/var/log`, journald, dmesg and `wtmp` are all tmpfs on this CCU; only `/data` (btrfs) persists. No BMC/IPMI SEL exists; the ADLINK `cmm` CLI is broken (GLIBC mismatch) so raw `i2ctransfer` is the only CMM path; watchdog is disarmed (ruled out). The CMM has **no latched cause register** (confirmed against the full R5001C CMM I2C Manual v2.5 — commands 0x01–0x20 are all live sensors / settable timers, zero history), so capturing state *before* the cut is the only diagnostic option.
+
+**Hardening applied (all artifacts on `/data`, the only persistent FS; unit files installed via btrfs RO-toggle):**
+1. `vign_poll.sh` heartbeat `HB` 300s → **30s** — last pre-cut sample now ≤30s old instead of up to 5 min.
+2. `vign-shutdown-marker.service` — writes `GRACEFUL_SHUTDOWN <iso>` + final CMM read to `/data/ignition-log/shutdown.log` on a clean shutdown only. **Absence after an outage proves a hard cut.**
+3. `nd-logtail.timer` (60s) → `/data/ignition-log/logtail/` — rolling tail of dmesg + journal priority≤4 (catches thermal/undervoltage/OOM precursors).
+4. Added inlet/outlet **temperature (CMM 0x03)** to the poller — signed 2's-complement decode verified against manual examples; new `inlet_c`,`outlet_c` columns. Closes the thermal-cause blind spot (CMM inlet thresh 70°C / outlet 85°C; kernel already logs an ACPI thermal firmware-bug warning). Confirmed live: inlet 25.5°C / outlet 30.5°C at install.
+
+**FINDING — repeatable ignition-input dropout in Manual mode (3rd occurrence):**
+- **2026-06-18 ~05:31 UTC (07:31 CEST):** HB=30 caught the exact transition — Vign **109.74 → 0.00 V** while **Vin held rock-steady at 109.79 V**, stayed 0 for ~90s, then CCU powered down (gap to next `start` 05:33→05:38). `shutdown.log` **EMPTY → hard cut, no graceful shutdown.**
+- Same signature on **2026-06-16 19:12** (Vign→0, Vin held ~112V). 06-17 event fell in the old 5-min blind window (inconclusive).
+- **Per the logger's own rule: clean Vign collapse with Vin holding = ignition-input fault.** This is now repeatable, not a one-off.
+- **Contradiction to resolve:** every sample reads `MANUAL_on` (chassis bits[7:6]=10), where the ADLINK manual (§3) says the ignition input is **bypassed** — a Vign=0 should NOT shut the CCU down in Manual. Yet it consistently does shortly after Vign collapses. Either (a) the front-panel 3-position switch is **not really on Manual** despite the CMM readout (wiring/readout mismatch → train is actually ignition-controlled → these are genuine ignition faults), or (b) Vign and the power-down share an upstream vehicle-circuit cause. **Either way the ignition line dropping to 0V while battery holds is a real, repeatable electrical event — a concrete finding for whoever owns vehicle power/ignition wiring (Stadler).** Next physical visit: verify the front-panel switch position by eye.
+
+**Data:** `/data/ignition-log/vign.csv` (live) + local copy `findings/ignition-log-4736-110/` (all scripts, unit files, `vign_4736-110_20260618.csv`). NDSU promote will roll the 3 unit files out of `/etc` (scripts on `/data` survive) — re-run RO-toggle install if that happens.

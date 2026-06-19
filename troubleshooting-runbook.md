@@ -9,6 +9,8 @@ Operational procedures for troubleshooting and reconfiguring DOSTO trainset onbo
   - [How to apply all fixes](#how-to-apply-fixes-on-a-ccu-manually-until-gitlab-release)
 - [CCU Firewall — TFTP conntrack helper missing (silent batch firmware failures)](#ccu-firewall--tftp-conntrack-helper-missing-silent-batch-firmware-failures)
 - [OBN train_id — Verify and Fix Before Any Config Push](#obn-train_id--verify-and-fix-before-any-config-push)
+- [NMS & Zabbix Operations](#nms--zabbix-operations) — hosts, both auth paths, switch template (10723), SNMP creds, host-IP/DHCP behaviour, factory-AP recovery
+- [NMS Train-Type Config: consist diagram via the API](#nms-train-type-config-creatingupdating-a-consist-diagram-via-the-api)
 
 ---
 
@@ -675,3 +677,149 @@ Spot-check with `head -2 nv4-*.cfg` after running — if a template already had 
 ### Caveat: btrfs snapshots roll back `/etc/obn/` on every CCU reboot
 
 `train_id` and template fixes need to be re-applied after every reboot until the OBN package itself is rebuilt with the correct Fzg ID baked in. See the spawned task: "Make OBN patches survive CCU reboots" for the long-term fix.
+
+---
+
+## NMS & Zabbix Operations
+
+The DOSTO-NEU monitoring stack has **two** backends with **two different auth paths**, and they're easy to confuse. This section is the operational index; deep per-topic notes live in the memory files referenced inline.
+
+### ⚠️ Get the host right first
+
+The live ÖBB NMS is **`nms-obb.nomadrail.com`** (ONE "o" — "obb"). There is a stale/decoy **`nms-oebb.nomadrail.com`** ("oebb", two letters) that resolves and returns plausible-but-wrong data (only 3 placeholder DOSTO trains). Querying the wrong host produced a chain of false "train not provisioned" conclusions (2026-06-08). **Match the host to the browser URL before concluding any data is "missing."**
+
+### The two auth paths
+
+| Target | Base | Auth | Use for |
+|---|---|---|---|
+| **NMS API** | `https://nms-obb.nomadrail.com/nms/rest` | POST `/user/authenticate` `{username,password}` → `.token` → send as header `Auth-Token: <token>` (valid 1 week). Use your **own NMS login**, NOT okapi. | trains, train-types, monitoring/alarms, consist config |
+| **Zabbix API** | `https://trainzabbix-obb-alpin.nomadrail.com/api_jsonrpc.php` | JSON-RPC `user.login` `{username:okapi, password:<from train-type zabbixConfiguration>}` → token in `auth`. (okapi creds are inside the NMS train-type config's `zabbixConfiguration` block.) | hosts, items, triggers, LLD rules, templates, problems |
+
+Run NMS calls from the CCU (`developer@10.179.X.1`) if your laptop can't reach NMS. Zabbix API is reachable from the CCU too. Swagger: `docs/swagger_all.yaml`. **Note:** the NMS `GET /train/{relativeId}` endpoint 500s even for valid trains — use `GET /train/project/{id}` (the project-scoped list) instead.
+
+### SNMP credential model (load-bearing — getting this wrong = fleet SNMP outage)
+
+`NomadStayOut!` is the **SNMP** passphrase; `NomadComeIn` is the **SSH/LuCI GUI** password and must **never** appear in an SNMP field. Creds are **inverted** by device type:
+
+| Device | SNMP user | auth/priv |
+|---|---|---|
+| **VDS switch** | `snmpadmin` | SNMPv3, SHA1 auth + AES128 priv, authPriv, passphrase `NomadStayOut!` (both) |
+| **Westermo AP** | `admin` | same SHA1/AES128/authPriv/`NomadStayOut!` |
+
+In the NMS train-type `dynamicConsistConfig.deviceConfigurations`, the Zabbix-6 enum is `authProtocol: 1=SHA1` and `privProtocol: 1=AES128` (NOT 2 — 2 is SHA224). After correcting host creds, switches need `systemctl restart zabbix-proxy` on the CCU (not just `config_cache_reload`) to clear stale failed-auth backoff — or let the power-cycle do it. Full history: [`project_nms_zabbix_snmp_cred_model`], [`feedback_zabbix_proxy_restart_for_stuck_snmp`].
+
+### Switch port monitoring — `Template VDS Switch - DOSTO NEU` (Zabbix template id 10723)
+
+ALL ~700 DOSTO-NEU switch hosts (every train type) link this **one shared template**, so template edits inherit fleet-wide automatically (each train's per-port items materialise on its own hourly LLD run, or force it with execute-now per host — `task.create [{type:6, request:{itemid:<lld-ruleid>}}]`).
+
+The template had two bug classes, both fixed 2026-06-08 ([`project_zabbix_switch_template_wrong_oids`]):
+- **Wrong OIDs / dead static items.** Static `snmp.statusoper.portN` items polled bogus ifIndex `1000001+`; firmware/software items used wrong enterprise OIDs (`31988`/`30036`). Device's real enterprise is **33658** (firmware = `.1.3.6.1.4.1.33658.1.10.2.0` → `7.4.2`). These 29 static items are now **disabled**; port monitoring comes from the LLD instead.
+- **Broken LLD filter.** The correct rule `ifDescrv3` (`discovery[{#SNMPVALUE},IF-MIB::ifDescr]`) had its filter keyed on `{#IFDESCR}` (undefined) → discovered nothing. **Fixed to `{#SNMPVALUE}` matches `^e[0-9]`**, with exclusions `NOT ^e0-2$` (coupler) and `NOT ^e0-5$` (service port). Discovers all real `eN-M` ports; `ifOperStatus[{#SNMPVALUE}]` auto-uses the correct ifIndex.
+
+Port-down trigger prototype (admin-enabled ports only, suppresses deliberately-disabled empty ports): `last(ifOperStatus[{#SNMPVALUE}])=2 and last(ifAdminStatus[{#SNMPVALUE}])=1`. Real ifIndex map on a 28-port NV6 switch: `e0-0`=3 … `e2-5`=30 (walk `ifDescr` `.1.3.6.1.2.1.2.2.1.2` to confirm). **Gotcha:** editing a trigger PROTOTYPE or LLD filter does NOT update already-instantiated per-port triggers until the LLD re-runs — force with execute-now or wait the 3600s LLD cycle.
+
+**Benches** (2123, 4122, 4124 — bench by name even if typed NV4) are workshop units with expected disconnection noise: their `ifDescrv3` LLD rule is **disabled per-host** and discovered port items deleted, so they don't alarm. This is intentionally per-host, NOT in the shared template (so real trains still alarm).
+
+### Host IP tracking — APs float on DHCP; don't pin a static IP
+
+AP/switch IPs float on 2-minute DHCP leases. NMS **auto-syncs** the current lease IP into each Zabbix host interface (a batch task; all hosts are `useip=1` with the live `10.179.x` IP). So do **not** hand-edit a host IP or pin a static one — it'll go stale. After an AP recovers/reboots, expect its "cannot be pinged" alarm to **linger a few minutes** (proxy-side ARP/forwarding convergence — the CCU can ping it the whole time); fix = force re-poll of the host's `icmpping` items + wait, NOT a config change. The trigger auto-resolves once `icmpping=1`.
+
+### Factory AP recovery (AP on 192.168.1.x, invisible to vlan100)
+
+A never-commissioned AP sits on factory `192.168.1.x`, off the management VLAN, so OBN can't discover/render it and `dosto-ap-config-update` can't reach it. Recover via temp untagged `192.168.1.2/24` on CCU `bond0` + clone a same-variant (m / non-m) sibling's rendered config + LuCI push. **Full procedure is the `dosto-ap-factory-recover` skill** (`.claude/skills/dosto-ap-factory-recover/`); validated on 4736-115 AP4m 2026-06-08. Standard reachable factory APs (already on `10.179.x`) use the [Westermo AP Config Push](#westermo-ap-config-push--manual-method-when-obn-snmp-fails) LuCI method below instead.
+
+### Provisioning facts (why some columns read blank / generic)
+
+- **No project 51** in NMS — DOSTO-NEU's NMS project is **50** ("Dosto-Neu-National"). The CCU's `project_id 51` is only the Nomad-Connect MQTT topic namespace, not an NMS project; NMS keys on `rtl_project_id 50 / rtl_train_id` (e.g. 6018). [`project_nms_train_record_vs_monitoring_layer`]
+- **Alarm "Device" column `C<n>`** (C2/C4/C6) = positional coach index from the Zabbix host `R<n>` (frontend R→C relabel), NOT the physical car letter or painted number. Real painted numbers require OBN `physical_coach_map_file` (a MAC→coach YAML, currently UNSET for DOSTO-NEU → all "unknown") AND `paintedCoach:true` on the project config. [`project_nms_painted_coach_number_source`]
+- **Summary In-depot/Trip/Location/Next-trip** = the RTPI **journey feed** (backend MQTT, keyed by `Vehicles[].vehicleNumber`), not telemetry/Zabbix. The ÖBB feed historically carried only `4744xxx`, not `4736xxx` — a journey-feed coverage gap, not a train fault.
+
+---
+
+## NMS Train-Type Config: creating/updating a consist diagram via the API
+
+When the NMS consist diagram for a train type is wrong (e.g. a bench registered with the wrong coach count) and the UI's "create new configuration" button returns **500**, drive the REST API directly. Validated 2026-06-04 building the 2-coach `NV2 - Bench` (OBB project 50) from the 4-coach NV4 template.
+
+### Auth
+NMS REST uses a token in the `Auth-Token` header (NOT basic auth, NOT a cookie — those all 401). The okapi Zabbix creds do **not** work here; use your own NMS login.
+```bash
+B="https://nms-obb.nomadrail.com/nms"
+TOKEN=$(curl -sk -X POST "$B/rest/user/authenticate" \
+  -H "content-type: application/json;charset=UTF-8" \
+  -d '{"username":"<you>","password":"<pw>"}' | sed -E 's/.*"token":"([^"]+)".*/\1/')
+curl -sk "$B/rest/configurations/50/traintypes" -H "Auth-Token: $TOKEN"        # list types
+curl -sk "$B/rest/configurations/50/traintypes/NV2%20-%20Bench" -H "Auth-Token: $TOKEN"  # GET (returns ALL versions as a list)
+```
+Run curl from the CCU (`developer@10.179.X.1`) — it can reach the NMS; your laptop may not.
+
+### Write model (non-obvious)
+- The train-type endpoint accepts **GET and POST only**. PUT / PATCH / DELETE all return **405**.
+- **POST = insert** (Mongo), keyed on `_id`. POSTing a body that still contains the existing `_id` → `DuplicateKeyException 11000`. **Remove `_id`** so Mongo assigns a new one.
+- There is **no update or delete verb and no activate endpoint**. Versioning is by document: GET returns every version; **the version with the highest `activatedOn` is the active one** the UI loads. To "update", POST a new version with `activatedOn` set higher than the current max.
+```bash
+python3 -c 'import json;d=json.load(open("/tmp/new.json"));d.pop("_id",None);d["activatedOn"]=<current_max+1>;json.dump(d,open("/tmp/push.json","w"))'
+curl -sk -X POST "$B/rest/configurations/50/traintypes/NV2%20-%20Bench" \
+  -H "Auth-Token: $TOKEN" -H "content-type: application/json;charset=UTF-8" \
+  --data-binary @/tmp/push.json
+```
+- The backend uses a **strict JSON parser**: any unknown top-level field (e.g. a hand-added comment field) → `UnrecognizedPropertyException 500`. Only the 27 known fields are allowed. Don't add notes inside the JSON.
+
+### Consist-view rendering rules (the `Item 'X.pN' not found` error)
+The Angular renderer (`DeviceCollection.layoutDevices` → `generateConnections` → `getDeviceItem`) has two hard requirements. Violating either throws `Item '<id>.<port>' not found` and the diagram won't draw:
+
+1. **`dynamicConsist` must be `false` for a static-layout bench.** With `true`, the renderer ignores `staticConsistLayout` and generates its own layout from live device reports (`convertDynamicConsist2Layout`), producing connections against ports that don't exist. Set `"dynamicConsist": false`.
+2. **Connection-target ordering.** `deviceLayouts` is processed in array order; a device's `connections[].target` must reference a device that appears **earlier** in the array (it must already be in `this.items`). Practically: declare each inter-device link on the *later* device pointing back to the *earlier* one, and **put the CCU/BOX last** in the array if it connects to a switch (the CCU references a switch, so the switch must come first).
+
+Validation snippet before pushing:
+```bash
+python3 -c '
+import json;d=json.load(open("/tmp/new.json"))
+lay=d["trainConsistView"]["staticConsistLayout"]["deviceLayouts"]
+idx={x["id"]:i for i,x in enumerate(lay)}
+bad=[f"{x[\"id\"]}->{c[\"target\"]}" for i,x in enumerate(lay) for c in (x.get("connections") or []) if idx.get(c["target"].split(".")[0],1e9)>=i]
+print("ordering violations:", bad or "NONE")'
+```
+
+### SNMP creds per device type (project 50 convention)
+⚠️ **CORRECTED 2026-06-08 (verified live by `snmpget` on multiple t18/t23 devices).** An earlier version of this note said switches use SNMP passphrase `NomadComeIn` — **that was WRONG and caused a fleet-wide Zabbix mis-cred outage** (all switch+AP SNMP monitoring dead, NMS SNMP-blind while tiles showed "online" off ICMP). `NomadComeIn` is the device **SSH / LuCI GUI login password** (user `admin`), **NOT** an SNMP credential. Do not put it in any SNMP field.
+
+The correct SNMP creds for `dynamicConsistConfig.deviceConfigurations` (and Zabbix host interfaces):
+
+| Device | SNMP user | auth | priv | passphrase (auth & priv) | level |
+|---|---|---|---|---|---|
+| **SW** (VDS switch) | `snmpadmin` | SHA1 | AES128 | `NomadStayOut!` | authPriv |
+| **AP** (Westermo) | `admin` | SHA1 | AES128 | `NomadStayOut!` | authPriv |
+| BOX / CCU, MEDIA | — | — | — | — | `snmp:false` (agent/ICMP only) |
+
+⚠️ **AP and SW use INVERTED SNMP usernames** (AP=`admin`, SW=`snmpadmin`) — proven mutually exclusive: the AP answers SNMP only as `admin` (`snmpadmin`→"Unknown user name"); the switch only as `snmpadmin` (`admin`→"Unknown user name"). Counter-intuitive but confirmed.
+
+⚠️ **Zabbix-6 enum gotcha:** the NMS `authProtocol`/`privProtocol` integers map `0=MD5, 1=SHA1, 2=SHA224…` and `0=DES, 1=AES128…`. So **SHA1 = `1`** (NOT 2 — 2 is SHA224) and **AES128 = `1`**. net-snmp `-a SHA -x AES` correspond to `authProtocol:1`/`privProtocol:1`.
+
+After correcting Zabbix host creds, switches also need a **`systemctl restart zabbix-proxy`** on the CCU (not just `config_cache_reload`) to clear stale failed-auth backoff — or let the train power-cycle do it.
+
+Device IPs are filled by discovery at activation — leave `trainLayout` octets as-is; APs sit at `7.7.7.7` in Zabbix until discovered.
+
+### Coach header label and canvas sizing (the `N/A` label + diagram proportions)
+Both reverse-engineered from `main.d338fc0ee0b0573fffdc.bundle.js` (download to CCU, grep — non-minified, real method names) on 2026-06-04 for the 2-coach `NV2 - Bench` (train 2123, `OEBB-Bench-2C`).
+
+**Coach header label ("A" shows as "N/A").** The `Coach` constructor (alarmObjects.js) computes:
+```js
+let coachName = deviceLayout.paintedCoachId !== "unknown" ? deviceLayout.paintedCoachId : deviceLayout.name;
+// then renders:  new fabric.Text(this.name || 'N/A', ...)
+```
+`paintedCoachId` is **NOT a config field** — the backend `DeviceLayout` model has exactly 7 known properties (`connections, position, type, name, id, coach, up`); POSTing a `paintedCoachId` key → `UnrecognizedPropertyException 500`. It is attached **at draw time** in `drawConsistLayout`: for each `coach`-type layout, the renderer finds the live `data.train.deviceGroups` entry whose `name` ("Coach N", `Coach` stripped) === `layout.coach`, and copies that group's `paintedCoachId` onto the layout. A live group's `paintedCoachId` defaults to the literal string `"unknown"` unless a device reports a painted number. So:
+- Coach **with** a matching live device group → gets `"unknown"` → ternary falls back to static `name` → label correct.
+- Coach with **no** matching live group → `paintedCoachId` stays `undefined` → `undefined !== "unknown"` is true → `coachName = undefined` → falsy → renders **`N/A`**.
+
+Therefore **the label is driven entirely by live device→coach mapping, never by the train-type JSON.** On bench 2123 all 8 Zabbix hosts were registered as `50_2123_R2_*` (coachId 2; `R%d` token = coach number, parsed at bundle `split[2].replace("R","")`), so no "Coach 1" group exists and coach A renders `N/A` — even though the train-type `trainLayout` correctly defines a coach-1 block (3 SW + 4 AP + BOX) and DHCP shows physical `2t-A1/A2/A3` switches online. The Zabbix skeleton is **stale** (created from an older config version; hosts still at placeholder `7.7.7.7`/`0.0.0.0` because OBN discovery never produced a consist here — `consist.yaml` empty, no `discovery.json`). **Fix path = rebuild the NMS/Zabbix host skeleton so coach-1 devices register as `R1`** (run OBN discover→report once the bench's templates match the intended consist, or correct the Zabbix host coach token). NOT a consist-view JSON change. ⚠️ This bench's OBN templates are nv4 4-coach (`nv4-100-A1`, `nv4-300-G1`, …) mid OEBB-251 v4 push — rebuilding intersects active commissioning state; coordinate before running discovery.
+
+**Deeper root cause — OBN has no nv2 support.** `report_dosto_neu.py`'s `number_coaches()` assigns coach numbers by BFS over LLDP, seeded from the CCU via `ccu1_coach_map={"nv4":2,"nv6":3,"fv5":2,"fv6":3}` / `max_coaches={"nv4":4,...}` — **no `nv2` key**, so a 2-coach bench can't be numbered. Plus the templates + `backbone-discovery.yaml train_type` are nv4, and the bench's CCU is wired non-standard (CCU→A2/A1, inter-coach A↔B on A1.e0-1↔B1.e0-1). Full staged enablement plan + verified LLDP topology: [`OEBB-251/nv2-bench-obn-enablement-plan.md`](OEBB-251/nv2-bench-obn-enablement-plan.md).
+
+**Canvas sizing.** `prepareCanvasDrawingContext` fits the canvas to the container while preserving the `gridSize` aspect ratio:
+```js
+scale = min(divWidth/gridSize.width, divHeight/gridSize.height);
+canvas.width = gridSize.width*scale;  canvas.height = gridSize.height*scale;
+```
+Device coords come from the coach `position.bounds` (absolute) + percentage-relative child positions. House style = **625 grid-units per coach** (4-coach NV4 uses `gridSize.width 2500`, coaches at left 0/625/1250/1875, each `width:600 height:800 top:0`; 25px right + 50px bottom slack vs grid 2500×850). For the 2-coach bench, tighten `gridSize` to exactly bound the content: coaches span x:0–1225, y:0–800 → set `gridSize {width:1225, height:800}` (was 1250×850). Pushed 2026-06-04 as NV2 version `activatedOn 1780564811287`.
+
+Reference file: [`trackers/bench_2123_nv2_template.json`](trackers/bench_2123_nv2_template.json) — the validated 2-coach NV2 bench. NOTE: the live active version drifts past this file as new versions are POSTed; always GET the highest-`activatedOn` version before editing, don't start from the reference file.
