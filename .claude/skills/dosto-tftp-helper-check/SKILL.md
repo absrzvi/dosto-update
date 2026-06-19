@@ -220,6 +220,28 @@ This is the harder case. If you see verdict `nft_compat_no_op` on a CCU, capture
 
 Validated against the legacy iptables backend on 2026-05-09 (box1-t10). The nft compat path is encoded here for completeness; if the fleet image is consistent, this branch will be unreachable.
 
+### 4b. The UDP-timeout-expiry caveat (helper present, batch still fails under concurrency)
+
+The helper module + CT rule being present (`all_present`) is necessary but **not sufficient for a full-fan-out batch**. Distinct second failure mode, confirmed 2026-06-09 on box1-t54 (4734-190):
+
+OBN's `process_batch()` (`/usr/share/obn/cli/update.py:328`) uses `ThreadPoolExecutor(max_workers=len(devices))` — **unbounded fan-out**; every AP is an OBNTree leaf, so the whole consist fires as **one batch** (e.g. 16 simultaneous ~100 MB TFTP pulls). The helper sets up a return-path *expectation* per transfer, but `net.netfilter.nf_conntrack_udp_timeout` defaults to **30 s**. Under 16-way contention each flow stalls for >30 s gaps → conntrack **expires the entry mid-transfer** → the AP's next data packet has no return mapping → ICMP port-unreachable → `in.tftpd: read(ack): Connection refused`, and the AP reports `rpcFwFlash=-1` (downloadError).
+
+**This is NOT table exhaustion** — on box1-t54 the table was 828/262144. It's purely the per-flow UDP timeout being too short for many slow concurrent transfers.
+
+**Tell-tale (distinguishes this from the helper-absent gap and from a flash hang):**
+- helper module loaded ✅ AND CT rule present ✅ (so `--check` says `all_present`), BUT
+- `journalctl _COMM=in.tftpd` shows `read(ack): Connection refused`, AND
+- failed APs read `rpcFwFlash=-1` (downloadError) — *not* `-2`, *not* `2` (a `2` that never reboots is a flash-trigger hang, a different problem — see `dosto-ap-firmware-update`).
+
+**Runtime fix (non-persistent):**
+```bash
+sudo sysctl -w net.netfilter.nf_conntrack_udp_timeout=180        # 30 → 180s
+sudo sysctl -w net.netfilter.nf_conntrack_udp_timeout_stream=600 # 120 → 600s
+```
+**Persistent home:** Puppet `60-allow-management`, alongside the `modprobe`/`CT --helper` lines (same gap). Until R&D ships it, re-apply after every reboot.
+
+**The two durable alternatives** (don't rely on the timeout bump alone): (1) **R&D** cap OBN's pool — `max_workers=min(4, len(devices))` at `update.py:328` (ideally a config key); (2) **operational** — chunk pushes to ~4 APs or single-AP serial (`dosto-ap-firmware-update`), which is the CLAUDE.md handoff-lesson-11 default. The 2026-06-09 test is the measured evidence for why serial-only is the standing rule: pass-1 full-batch = 7/16 with 9× `Connection refused`; lower-concurrency retry = 0 refused (download layer recovered). Full writeup: `findings/bug11_batch_fw_test_4734-190_2026-06-09.md`.
+
 ### 5. After applying the runtime workaround — verify
 
 Tell the engineer to:

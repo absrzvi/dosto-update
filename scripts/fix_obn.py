@@ -174,13 +174,42 @@ def fix_bug_7():
                  label="Bug 7 (reboot hostname None guard)")
 
 
+def _run_sibling(script_name: str, label: str):
+    """Run a sibling fix_obn_bug*.py from the same directory, if present.
+
+    Bugs 8/9/10/11 live in their own scripts (multi-line method-body replacements
+    that don't fit the simple patch() helper). We chain them here so a single
+    `python3 fix_obn.py` applies the full 1-11 set. Each sibling is idempotent.
+    Looks in the script's own dir first (works whether run from repo or /var/tmp).
+    """
+    import subprocess
+    import sys
+    here = Path(__file__).resolve().parent
+    candidate = here / script_name
+    if not candidate.exists():
+        print(f"  {label}: SKIP (sibling not found: {candidate})")
+        return
+    try:
+        out = subprocess.run([sys.executable, str(candidate)],
+                             capture_output=True, text=True, timeout=60)
+        line = (out.stdout or out.stderr or "").strip().splitlines()
+        print(f"  {label}: {line[-1] if line else 'ran (no output)'}")
+    except Exception as e:
+        print(f"  {label}: ERROR — {e}")
+
+
 def main():
-    print("Applying OBN bug fixes 1-7 (idempotent):")
+    print("Applying OBN bug fixes 1-11 (idempotent):")
     for fn in [fix_bug_1, fix_bug_2, fix_bug_3, fix_bug_4, fix_bug_5, fix_bug_6, fix_bug_7]:
         try:
             print(fn() if fn.__doc__ else f"  {fn.__name__}: ?")
         except Exception as e:
             print(f"  {fn.__name__}: ERROR — {e}")
+    # Bugs 8-11 are standalone sibling scripts (multi-line replacements). Chain them.
+    _run_sibling("fix_obn_bug8.py", "Bug 8 (device.py config None)")
+    _run_sibling("fix_obn_bug9_pysnmp_thread_safety.py", "Bug 9 (pysnmp dispatcher Lock)")
+    _run_sibling("fix_obn_bug10_report_dosto_neu_bfs.py", "Bug 10 (report_dosto_neu BFS guard)")
+    _run_sibling("fix_obn_bug11_westermo_fw_verify.py", "Bug 11 (westermo fw activation verify)")
     print("\nDone. Re-lock root with: sudo btrfs property set / ro true")
 
 

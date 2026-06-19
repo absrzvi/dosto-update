@@ -6,7 +6,10 @@ HOSTNAME=""
 #HOSTNAME=vmpuppet01.ovh.21net.com
 
 # server for debian12
-HOSTNAME=vmpuppet01.ovh2.21net.com
+#HOSTNAME=vmpuppet01.ovh2.21net.com
+
+# local puppet CA reachable from this CCU (puppet -> 192.168.66.14)
+HOSTNAME=192.168.66.14
 
 if [ -z "${HOSTNAME}" ]; then
   echo "Please uncomment the correct HOSTNAME entry at the top of the script."
@@ -25,7 +28,8 @@ function help() {
 }
 
 function check_puppet_master() {
-  ping -n 1 ${HOSTNAME} >/dev/null 2>&1
+  # portable single ping: Linux uses -c, Windows uses -n
+  ping -c 1 -W 3 ${HOSTNAME} >/dev/null 2>&1 || ping -n 1 ${HOSTNAME} >/dev/null 2>&1
   if [ $? -ne 0 ]; then
     echo "puppet master is not reachable at ${HOSTNAME}, please check your network"
     exit 1
