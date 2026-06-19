@@ -170,6 +170,10 @@ This is a workflow extension, not part of the original four. Applied to our stac
 
 When in doubt, prefer serial — but document the reason. Default-parallel should be the goal once evidence supports it.
 
+### Written comms rule (Jira / Confluence / email)
+
+Anything written to an external audience — Jira tickets and comments, Confluence pages, email — must be **professional, concise, and warm**: no emoticons or emoji, no walls of text. Lead with the ask in 1–2 lines; use short numbered lists; put deep technical detail in a linked doc or attachment, never in the comment body. (Lesson from RD-12433, 2026-06-09: a long ticket body got "i'm not going to read this huge wall of text" from R&D.)
+
 ## Architecture cheat-sheet
 
 A typical DOSTO consist has:
@@ -505,6 +509,7 @@ The project is organised into the following subfolders. Anything not listed here
 - `switch_user_manual.pdf` — VDS Consist Switch User Manual v2.0.4. Full-text extract cached at `.claude/switch_manual.txt`.
 - `Westermo-Management-Guide-6.9.5.pdf` — Westermo AP management reference.
 - `ND-DEL-OBB-035-CFG-001-01 OBB Fleet Control Sheet 20260211.xlsx` — fleet control sheet.
+- `docs/reference/` — supplementary hardware/feature manuals not tied to a single train: `R5001C Rack Chassis, CMM I2C Manual_V2.5.pdf` (CCU CMM ignition/power readout), `Explainer, Ignition controlled power management_Issue1.0.pdf`.
 
 ### `scripts/` — all scripts
 
@@ -545,6 +550,14 @@ python scripts/regenerate_bootstrap.py --check    # dry run, just report sizes
 ```
 
 The regenerator embeds: 4 contracts + 2 agent definitions + 14 SKILL.mds + CLAUDE.md + 5 fix scripts + the regenerator script itself (self-replicating). It does NOT embed: the SSH key, schema PDFs, IP-Port-Allocation PDFs, customer reports, log files, node_modules. Those are engineer-supplied or generated.
+
+### `.archive/` — retired scratch (not load-bearing)
+
+Holding ground for files that are no longer referenced by any skill, script, or contract but are kept for history rather than deleted. Nothing here is read at runtime; safe to ignore during a normal session.
+
+- `.archive/sdd-edit-scratch/` — one-off PowerShell + `.txt` extracts from a 2026-05 SDD-docx editing session (`mar3`/`mar5`/`section510`/`internetzugang` helpers).
+- `.archive/old-handoffs/` — superseded planning/handoff notes (`monday-plan.md`, `clone-disk*.md`) and a retired one-off script (`l2_error_scan_fzg12.py`).
+- `.archive/enhancement-notes-*.md` — applied enhancement notes kept for provenance.
 
 ### `.claude/` — Claude harness state
 

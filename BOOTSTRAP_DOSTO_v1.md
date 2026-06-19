@@ -1,6 +1,6 @@
 # DOSTO Bootstrap — Single-paste scaffold for the dosto-troubleshooting workspace
 
-**Generated:** 2026-05-22 13:41 UTC (by `scripts/regenerate_bootstrap.py`)
+**Generated:** 2026-06-19 05:23 UTC (by `scripts/regenerate_bootstrap.py`)
 **Scope:** Self-contained bootstrap for the DOSTO commissioning workspace. Paste this entire file into a fresh Claude Code session in an empty directory; Claude reads each STEP and creates every file with the exact content given. No git, no MCP-clone, no remote dependency.
 
 This file is **regenerated** from the live project tree — don't hand-edit. To update it:
@@ -63,608 +63,259 @@ Create `.claude/settings.local.json`:
 {
   "permissions": {
     "allow": [
-      "Bash(puttygen --version)",
-      "Bash(puttygen \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/pvt_key.ppk\" -O private-openssh -o \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/id_rsa_dosto\")",
-      "PowerShell(& \"C:\\\\Program Files\\\\PuTTY\\\\puttygen.exe\" \"C:\\\\Users\\\\AbbasRizvi\\\\Documents\\\\dosto-troubleshooting\\\\pvt_key.ppk\" -O private-openssh -o \"C:\\\\Users\\\\AbbasRizvi\\\\Documents\\\\dosto-troubleshooting\\\\id_rsa_dosto\")",
-      "Bash(puttygen --help)",
-      "Bash(puttygen)",
-      "Bash(puttygen -h)",
-      "Read(//c/Users/AbbasRizvi/**)",
-      "Read(//c/Users/AbbasRizvi/Downloads/**)",
-      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 developer@10.179.61.1 \"echo CONNECTED; whoami; hostname; uname -a\")",
-      "Bash(pdftotext \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/docs/switch_user_manual.pdf\" -)",
-      "Bash(pdftotext -layout \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/docs/switch_user_manual.pdf\" \"/tmp/switch_manual.txt\")",
-      "Read(//tmp/**)",
-      "Bash(pdftotext -layout \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/docs/switch_user_manual.pdf\" \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/switch_manual.txt\")",
-      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 developer@10.179.61.1 'hostname; echo '\\\\''---ip---'\\\\''; ip -br addr; echo '\\\\''---route---'\\\\''; ip route; echo '\\\\''---arp---'\\\\''; ip neigh | head -30; echo '\\\\''---tools---'\\\\''; for t in iperf3 ping fping arping nmap mtr traceroute snmpget; do command -v $t >/dev/null && echo \"$t: yes\" || echo \"$t: no\"; done')",
-      "Bash(ping -n 3 10.179.61.1)",
-      "Bash(ping -n 3 10.179.8.1)",
-      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.8.1 'hostname; echo '\\\\''---uname---'\\\\''; uname -a; echo '\\\\''---ip-addr---'\\\\''; ip -br addr; echo '\\\\''---routes---'\\\\''; ip route; echo '\\\\''---tools---'\\\\''; for t in iperf3 ping fping arping nmap mtr traceroute snmpget tcpdump ip ss; do command -v $t >/dev/null && echo \"$t: yes\" || echo \"$t: no\"; done')",
-      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.8.1 \"echo '---neigh on vlan7---'; ip neigh show dev vlan7 | head -50; echo '---neigh on bond0---'; ip neigh show dev bond0 | head -30; echo '---LLDP if present---'; \\(command -v lldpcli && sudo -n lldpcli show neighbors 2>/dev/null | head -40\\) || echo 'lldpcli n/a'; echo '---fping sweep .1-.20 of 172.19.196 \\(we are .2\\)---'; fping -a -q -g 172.19.196.1 172.19.196.20 2>/dev/null\")",
-      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.8.1 'echo '\\\\''--- ping consist switch 172.19.196.1 ---'\\\\''; ping -c 5 -W 1 172.19.196.1; echo '\\\\''--- vendor lookup ---'\\\\''; echo '\\\\''00:90:e8 = MOXA Inc.'\\\\''; echo '\\\\''--- larger sweeps in /24s likely to host devices ---'\\\\''; for net in 172.19.196 172.19.197 172.19.200 172.19.201 172.19.128 172.19.129 172.19.130 172.18.201 172.17.201 172.20.201 172.20.73; do c=$\\(fping -a -q -g ${net}.1 ${net}.254 2>/dev/null | wc -l\\); echo \"${net}.0/24: $c hosts up\"; done')",
-      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.8.1 \"echo '--- vlan100 mgmt range ---'; ip -br addr show vlan100; echo '--- fping sweep mgmt /25 ---'; fping -a -q -g 10.179.8.128 10.179.8.255 2>/dev/null; echo '--- ARP on vlan100 ---'; ip neigh show dev vlan100\")",
-      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.8.1 \"ip neigh show dev vlan100 | awk '/REACHABLE|STALE/{print \\\\$1, \\\\$5}' | sort -t. -k4 -n\")",
-      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.8.1 \"ip neigh show dev vlan100 | awk '/lladdr/{print \\\\$1, \\\\$5}' | sort -t. -k4 -n | awk '{mac=\\\\$2; oui=substr\\(mac,1,8\\); if\\(oui==\\\\\"a0:59:3a\\\\\"\\) v=\\\\\"VDS-Consist-Switch\\\\\"; else if\\(oui==\\\\\"00:14:5a\\\\\"\\) v=\\\\\"Westermo\\\\\"; else if\\(oui==\\\\\"00:90:e8\\\\\"\\) v=\\\\\"MOXA\\\\\"; else v=\\\\\"?\\\\\"; printf \\\\\"%-16s %s  %s\\\\n\\\\\", \\\\$1, \\\\$2, v}'\")",
-      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.8.1 \"ip neigh show dev vlan100 | grep lladdr | awk '{print \\\\$1\\\\\"|\\\\\"\\\\$5}' | sort -t. -k4 -n\")",
-      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.8.1 'ip neigh show dev vlan100')",
-      "Bash(sort -t. -k4 -n)",
-      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.8.1 'ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes admin@10.179.8.178 \"show version\" 2>&1 | head -20; echo \"---try operator---\"; ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes operator@10.179.8.178 \"show version\" 2>&1 | head -10; echo \"---list ssh keys on box---\"; ls -la ~/.ssh/ 2>&1')",
-      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.8.1 'sshpass -p \"Nom@dCome1n\" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o KexAlgorithms=+diffie-hellman-group14-sha1,diffie-hellman-group1-sha1 -o HostKeyAlgorithms=+ssh-rsa,ssh-dss -o PubkeyAuthentication=no admin@10.179.8.178 \"show version\" 2>&1 | head -30; echo \"---sshpass installed?---\"; command -v sshpass || echo \"sshpass missing\"')",
-      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.8.1 'sshpass -p \"Nom@dCome1n\" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o KexAlgorithms=+diffie-hellman-group14-sha1,diffie-hellman-group1-sha1 -o HostKeyAlgorithms=+ssh-rsa,ssh-dss -o PubkeyAuthentication=no admin@10.179.8.178 \"show version; echo \\\\\"===SUMMARY===\\\\\"; show interface summary; echo \\\\\"===VLANS===\\\\\"; show vlans; echo \\\\\"===TRUNKS===\\\\\"; show interface trunks; echo \\\\\"===STP===\\\\\"; show spanning-tree; echo \\\\\"===SYSTEM===\\\\\"; show system; show system temperature; show system memory\" 2>&1')",
-      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=30 developer@10.179.8.1 'echo \"=== ip addr \\(vlan7\\) ===\"; ip -br addr show vlan7 2>&1; ip -br addr show 2>&1 | grep -i vlan; echo \"=== route to 172.19.196.0/24 ===\"; ip route get 172.19.196.1 2>&1; echo \"=== ping 172.19.196.1 1000 packets at 0.2s interval ===\"; ping -i 0.2 -c 1000 -q 172.19.196.1 2>&1')",
-      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.8.1 'sshpass -p \"Nom@dCome1n\" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 -o KexAlgorithms=+diffie-hellman-group14-sha1,diffie-hellman-group1-sha1 -o HostKeyAlgorithms=+ssh-rsa,ssh-dss -o PubkeyAuthentication=no admin@10.179.8.191 \"show interface e1-4 details\" 2>&1 | grep -E \"RX bytes|TX bytes|RX packets|TX packets\" | head -4; echo \"TS=$\\(date +%s\\)\"')",
-      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=20 developer@10.179.8.1 'echo \"=== ARP entry for FW \\(vlan7\\) ===\"; ip neigh show dev vlan7 2>&1; echo; echo \"=== vlan7 interface stats ===\"; ip -s link show vlan7 2>&1; echo; echo \"=== Check for active TCP connections via vlan7 \\(FW route\\) ===\"; ss -tn 2>&1 | head -20; echo; echo \"=== Test FW with TCP probes \\(port 443/80/53/22 most common\\) ===\"; for p in 443 80 53 22; do timeout 3 bash -c \"echo > /dev/tcp/172.19.196.1/$p\" 2>&1 && echo \"  port $p: OPEN\" || echo \"  port $p: closed/filtered\"; done; echo; echo \"=== Default route / where does internet traffic go? ===\"; ip route show 2>&1 | head -10')",
-      "Bash(command -v node)",
-      "Bash(command -v npm)",
-      "Bash(npm list *)",
-      "Bash(npm install *)",
-      "Bash(python C:/Users/AbbasRizvi/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/ddbbf03c-560a-4907-b889-22c88156c899/6215c587-48f2-4160-ac5c-b3853e0d3ee8/skills/docx/scripts/office/validate.py C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/OBB_Fzg146_Network_Health_Check_Report_v1.0.docx)",
-      "Bash(python -c ' *)",
-      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=8 developer@10.179.4.1 \"hostname && ip addr show vlan100 | grep 'inet ' && fping -a -q -g 10.179.4.128 10.179.4.255 2>/dev/null\")",
-      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 developer@10.179.8.1 \"hostname; ip addr show vlan100 2>/dev/null | grep inet; cat /etc/obn/template/nv4-100-A1.cfg 2>/dev/null | head -5\")",
-      "Bash(node -e \"require\\('docx'\\); console.log\\('docx ok'\\)\")",
-      "Bash(node scripts/generate_report.js --findings findings_4736-108_2026-05-04.json --customer \"Stadler Rail\" --fzg-nr \"4736-108\" --fzg-id \"108\" --consist-size \"6-car\" --output \"Stadler_4736-108_Cabling_Fault_Report_v1.0.docx\")",
-      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 developer@10.179.1.1 \"hostname; uptime; echo '---'; ps aux | grep -i 'obn\\\\|update\\\\|upgrade\\\\|apt\\\\|dpkg\\\\|install\\\\|swupdate\\\\|firmware' | grep -v grep\")",
-      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 developer@10.179.28.1 \"hostname; ip addr show vlan100 2>/dev/null | grep 'inet '; ip addr show bond0 2>/dev/null | grep 'inet '; uname -n\")",
-      "Bash(python3 -c ' *)",
-      "mcp__Desktop_Commander__start_process",
-      "mcp__Desktop_Commander__read_process_output",
-      "mcp__Desktop_Commander__read_file",
-      "Read(//mnt/c/Users/AbbasRizvi/Documents/dosto-troubleshooting/**)",
-      "Read(//c/mnt/c/Users/**)",
-      "Read(//c/mnt/**)",
-      "Read(//c//**)",
-      "Bash(chmod 600 /c/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh)",
-      "Bash(ssh -i \"/c/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 developer@10.179.1.1 \"echo connected; ps aux | grep 'obn update' | grep -v grep; echo '---log---'; sudo tail -20 /var/log/obn/nd-backbone-discovery.log\")",
-      "Bash(ssh -i \"/c/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no developer@10.179.1.1 \"cat /etc/obn/vendors.yaml | grep -A5 'vdsrail' | grep -i 'firmware\\\\|target\\\\|version'\")",
-      "Bash(ssh -i \"/c/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no developer@10.179.1.1 \"grep -r 'target_firmware\\\\|7.4.2\\\\|ipart' /etc/obn/ 2>/dev/null | head -20\")",
-      "mcp__plugin_pdf-viewer_pdf__display_pdf",
-      "Bash(ssh -i \"/c/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no developer@10.179.1.1 \"ps aux | grep 'obn update f' | grep -v grep; echo '---'; sudo tail -10 /data/obn_update_f.log\")",
-      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh developer@10.179.28.1 'sshpass -p '\\\\''Nom@dCome1n'\\\\'' ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 -o KexAlgorithms=+diffie-hellman-group14-sha1,diffie-hellman-group1-sha1 -o HostKeyAlgorithms=+ssh-rsa,ssh-dss -o PubkeyAuthentication=no admin@10.179.28.189 '\\\\''__TRACKED_VAR__'\\\\''')",
-      "Bash(ssh -i \"/c/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no developer@10.179.1.1 \"ps aux | grep 'obn update' | grep -v grep; echo '---log so far---'; tail -20 /data/obn_update_f.log; echo '---tftp---'; sudo journalctl -u tftpd-hpa --since '1 minute ago' --no-pager | tail -10\")",
-      "Bash(node scripts/generate_report_109.js --findings findings_4736-109_2026-05-04.json --customer 'Stadler Rail' --fzg-nr 4736-109 --fzg-id 109 --consist-size 6-car --author 'Abbas Rizvi' --organisation 'Nomad Digital' --date 2026-05-04 --output Stadler_4736-109_L2_Health_Check_Report_v1.0.docx)",
-      "Bash(ssh -i \"/c/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no developer@10.179.1.1 'sudo btrfs property set / ro false && sudo python3 /data/fix_device.py && sudo btrfs property set / ro true && grep -n \"bool\\(self.firmware\\)\" /usr/share/obn/lib/report/device.py')",
-      "Bash(ssh -i *)",
-      "mcp__plugin_pdf-viewer_pdf__interact",
-      "Bash(ping -c 4 10.179.1.1)",
-      "Bash(scp -i \"/c/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no /tmp/flash_switches.sh developer@10.179.1.1:/data/flash_switches.sh)",
-      "Bash(scp -i \"/c/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no /tmp/flash_switches.sh developer@10.179.1.1:/tmp/flash_switches.sh)",
-      "Bash(scp -i \"/c/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no /c/Users/AbbasRizvi/AppData/Local/Temp/fix_obn.py developer@10.179.1.1:/tmp/fix_obn.py)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/fix_obn.py\" developer@10.179.2.1:/tmp/fix_obn.py)",
-      "Bash(ping -n 3 -w 3000 10.179.2.1)",
-      "Bash(ping -n 3 -w 3000 10.179.2.254)",
-      "Bash(bash .claude/skills/dosto-l2-health/scripts/01_ccu_probe.sh 10.179.23.1)",
-      "Bash(bash .claude/skills/dosto-l2-health/scripts/02_discover.sh 10.179.23.1)",
-      "Bash(bash .claude/skills/dosto-l2-health/scripts/03_fingerprint.sh 10.179.23.1)",
-      "Bash(bash .claude/skills/dosto-l2-health/scripts/04_error_scan.sh 10.179.23.1)",
-      "Bash(bash .claude/skills/dosto-l2-health/scripts/06_stp_check.sh 10.179.23.1)",
-      "Bash(bash .claude/skills/dosto-l2-health/scripts/08_e2e_probe.sh 10.179.23.1)",
-      "Bash(bash .claude/skills/dosto-l2-health/scripts/08_e2e_probe.sh 10.179.23.1 172.19.197.1)",
-      "Bash(bash .claude/skills/dosto-l2-health/scripts/05_critical_trunks.sh 10.179.23.1)",
-      "Bash(bash .claude/skills/dosto-l2-health/scripts/07_throughput.sh 10.179.23.1 30)",
-      "Bash(bash .claude/skills/dosto-l2-health/scripts/09_aggregate.sh 10.179.23.1)",
-      "Bash(ssh -v -o StrictHostKeyChecking=no -i \"/mnt/c/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" developer@10.179.8.1 \"echo connected\")",
-      "Bash(chmod 600 \"/c/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\")",
-      "Bash(ssh -o StrictHostKeyChecking=no -i \"/c/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" developer@10.179.8.1 \"echo connected && sudo obn report 2>&1 | tail -5\")",
-      "Bash(ssh -o StrictHostKeyChecking=no -i \"/c/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" developer@10.179.8.1 \"cat /usr/share/obn/lib/device/snmpdevice.py\")",
-      "Bash(ssh -o StrictHostKeyChecking=no -i \"/c/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" developer@10.179.8.1 \"sudo obn discover && sudo obn report\")",
-      "Bash(ssh -o StrictHostKeyChecking=no -i \"/c/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" developer@10.179.8.1 \"sudo obn update c 10.179.8.185 10.179.8.194 10.179.8.182 10.179.8.192 10.179.8.180 10.179.8.183 10.179.8.195 10.179.8.186 10.179.8.179 10.179.8.191 10.179.8.188 10.179.8.184 10.179.8.187 10.179.8.193 10.179.8.181 10.179.8.178 10.179.8.189 2>&1\")",
-      "Bash(echo \"Update PID: $!\")",
-      "Bash(wait 1838)",
-      "Bash(ssh -o StrictHostKeyChecking=no -i \"/c/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" developer@10.179.8.1 \"sudo obn update a 2>&1 | tee /tmp/obn_update_ap.log\")",
-      "Bash(ssh -o StrictHostKeyChecking=no -i \"/c/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" developer@10.179.8.1 \"sudo obn --help 2>&1\")",
-      "Bash(grep -v \"^$\")",
-      "Bash(bash \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/skills/dosto-l2-health/scripts/01_ccu_probe.sh\" 10.179.19.1)",
-      "Bash(node -e \"require\\('docx'\\); console.log\\('docx OK'\\)\")",
-      "Bash(node C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/skills/dosto-l2-report/scripts/generate_report_4736106.js --findings C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/findings_4736-106_20260504.json --customer ÖBB --fzg-id 134 --fzg-nr 4736-106 --output C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/OBB_Fzg134_4736-106_Network_Health_Check_Report_v1.0.docx)",
-      "Bash(node C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/skills/dosto-l2-report/scripts/generate_report_4736106.js --findings C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/findings_4736-106_20260504.json --customer ÖBB --fzg-id 134 --fzg-nr 4736-106 --output C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/OBB_Fzg134_4736-106_Network_Health_Check_Report_v1.1.docx)",
-      "Bash(node scripts/generate_report_4736106.js --findings C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/findings_4736-106_20260504.json --customer ÖBB --fzg-id 134 --fzg-nr 4736-106 --output C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/OBB_Fzg134_4736-106_Network_Health_Check_Report_v1.2.docx)",
-      "Bash(ssh -o StrictHostKeyChecking=no -i \"/c/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" developer@10.179.8.1 \"cat /etc/obn/vendors.yaml | grep -A30 -i 'westermo'\")",
-      "Bash(node .claude/skills/dosto-l2-report/scripts/generate_report.js --findings findings_10.179.23.1_20260504_135753.json --customer ÖBB --fzg-id 138 --fzg-nr 4736-110 --consist-size 6-car --output C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/OBB_Fzg138_4736-110_Network_Health_Check_Report_v1.0.docx --author 'Abbas Rizvi' --organisation 'Nomad Digital' --schema-pdf-name ND-DEL-OBB-035-IPA-138_NV_6Teiler.pdf)",
-      "Bash(node .claude/skills/dosto-l2-report/scripts/generate_report_106style.js --findings findings_10.179.23.1_20260504_135753.json --customer ÖBB --fzg-id 138 --fzg-nr 4736-110 --consist-size 6-car --ccu-hostname box1-t23 --ccu-vlan100 10.179.23.129/25 --ccu-vlan7 172.19.197.2/17 --fw-ip 172.19.197.1 --fw-mac 00:90:e8:c5:3d:9d --a3-ip 10.179.23.195 --output C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/OBB_Fzg138_4736-110_Network_Health_Check_Report_v1.0.docx)",
-      "Bash(node .claude/skills/dosto-l2-report/scripts/generate_report_106style.js --findings findings_10.179.23.1_20260504_135753.json --customer ÖBB --fzg-id 138 --fzg-nr 4736-110 --consist-size 6-car --ccu-hostname box1-t23 --ccu-vlan100 10.179.23.129/25 --ccu-vlan7 172.19.197.2/17 --fw-ip 172.19.197.1 --fw-mac 00:90:e8:c5:3d:9d --a3-ip 10.179.23.195 --output C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/OBB_Fzg138_4736-110_Network_Health_Check_Report_v1.0_106style.docx)",
-      "Bash(ls *108*.docx)",
-      "Bash(ls *4736-108*.docx)",
-      "Bash(ls *Fzg136*.docx)",
-      "Bash(ls *136*.docx)",
-      "Bash(python3 gen_report_108.py)",
-      "Bash(python3 -c \"import zipfile, xml.etree.ElementTree as ET; z=zipfile.ZipFile\\('OBB_Fzg136_4736-108_Network_Health_Check_Report_v1.0.docx'\\); [ET.fromstring\\(z.read\\(n\\)\\) for n in z.namelist\\(\\) if n.endswith\\('.xml'\\)]; print\\('OK'\\)\")",
-      "Bash(cp /mnt/c/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh /tmp/obn_key)",
-      "Bash(chmod 600 /tmp/obn_key)",
-      "PowerShell(Copy-Item \"C:\\\\Users\\\\AbbasRizvi\\\\Documents\\\\dosto-troubleshooting\\\\openssh\" \"$env:TEMP\\\\obn_key\" -Force; icacls \"$env:TEMP\\\\obn_key\" /inheritance:r /grant:r \"${env:USERNAME}:R\")",
-      "Bash(node scripts/generate_report_4736106.js --findings C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/findings_4736-106_20260504.json --customer ÖBB --fzg-id 134 --fzg-nr 4736-106 --output C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/OBB_Fzg134_4736-106_Network_Health_Check_Report_v1.3.docx)",
-      "Bash(lsblk -no NAME,MOUNTPOINT)",
-      "Bash(awk '\\\\$2==\\\\\"/\\\\\" {print \\\\$1}')",
-      "Bash(python -c \"import pdfminer; print\\('ok'\\)\")",
-      "Bash(python -m pip show pdfminer.six)",
-      "Bash(python -c \"import pypdf; print\\('pypdf ok'\\)\")",
-      "Bash(python -c \"import fitz; print\\('pymupdf ok'\\)\")",
-      "Bash(pip install *)",
-      "Bash(python C:/Users/AbbasRizvi/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/ddbbf03c-560a-4907-b889-22c88156c899/6215c587-48f2-4160-ac5c-b3853e0d3ee8/skills/docx/scripts/office/unpack.py C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/OBB_Fzg138_4736-110_Network_Health_Check_Report_v1.0.docx C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.tmp_110_unpacked/)",
-      "Bash(pandoc \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/OBB_Fzg138_4736-110_Network_Health_Check_Report_v1.0.docx\" -t plain)",
-      "mcp__Desktop_Commander__interact_with_process",
-      "Bash(node scripts/generate_health_check_report.js --customer ÖBB --fzg-id 131 --fzg-nr 4736-103 --consist-size 6-car --ccu-ip 10.179.3.1 --author 'Abbas Rizvi' --organisation 'Nomad Digital' --offline --output C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/OBB_Fzg131_4736-103_Network_Health_Check_Report_v1.0.docx --findings /dev/null)",
-      "Bash(node scripts/generate_health_check_report.js --customer ÖBB --fzg-id 131 --fzg-nr 4736-103 --consist-size 6-car --ccu-ip 10.179.3.1 --author 'Abbas Rizvi' --organisation 'Nomad Digital' --offline true --output C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/OBB_Fzg131_4736-103_Network_Health_Check_Report_v1.0.docx)",
-      "Bash(bash \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/skills/dosto-l2-health/scripts/01_ccu_probe.sh\" 10.179.12.1)",
-      "Bash(bash \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claire/skills/dosto-l2-health/scripts/08_e2e_probe.sh\" 10.179.12.1)",
-      "Bash(bash \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/skills/dosto-l2-health/scripts/08_e2e_probe.sh\" 10.179.12.1)",
-      "Bash(node .claude/skills/dosto-l2-report/scripts/generate_report_106style.js --findings findings_10.179.23.1_20260505.json --customer ÖBB --fzg-id 138 --fzg-nr 4736-110 --consist-size 6-car --ccu-hostname box1-t23 --ccu-vlan100 10.179.23.129/25 --ccu-vlan7 172.19.197.2/17 --fw-ip 172.19.197.1 --fw-mac 00:90:e8:c5:3d:9d --a3-ip 10.179.23.199 --output C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/OBB_Fzg138_4736-110_Network_Health_Check_Report_v1.0_20260505.docx)",
-      "Bash(2>/dev/null)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/push_ap_config.sh\" developer@10.179.49.1:/tmp/push_ap_config.sh)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/push_remaining_aps.sh\" developer@10.179.49.1:/tmp/push_remaining_aps.sh)",
-      "Bash(echo \"Started push_remaining_aps.sh in background, PID=$!\")",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/apply_ap_configs.sh\" developer@10.179.49.1:/tmp/apply_ap_configs.sh)",
-      "Bash(break)",
-      "Bash(echo \"Update running in background PID $!\")",
-      "Bash(ssh-keygen -R 10.179.11.1)",
-      "Bash(unzip -q -c \"OBB_Fzg131_4736-103_Network_Health_Check_Report_v1.0.docx\" \"word/document.xml\")",
-      "Bash(unzip -q -c \"OBB_Fzg138_4736-110_Network_Health_Check_Report_v1.0_20260505.docx\" \"word/document.xml\")",
-      "Bash(unzip -q -c \"OBB_Fzg134_4736-106_Network_Health_Check_Report_v1.3.docx\" \"word/document.xml\")",
-      "Bash(bash scripts/01_ccu_probe.sh 10.179.23.1)",
-      "Bash(bash scripts/02_discover.sh 10.179.23.1)",
-      "Bash(bash scripts/03_fingerprint.sh 10.179.23.1)",
-      "mcp__b29e83b2-87a0-46a4-9f8c-e389232437ac__search",
-      "mcp__b29e83b2-87a0-46a4-9f8c-e389232437ac__getConfluencePage",
-      "Bash(pdfinfo \"/c/Users/AbbasRizvi/Documents/dosto-troubleshooting/train-ip-allocation-commission/4734-xxx/4734-101/IP-Schema/4734-101_IP_Port_Allocation.pdf\")",
-      "Bash(pdftotext -layout \"/c/Users/AbbasRizvi/Documents/dosto-troubleshooting/train-ip-allocation-commission/4734-xxx/4734-101/IP-Schema/4734-101_IP_Port_Allocation.pdf\" \"/c/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/4734-101_ports.txt\")",
-      "Bash(awk 'NR==1 || /4734-101/ || /Fzg\\\\./ || /Wagen/ || /Teiler/' \"/c/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/4734-101_ports.txt\")",
-      "Bash(ping -n 2 -w 2000 10.179.4.1)",
-      "Bash(ipconfig)",
-      "Bash(ping -n 4 -w 3000 10.179.4.1)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/lldp_topology_check.py\" developer@10.179.4.1:/tmp/lldp_topology_check.py)",
-      "Bash(pandoc --track-changes=all \"Stadler_4736-108_Cabling_Fault_Report_v1.0.docx\" -o \"/tmp/108_cabling.md\")",
-      "Bash(python3 \"C:/Users/AbbasRizvi/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/ddbbf03c-560a-4907-b889-22c88156c899/6215c587-48f2-4160-ac5c-b3853e0d3ee8/skills/docx/scripts/office/unpack.py\" \"Stadler_4736-108_Cabling_Fault_Report_v1.0.docx\" \"/tmp/108_unpacked\")",
-      "Bash(python3 -m json.tool)",
-      "Bash(python3 build_cable_tracker.py)",
-      "Bash(python3 \"C:/Users/AbbasRizvi/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/ddbbf03c-560a-4907-b889-22c88156c899/6215c587-48f2-4160-ac5c-b3853e0d3ee8/skills/xlsx/scripts/recalc.py\" cable-issues-tracker.xlsx)",
-      "Bash(ping -n 2 10.179.11.1)",
-      "Bash(bash \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/skills/dosto-l2-health/scripts/01_ccu_probe.sh\" 10.179.10.1)",
-      "Bash(ping -n 3 10.179.11.1)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/fix_obn_templates.sh\" developer@10.179.10.1:/tmp/fix_obn_templates.sh)",
-      "Bash(pdfinfo 4736-109_IP_Port_Allocation.pdf)",
-      "PowerShell($env:PATH += \";C:\\\\Program Files\\\\poppler\\\\bin;C:\\\\poppler\\\\bin\"; Get-Command pdfinfo,pdftoppm -ErrorAction SilentlyContinue | Select-Object Name,Source)",
-      "Bash(python3 -)",
-      "Bash(cat)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no /tmp/lldp_quick.sh developer@10.179.11.1:/tmp/lldp_quick.sh)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no /tmp/crc_check.sh developer@10.179.11.1:/tmp/crc_check.sh)",
-      "Bash(pdftotext \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/train-ip-allocation-commission/4736-xxx/4736-103/4736-103_IP_Port_Allocationt.pdf\" -)",
-      "Bash(pdftotext \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/train-ip-allocation-commission/4736-xxx/4736-102/ND-DEL-OBB-021-COM-130.pdf\" -)",
-      "Bash(python3 check_cabling.py 10.179.11.1 --fzg 131)",
-      "Bash(python3 check_cabling.py 10.179.4.1 --fzg unknown)",
-      "mcp__3fb9a852-6b22-49e0-8afa-68d4505061d9__getConfluencePage",
-      "mcp__3fb9a852-6b22-49e0-8afa-68d4505061d9__search",
-      "Bash(chmod +x /c/Users/AbbasRizvi/Documents/dosto-troubleshooting/dbc12)",
-      "Bash(/c/Users/AbbasRizvi/Documents/dosto-troubleshooting/dbc12 box1-t9.dostoneu.21net.com migration-mar5)",
-      "Bash(ping -c 3 vmpuppet01.ovh2.21net.com)",
-      "Bash(nslookup vmpuppet01.ovh2.21net.com)",
-      "Bash(ping -n 3 192.168.66.14)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/fix_obn.py\" developer@10.179.11.1:/tmp/fix_obn.py)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/lldp_check_4734-119.py\" developer@10.179.47.1:/tmp/lldp_check_4734-119.py)",
-      "Bash(rm -v ~\\\\$*.docx ~\\\\$*.xlsx desktop.ini stress-test.md dosto-ip-allocation.zip)",
-      "Bash(rm -rfv .tmp_110_unpacked)",
-      "Bash(rm -v 'target={role_to_target[role][config]}\\) *)",
-      "Bash(mv -v switch_user_manual.pdf docs/)",
-      "Bash(mv -v Westermo-Management-Guide-6.9.5.pdf docs/)",
-      "Bash(mv -v ND-DEL-OBB-035-IPA-146_NV_6Teiler.pdf docs/)",
-      "Bash(mv -v ND-DEL-OBB-035-IPA-147_NV_6Teiler.pdf docs/)",
-      "Bash(mv -v \"ND-DEL-OBB-035-CFG-001-01 OBB Fleet Control Sheet 20260211.xlsx\" docs/)",
-      "Bash(mv -v cable-issues-tracker.xlsx trackers/)",
-      "Bash(mv -v topology_4736-106.svg trackers/)",
-      "Bash(mv -v 105-l2-health-report-2026-05-05.md reports/internal/)",
-      "Bash(mv -v 105-update-report-2026-05-04.md reports/internal/)",
-      "Bash(mv -v OBB_Fzg131_4736-103_Network_Health_Check_Report_v1.0.docx reports/customer/)",
-      "Bash(mv -v OBB_Fzg134_4736-106_Network_Health_Check_Report_v1.3.docx reports/customer/)",
-      "Bash(mv -v OBB_Fzg134_4736-106_Network_Health_Check_Report.pdf reports/customer/)",
-      "Bash(mv -v OBB_Fzg136_4736-108_Network_Health_Check_Report_v1.0.docx reports/customer/)",
-      "Bash(mv -v OBB_Fzg136_4736-108_Network_Health_Check_Report.pdf reports/customer/)",
-      "Bash(mv -v OBB_Fzg134_4736-106_Network_Health_Check_Report.docx reports/_archive/)",
-      "Bash(mv -v OBB_Fzg134_4736-106_Network_Health_Check_Report_v1.0.docx reports/_archive/)",
-      "Bash(mv -v OBB_Fzg134_4736-106_Network_Health_Check_Report_v1.1.docx reports/_archive/)",
-      "Bash(mv -v OBB_Fzg134_4736-106_Network_Health_Check_Report_v1.2.docx reports/_archive/)",
-      "Bash(mv -v OBB_Fzg138_4736-110_Network_Health_Check_Report_v1.0.docx reports/_archive/)",
-      "Bash(mv -v fix_obn.py scripts/)",
-      "Bash(mv -v fix_obn_templates.sh scripts/)",
-      "Bash(mv -v lldp_topology_check.py scripts/)",
-      "Bash(mv -v lldp_topology_check_t8.py scripts/)",
-      "Bash(mv -v lldp_check_4734-119.py scripts/)",
-      "Bash(python3 -c \"import json; json.load\\(open\\('C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/settings.local.json'\\)\\); print\\('OK — valid JSON'\\)\")",
+      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.12.1 'bash -s')",
+      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=20 developer@10.179.12.1 'echo ALIVE; ls /usr/share/obn/ 2>&1')",
+      "Bash(echo \"ssh exit: $?\")",
       "WebSearch",
-      "WebFetch(domain:gist.github.com)",
-      "WebFetch(domain:www.eesel.ai)",
-      "WebFetch(domain:json.schemastore.org)",
-      "WebFetch(domain:www.schemastore.org)",
-      "Bash(pdftotext -layout \"docs/ND-DEL-OBB-035-IPA-146_NV_6Teiler.pdf\" -)",
-      "Bash(pdftotext -layout \"train-ip-allocation-commission/4736-xxx/4736-105/4736-105_IP_Port_Allocation.pdf\" -)",
-      "Bash(pdftotext -layout \"train-ip-allocation-commission/4734-xxx/4734-120/4734-120_IP-Port-Allocation.pdf\" -)",
-      "Bash(mkdir -p \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/skills/dosto-vlan7-config\")",
-      "Bash(cp -v \"C:/Users/AbbasRizvi/AppData/Local/Temp/fix_obn_bugs67.py\" \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/\")",
-      "Bash(cp -v \"C:/Users/AbbasRizvi/AppData/Local/Temp/fix_obn_bug8.py\" \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/\")",
-      "Bash(cp -v \"C:/Users/AbbasRizvi/AppData/Local/Temp/fix_bug1_regex.py\" \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/\")",
-      "Bash(mkdir -p \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/skills/dosto-obn-patches\")",
-      "Bash(mkdir -p \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/contracts\")",
-      "Bash(\" \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/contracts/subagent-report.md\" | head -40)",
-      "Bash(grep -nE \"^### |^## |^\\\\| `\" \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/contracts/subagent-report.md\" | head -40)",
-      "Bash(mkdir -p \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/skills/dosto-extract-train-pdf\" && \\\\ *)",
-      "Bash(pdftotext -layout \"train-ip-allocation-commission/4736-xxx/4736-105/4736-105_IP_Port_Allocation.pdf\" /tmp/4736-105.txt)",
-      "Bash(pdftoppm -v)",
-      "Bash(tar -xzf - -C /tmp/templates_4736-104/)",
-      "Bash(ssh -v -o ConnectTimeout=10 -o BatchMode=no -T git@git-nc.nomadrail.com)",
-      "Bash(ssh-keyscan -t ed25519 git-nc.nomadrail.com)",
-      "Bash(tee /tmp/nomadrail-hostkey.txt)",
-      "Bash(ssh-keygen -lf /tmp/nomadrail-hostkey.txt)",
-      "Bash(ssh-keygen -lf __TRACKED_VAR__/.ssh/id_ed25519.pub)",
-      "Bash(ssh-add -l)",
-      "Bash(mkdir -p \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/skills/dosto-device-discovery\")",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=15 \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py\" \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bugs67.py\" \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug8.py\" \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_bug1_regex.py\" developer@10.179.10.1:/tmp/)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=15 \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py\" \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug8.py\" developer@10.179.10.1:/var/tmp/)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=15 \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py\" \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug8.py\" developer@10.179.10.1:/tmp/)",
-      "Bash(mkdir -p \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/skills/dosto-fzg-id-check\")",
-      "Bash(mkdir -p \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/skills/dosto-tftp-helper-check\")",
-      "Bash(mkdir -p \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/skills/dosto-ap-firmware-update\")",
-      "Bash(mkdir -p \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/skills/dosto-ap-config-update\")",
-      "Bash(mkdir -p \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/skills/dosto-sw-firmware-update\")",
-      "Bash(grep -inA 5 \"reboot\\(\\)\" \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/troubleshooting-runbook.md\")",
-      "Bash(mkdir -p \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/skills/dosto-sw-config-update\")",
-      "Bash(mkdir -p \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/skills/dosto-commission-train\")",
-      "Bash(mkdir -p \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/agents\")",
-      "Bash(ping -n 1 -w 2000 10.179.47.1)",
-      "Bash(stat -c \"%s %y\" \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/fleet-status.md\" 2>&1; echo \"---\"; date -u +\"%Y-%m-%dT%H:%M:%SZ\")",
-      "mcp__b29e83b2-87a0-46a4-9f8c-e389232437ac__updateConfluencePage",
-      "Bash(mkdir -p \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/logs\" 2>&1; ls \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/logs\" 2>&1)",
-      "Bash(python scripts/regenerate_bootstrap.py --check)",
-      "Bash(python scripts/regenerate_bootstrap.py)",
-      "Bash(python scripts/regenerate_bootstrap.py --check --include-state)",
-      "Bash(gh api *)",
-      "WebFetch(domain:raw.githubusercontent.com)",
-      "Bash(python scripts/validate_dosto_workspace.py)",
-      "Bash(mkdir -p \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/skills/dosto-auto-scan\")",
-      "Bash(mkdir -p \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/state\")",
-      "Bash(python -c \"import ast; ast.parse\\(open\\('C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/dosto_auto_scan.py'\\).read\\(\\)\\); print\\('syntax OK'\\)\")",
-      "Bash(python scripts/dosto_auto_scan.py --status --json)",
-      "Bash(python scripts/dosto_auto_scan.py --fzg 132 --ccu-ip 192.0.2.1 --train-num 4736-104 --dry-run --json --inject-test-signal \"missing_ap=.240/lldp=D3.e1-4\")",
-      "Bash(rm -f auto-scan-state.json)",
-      "Bash(python scripts/dosto_auto_scan.py --fzg 132 --ccu-ip 192.0.2.1 --train-num 4736-104 --dry-run --inject-test-signal \"missing_ap=.240/lldp=D3.e1-4\")",
-      "Bash(python scripts/add_auto_scan_columns.py)",
-      "Bash(python scripts/dosto_auto_scan.py --fzg 132 --ccu-ip 192.0.2.1 --train-num 4736-104 --dry-run --json)",
-      "Bash(rm -f auto-scan-state.json cable-issues-register.md.bak)",
-      "Bash(cp cable-issues-register.md cable-issues-register.md.bak)",
-      "Bash(python scripts/dosto_auto_scan.py --fzg 132 --ccu-ip 192.0.2.1 --train-num 4736-104 --json --inject-test-signal \"missing_ap=.240/lldp=D3.e1-4\")",
-      "Bash(awk '/^description:/{flag=1; print; next} /^---$/&&flag{flag=0; print \"\\(end\\)\"; exit} flag{print}' .claude/skills/__TRACKED_VAR__/SKILL.md)",
-      "mcp__b29e83b2-87a0-46a4-9f8c-e389232437ac__getVisibleJiraProjects",
-      "mcp__b29e83b2-87a0-46a4-9f8c-e389232437ac__searchJiraIssuesUsingJql",
-      "Bash(python \"C:\\\\Users\\\\AbbasRizvi\\\\Documents\\\\dosto-troubleshooting\\\\scripts\\\\validate_dosto_workspace.py\")",
-      "PowerShell($n = git config user.name 2>$null; if \\(-not $n\\) { $n = $env:USERNAME }; $n)",
-      "Bash(echo \"---exit:$?\")",
-      "Bash(echo \"---fzg130-exit:$?\")",
-      "Bash(echo \"---fzg131-exit:$?\")",
-      "Bash(ping -n 2 10.179.47.1)",
-      "Bash(echo \"---fzg20-exit:$?\")",
-      "Bash(scp -i /c/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 /c/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py /c/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bugs67.py /c/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug8.py /c/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_bug1_regex.py developer@10.179.47.1:/var/tmp/)",
-      "Bash(scp -i /c/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 /c/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py /c/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bugs67.py /c/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug8.py /c/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_bug1_regex.py developer@10.179.47.1:/tmp/)",
-      "Bash(bash \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/skills/dosto-l2-health/scripts/01_ccu_probe.sh\" 10.179.4.1)",
-      "Bash(bash \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.tmp/l2-health-fzg1/04_error_scan.sh\" 10.179.4.1)",
-      "Bash(rm \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/agents/dosto-orchestrator.md\" && echo \"deleted\" && ls \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/agents/\")",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug8.py developer@10.179.11.1:/tmp/)",
-      "Bash(command -v pdftotext)",
-      "Bash(pdftotext -layout \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/train-ip-allocation-commission/4736-xxx/4736-103/4736-103_IP_Port_Allocationt.pdf\" -)",
-      "Bash(pdftotext -layout \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/train-ip-allocation-commission/4736-xxx/4736-103/4736-103_IP_Port_Allocationt.pdf\" /tmp/4736-103.txt)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug8.py developer@10.179.11.1:/var/tmp/)",
-      "Bash(git -C \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting\" status)",
-      "Bash(git -C \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting\" remote -v)",
-      "Bash(git init *)",
-      "Bash(git config *)",
-      "Bash(git remote *)",
-      "Bash(git add *)",
-      "Bash(git -c commit.gpgsign=false commit -m 'Initial snapshot of dosto-troubleshooting workspace *)",
-      "Bash(git branch *)",
-      "Bash(git push *)",
-      "Bash(git rm *)",
-      "Bash(git -c commit.gpgsign=false commit --amend --no-edit)",
-      "Bash(bash .claude/skills/dosto-l2-health/scripts/01_ccu_probe.sh 10.179.10.1)",
-      "Bash(bash .claude/skills/dosto-l2-health/scripts/04_error_scan.sh 10.179.10.1 > /tmp/l2_step4.out 2>&1)",
-      "Bash(bash .claude/skills/dosto-l2-health/scripts/04_error_scan.sh 10.179.47.1 > /tmp/l2_t47_step4.out 2>&1)",
-      "Bash(bash .claude/skills/dosto-l2-health/scripts/09_aggregate.sh 10.179.47.1 \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/findings/findings_10.179.47.1_$\\(date +%Y%m%d_%H%M%S\\).json\")",
-      "Bash(grep -n -B5 -A5 \"^reload\\\\b\\\\|system reload\\\\|configure.*reload\\\\| reload$\\\\|reload system\" .claude/switch_manual.txt)",
-      "Bash(git commit -m ' *)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=15 scripts/fix_obn.py scripts/fix_obn_bugs67.py scripts/fix_obn_bug8.py scripts/fix_bug1_regex.py developer@10.179.1.1:/tmp/)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=15 scripts/fix_obn.py scripts/fix_obn_bugs67.py scripts/fix_obn_bug8.py scripts/fix_bug1_regex.py developer@10.179.19.1:/tmp/)",
-      "Bash(git -C C:/Users/AbbasRizvi/Documents/dosto-troubleshooting status --short)",
-      "Bash(git -C C:/Users/AbbasRizvi/Documents/dosto-troubleshooting branch --show-current)",
-      "Bash(git checkout *)",
-      "Bash(git commit -m 'docs: spec + plan for dosto-sw-config-update-batch *)",
-      "Bash(mkdir -p \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/skills/dosto-sw-config-update-batch/scripts\")",
-      "Bash(bash -c 'source \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/skills/dosto-sw-config-update-batch/scripts/_lib.sh\" && type ccu_run switch_run emit_event rstp_root_mac')",
-      "Bash(SKIP_DELEGATED=1 ./.claude/skills/dosto-sw-config-update-batch/scripts/01_preflight.sh 10.179.5.1)",
-      "Bash(echo \"exit: $?\")",
-      "Bash(SKIP_DELEGATED=1 bash \".claude/skills/dosto-sw-config-update-batch/scripts/01_preflight.sh\" 10.179.5.1)",
-      "Bash(sort -k5 -hr)",
-      "Bash(fdisk -l \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/base-efi-20230725.img\")",
-      "Bash(SKIP_DELEGATED=1 bash .claude/skills/dosto-sw-config-update-batch/scripts/01_preflight.sh 10.179.5.1)",
-      "Bash(bash .claude/skills/dosto-sw-config-update-batch/scripts/02_scope.sh 10.179.5.1)",
-      "Bash(bash .claude/skills/dosto-sw-config-update-batch/scripts/02_scope.sh 10.179.5.1 10.179.5.181,10.179.5.999)",
-      "Bash(git -C \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting\" add .claude/skills/dosto-sw-config-update-batch/scripts/02_scope.sh)",
-      "Bash(git -C C:/Users/AbbasRizvi/Documents/dosto-troubleshooting commit -m ' *)",
-      "Bash(bash --version)",
-      "Bash(chmod +x /c/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/skills/dosto-sw-config-update-batch/scripts/03_execute_auto.sh)",
-      "Bash(python3 -c 'import sys, json; print\\(\",\".join\\(json.load\\(sys.stdin\\)[0]\\)\\)')",
-      "Bash(/c/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/skills/dosto-sw-config-update-batch/scripts/03_execute_auto.sh)",
-      "Bash(bash \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/skills/dosto-sw-config-update-batch/scripts/04_execute_manual.sh\")",
-      "Bash(python3 -c \"import sys, json; print\\(','.join\\(json.load\\(sys.stdin\\)[0]\\)\\)\")",
-      "Bash(git -C \"C:\\\\Users\\\\AbbasRizvi\\\\Documents\\\\dosto-troubleshooting\" checkout feat/sw-config-update-batch)",
-      "Bash(git -C \"C:\\\\Users\\\\AbbasRizvi\\\\Documents\\\\dosto-troubleshooting\" log --oneline -5)",
-      "Bash(chmod +x \"C:\\\\Users\\\\AbbasRizvi\\\\Documents\\\\dosto-troubleshooting\\\\.claude\\\\skills\\\\dosto-sw-config-update-batch\\\\scripts\\\\06_postcheck.sh\")",
-      "Bash(bash ./.claude/skills/dosto-sw-config-update-batch/scripts/06_postcheck.sh 10.179.5.1 unknown 10.179.5.186,10.179.5.185,10.179.5.183,10.179.5.178,10.179.5.189,10.179.5.179,10.179.5.188,10.179.5.181,10.179.5.180,10.179.5.184,10.179.5.187,10.179.5.182 10.179.5.179)",
-      "Bash(scp -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug8.py C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bugs67.py C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_templates.sh developer@10.179.5.1:/tmp/)",
-      "Bash(echo \"ssh_exit=$?\")",
-      "Bash(echo \"exit=$?\")",
-      "Bash(ping -n 2 -w 2000 10.179.11.1)",
-      "Bash(pandoc --track-changes=all \"ND-DEL-OBB-035-SDD-002-01_v2.1.docx\" -o /tmp/sdd002_full.md)",
-      "mcp__Desktop_Commander__start_search",
-      "mcp__Desktop_Commander__edit_block",
-      "Bash(powershell -Command ' *)",
-      "PowerShell(cd \"C:\\\\Users\\\\AbbasRizvi\\\\Documents\\\\dosto-troubleshooting\"; powershell -ExecutionPolicy Bypass -File fix_cell.ps1)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py\" developer@10.179.8.1:/tmp/fix_obn.py)",
-      "Bash(Read \"C:\\\\Users\\\\ABBASR~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-AbbasRizvi-Documents-dosto-troubleshooting\\\\c109f28f-7f11-4730-9adf-52a7edcdcb15\\\\tasks\\\\b36y433l9.output\")",
-      "Skill(anthropic-skills:xlsx)",
-      "Skill(anthropic-skills:xlsx:*)",
-      "Bash(python3)",
-      "Bash(python scripts/recalc.py \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/trackers/cable-issues-tracker.xlsx\")",
-      "Skill(dosto-l2-health)",
-      "Skill(dosto-l2-health:*)",
-      "Bash(python3 gen_dashboard.py)",
-      "Bash(start dashboard.html)",
-      "Bash(xargs -P20 -I{} bash -c 'ping -n 1 -w 500 {} > /dev/null 2>&1 && echo \"{} UP\"')",
-      "Bash(sort -t. -k3 -n)",
-      "Bash(sudo ls /etc/obn/template/)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py\" developer@10.179.12.1:/tmp/fix_obn.py)",
-      "Bash(ssh -o ServerAliveInterval=30 -o ServerAliveCountMax=10 -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no developer@10.179.12.1 ' *)",
-      "Bash(ping -n 1 -w 2000 10.179.12.1)",
-      "Bash(xargs -P12 -I{} bash -c 'ping -n 1 -w 1000 {} > /dev/null 2>&1 && echo \"{} UP\" || echo \"{} DOWN\"')",
-      "Skill(dosto-vlan7-config)",
-      "Skill(dosto-vlan7-config:*)",
-      "Skill(dosto-commission-train)",
-      "Skill(dosto-commission-train:*)",
-      "Skill(dosto-device-discovery)",
-      "Skill(dosto-device-discovery:*)",
-      "Skill(dosto-state-inventory)",
-      "Skill(dosto-state-inventory:*)",
-      "Skill(dosto-obn-patches)",
-      "Skill(dosto-obn-patches:*)",
-      "Skill(dosto-fzg-id-check)",
-      "Skill(dosto-fzg-id-check:*)",
-      "Skill(dosto-tftp-helper-check)",
-      "Skill(dosto-tftp-helper-check:*)",
-      "Skill(dosto-ap-config-update)",
-      "Skill(dosto-ap-config-update:*)",
-      "Skill(dosto-ap-firmware-update)",
-      "Skill(dosto-ap-firmware-update:*)",
-      "Skill(dosto-sw-config-update)",
-      "Skill(dosto-sw-config-update:*)",
-      "Skill(dosto-sw-config-update-batch)",
-      "Skill(dosto-sw-config-update-batch:*)",
-      "Skill(dosto-sw-firmware-update)",
-      "Skill(dosto-sw-firmware-update:*)",
-      "Skill(dosto-l2-report)",
-      "Skill(dosto-l2-report:*)",
-      "Skill(dosto-confluence-sync)",
-      "Skill(dosto-confluence-sync:*)",
-      "Bash(echo \"reboot command sent \\(exit $?\\)\")",
-      "Bash(Start-Sleep -Seconds 70)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py\" developer@10.179.23.1:/tmp/fix_obn.py)",
-      "Bash(mkdir -p .claude/skills/dosto-morning-brief)",
-      "Bash(python scripts/dosto_morning_brief.py --timeout 3)",
-      "Bash(mkdir -p .claude/logs)",
-      "Bash(echo '{\"cycle_id\":\"2026-05-20T-orchestrate-143-144\",\"run_at\":\"2026-05-20\",\"trains\":[{\"fzg\":143,\"ccu_ip\":\"10.179.18.1\",\"reachable\":true,\"switches\":\"18/18\",\"aps\":\"24/24\",\"verdict\":\"PASS\"},{\"fzg\":144,\"ccu_ip\":\"10.179.16.1\",\"reachable\":true,\"switches\":\"18/18\",\"aps\":\"23/24\",\"verdict\":\"FAIL\",\"failure_reason\":\"1 AP missing\"}],\"dispatch_decision\":\"all\"}')",
-      "Bash(python scripts/dosto_morning_brief.py)",
-      "Bash(echo \"reboot-sent-exit=$?\")",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no scripts/fix_obn.py scripts/fix_obn_bugs67.py scripts/fix_obn_bug8.py scripts/fix_bug1_regex.py developer@10.179.18.1:/tmp/)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no scripts/fix_obn.py scripts/fix_obn_bugs67.py scripts/fix_obn_bug8.py scripts/fix_bug1_regex.py developer@10.179.16.1:/tmp/)",
-      "Bash(echo \"143-reboot-sent-exit=$?\")",
-      "Bash(echo \"144-reboot-sent-exit=$?\")",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no scripts/fix_obn.py developer@10.179.45.1:/var/tmp/fix_obn.py)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no scripts/fix_obn.py developer@10.179.45.1:/tmp/fix_obn.py)",
-      "Bash(timeout 5 bash -c \"</dev/tcp/10.179.45.1/22\")",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no scripts/fix_obn_bug9_pysnmp_thread_safety.py developer@10.179.18.1:/tmp/)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no scripts/fix_obn_bug9_pysnmp_thread_safety.py developer@10.179.16.1:/tmp/)",
-      "Bash(timeout 5 bash -c \"</dev/tcp/10.178.24.1/22\")",
-      "Bash(timeout 5 bash -c \"</dev/tcp/10.178.27.1/22\")",
-      "Bash(timeout 5 bash -c \"</dev/tcp/10.178.22.1/22\")",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no scripts/lldp_check_4734-120.py developer@10.179.49.1:/tmp/lldp_check_4734-120.py)",
-      "Bash(git fetch *)",
-      "Bash(ping -n 3 10.179.17.1)",
-      "Bash(grep -E \"^\\(fix_obn|fix_bug1_regex|fix_obn_bug8|fix_obn_bugs67\\)\\\\.py$\")",
-      "Bash(scp -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bugs67.py C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug8.py C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_bug1_regex.py developer@10.179.17.1:/tmp/)",
-      "Bash(scp -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug9.py developer@10.179.17.1:/tmp/fix_obn_bug9.py)",
-      "Bash(git merge *)",
-      "Bash(git stash *)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no scripts/fix_obn.py scripts/fix_obn_bug9.py developer@10.179.45.1:/tmp/)",
-      "Bash(python scripts/dosto_morning_brief.py --timeout 5)",
-      "Bash(echo \"reboot triggered \\(exit $?\\)\")",
-      "Skill(dosto-orchestrate)",
-      "Skill(dosto-orchestrate:*)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py\" \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug8.py\" \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug9_pysnmp_thread_safety.py\" developer@10.179.12.1:/tmp/)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py\" developer@10.179.24.1:/tmp/)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py\" developer@10.179.12.1:/tmp/)",
-      "Skill(dosto-auto-scan)",
-      "Skill(dosto-auto-scan:*)",
-      "Bash(ping -n 3 10.179.24.1)",
-      "Bash(ping -n 3 10.179.12.1)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug9.py\" developer@10.179.24.1:/tmp/)",
-      "Bash(findstr /i \"Control Sheet\")",
-      "Bash(python -c \"import openpyxl; wb = openpyxl.load_workbook\\(r'docs/ND-DEL-OBB-035-CFG-001-01 OBB Fleet Control Sheet 20260211.xlsx', data_only=True\\); [print\\('Sheet:', s\\) for s in wb.sheetnames]\")",
-      "Bash(move \"C:\\\\Users\\\\AbbasRizvi\\\\Documents\\\\dosto-troubleshooting\\\\enhancement-notes-dosto-orchestrate-2026-05-21.md\" \"C:\\\\Users\\\\AbbasRizvi\\\\Documents\\\\dosto-troubleshooting\\\\.archive\\\\enhancement-notes-dosto-orchestrate-2026-05-21-applied.md\")",
-      "PowerShell(New-Item -ItemType Directory -Path '.archive' -Force)",
-      "PowerShell(Move-Item -Path 'enhancement-notes-dosto-orchestrate-2026-05-21.md' -Destination '.archive/enhancement-notes-dosto-orchestrate-2026-05-21-applied.md' -Force)",
-      "Bash(git check-ignore *)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py\" \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug8.py\" \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug9_pysnmp_thread_safety.py\" developer@10.179.37.1:/tmp/)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py\" \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug8.py\" \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug9_pysnmp_thread_safety.py\" developer@10.179.44.1:/tmp/)",
-      "Bash(echo '{\"timestamp\":\"2026-05-21T08:13:00Z\",\"fzg\":14,\"train_number\":\"4734-114\",\"ccu_ip\":\"10.179.44.1\",\"gate\":\"promote_snapshot\",\"response\":\"approved\",\"approved_by\":\"Abbas Rizvi\",\"rationale\":\"8/8 OBN patches applied live; standard single-promote, no fold-ins\"}')",
-      "mcp__3fb9a852-6b22-49e0-8afa-68d4505061d9__updateConfluencePage",
-      "Bash(echo '{\"timestamp\":\"2026-05-21T08:18:30Z\",\"fzg\":14,\"train_number\":\"4734-114\",\"ccu_ip\":\"10.179.44.1\",\"gate\":\"safe_reboot\",\"response\":\"approved\",\"approved_by\":\"Abbas Rizvi\",\"rationale\":\"run2/id325 created \\(9 patches incl bug 9\\); reboot needed to activate\"}' >> .claude/logs/approval-gates.jsonl)",
-      "Bash(timeout 5 bash -c \"</dev/tcp/10.179.37.1/22\")",
-      "Bash(ping -n 5 10.179.12.1)",
-      "Bash(timeout 5 bash -c \"</dev/tcp/10.179.44.1/22\")",
-      "Bash(ping -n 2 10.179.121.1)",
-      "Bash(scp -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no /tmp/fzg143_push.sh developer@10.179.18.1:/tmp/)",
-      "Bash(sed -i 's|/var/tmp/ap_fw_push_fzg143.log|/tmp/ap_fw_push_fzg143.log|g' /tmp/fzg143_push.sh)",
-      "Bash(sed -i 's|/var/tmp/ap_fw_push_fzg144.log|/tmp/ap_fw_push_fzg144.log|g' /tmp/fzg144_push.sh)",
-      "Bash(echo \"rc=$?\")",
-      "Bash(scp -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no scripts/fix_obn.py scripts/fix_obn_bug8.py scripts/fix_obn_bug9_pysnmp_thread_safety.py developer@10.179.46.1:/tmp/)",
-      "Bash(scp -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no /tmp/fzg13_obn_update_c.sh developer@10.179.46.1:/tmp/)",
-      "Bash(printf '%s\\\\n' '{\"ts\":\"2026-05-21T10:25:00Z\",\"action\":\"push\",\"page_id\":\"5410684933\",\"prev_version\":11,\"new_version\":12,\"source\":\"manual:Abbas Rizvi\",\"versionMessage\":\"added Stadler status column, renamed Status -> Nomad status\"}' >> \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/logs/confluence-sync.jsonl\")",
-      "Bash(ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o ServerAliveInterval=30 -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" developer@10.179.24.1 \"ping -c 3 -W 2 10.179.24.222 2>&1; sudo python3 -c \\\\\"import json; ap=[x for x in json.load\\(open\\('/tmp/discovery.json'\\)\\) if x.get\\('ip'\\)=='10.179.24.222']; print\\('uptime:', ap[0]['uptime'] if ap else 'not found'\\)\\\\\" 2>&1\")",
-      "Bash(python)",
-      "Bash(command -v pdftotext pdftoppm)",
-      "Bash(python -c \"import pypdf, sys; r=pypdf.PdfReader\\('train-ip-allocation-commission/4734-xxx/4734-119/4734-119_IP-Port-Allocation.pdf'\\); [print\\(p.extract_text\\(\\)\\) for p in r.pages]\")",
-      "Bash(pdftotext -layout train-ip-allocation-commission/4734-xxx/4734-119/4734-119_IP-Port-Allocation.pdf -)",
-      "Skill(dosto-extract-train-data)",
-      "Skill(dosto-extract-train-data:*)",
-      "Bash(pdftotext -layout train-ip-allocation-commission/4734-xxx/4734-119/4734-119_IP-Port-Allocation.pdf /tmp/4734-119.txt)",
-      "Bash(pdftotext -layout train-ip-allocation-commission/4734-xxx/4734-120/4734-120_IP-Port-Allocation.pdf /tmp/4734-120.txt)",
-      "Bash(ssh -i ./openssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.122.1 ' *)",
-      "Bash(awk '/^Nahverkehr- 4 Teiler/{p++} {print p\"|\"$0}' /tmp/4734-119.txt)",
-      "Skill(anthropic-skills:docx)",
-      "Skill(anthropic-skills:docx:*)",
-      "Bash(awk '/^Nahverkehr- 4 Teiler/{p++} p==4' /tmp/4734-119.txt)",
-      "Bash(awk '/^Nahverkehr- 4 Teiler/{p++} p==3' /tmp/4734-119.txt)",
-      "Bash(node generate_rma_report.js)",
-      "Bash(echo '{\"ts\":\"2026-05-21T11:16:00Z\",\"action\":\"push\",\"page_id\":\"5410684933\",\"prev_version\":13,\"new_version\":14,\"source\":\"manual:Abbas Rizvi\",\"banner_version\":14}' >> \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/logs/confluence-sync.jsonl\")",
-      "Bash(python \"C:\\\\Users\\\\AbbasRizvi\\\\AppData\\\\Roaming\\\\Claude\\\\local-agent-mode-sessions\\\\skills-plugin\\\\c0278ed2-766b-4310-bedd-d0b72ff1b4d4\\\\6ce6c380-7083-49a2-bfd4-16ea9d63a896\\\\skills\\\\docx\\\\scripts\\\\office\\\\soffice.py\" --headless --convert-to pdf \"RMA_Report_VDS_Switch_SN240658_2026-05-21.docx\")",
-      "Bash(python \"C:\\\\Users\\\\AbbasRizvi\\\\AppData\\\\Roaming\\\\Claude\\\\local-agent-mode-sessions\\\\skills-plugin\\\\c0278ed2-766b-4310-bedd-d0b72ff1b4d4\\\\6ce6c380-7083-49a2-bfd4-16ea9d63a896\\\\skills\\\\docx\\\\scripts\\\\office\\\\soffice.py\" --headless --convert-to pdf --outdir \"C:\\\\Users\\\\AbbasRizvi\\\\Documents\\\\dosto-troubleshooting\\\\reports\\\\rma\" \"C:\\\\Users\\\\AbbasRizvi\\\\Documents\\\\dosto-troubleshooting\\\\reports\\\\rma\\\\RMA_Report_VDS_Switch_SN240658_2026-05-21.docx\")",
-      "Bash(pandoc \"C:\\\\Users\\\\AbbasRizvi\\\\Documents\\\\dosto-troubleshooting\\\\reports\\\\rma\\\\RMA_Report_VDS_Switch_SN240658_2026-05-21.docx\" -o -)",
-      "Bash(echo '{\"ts\":\"2026-05-21T11:39:29Z\",\"action\":\"push\",\"page_id\":\"5410684933\",\"prev_version\":15,\"new_version\":17,\"source\":\"manual:Abbas Rizvi\",\"body_size\":5200,\"banner_version\":16,\"version_message\":\"dosto-confluence-sync: v16 — Fzg 13 PAUSED \\(8/12 sw v8-013, 4 stuck v7m, train offline\\); Fzg 143+144 AP fw push progress update\"}' >> \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.claude/logs/confluence-sync.jsonl\")",
-      "Bash(ping -n 1 -w 1500 10.179.12.1)",
-      "PowerShell($ips = 1..255 | ForEach-Object { \"10.179.$_.1\" }; $jobs = $ips | ForEach-Object { Start-ThreadJob -ScriptBlock { param\\($ip\\) if \\(Test-Connection -ComputerName $ip -Count 1 -Quiet\\) { $ip } } -ArgumentList $_ -ThrottleLimit 64 }; $jobs | Wait-Job | Receive-Job | Sort-Object {[int]\\($_ -split '\\\\.'\\)[2]})",
-      "Bash(echo '{\"ts\":\"2026-05-21T12:20:00Z\",\"cycle\":1,\"fzg\":146,\"gate\":\"device_count_mismatch\",\"decision\":\"partial\",\"approved_by\":\"Abbas Rizvi\",\"notes\":\"commission 17 sw + 22 APs visible; C1 + 2 APs logged as Stadler\"}')",
-      "Bash(echo '{\"ts\":\"2026-05-21T12:32:00Z\",\"cycle\":1,\"fzg\":130,\"gate\":\"device_count_mismatch\",\"decision\":\"partial\",\"approved_by\":\"Abbas Rizvi\",\"notes\":\"push AP fw to 21 healthy APs; skip .218 SNMP-silent; E3 sw + 2 APs logged as Stadler; NO obn update c all\"}' >> .claude/logs/approval-gates.jsonl *)",
-      "Bash(nohup ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no developer@10.179.46.1 \"sudo obn discover && sudo obn report && sudo obn update c all\")",
-      "Bash(echo \"Fzg 13 obn update c all started, PID $!\")",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no .tmp/fzg146_chroot.sh .tmp/_fzg146_train_id.py .tmp/_fzg146_vlan7.py developer@10.179.21.1:/tmp/)",
-      "Bash(tee /tmp/fzg146_chroot_run.log)",
-      "Bash(tee /tmp/fzg130_promote.log)",
-      "Bash(tee /tmp/fzg132_promote.log)",
-      "Bash(chmod +x .tmp/fzg132_ap_fw_serial.sh)",
-      "Bash(chmod +x .tmp/fzg130_ap_fw_serial.sh)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no .tmp/fzg132_ap_fw_serial.sh developer@10.179.10.1:/tmp/)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no .tmp/fzg130_ap_fw_serial.sh developer@10.179.47.1:/tmp/)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no .tmp/fzg146_luci_bypass.sh developer@10.179.21.1:/tmp/)",
-      "Bash(timeout 5 bash -c \"</dev/tcp/10.179.46.1/22\")",
-      "Bash(ping -n 2 -w 2000 10.179.46.1)",
-      "Bash(stat -c '%y %n' fleet-status.md 2>/dev/null || stat fleet-status.md *)",
-      "Bash(echo '{\"ts\":\"2026-05-21T13:32:00Z\",\"action\":\"push\",\"page_id\":\"5410684933\",\"prev_version\":19,\"new_version\":21,\"source\":\"manual:Abbas Rizvi\",\"versionMessage\":\"/dosto-orchestrate run on 130/132/146/13: Fzg 132 DONE w/ Stadler; Fzg 146 chroot promote + LuCI bypass DONE; Fzg 130 AP fw partial; Fzg 13 OFFLINE\"}' >> .claude/logs/confluence-sync.jsonl *)",
-      "WebFetch(domain:www.anthropic.com)",
-      "Bash(python gen_dashboard.py)",
-      "Bash(python scripts/dosto_morning_brief.py --no-discover)",
-      "Bash(python .tmp/test_fleet_lookup.py)",
-      "Bash(cp .tmp/fleet-status.md fleet-status.md)",
-      "Bash(python scripts/dosto_morning_brief.py --no-discover --timeout 3)",
-      "Bash(fping -a -q -g 10.178.0.1 10.178.255.1)",
-      "Bash(python scripts/dosto_auto_scan.py --status)",
-      "Bash(python scripts/fleet_status_lookup.py list)",
-      "Bash(python -c \"import sys, json; d=json.load\\(sys.stdin\\); print\\(f'{len\\(d\\)} rows across {len\\(set\\(r[\\\\\"series\\\\\"] for r in d\\)\\)} series; missing Fzg: {sum\\(1 for r in d if r[\\\\\"fzg\\\\\"] is None\\)}'\\)\")",
-      "Bash(python scripts/fleet_status_lookup.py ensure-fzg 4706-103 --non-interactive)",
-      "Bash(python scripts/fleet_status_lookup.py lookup 4736-120)",
-      "Bash(python scripts/fleet_status_lookup.py lookup 4736-104)",
-      "Bash(python scripts/fleet_status_lookup.py lookup 4736-119)",
-      "Bash(python scripts/fleet_status_lookup.py lookup 4706-103)",
-      "Bash(python scripts/fleet_status_lookup.py lookup 4736-115)",
-      "Bash(ip neigh *)",
-      "Bash(wait)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no scripts/fix_obn.py scripts/fix_obn_bug8.py scripts/fix_obn_bug9_pysnmp_thread_safety.py developer@10.179.18.1:/tmp/)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no scripts/fix_obn.py scripts/fix_obn_bug8.py scripts/fix_obn_bug9_pysnmp_thread_safety.py developer@10.179.17.1:/tmp/)",
-      "Bash(python scripts/fleet_status_lookup.py lookup 4736-115 --require-fzg)",
-      "Skill(update-config)",
-      "Skill(update-config:*)",
-      "Read(C:\\Users\\ABBASR~1\\AppData\\Local\\Temp\\claude\\**)",
-      "Bash(tail -20 .claude/logs/approval-gates.jsonl)",
-      "Bash(grep -c device_count_mismatch .claude/logs/approval-gates.jsonl)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py\" \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug8.py\" \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug9_pysnmp_thread_safety.py\" developer@10.179.54.1:/tmp/)",
-      "Bash(python scripts/fleet_status_lookup.py lookup 4734-190 --require-fzg)",
-      "Bash(sudo grep -c 'default image is now' /usr/share/obn/lib/device/vendor/vdsrail.py)",
-      "Bash(sudo grep -c 'if not result:' /usr/share/obn/lib/device/vendor/vdsrail.py)",
-      "Bash(sudo grep -c 'except KeyError:' /usr/share/obn/lib/device/snmpdevice.py)",
-      "Bash(sudo grep -c 'bool\\(self.firmware\\) and not self.firmware.endswith' /usr/share/obn/lib/report/device.py)",
-      "Bash(sudo grep -c 'Bug 5 fix: pre-populate tftp_allowed ipset' /usr/share/obn/cli/update.py)",
-      "Bash(python3 -c \"from datetime import datetime, timezone; print\\(datetime.now\\(timezone.utc\\).strftime\\('%Y-%m-%dT%H:%M:%SZ'\\)\\)\")",
-      "Bash(echo \"EXIT:$?\")",
-      "Bash(ping -n 3 10.179.10.1)",
-      "Bash(ping -n 3 10.179.28.1)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no scripts/fix_obn_bug9_pysnmp_thread_safety.py developer@10.179.17.1:/tmp/)",
-      "Bash(python3 -c \"import time; time.sleep\\(15\\); print\\('done'\\)\")",
-      "Bash(ping -n 3 10.179.4.1)",
-      "Bash(python3 -c \"import time; time.sleep\\(20\\); print\\('done'\\)\")",
-      "Bash(echo \"SSH_EXIT:$?\")",
-      "mcp__Desktop_Commander__get_config",
-      "Bash(python scripts/dosto_morning_brief.py --timeout 4)",
-      "Bash(echo \"EXIT_CODE: $?\")",
-      "Bash(nc -zw5 10.179.54.1 22)",
-      "Bash(echo \"nc exit: $?\")",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o BatchMode=yes \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py\" \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug8.py\" developer@10.179.54.1:/tmp/)",
-      "Bash(echo \"SCP_EXIT:$?\")",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o BatchMode=yes \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug9_pysnmp_thread_safety.py\" developer@10.179.54.1:/tmp/)",
-      "Bash(python .tmp/test_in_flight.py)",
-      "Bash(echo \"OBN_DISCOVER_EXIT:$?\")",
-      "Bash(echo \"OBN_REPORT_EXIT:$?\")",
-      "Bash(echo \"OBN_VAL_EXIT:$?\")",
-      "Bash(python scripts/dosto_morning_brief.py --fleet-status .tmp/fleet-status.test2.md --out .tmp/morning-brief.test.html --no-discover --timeout 2)",
-      "Bash(python scripts/dosto_morning_brief.py --fleet-status .tmp/fleet-status.test2.md --clean-stale-claim 4734-120)",
-      "Bash(python scripts/dosto_morning_brief.py --assign 10.179.41.1 4705-103 --fzg 231)",
-      "Bash(python scripts/fleet_status_lookup.py 4734-190)",
-      "Bash(PYTHONIOENCODING=utf-8 python -c ' *)",
-      "Bash(PYTHONIOENCODING=utf-8 python .tmp/write_claims_2026-05-22.py)",
-      "Bash(PYTHONIOENCODING=utf-8 python .tmp/revert_claims_2026-05-22.py)",
-      "Bash(PYTHONIOENCODING=utf-8 python .tmp/revert_4705_claims.py)",
-      "Bash(where pdftoppm *)",
-      "Bash(python -c \"import pypdf; print\\(pypdf.__version__\\)\")",
-      "Bash(pdftotext -layout \"train-ip-allocation-commission/4705-xxx/4705-101/4705-101_IP-Port-Allocation.pdf\" .tmp/4705-101.txt)",
-      "Bash(pdftotext -layout \"train-ip-allocation-commission/4705-xxx/4705-103/4705-103_IP-Port-Allocation.pdf\" .tmp/4705-103.txt)",
-      "Bash(scp -i ./openssh -o StrictHostKeyChecking=no scripts/fix_obn.py scripts/fix_obn_bug8.py scripts/fix_obn_bug9_pysnmp_thread_safety.py developer@10.179.39.1:/tmp/)",
-      "Bash(ssh -tt -i ./openssh -o StrictHostKeyChecking=no developer@10.179.2.1 \"sudo /usr/sbin/nd-systemupdate.sh.dont shell\")",
+      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o ConnectTimeout=10 -o StrictHostKeyChecking=no developer@10.179.12.1 ' *)",
+      "Bash(npm root *)",
+      "Bash(NODE_PATH=$\\(npm root -g\\) node gen_report_docx.js)",
+      "Bash(python \"C:/Users/AbbasRizvi/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/c0278ed2-766b-4310-bedd-d0b72ff1b4d4/6ce6c380-7083-49a2-bfd4-16ea9d63a896/skills/docx/scripts/office/validate.py\" DOSTO_Coupled_Train_Test_Report_2026-06-12_v1.0.docx)",
+      "Bash(PYTHONUTF8=1 python \"C:/Users/AbbasRizvi/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/c0278ed2-766b-4310-bedd-d0b72ff1b4d4/6ce6c380-7083-49a2-bfd4-16ea9d63a896/skills/docx/scripts/office/validate.py\" DOSTO_Coupled_Train_Test_Report_2026-06-12_v1.0.docx)",
+      "Bash(powershell.exe -NoProfile -Command \"Compress-Archive -Force -Path '4736-110_fzg138_harvest.txt','4736-119_fzg147_harvest.txt','tc_trace_138.txt','tc_trace_147.txt','tc_trace_147_solo.txt' -DestinationPath 'DOSTO_Coupled_Test_2026-06-12_evidence.zip'\")",
+      "Bash(git log *)",
+      "Bash(cd \"$HOME/Documents/nomad-obn-template-nv6\" 2>/dev/null && echo \"=== grep port-cost across all template files ===\" && grep -rn -i \"port-cost\\\\|port_cost\\\\|portcost\" . 2>/dev/null | head -40)",
+      "Bash(git -C nd-obn-template-dostoneu-nv6 branch --show-current)",
+      "Bash(git -C nd-obn-template-dostoneu-nv6 log -1 --oneline)",
+      "Bash(git -C nd-obn-template-dostoneu-nv6 status --short)",
+      "Bash(python3 _bmad/scripts/resolve_customization.py --skill \"C:/Users/AbbasRizvi/.claude/plugins/marketplaces/bmad-method/src/bmm-skills/4-implementation/bmad-create-story\" --key workflow)",
+      "Bash(sed -n '1,15p' nv6-300-D1.cfg)",
+      "Bash(sed -n '1,15p' nv6-100-A1.cfg)",
       "mcp__3fb9a852-6b22-49e0-8afa-68d4505061d9__getAccessibleAtlassianResources",
+      "Bash(python scripts/fleet_status_lookup.py 4736-118)",
       "mcp__3fb9a852-6b22-49e0-8afa-68d4505061d9__searchConfluenceUsingCql",
-      "Bash(scp -i ./openssh -o StrictHostKeyChecking=no scripts/fix_obn.py scripts/fix_obn_bug8.py scripts/fix_obn_bug9_pysnmp_thread_safety.py developer@10.179.2.1:/tmp/)",
-      "Bash(PYTHONIOENCODING=utf-8 python .tmp/revert_4736_102.py)",
-      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\AbbasRizvi\\\\Documents\\\\dosto-troubleshooting\" -Recurse -File -ErrorAction SilentlyContinue)",
-      "Bash(Select-Object -First 50)",
-      "Bash(Format-Table FullName, Length, LastWriteTime)",
-      "Bash(xargs grep -l \"WAP.*swap\\\\|WE1\\\\|WE2\\\\|4734-119\\\\|4734-120\")",
-      "Bash(xargs grep \"project_be_wap_swap\")",
-      "Bash(python scripts/dosto_morning_brief.py --clean-stale-claim 4736-120)",
-      "Bash(python scripts/dosto_morning_brief.py --clean-stale-claim 4734-111)",
-      "Bash(python scripts/fleet_status_lookup.py lookup 4736-120 --require-fzg)",
-      "Bash(python scripts/fleet_status_lookup.py lookup 4734-111 --require-fzg)",
-      "Bash(python scripts/fleet_status_lookup.py lookup 4705-101 --require-fzg)",
-      "Bash(python scripts/fleet_status_lookup.py lookup 4734-113 --require-fzg)",
-      "Bash(python scripts/fleet_status_lookup.py lookup 4734-115 --require-fzg)",
-      "Bash(PYTHONIOENCODING=utf-8 python -c \"print\\(open\\('.tmp/confluence-body-v22.md','r',encoding='utf-8'\\).read\\(\\)\\)\")",
-      "Bash(PYTHONIOENCODING=utf-8 python -c \"import sys; print\\(open\\('.tmp/confluence-body-v22.md','r',encoding='utf-8'\\).read\\(\\)\\)\")",
-      "Bash(PYTHONIOENCODING=utf-8 python -c \"import os; print\\(os.path.getsize\\('.tmp/confluence-body-v22.md'\\)\\)\")",
-      "Bash(awk -F'|' '{print $2, $4}')",
-      "Bash(nc -z -w 5 10.179.46.1 22)",
-      "Bash(awk -F'|' '{print $2, $4, $5}')",
-      "Bash(python scripts/fleet_status_lookup.py lookup 4734-108 --require-fzg)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no scripts/fix_obn.py scripts/fix_obn_bug8.py scripts/fix_obn_bug9_pysnmp_thread_safety.py developer@10.179.29.1:/tmp/)",
-      "Bash(timeout 5 bash -c '</dev/tcp/10.179.46.1/22')",
-      "Bash(echo '{\"recorded_at\":\"2026-05-22T10:30:00Z\",\"train_number\":\"4734-108\",\"fzg\":8,\"gate\":\"device_count_mismatch\",\"decision\":\"partial\",\"approved_by\":\"Abbas Rizvi\",\"defer_count\":0,\"notes\":\"All CCU-local fixes OK; HALT before obn update c. Investigate 6 extra plain-config AP leases via switch SSH+LLDP before fleet push.\"}' >> .claude/logs/approval-gates.jsonl)",
-      "Bash(timeout 5 bash -c '</dev/tcp/10.179.61.1/22')",
-      "Bash(python scripts/fleet_status_lookup.py lookup 4734-190)",
-      "Bash(python scripts/fleet_status_lookup.py 4736-112 4736-114 4736-113 4734-104 4734-105 4734-106 4734-107 4736-118)",
-      "Bash(ping -n 2 -w 2000 10.179.21.1)",
-      "Bash(ping -n 2 -w 2000 10.179.2.1)",
-      "Bash(echo '{\"recorded_at\":\"2026-05-22T11:10:00Z\",\"train_number\":\"4734-108\",\"fzg\":8,\"event\":\"terminal_paused\",\"ccu_subvol\":\"/.snapshots/run2\",\"subvol_id\":327,\"obn_patches\":\"8/8 persisted\",\"vlan7\":\"172.19.132.2/17\",\"ndsu\":\".dont\",\"tftp_helper\":\"runtime-applied \\(will wipe next reboot\\)\",\"template_pkg\":\"nd-obn-template-dostoneu-nv4 0.0.19\",\"rendered_hostnames\":\"nv4-X-v8-008\",\"gate5_partial_remaining_scope\":\"investigate 6 extra plain-config AP leases via switch SSH+LLDP before push_switch_config\"}' >> .claude/logs/orchestrator.jsonl)",
-      "Bash(scp -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no scripts/fix_obn.py scripts/fix_obn_bug8.py scripts/fix_obn_bug9_pysnmp_thread_safety.py developer@10.179.39.1:/tmp/)",
-      "Bash(python scripts/fleet_status_lookup.py claim 4734-111 --stage initial_diagnostics --session 1212Z)",
-      "Bash(echo '{\"ts\":\"2026-05-22T11:14:10Z\",\"action\":\"push\",\"page_id\":\"5410684933\",\"prev_version\":23,\"new_version\":24,\"source\":\"orchestrator:Abbas Rizvi\",\"note\":\"4734-108 PAUSED post-CCU-local fixes\"}' >> .claude/logs/confluence-sync.jsonl)",
-      "Bash(timeout 5 bash -c '</dev/tcp/10.179.39.228/22')",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no .tmp/swssh_4734-108.py developer@10.179.29.1:/tmp/swssh.py)",
-      "Bash(python -c 'import socket,sys; s=socket.socket\\(\\); s.settimeout\\(5\\); *)",
-      "Bash(scp -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no scripts/fix_obn.py scripts/fix_obn_bug8.py scripts/fix_obn_bug9_pysnmp_thread_safety.py developer@10.179.61.1:/tmp/)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no scripts/fix_obn_bug10_report_dosto_neu_bfs.py developer@10.179.29.1:/tmp/)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no .tmp/push_aps_4734-108.sh developer@10.179.29.1:/tmp/push_aps.sh)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no .tmp/ap_ssh.py developer@10.179.29.1:/tmp/ap_ssh.py)",
-      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no .tmp/ap_cli.py developer@10.179.29.1:/tmp/ap_cli.py)",
-      "Bash(python -c \"import socket; s=socket.socket\\(\\); s.settimeout\\(5\\); s.connect\\(\\('10.179.61.1',22\\)\\)\")",
-      "Bash(python scripts/dosto_morning_brief.py --clean-stale-claim 4734-108)"
+      "mcp__3fb9a852-6b22-49e0-8afa-68d4505061d9__getConfluencePage",
+      "Bash(python scripts/fleet_status_lookup.py lookup 4736-118)",
+      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.28.1 'for IF in mar5-tun mar3-tun ifb0 bond0; do echo \"===== $IF =====\"; tc qdisc show dev $IF 2>/dev/null; echo '\\\\''--- classes ---'\\\\''; tc class show dev $IF 2>/dev/null; echo '\\\\''--- filters ---'\\\\''; tc filter show dev $IF 2>/dev/null; done; echo '\\\\''===== nd-redundancy version ====='\\\\''; dpkg -l 2>/dev/null | grep nd-redundancy')",
+      "Bash(ping -n 2 -w 3000 10.179.28.1)",
+      "Bash(echo \"exit=$?\")",
+      "Bash(git fetch *)",
+      "Bash(git checkout *)",
+      "Bash(ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes developer@10.179.21.1 \"echo CCU_UP; hostname; sudo dhcp-lease-list 2>/dev/null | grep -iE 'a0:59:3a|00:14:5a' | wc -l\")",
+      "Bash(git -c core.autocrlf=false diff --stat)",
+      "Bash(ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 developer@10.179.21.1 \"sudo dhcp-lease-list 2>/dev/null | grep -iE 'a0:59:3a|00:14:5a'\")",
+      "Bash(git add *)",
+      "Bash(git -c core.autocrlf=false commit -F -)",
+      "Bash(ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 developer@10.179.21.1 'SSH_OPTS=\"-o StrictHostKeyChecking=no -o ConnectTimeout=8 -o KexAlgorithms=+diffie-hellman-group14-sha1,diffie-hellman-group1-sha1 -o HostKeyAlgorithms=+ssh-rsa,ssh-dss -o PubkeyAuthentication=no\"; echo \"=== show poe ===\"; sshpass -p \"Nom@dCome1n\" ssh $SSH_OPTS admin@10.179.21.189 \"show poe\"')",
+      "Bash(ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 developer@10.179.21.1 'SSH_OPTS=\"-o StrictHostKeyChecking=no -o ConnectTimeout=8 -o KexAlgorithms=+diffie-hellman-group14-sha1,diffie-hellman-group1-sha1 -o HostKeyAlgorithms=+ssh-rsa,ssh-dss -o PubkeyAuthentication=no\"; echo \"=== E1 iface summary \\(e0-4 AP port\\) ===\"; sshpass -p \"Nom@dCome1n\" ssh $SSH_OPTS admin@10.179.21.189 \"show interface summary\" 2>/dev/null | grep -E \"Port|e0-4\"; echo \"=== ping E-coach AP1m candidates ===\"; for ip in 10.179.21.232 10.179.21.233; do echo -n \"$ip: \"; ping -c2 -W2 $ip >/dev/null 2>&1 && echo REACHABLE || echo NO_REPLY; done')",
+      "Bash(ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 developer@10.179.21.1 'SSH_OPTS=\"-o StrictHostKeyChecking=no -o ConnectTimeout=8 -o KexAlgorithms=+diffie-hellman-group14-sha1,diffie-hellman-group1-sha1 -o HostKeyAlgorithms=+ssh-rsa,ssh-dss -o PubkeyAuthentication=no\"; sshpass -p \"Nom@dCome1n\" ssh $SSH_OPTS admin@10.179.21.189 \"show log\"')",
+      "Bash(ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 developer@10.179.21.1 'SSH_OPTS=\"-o StrictHostKeyChecking=no -o ConnectTimeout=8 -o KexAlgorithms=+diffie-hellman-group14-sha1,diffie-hellman-group1-sha1 -o HostKeyAlgorithms=+ssh-rsa,ssh-dss -o PubkeyAuthentication=no\"; echo \"=== full log tail ===\"; sshpass -p \"Nom@dCome1n\" ssh $SSH_OPTS admin@10.179.21.189 \"show log\" 2>/dev/null | grep -iE \"poe|pse|power|overload|short|current|e0-4|fault|class|denied|fail\" ; echo \"=== log line count ===\"; sshpass -p \"Nom@dCome1n\" ssh $SSH_OPTS admin@10.179.21.189 \"show log\" 2>/dev/null | wc -l')",
+      "Bash(ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 developer@10.179.21.1 'SSH_OPTS=\"-o StrictHostKeyChecking=no -o ConnectTimeout=8 -o KexAlgorithms=+diffie-hellman-group14-sha1,diffie-hellman-group1-sha1 -o HostKeyAlgorithms=+ssh-rsa,ssh-dss -o PubkeyAuthentication=no\"; echo \"=== show log persistent ===\"; sshpass -p \"Nom@dCome1n\" ssh $SSH_OPTS admin@10.179.21.189 \"show log persistent\" 2>/dev/null')",
+      "Bash(ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 developer@10.179.21.1 'SSH_OPTS=\"-o StrictHostKeyChecking=no -o ConnectTimeout=8 -o KexAlgorithms=+diffie-hellman-group14-sha1,diffie-hellman-group1-sha1 -o HostKeyAlgorithms=+ssh-rsa,ssh-dss -o PubkeyAuthentication=no\"; SW=10.179.21.189; echo \"=== disable e0-4 ===\"; sshpass -p \"Nom@dCome1n\" ssh $SSH_OPTS admin@$SW \"configure interface e0-4 disable\" 2>/dev/null; sleep 3; echo \"=== enable e0-4 ===\"; sshpass -p \"Nom@dCome1n\" ssh $SSH_OPTS admin@$SW \"configure interface e0-4 enable\" 2>/dev/null; echo \"\\(settling 15s\\)\"; sleep 15; echo \"=== show poe \\(e0-4 row\\) ===\"; sshpass -p \"Nom@dCome1n\" ssh $SSH_OPTS admin@$SW \"show poe\" 2>/dev/null | grep -E \"Port|e0-4|Total\"; echo \"=== e0-4 link ===\"; sshpass -p \"Nom@dCome1n\" ssh $SSH_OPTS admin@$SW \"show interface summary\" 2>/dev/null | grep -E \"Port |e0-4\"')",
+      "Bash(ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 developer@10.179.21.1 'SSH_OPTS=\"-o StrictHostKeyChecking=no -o ConnectTimeout=8 -o KexAlgorithms=+diffie-hellman-group14-sha1,diffie-hellman-group1-sha1 -o HostKeyAlgorithms=+ssh-rsa,ssh-dss -o PubkeyAuthentication=no\"; SW=10.179.21.189; run\\(\\){ sshpass -p \"Nom@dCome1n\" ssh $SSH_OPTS admin@$SW \"$1\" 2>/dev/null; }; echo \"=1 poe off=\"; run \"configure interface e0-4 poe mode off\"; sleep 2; echo \"=2 link down=\"; run \"no configure interface e0-4 enable\"; sleep 3; echo \"=3 link up=\"; run \"configure interface e0-4 enable\"; sleep 2; echo \"=4 poe on=\"; run \"configure interface e0-4 poe mode on\"; echo \"\\(settling 20s\\)\"; sleep 20; echo \"=== show poe e0-4 ===\"; run \"show poe\" | grep -E \"Port|e0-4|Total\"; echo \"=== e0-4 link ===\"; run \"show interface summary\" | grep -E \"Port |e0-4\"')",
+      "Bash(sort -t't' -k2 -n)",
+      "Bash(ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 developer@10.179.21.1 'SSH_OPTS=\"-o StrictHostKeyChecking=no -o ConnectTimeout=8 -o KexAlgorithms=+diffie-hellman-group14-sha1,diffie-hellman-group1-sha1 -o HostKeyAlgorithms=+ssh-rsa,ssh-dss -o PubkeyAuthentication=no\"; SW=10.179.21.189; run\\(\\){ sshpass -p \"Nom@dCome1n\" ssh $SSH_OPTS admin@$SW \"$1\" 2>/dev/null; }; echo \"=== enable PoE+dev verbose logging ===\"; run \"configure system logging debug poe,dev\"; echo \"\\(exit code $?\\)\"; echo \"=== verify logging config ===\"; run \"show running-config\" | grep -iE \"logging|debug\" | head; echo \"=== current uptime marker \\(last log line before reboot\\) ===\"; run \"show log\" | tail -2')",
+      "Bash(ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 developer@10.179.21.1 'echo \"=== snmp_reboot_oid + community from OBN configs ===\"; sudo grep -rEn \"snmp_reboot_oid|snmp_write_community|write_community|snmp_community|reboot_oid\" /usr/share/obn /etc/obn /usr/lib/python3*/dist-packages/obn 2>/dev/null | grep -iE \"reboot_oid|community\" | head -20; echo \"=== check snmpset present ===\"; command -v snmpset')",
+      "Bash(ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 developer@10.179.21.1 'sudo awk \"/vdsrail|vds_rail|VDS|a0:59:3a|consist/{found=1} found{print} /^[a-z].*:$/{if\\(found && !/vds|consist/\\){c++; if\\(c>2\\)exit}}\" /etc/obn/vendors.yaml 2>/dev/null | head -60')",
+      "Bash(ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 developer@10.179.21.1 'SW=10.179.21.189; OID=\".1.3.6.1.4.1.8072.1.3.2.2.1.7.6.114.101.98.111.111.116\"; echo \"=== firing reboot OID=3 ===\"; snmpset -v3 -l authPriv -u snmpadmin -a SHA -A \"NomadStayOut!\" -x AES -X \"NomadStayOut!\" -t 2 -r 2 $SW $OID i 3 2>&1; echo \"\\(rc $?\\)\"; echo \"=== poll for down \\(every 5s, up to 60s\\) ===\"; for i in $\\(seq 1 12\\); do if ping -c1 -W2 $SW >/dev/null 2>&1; then echo \"t+$\\(\\(i*5\\)\\)s: UP\"; else echo \"t+$\\(\\(i*5\\)\\)s: DOWN <-- reboot started\"; break; fi; sleep 4; done')",
+      "Bash(git pull *)",
+      "Bash(python3 -c \"import yaml;yaml.safe_load\\(open\\('hieradata/box/box1.yaml'\\)\\);print\\('YAML OK'\\)\")",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 developer@10.179.21.1 'SW=10.179.21.189; echo \"=== extended poll for down \\(another 60s\\) ===\"; for i in $\\(seq 1 12\\); do if ping -c1 -W2 $SW >/dev/null 2>&1; then echo \"t+$\\(\\(60+i*5\\)\\)s: UP\"; else echo \"DOWN <-- reboot started\"; break; fi; sleep 4; done; echo \"=== current SNMP uptime ===\"; snmpget -v3 -l authPriv -u snmpadmin -a SHA -A \"NomadStayOut!\" -x AES -X \"NomadStayOut!\" -t 2 -r 2 $SW .1.3.6.1.2.1.1.3.0 2>&1')",
+      "Bash(ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 developer@10.179.21.1 'SSH_OPTS=\"-o StrictHostKeyChecking=no -o ConnectTimeout=8 -o KexAlgorithms=+diffie-hellman-group14-sha1,diffie-hellman-group1-sha1 -o HostKeyAlgorithms=+ssh-rsa,ssh-dss -o PubkeyAuthentication=no\"; SW=10.179.21.189; run\\(\\){ sshpass -p \"Nom@dCome1n\" ssh $SSH_OPTS admin@$SW \"$1\" 2>/dev/null; }; echo \"=== try sysadmin reboot \\(CLI fallback\\) ===\"; run \"sysadmin reboot\"; echo \"\\(rc $?\\)\"; echo \"=== verbose poe/dev log since debug enabled ===\"; run \"show log\" | grep -iE \"poe|kon|kmdev|dev:|reboot|power\" | tail -25; echo \"=== persistent log now ===\"; run \"show log persistent\"; echo \"=== revert debug logging ===\"; run \"no configure system logging debug\"; run \"show running-config\" | grep -iE \"logging debug\" || echo \"\\(debug logging cleared\\)\"')",
+      "Bash(echo \"1. vlan7 IP    = 172.19.<128+Fzg//2>.{2|130}   <- per-train, on the SHARED Stadler /17\")",
+      "Bash(ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 developer@10.179.21.1 'SW=10.179.21.189; echo \"=== still up? uptime \\(should be ~2h+ if reboot ignored\\) ===\"; sleep 20; snmpget -v3 -l authPriv -u snmpadmin -a SHA -A \"NomadStayOut!\" -x AES -X \"NomadStayOut!\" -t 2 -r 2 $SW .1.3.6.1.2.1.1.3.0 2>&1; ping -c1 -W2 $SW >/dev/null 2>&1 && echo \"PING: UP\" || echo \"PING: DOWN\"')",
+      "Bash(ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 developer@10.179.21.1 'SSH_OPTS=\"-o StrictHostKeyChecking=no -o ConnectTimeout=8 -o KexAlgorithms=+diffie-hellman-group14-sha1,diffie-hellman-group1-sha1 -o HostKeyAlgorithms=+ssh-rsa,ssh-dss -o PubkeyAuthentication=no\"; SW=10.179.21.189; run\\(\\){ sshpass -p \"Nom@dCome1n\" ssh $SSH_OPTS admin@$SW \"$1\" 2>/dev/null; }; echo \"=== POST-REBOOT show poe ===\"; run \"show poe\" | grep -E \"Port|e0-4|Total\"; echo \"=== POST-REBOOT e0-4 link ===\"; run \"show interface summary\" | grep -E \"Port |e0-4\"; echo \"=== POST-REBOOT boot log \\(poe/dev\\) ===\"; run \"show log\" | grep -iE \"poe|kmdev|kon|power|coldstart\" | head -15; echo \"=== persistent log ===\"; run \"show log persistent\"')",
+      "Bash(python scripts/fleet_status_lookup.py 4736-109)",
+      "Bash(python scripts/fleet_status_lookup.py lookup 4736-109)",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.28.1 \"hostname; sudo dhcp-lease-list 2>/dev/null | grep -i 'a0:59:3a' | sort\")",
+      "Bash(ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 developer@10.179.28.1 \"hostname; echo ---; sudo dhcp-lease-list 2>/dev/null | head -50\")",
+      "Bash(SSH_OPTS=\"-o StrictHostKeyChecking=no -o ConnectTimeout=8 -o KexAlgorithms=+diffie-hellman-group14-sha1,diffie-hellman-group1-sha1 -o HostKeyAlgorithms=+ssh-rsa,ssh-dss -o PubkeyAuthentication=no\" *)",
+      "Bash(awk '{print $1, \"Fzg=\"$2, $3}')",
+      "Bash(ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 developer@10.179.21.1 'SSH_OPTS=\"-o StrictHostKeyChecking=no -o ConnectTimeout=8 -o KexAlgorithms=+diffie-hellman-group14-sha1,diffie-hellman-group1-sha1 -o HostKeyAlgorithms=+ssh-rsa,ssh-dss -o PubkeyAuthentication=no\"; SWE=10.179.21.189; SWF=10.179.21.187; run\\(\\){ sshpass -p \"Nom@dCome1n\" ssh $SSH_OPTS admin@$1 \"$2\" 2>/dev/null; }; echo \"=== E1 show version ===\"; run $SWE \"show version\"; echo; echo \"=== E1 \\(faulty\\) show poe ===\"; run $SWE \"show poe\"; echo; echo \"=== E2 \\(healthy sibling\\) show poe ===\"; run $SWF \"show poe\"')",
+      "Bash(cd \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/.tmp/gitlab-repos/nd-obn-template-dostoneu-nv6\" && echo \"=== where does the 'v8' / version string in hostnames come from in the template? ===\" && grep -rn \"v8\\\\|v7\\\\|hostname nv6\" src/etc/obn/template/nv6-300-D1.cfg | head && echo && echo \"=== is the version hardcoded 'v8' in templates, or templated? ===\" && grep -rho \"nv6-[A-Z0-9]*-v[0-9]\" src/etc/obn/template/*.cfg | sort -u | head && echo && echo \"=== repo version file ===\" && cat version 2>/dev/null; echo \"--- package version in env pipeline ---\" && grep -i \"template_pkg\" ../environment-dostoneu/hieradata/pipeline/dostoneu-nv6.yaml 2>/dev/null)",
+      "Bash(git stash *)",
+      "Bash(git reset *)",
+      "Bash(python scripts/dosto_morning_brief.py --timeout 4)",
+      "Bash(python -c ' *)",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 developer@10.179.23.1 \"hostname; echo '---'; ip -4 addr show vlan7 2>/dev/null | grep -oP 'inet \\\\K[0-9.]+/[0-9]+' ; echo '---bond0---'; ip -4 addr show bond0 2>/dev/null | grep -oP 'inet \\\\K[0-9.]+/[0-9]+'\")",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 developer@10.179.23.1 \"echo '=== template cfg filenames \\(train_id rendered into names\\) ==='; ls /etc/obn/template/ 2>/dev/null | head -40; echo '=== nv? family ==='; ls /etc/obn/template/ 2>/dev/null | grep -oE 'nv[0-9]' | sort -u\")",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 developer@10.179.23.1 \"echo '=== train_id directive line in A1 cfg ==='; grep -nE 'train_id' /etc/obn/template/nv6-100-A1.cfg 2>/dev/null | head; echo '=== rendered switch hostname if any ==='; grep -niE 'hostname|nv6-.*-v8' /etc/obn/template/nv6-100-A1.cfg 2>/dev/null | head\")",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.23.1 \"echo '=== uptime / now ==='; uptime; date; echo '=== boots ==='; journalctl --list-boots 2>/dev/null | tail -12; echo '=== last reboots/shutdowns \\(wtmp\\) ==='; last -x -n 15 reboot shutdown 2>/dev/null; echo '=== last few login/system sessions ==='; last -n 8 2>/dev/null\")",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.23.1 \"echo '=== journal persistence ==='; ls -d /var/log/journal 2>/dev/null && echo 'PERSISTENT' || echo 'volatile-only \\(/run\\)'; echo '=== journalctl boots \\(sudo\\) ==='; sudo journalctl --list-boots 2>&1 | tail -15; echo '=== syslog files present \\(yesterday?\\) ==='; ls -la /var/log/syslog* /var/log/messages* 2>/dev/null; echo '=== wtmp rotated copies ==='; ls -la /var/log/wtmp* 2>/dev/null\")",
+      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.23.1 'echo '\\\\''=== any persistent log dirs / power-state hints ==='\\\\''; for d in /data /persist /var/lib/nd-redundancy /var/lib/nomad /opt/nomad/log; do [ -e $d ] && echo \"EXISTS: $d\"; done; echo '\\\\''=== rsyslog target ==='\\\\''; grep -rsh '\\\\''FileName\\\\|/var/log\\\\|imuxsock\\\\|omfile'\\\\'' /etc/rsyslog.conf /etc/rsyslog.d/ 2>/dev/null | grep -v '\\\\''^#'\\\\'' | head; echo '\\\\''=== this-boot: when did net/redundancy come up \\(matches Zabbix 07:04\\) ==='\\\\''; sudo journalctl -b -o short-iso 2>/dev/null | grep -iE '\\\\''nd-redundancy|vlan7|ModemManager|bond0'\\\\'' | head -8; echo '\\\\''=== current modem/uplink state ==='\\\\''; nmcli -t -f NAME,DEVICE,STATE con show --active 2>/dev/null | head')",
+      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.23.1 'echo '\\\\''=== is /var/log on /data \\(persistent\\)? ==='\\\\''; df -h /var/log /data 2>/dev/null; echo '\\\\''=== networkmanager.log span ==='\\\\''; ls -la /var/log/networkmanager.log* 2>/dev/null; sudo head -1 /var/log/networkmanager.log 2>/dev/null; echo '\\\\''--- earliest/last lines ---'\\\\''; sudo sed -n '\\\\''1p;$p'\\\\'' /var/log/networkmanager.log 2>/dev/null; echo '\\\\''=== grep for yesterday Jun 15 around 11:50 \\(modem down / shutdown\\) ==='\\\\''; sudo grep -iE '\\\\''Jun 15'\\\\'' /var/log/networkmanager.log 2>/dev/null | grep -iE '\\\\''09:[45]|disconnect|down|removed|disabled'\\\\'' | tail -25')",
+      "Bash(powershell -NoProfile -Command \"Get-ChildItem -Path . -Filter *.pdf -File | Sort-Object LastWriteTime -Descending | Select-Object -First 8 LastWriteTime, Length, Name | Format-Table -AutoSize\")",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.23.1 \"echo '=== i2c tooling present? ==='; command -v i2ctransfer i2cdetect; echo '=== i2c buses ==='; sudo i2cdetect -l 2>/dev/null | grep -i synopsys\")",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.23.1 \"echo '=== find i2ctransfer/i2cdetect anywhere ==='; sudo find /usr /sbin /bin -name 'i2ctransfer' -o -name 'i2cdetect' 2>/dev/null; echo '=== i2c-dev loaded? ==='; lsmod | grep i2c_dev || echo 'i2c-dev NOT loaded'; echo '=== dev nodes ==='; ls -la /dev/i2c-* 2>/dev/null; echo '=== dpkg i2c-tools ==='; dpkg -l 2>/dev/null | grep -i i2c-tools || echo 'i2c-tools pkg not installed'\")",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.23.1 \"echo '=== probe bus 2 for 0x2d ==='; sudo i2cdetect -y -r 2 2>/dev/null | grep -E '^20:|^2[0-9]:' ; echo '=== probe bus 1 for 0x2d ==='; sudo i2cdetect -y -r 1 2>/dev/null | grep -E '^20:'\")",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.23.1 \"echo 'STATE:'; sudo i2ctransfer -y 2 w1@0x2d 0x01 r3; echo 'VOLT:'; sudo i2ctransfer -y 2 w1@0x2d 0x04 r9; echo 'CURR:'; sudo i2ctransfer -y 2 w1@0x2d 0x05 r3; echo 'OFFDELAY:'; sudo i2ctransfer -y 2 w1@0x2d 0x0d r2; echo 'FW:'; sudo i2ctransfer -y 2 w1@0x2d 0x14 r11; echo 'SN:'; sudo i2ctransfer -y 2 w1@0x2d 0x20 r13\")",
+      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.23.1 'echo '\\\\''=== mount types for candidates ==='\\\\''; for m in / /data /tmp /var/tmp /home /var/log /run; do printf '\\\\''%-10s '\\\\'' $m; findmnt -no FSTYPE,OPTIONS $m 2>/dev/null | head -1 || echo '\\\\''\\(not a mount\\)'\\\\''; done; echo '\\\\''=== is / \\(rootfs\\) read-only? ==='\\\\''; mount | grep '\\\\'' / '\\\\'' | head -1; echo '\\\\''=== /data details + writability ==='\\\\''; ls -ld /data; touch /data/.persist_test_$\\(id -u\\) 2>&1 && echo '\\\\''WRITE /data OK'\\\\'' || echo '\\\\''WRITE /data DENIED'\\\\''; echo '\\\\''=== /tmp + /var/tmp writability ==='\\\\''; touch /tmp/.t 2>&1 && echo '\\\\''WRITE /tmp OK'\\\\'' || echo '\\\\''/tmp denied'\\\\''; touch /var/tmp/.t 2>&1 && echo '\\\\''WRITE /var/tmp OK'\\\\'' || echo '\\\\''/var/tmp denied'\\\\''')",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=12 /tmp/vign_poll.sh /tmp/vign-logger.service developer@10.179.23.1:/tmp/)",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.23.1 \"set -e; echo '=== install poller to /data ==='; sudo mkdir -p /data/ignition-log; sudo cp /tmp/vign_poll.sh /data/ignition-log/vign_poll.sh; sudo chmod 755 /data/ignition-log/vign_poll.sh; echo '=== install + enable service ==='; sudo cp /tmp/vign-logger.service /etc/systemd/system/vign-logger.service; sudo systemctl daemon-reload; sudo systemctl enable --now vign-logger.service; sleep 8; echo '=== status ==='; sudo systemctl --no-pager -l status vign-logger.service | head -12; echo '=== first log lines ==='; sudo cat /data/ignition-log/vign.csv\")",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.23.1 \"echo '=== poller landed? ==='; sudo ls -l /data/ignition-log/; echo '=== is /etc on its own subvol or rootfs? ==='; findmnt -no SOURCE,FSTYPE,OPTIONS / ; mount | grep -E ' /etc ' || echo '/etc is part of / \\(rootfs subvol run1\\)'; echo '=== btrfs ro property of run1 subvol ==='; sudo btrfs property get -ts / 2>/dev/null\")",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.23.1 \"echo '=== can we toggle run1 ro=false in place? \\(read-only check, NOT applying\\) ==='; echo 'btrfs property set -ts / ro false  <-- would re-enable writes'; echo '=== does a cron exist for developer/root? \\(alt: @reboot\\) ==='; sudo crontab -l 2>/dev/null | tail -3 || echo 'no root crontab'; command -v crontab; echo '=== rc.local present \\(persistent on rootfs but RO same problem\\)? ==='; ls -l /etc/rc.local 2>/dev/null || echo 'no rc.local'; echo '=== NDSU helper present \\(the proper persist path\\)? ==='; ls -l /usr/sbin/nd-systemupdate.sh* 2>/dev/null\")",
+      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.23.1 'set -e *)",
+      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.23.1 'set -e *)",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.23.1 \"echo '=== service enabled for boot? ==='; sudo systemctl is-enabled vign-logger.service; echo '=== rootfs restored RO? ==='; sudo btrfs property get -ts / | grep ro; echo '=== unit file persisted on disk ==='; ls -l /etc/systemd/system/vign-logger.service /etc/systemd/system/multi-user.target.wants/vign-logger.service; echo '=== log \\(should still be ~1 line: Vign stable so no deltas yet\\) ==='; sudo cat /data/ignition-log/vign.csv; echo '=== confirm poller alive + iterating \\(proc age\\) ==='; ps -o pid,etime,cmd -p \\\\$\\(pgrep -f 'vign_poll.sh' | head -1\\)\")",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.8.1 \"hostname; echo '---ver---'; sudo apt -qq list --installed 2>/dev/null | grep -i nd-obn || dpkg -l 2>/dev/null | grep -i nd-obn; echo '---obn procs \\(hang check\\)---'; ps -eo pid,etime,stat,cmd | grep -iE 'obn|python3' | grep -v grep\")",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.8.1 \"echo '=== any obn discover/report/update running long? ==='; ps -eo pid,etime,cmd | grep -iE 'obn \\(discover|report|update|validate\\)' | grep -v grep || echo 'no obn cmd running'; echo '=== obn lib layout \\(2.2.23\\) ==='; sudo ls /usr/share/obn/ 2>/dev/null; echo '---lib subdir?---'; sudo ls /usr/share/obn/lib/ 2>/dev/null | head; echo '=== discovery snapshot freshness ==='; sudo ls -la /tmp/discovery.json /tmp/discovery.prev.json 2>/dev/null; echo '=== bug11 marker \\(the only hand-patch needed on 2.2.23\\) ==='; sudo grep -rl 'NDP-PATCH-BUG11-FW-VERIFY' /usr/share/obn/ 2>/dev/null || echo 'BUG11 MARKER ABSENT'\")",
+      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.8.1 'echo '\\\\''=== device dir \\(westermo / vdsrail\\) ==='\\\\''; sudo ls /usr/share/obn/lib/device/ 2>/dev/null; echo '\\\\''=== bug11 belongs in westermo AP-fw verify; find westermo file ==='\\\\''; W=$\\(sudo find /usr/share/obn/lib -iname '\\\\''westermo*.py'\\\\'' 2>/dev/null | head -1\\); echo \"westermo file: $W\"; echo '\\\\''--- does it have the 600s rpcFwFlash+uptime poll \\(bug11 behaviour\\)? ---'\\\\''; sudo grep -nE '\\\\''rpcFwFlash|NDP-PATCH-BUG11|fw.*verify|uptime'\\\\'' $W 2>/dev/null | head; echo '\\\\''=== discovery.json device count + any error state ==='\\\\''; sudo python3 -c \"import json; d=json.load\\(open\\('\\\\''/tmp/discovery.json'\\\\''\\)\\); devs=d.get\\('\\\\''devices'\\\\'',d if isinstance\\(d,list\\) else []\\); print\\('\\\\''devices:'\\\\'',len\\(devs\\)\\); [print\\(x.get\\('\\\\''ip'\\\\''\\),x.get\\('\\\\''type'\\\\''\\),x.get\\('\\\\''firmware'\\\\''\\),x.get\\('\\\\''config'\\\\''\\)\\) for x in devs][:50]\" 2>&1 | head -50')",
+      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.8.1 'echo '\\\\''=== discovery.json device list \\(top-level list\\) ==='\\\\''; sudo python3 -c \" *)",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.8.1 \"echo '=== nv6 or nv4 templates? ==='; sudo ls /etc/obn/template/ | grep -E 'nv[46]' | head -3; echo '=== train_id directive ==='; sudo grep -h 'set train_id' /etc/obn/template/nv6-*A1*.cfg 2>/dev/null | head -1; echo '=== vlan7 IP \\(Fzg encoded\\) ==='; ip -4 addr show vlan7 2>/dev/null | grep -oP 'inet \\\\K[0-9.]+/[0-9]+'; echo '=== bond0 \\(which t-number subnet\\) ==='; ip -4 addr show bond0 2>/dev/null | grep -oP 'inet \\\\K[0-9.]+/[0-9]+'; echo '=== last obn run in journal \\(hang evidence?\\) ==='; sudo journalctl -b 2>/dev/null | grep -iE 'obn|discover|report|number_coaches|Traceback' | tail -15\")",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.8.1 \"echo '=== full traceback from backbone-discovery this boot ==='; sudo journalctl -b -u nd-backbone-discovery.service --no-pager 2>/dev/null | grep -A30 'Traceback' | head -40; echo '=== service status \\(is it failing/looping?\\) ==='; sudo systemctl --no-pager status nd-backbone-discovery.service 2>/dev/null | head -14; echo '=== how many times has it run/restarted this boot? ==='; sudo journalctl -b 2>/dev/null | grep -c 'Starting nd-backbone-discovery'\")",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.8.1 \"echo '=== PID 58820 age + state + CPU \\(spinning vs blocked?\\) ==='; ps -o pid,etimes,stat,pcpu,wchan:24,cmd -p 58820 2>/dev/null; echo '=== what is obn user-count waiting on? \\(open sockets/files\\) ==='; sudo ls -l /proc/58820/fd 2>/dev/null | grep -E 'socket|TCP' | head; echo '=== its recent syscall \\(strace 2s\\) ==='; sudo timeout 3 strace -p 58820 -f -e trace=network,poll,select,read 2>&1 | tail -15 || echo 'strace n/a'; echo '=== sherlock.sh: what step calls user-count + is there a discover/report after? ==='; sudo grep -nE 'user-count|discover|report|number_coaches' /usr/local/bin/sherlock.sh 2>/dev/null | head\")",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.8.1 \"echo '=== socket 1026124 — what is fd5 connected to? ==='; sudo ss -tanp 2>/dev/null | grep 58820 || sudo cat /proc/58820/net/tcp 2>/dev/null | head; echo '=== the 06:20 traceback \\(search whole journal, python proc\\) ==='; sudo journalctl -b --no-pager 2>/dev/null | grep -B2 -A25 '06:20:44' | grep -iA25 traceback | head -35; echo '=== backbone_user_count.py — what does it block on? ==='; sudo grep -nE 'connect|socket|recv|timeout|snmp|requests\\\\\\\\.|urlopen|http' /usr/share/obn/backbone_user_count.py 2>/dev/null | head -20\")",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.8.1 \"echo '=== which AP is user-count stuck on? recent obn/user-count log line ==='; sudo journalctl -b --no-pager 2>/dev/null | grep -iE 'user.count|connected.devices|device count for' | tail -8; echo '=== bug9 pysnmp Lock marker present in 2.2.23? ==='; sudo grep -rl 'NDP-PATCH-BUG9\\\\\\\\|pysnmp.*[Ll]ock\\\\\\\\|lockless' /usr/share/obn/ 2>/dev/null | head || echo 'bug9 marker absent \\(expected on 2.2.23 native — greps false-neg per note\\)'; echo '=== does get_connected_devices have an SNMP timeout? ==='; sudo grep -rnE 'timeout|UdpTransportTarget|retries' /usr/share/obn/lib/device/ 2>/dev/null | grep -iE 'snmp|udp|timeout|retries' | head; echo '=== still stuck? PID 58820 age now ==='; ps -o pid,etimes,pcpu,cmd -p 58820 2>/dev/null || echo 'PID 58820 GONE \\(run completed/killed\\)'\")",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.8.1 \"echo '=== Bug 9 lock actually present \\(the patch we think we have\\)? ==='; sudo grep -c '_SNMP_DISPATCH_LOCK' /usr/share/obn/lib/device/snmpdevice.py; echo '=== how does snmpdevice.py build its SNMP request — any timeout/retries arg? ==='; sudo grep -nE 'UdpTransportTarget|getCmd|nextCmd|bulkCmd|timeout|retries' /usr/share/obn/lib/device/snmpdevice.py 2>/dev/null | head -20; echo '=== get_connected_devices def \\(the hanging call\\) ==='; sudo grep -n 'def get_connected_devices' /usr/share/obn/lib/device/accesspointdevice.py 2>/dev/null\")",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.8.1 \"echo '=== is the ORIGINAL stuck PID 58820 still alive? \\(it has been ~6+ min now\\) ==='; ps -o pid,etimes,pcpu,cmd -p 58820 2>/dev/null || echo 'PID 58820 GONE'; echo '=== any obn user-count running at all right now? ==='; pgrep -af 'user-count' | grep -v grep || echo 'no user-count proc'; echo '=== service state now ==='; sudo systemctl is-active nd-backbone-discovery.service; sudo systemctl --no-pager status nd-backbone-discovery.service 2>/dev/null | grep -E 'Active:|Main PID'; echo '=== configured snmp_timeout / retries values ==='; sudo grep -rnE 'snmp_timeout|snmp_retries' /usr/share/obn/ /etc/obn/ 2>/dev/null | grep -vE 'device_config\\\\[' | head; echo '=== AP band loop — how many SNMP attempts per user-count run? ==='; sudo sed -n '160,200p' /usr/share/obn/backbone_user_count.py\")",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.8.1 \"date -u +'%H:%M:%SZ baseline'; echo '--- user-count proc ---'; ps -o pid,etimes,pcpu,cmd -p \\\\$\\(pgrep -f 'obn user-count'|head -1\\) 2>/dev/null || echo 'none'; echo '--- service ---'; sudo systemctl show nd-backbone-discovery.service -p ActiveState,SubState,ExecMainPID,NRestarts 2>/dev/null; echo '--- has user-count EVER logged done collecting this boot? + last few user-count log lines ---'; sudo journalctl -b -t obn --no-pager 2>/dev/null | grep -iE 'done collecting|device count for|user.count' | tail -6; echo '--- count of done-collecting this boot ---'; sudo journalctl -b --no-pager 2>/dev/null | grep -c 'done collecting'\")",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.8.1 \"echo '=== where does OBN log? syslog identifiers seen this boot ==='; sudo journalctl -b --no-pager -o json 2>/dev/null | python3 -c \\\\\"import sys,json,collections; c=collections.Counter\\(\\); [c.update\\([json.loads\\(l\\).get\\('SYSLOG_IDENTIFIER','?'\\)]\\) for l in sys.stdin]; [print\\(k,v\\) for k,v in c.most_common\\(25\\)]\\\\\" 2>/dev/null | grep -iE 'obn|sherlock|backbone|discover|user' ; echo '=== sherlock.sh full \\(does it log? where does user-count stdout go?\\) ==='; sudo cat /usr/local/bin/sherlock.sh; echo '=== the discovery timer cadence ==='; sudo systemctl cat nd-backbone-discovery.timer 2>/dev/null | grep -iE 'OnCalendar|OnUnit|Persistent'\")",
+      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.8.1 'for i in $\\(seq 1 26\\); do ts=$\\(date -u +%H:%M:%SZ\\); st=$\\(systemctl show nd-backbone-discovery.service -p ActiveState,SubState 2>/dev/null | tr '\\\\''\\\\n'\\\\'' '\\\\'' '\\\\''\\); uc=$\\(ps -o pid=,etimes= -C python 2>/dev/null | awk '\\\\''/./{}'\\\\'' ; pgrep -f '\\\\''obn user-count'\\\\'' | head -1\\); ucage=$\\(ps -o etimes= -p \"$uc\" 2>/dev/null | tr -d '\\\\'' '\\\\''\\); cur=$\\(pgrep -af '\\\\''obn \\(discover|report|user-count\\)'\\\\'' | grep -v pgrep | sed -E '\\\\''s#.*/usr/local/bin/obn ##; s#.*obn.py ##'\\\\'' | tr '\\\\''\\\\n'\\\\'' '\\\\'','\\\\'' \\); echo \"$ts | svc:$st| step:${cur:-idle} ucpid:${uc:-none} age:${ucage:-_}s\"; sleep 28; done')",
+      "Bash(python -c \"import time; time.sleep\\(95\\)\")",
+      "Bash(cat \"C:/Users/ABBASR~1/AppData/Local/Temp/claude/C--Users-AbbasRizvi-Documents-dosto-troubleshooting/e0585d9e-db74-4002-803e-4c5cd6288b79/tasks/bzglh8tt0.output\")",
+      "Bash(python -c \"import time; time.sleep\\(240\\)\")",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.8.1 \"echo '=== service result of last completed runs \\(clean exit?\\) ==='; sudo journalctl -b -u nd-backbone-discovery.service --no-pager 2>/dev/null | grep -iE 'Deactivated successfully|Finished|Failed|result|Consumed' | tail -8; echo '=== how many full cycles completed this boot ==='; sudo journalctl -b -u nd-backbone-discovery.service --no-pager 2>/dev/null | grep -c 'Finished\\\\|Deactivated successfully'; echo '=== does user-count publish MQTT \\(work actually done\\)? recent telemetry/user_count activity ==='; sudo journalctl -b --no-pager 2>/dev/null | grep -iE 'user_count|connectedDevices|done collecting|mqtt' | tail -6\")",
+      "Bash(python scripts/zbx_reconcile.py)",
+      "Bash(timeout 45 ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.40.1 \"sudo python3 -c \\\\\"import json; d=json.load\\(open\\('/tmp/discovery.json'\\)\\); [print\\(x.get\\('coach'\\), x.get\\('device'\\), x.get\\('ip'\\), x.get\\('mac'\\), x.get\\('type',''\\)\\) for x in d.get\\('devices',[]\\)]\\\\\" 2>/dev/null || echo NO_DISCOVERY_JSON\")",
+      "Bash(timeout 45 ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.40.1 \"ls -1 /tmp/discovery*.json /var/lib/obn/*.json 2>/dev/null; echo '---report.prev---'; sudo find / -name 'discovery*.json' 2>/dev/null | head\")",
+      "Bash(timeout 45 ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.40.1 \"sudo python3 -c \\\\\"import json; d=json.load\\(open\\('/tmp/discovery.prev.json'\\)\\); print\\(type\\(d\\).__name__\\); k=list\\(d.keys\\(\\)\\) if isinstance\\(d,dict\\) else d[:1]; print\\(k\\)\\\\\"\")",
+      "Bash(python .tmp/zbx_host_6007.py)",
+      "Bash(sort -t. -k3 -n -u)",
+      "Bash(python .tmp/zbx_6040_bootstrap_from_obn.py)",
+      "Bash(ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 -o BatchMode=yes developer@10.179.10.1 \"hostname; echo REACHABLE\")",
+      "Bash(timeout 12 ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes developer@10.179.8.1 \"echo ALIVE\")",
+      "Bash(echo \"---exit=$?---\")",
+      "Bash(python .tmp/zbx_6040_bootstrap_from_obn.py --commit)",
+      "Bash(timeout 15 ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes developer@10.179.10.1 \"hostname; echo ALIVE\")",
+      "Bash(ipconfig)",
+      "Bash(powershell -Command \"Get-NetRoute -DestinationPrefix '10.179.0.0/16' -ErrorAction SilentlyContinue | Format-Table -AutoSize\")",
+      "Bash(powershell -Command 'Get-NetRoute -ErrorAction SilentlyContinue | Where-Object {$_.DestinationPrefix -like '\\\\''10.*'\\\\''} | Format-Table DestinationPrefix,NextHop,ifIndex -AutoSize')",
+      "Bash(powershell -Command 'Get-NetIPAddress -AddressFamily IPv4 -ErrorAction SilentlyContinue | Where-Object {$_.InterfaceAlias -like '\\\\''*Fortinet*'\\\\'' -or $_.InterfaceAlias -like '\\\\''*SSL*'\\\\'' -or $_.InterfaceAlias -like '\\\\''*VPN*'\\\\''} | Format-Table InterfaceAlias,IPAddress,AddressState -AutoSize; Write-Output '\\\\''=== adapter status ==='\\\\''; Get-NetAdapter -ErrorAction SilentlyContinue | Where-Object {$_.InterfaceDescription -like '\\\\''*Fortinet*'\\\\''} | Format-Table Name,Status,LinkSpeed,MacAddress -AutoSize')",
+      "Bash(powershell -Command 'Get-NetRoute -DestinationPrefix '\\\\''10.179.0.0/16'\\\\'' -ErrorAction SilentlyContinue | Format-Table DestinationPrefix,NextHop,ifIndex -AutoSize; Get-NetIPAddress -AddressFamily IPv4 -ErrorAction SilentlyContinue | Where-Object {$_.InterfaceAlias -like '\\\\''*Ethernet 3*'\\\\'' -or $_.InterfaceAlias -like '\\\\''*Fortinet*'\\\\''} | Format-Table InterfaceAlias,IPAddress -AutoSize')",
+      "Bash(python .tmp/zbx_cmp_6007_6023.py)",
+      "Bash(python -)",
+      "Bash(python scripts/zbx_reconcile.py --commit)",
+      "Bash(python -c \"import time; time.sleep\\(75\\)\")",
+      "Bash(python .tmp/zbx_verify_6040.py)",
+      "Bash(timeout 45 ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.40.1 \"sudo dhcp-lease-list 2>/dev/null | grep -iE 'a0:59:3a:d0:41:40|a0:59:3a:d0:44:80'\")",
+      "Bash(timeout 30 ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.40.1 'for ip in 10.179.40.185 10.179.40.186 10.179.40.194; do echo -n \"$ip: \"; ping -c1 -W2 $ip >/dev/null 2>&1 && echo UP || echo no-reply; done')",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.24.1 'hostname; echo \"---vlan7-live---\"; ip -br addr show vlan7; echo \"---nmconnection---\"; sudo cat /etc/NetworkManager/system-connections/ndrd-vlan-vlan7.nmconnection 2>/dev/null | grep -E \"^address1=|^method=\"; echo \"---yaml-fis---\"; awk \"/^  fis:/,/^  [a-z]/\" /etc/nd-redundancy/networks.yaml 2>/dev/null | head -20')",
+      "Bash(python -c \"import time; time.sleep\\(150\\)\")",
+      "Bash(python .tmp/zbx_proxy_state.py)",
+      "Bash(timeout 50 ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.40.1 \"echo '=== zabbix-proxy service ==='; systemctl is-active zabbix-proxy 2>/dev/null; systemctl status zabbix-proxy --no-pager 2>/dev/null | grep -E 'Active:|Main PID' | head -2; echo '=== proxy uptime \\(did it restart with the server?\\) ==='; ps -o etime= -C zabbix_proxy 2>/dev/null | head -1; echo '=== R2_AP2 search: any AP lease near .26 or with a missing slot? full AP lease list ==='; sudo dhcp-lease-list 2>/dev/null | grep -iE '00:14:5a' | sort -t. -k4 -n\")",
+      "Bash(timeout 40 ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.40.1 \"sudo dhcp-lease-list 2>/dev/null | grep -iE 'a0:59:3a:d0:41:40|a0:59:3a:d0:44:80'\")",
+      "Bash(python -c \"import time; time.sleep\\(180\\)\")",
+      "Bash(timeout 60 ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.40.1 'echo '\\\\''=== SNMP from CCU to BOTH a working switch and the two stuck ones \\(same creds\\) ==='\\\\''; for ip in 10.179.40.183 10.179.40.185 10.179.40.186; do echo -n \"$ip: \"; timeout 6 snmpget -v3 -l authPriv -u snmpadmin -a SHA -A '\\\\''NomadStayOut!'\\\\'' -x AES -X '\\\\''NomadStayOut!'\\\\'' $ip 1.3.6.1.2.1.1.5.0 2>&1 | head -1; done; echo '\\\\''=== does the proxy log mention these IPs? ==='\\\\''; sudo grep -hE '\\\\''10.179.40.18[56]'\\\\'' /var/log/zabbix/zabbix_proxy.log 2>/dev/null | tail -4 || echo '\\\\''\\(no log access / no entries\\)'\\\\''')",
+      "Bash(python -c \"import time; time.sleep\\(60\\)\")",
+      "Bash(python -c \"import time; time.sleep\\(120\\)\")",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.24.1 'echo REACHABLE; uptime -p; echo \"boot-subvol:\"; findmnt -no SOURCE /')",
+      "Bash(timeout 60 ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.40.1 'echo '\\\\''=== ARP/neigh for the 2 stuck + 1 working ==='\\\\''; ip neigh show | grep -E '\\\\''10.179.40.18[356]'\\\\''; echo '\\\\''=== SNMP as zabbix user \\(proxy runs as zabbix\\) ==='\\\\''; for ip in 10.179.40.185 10.179.40.186; do echo -n \"$ip\\(zabbix-user\\): \"; sudo -u zabbix timeout 6 snmpget -v3 -l authPriv -u snmpadmin -a SHA -A '\\\\''NomadStayOut!'\\\\'' -x AES -X '\\\\''NomadStayOut!'\\\\'' $ip 1.3.6.1.2.1.1.5.0 2>&1 | head -1; done; echo '\\\\''=== recent proxy log lines mentioning timeout/185/186 ==='\\\\''; sudo tail -50 /var/log/zabbix/zabbix_proxy.log 2>/dev/null | grep -iE '\\\\''timeout|10.179.40.18[56]|snmp'\\\\'' | tail -6 || echo '\\\\''\\(no readable log\\)'\\\\''')",
+      "Bash(python .tmp/zbx_bulk_toggle.py 1)",
+      "Bash(python -c \"import time; time.sleep\\(90\\)\")",
+      "Bash(python .tmp/zbx_diag_6007.py)",
+      "Bash(python .tmp/zbx_diag_6007b.py)",
+      "Bash(python .tmp/zbx_diag_6007c.py)",
+      "Bash(timeout 80 ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.40.1 \"echo '=== capture proxy SNMP to .185/.186 for 70s \\(delay=30s so expect 2 polls each\\) ==='; sudo timeout 70 tcpdump -ni vlan100 -c 40 'udp port 161 and \\(host 10.179.40.185 or host 10.179.40.186\\)' 2>&1 | grep -vE 'tcpdump: verbose|listening on'\")",
+      "Bash(python .tmp/zbx_diag_6007d.py)",
+      "Bash(timeout 50 ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.40.1 'echo '\\\\''=== SNMP engineID \\(1.3.6.1.6.3.10.2.1.1.0\\) + engineBoots/Time on stuck vs working ==='\\\\''; for ip in 10.179.40.183 10.179.40.185 10.179.40.186; do echo \"--- $ip ---\"; timeout 6 snmpget -v3 -l authPriv -u snmpadmin -a SHA -A '\\\\''NomadStayOut!'\\\\'' -x AES -X '\\\\''NomadStayOut!'\\\\'' $ip 1.3.6.1.6.3.10.2.1.1.0 1.3.6.1.6.3.10.2.1.2.0 1.3.6.1.6.3.10.2.1.3.0 2>&1 | head -4; done')",
+      "Bash(python .tmp/zbx_diag_6040_ips.py)",
+      "Bash(ssh -i ./openssh -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.7.1 \"echo '=== hostname ==='; hostname; echo '=== dhcp leases ==='; sudo dhcp-lease-list 2>/dev/null | head -80\")",
+      "Bash(ssh -i ./openssh -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.7.1 'echo '\\\\''=== full AP hostnames from lease file ==='\\\\''; sudo grep -A6 '\\\\''lease 10.179.7.2'\\\\'' /var/lib/dhcp/dhcpd.leases 2>/dev/null | grep -E '\\\\''lease |client-hostname'\\\\'' | sed '\\\\''N;s/\\\\n/ /'\\\\'' | sort -t. -k4 -n; echo; echo '\\\\''=== AP hostnames via avahi/host ==='\\\\''; for ip in 218 219 220 221 222 223 224 225; do printf '\\\\''%s '\\\\'' $ip; sudo grep -B0 -A5 \"lease 10.179.7.$ip \" /var/lib/dhcp/dhcpd.leases 2>/dev/null | grep client-hostname | tail -1; done')",
+      "Bash(ssh -i ./openssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.7.1 'echo '\\\\''=== OBN discovery.json device map \\(ip / mac / coach / position / type\\) ==='\\\\''; sudo python3 -c \" *)",
+      "Bash(ssh -i ./openssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.7.1 'sudo python3 -c \" *)",
+      "Bash(ssh -i ./openssh -o StrictHostKeyChecking=no -o ConnectTimeout=20 developer@10.179.7.1 \"echo '=== full AP hostnames \\(untruncated\\) ==='; sudo awk '/^lease /{ip=\\\\$2} /client-hostname/{gsub\\(/[\\\\\";]/,\\\\\"\\\\\"\\); print ip, \\\\$2}' /var/lib/dhcp/dhcpd.leases 2>/dev/null | awk '\\\\$1 ~ /^10.179.7.2[1-4][0-9]$/' | sort -u -t. -k4 -n\")",
+      "Bash(timeout 70 ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.40.1 ' *)",
+      "Bash(timeout 70 ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.40.1 ' *)",
+      "Bash(python .tmp/zbx_forwarder.py)",
+      "Bash(timeout 30 ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.40.1 \"echo CCU_UP; hostname\")",
+      "Bash(timeout 90 ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.40.1 ' *)",
+      "Bash(timeout 40 ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.40.1 \"sudo grep -nE 'gpsd' /etc/mqtt-bridge/*.y*ml 2>/dev/null\")",
+      "Bash(timeout 40 ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.23.1 \"echo CONNECTED $\\(hostname\\); sudo grep -nE 'gpsd' /etc/mqtt-bridge/*.y*ml 2>/dev/null\")",
+      "Bash(timeout 60 ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.40.1 \"timeout 12 mosquitto_sub -h localhost -t 'gpsd_ws/#' -v 2>/dev/null | sed 's/{.*latitude/{...latitude/' | awk '{print \\\\$1}' | sort | uniq -c\")",
+      "Bash(timeout 80 ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.40.1 ' *)",
+      "Bash(python .tmp/zbx_build_6007_map.py)",
+      "Bash(ssh -i ./openssh -o StrictHostKeyChecking=no -o ConnectTimeout=20 developer@10.179.7.1 \"echo '=== obn report \\(coach numbering\\) ==='; sudo obn report 2>&1 | head -60\")",
+      "Bash(ssh -i ./openssh -o StrictHostKeyChecking=no -o ConnectTimeout=20 developer@10.179.7.1 \"echo '=== validate \\(rendered positions\\) ==='; sudo obn validate 2>&1 | head -70; echo; echo '=== consist.yaml ==='; sudo cat /tmp/consist.yaml 2>/dev/null | head -60; sudo find / -name 'consist*.yaml' 2>/dev/null | head\")",
+      "Bash(python .tmp/zbx_build_6007_map2.py)",
+      "Bash(python .tmp/zbx_apply_6007.py)",
+      "Bash(python .tmp/zbx_reload_proxy_6007.py)",
+      "Bash(python -c \"import time; print\\('waiting one proxy cycle...'\\)\")",
+      "Bash(powershell -NoProfile -Command \"Start-Sleep -Seconds 90\")",
+      "mcp__b29e83b2-87a0-46a4-9f8c-e389232437ac__getAccessibleAtlassianResources",
+      "Bash(ls -la .tmp/gitlab-repos/ 2>/dev/null; echo \"---ENZO/MODEM/SIM SEARCH IN HOME---\"; ls -d ~/Documents/nomad-* 2>/dev/null)",
+      "mcp__b29e83b2-87a0-46a4-9f8c-e389232437ac__searchConfluenceUsingCql",
+      "mcp__b29e83b2-87a0-46a4-9f8c-e389232437ac__getConfluencePage",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 developer@10.179.40.1 \"hostname; echo '---bridge status---'; systemctl is-active mqtt-bridge 2>/dev/null; echo '---bridge ESTAB to emqx---'; ss -tnp 2>/dev/null | grep -i 8883 | head\")",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.40.1 \"sudo grep -vE '^\\\\s*#|^\\\\s*$' /etc/gpsd-ws/gpsd-ws.properties\")",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.22.1 \"sudo grep -vE '^\\\\s*#|^\\\\s*$' /etc/gpsd-ws/gpsd-ws.properties\")",
+      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=80 developer@10.179.40.1 ' *)",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.40.1 \"sudo journalctl -u gpsd-ws --no-pager -n 30 2>/dev/null | grep -iE 'gps|error|exception|mqtt|publish|warn' | tail -25 | cut -c1-160\")",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=60 developer@10.179.40.1 \"timeout 45 mosquitto_sub -h localhost -t 'gpsd_ws/gps' -C 1 2>/dev/null\")",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=60 developer@10.179.22.1 \"timeout 45 mosquitto_sub -h localhost -t 'gpsd_ws/gps' -C 1 2>/dev/null\")",
+      "mcp__3fb9a852-6b22-49e0-8afa-68d4505061d9__search",
+      "Bash(command -v curl jq ping bash)",
+      "Bash(ping -n 1 -w 3000 192.168.66.14)",
+      "Bash(curl -s -m 5 -o /dev/null -w \"http_code=%{http_code}\\\\n\" \"http://192.168.66.14:9494/env\")",
+      "Bash(./scripts/dbc12)",
+      "Bash(./scripts/dbc12 box1-t40.dostoneu-nv6.21net.com)",
+      "Bash(curl -s -m 8 \"http://192.168.66.14:9494/env?host=box1-t40.dostoneu-nv6.21net.com\")",
+      "Bash(curl -s -m 8 \"http://192.168.66.14:9494/env\")",
+      "Bash(grep -iA1 \"t40\")",
+      "Bash(timeout 25 ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 -o BatchMode=yes developer@10.179.38.1 'echo \"=== uptime ===\"; uptime; echo \"=== vlan100 leases \\(sw/ap count\\) ===\"; sudo dhcp-lease-list 2>/dev/null | grep -Ei \"a0:59:3a|00:14:5a\" | wc -l; echo \"=== vlan7 ip ===\"; ip -4 addr show vlan7 2>/dev/null | grep -o \"inet [0-9.]*/[0-9]*\"; echo \"=== A1 in-band reachable? \\(192.168.1.100\\) ===\"; ping -c1 -W2 192.168.1.100 >/dev/null 2>&1 && echo \"A1 reachable via native-vlan1\" || echo \"A1 not reachable on 192.168.1.100 \\(expected unless workaround IP still set\\)\"')",
+      "Bash(timeout 30 ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 -o BatchMode=yes developer@10.179.38.1 'sshpass -p '\\\\''Nom@dCome1n'\\\\'' ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 -o KexAlgorithms=+diffie-hellman-group14-sha1,diffie-hellman-group1-sha1 -o HostKeyAlgorithms=+ssh-rsa,ssh-dss -o PubkeyAuthentication=no admin@10.179.38.186 '\\\\''show interface trunks'\\\\''')",
+      "Bash(timeout 25 ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 -o BatchMode=yes developer@10.179.38.1 'sudo dhcp-lease-list 2>/dev/null | grep -i \"d0:8f:a0\" || echo \"NO vlan100 lease for d0:8f:a0 \\(old A1 not on vlan100\\)\"')",
+      "Bash(timeout 30 ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 -o BatchMode=yes developer@10.179.38.1 'sshpass -p '\\\\''Nom@dCome1n'\\\\'' ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 -o KexAlgorithms=+diffie-hellman-group14-sha1,diffie-hellman-group1-sha1 -o HostKeyAlgorithms=+ssh-rsa,ssh-dss -o PubkeyAuthentication=no admin@10.179.38.180 '\\\\''show interface trunks'\\\\''')",
+      "Bash(mkdir -p /tmp/sdd_extract)",
+      "Bash(unzip -o -q \"ND-DEL-OBB-035-SDD-003-01_kommentar.docx\" -d /tmp/sdd_extract)",
+      "Bash(rm -rf ./.sdd_extract)",
+      "Bash(mkdir -p ./.sdd_extract)",
+      "Bash(unzip -o -q \"ND-DEL-OBB-035-SDD-003-01_kommentar.docx\" -d ./.sdd_extract)",
+      "Bash(python3 -)",
+      "Bash(python3 .build_tracker.py)",
+      "Bash(python3 __TRACKED_VAR__/scripts/recalc.py OEBB_SDD-003_Comment_Tracker.xlsx 60)",
+      "Bash(command -v soffice libreoffice)",
+      "Bash(where.exe soffice *)",
+      "Bash(timeout 30 ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 -o BatchMode=yes developer@10.179.38.1 'sshpass -p '\\\\''Nom@dCome1n'\\\\'' ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 -o KexAlgorithms=+diffie-hellman-group14-sha1,diffie-hellman-group1-sha1 -o HostKeyAlgorithms=+ssh-rsa,ssh-dss -o PubkeyAuthentication=no admin@10.179.38.180 '\\\\''show spanning-tree'\\\\''')",
+      "Bash(cd \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/design freeze\")",
+      "Bash(cp \"ND-DEL-OBB-035-SDD-003-01_kommentar.docx\" \"ND-DEL-OBB-035-SDD-003-01_v3-tracked.docx\")",
+      "Bash(python3 __TRACKED_VAR__/scripts/office/unpack.py ND-DEL-OBB-035-SDD-003-01_v3-tracked.docx unpacked/)",
+      "Bash(ping -n 2 -w 2000 10.179.42.1)",
+      "Bash(grep -oE '[0-9]+$')",
+      "Bash(python3 __TRACKED_VAR__/scripts/comment.py --help)",
+      "Bash(python3 __TRACKED_VAR__/scripts/office/pack.py unpacked/ ND-DEL-OBB-035-SDD-003-01_v3-tracked.docx --original ND-DEL-OBB-035-SDD-003-01_kommentar.docx)",
+      "Bash(export PYTHONUTF8=1)",
+      "Bash(export PYTHONIOENCODING=utf-8)",
+      "Bash(rm -rf .verify)",
+      "Bash(mkdir .verify)",
+      "Bash(unzip -o -q \"ND-DEL-OBB-035-SDD-003-01_v3-tracked.docx\" -d .verify)",
+      "Bash(python3 __TRACKED_VAR__/scripts/office/soffice.py --headless --convert-to pdf ND-DEL-OBB-035-SDD-003-01_v3-tracked.docx)",
+      "Bash(ls \"/c/Program Files/LibreOffice/program/soffice.exe\")",
+      "Bash(command -v pandoc)",
+      "Bash(rm -rf .verify unpacked)",
+      "Bash(ls -d unpacked .verify .sdd_extract)",
+      "Bash(ping -n 2 -w 3000 10.179.7.1)",
+      "Bash(timeout 6 bash -c \"echo > /dev/tcp/10.179.7.1/22\")",
+      "Bash(timeout 15 ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes developer@10.179.7.1 'hostname; uptime')",
+      "Bash(export PYTHONUTF8=1 PYTHONIOENCODING=utf-8)",
+      "Bash(command -v pdftotext)",
+      "Bash(python3 -c \"import pypdf; print\\('pypdf: yes'\\)\")",
+      "Bash(python3 -c \"import PyPDF2; print\\('PyPDF2: yes'\\)\")",
+      "Bash(cd \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting\" *)",
+      "Bash(python3 -c ' *)",
+      "Bash(python scripts/fleet_status_lookup.py 4736-110)",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.23.1 \"sudo systemctl is-active vign-logger.service 2>/dev/null; echo '---STATUS---'; sudo systemctl status vign-logger.service --no-pager 2>/dev/null | head -12; echo '---CSV-META---'; sudo ls -la /data/ignition-log/ 2>/dev/null; echo '---WC---'; sudo wc -l /data/ignition-log/vign.csv 2>/dev/null\")",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.23.1:/tmp/vign_export.csv findings/ignition-log-4736-110/)",
+      "Bash(scp -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.23.1:/tmp/vign_export.csv \"findings/ignition-log-4736-110/vign_4736-110_20260618.csv\")",
+      "Bash(awk -F, 'NR==1 || \\($1 >= \"2026-06-17T06:00\" \\)' \"findings/ignition-log-4736-110/vign_4736-110_20260618.csv\")",
+      "Bash(awk -F, 'NR>1 && $1 >= \"2026-06-17T06:20\" && $1 <= \"2026-06-17T22:00\"' findings/ignition-log-4736-110/vign_4736-110_20260618.csv)",
+      "Bash(awk -F, 'NR>1 {print $10}' findings/ignition-log-4736-110/vign_4736-110_20260618.csv)",
+      "Bash(scp -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=12 shutdown_marker.sh logtail.sh developer@10.179.23.1:/tmp/)",
+      "Bash(scp -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=12 vign-shutdown-marker.service nd-logtail.service nd-logtail.timer developer@10.179.23.1:/tmp/)",
+      "Bash(bash -n vign_poll.sh)",
+      "Bash(bash -c ' *)",
+      "Bash(scp -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 vign_poll.sh developer@10.179.23.1:/tmp/vign_poll_new.sh)",
+      "Bash(scp -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=20 vign_poll.sh developer@10.179.23.1:/tmp/vign_poll_new.sh)",
+      "Bash(scp -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=20 developer@10.179.23.1:/tmp/vign_export2.csv C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/findings/ignition-log-4736-110/vign_4736-110_20260618_full.csv)",
+      "Bash(scp -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=20 developer@10.179.23.1:/tmp/logtail_4736-110.tar.gz .)",
+      "Bash(tar -xzf logtail_4736-110.tar.gz)",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.17.1 \"hostname; echo '---'; cat /etc/hostname 2>/dev/null; echo '--- uptime ---'; uptime; echo '--- nd-systemupdate present? ---'; ls -la /usr/sbin/nd-systemupdate.sh* 2>/dev/null\")",
+      "Bash(ping -n 3 -w 2000 10.179.10.1)",
+      "Bash(ping -n 2 -w 2000 10.179.10.129)",
+      "Bash(powershell -NoProfile -Command \"\\(Test-NetConnection -ComputerName 10.179.10.1 -Port 22 -WarningAction SilentlyContinue\\) | Select-Object -ExpandProperty TcpTestSucceeded\")",
+      "Bash(python scripts/regenerate_bootstrap.py --check)",
+      "Bash(python scripts/regenerate_bootstrap.py)"
     ]
   }
 }
@@ -2157,8 +1808,11 @@ This is **config push only**. Firmware push is [`dosto-ap-firmware-update`](../d
 Before deciding which execution path to take, the skill probes the AP's current state. Three SSH commands run from the CCU, in sequence:
 
 ```bash
-# A. SNMP probe with Nomad community
-snmpget -v2c -c NomadStayOut! -t 3 -r 1 <ap-ip> .1.3.6.1.2.1.1.1.0
+# A. SNMP probe with Nomad SNMPv3 credentials
+#    AP SNMP is v3 / user=admin / SHA auth / AES priv / authPriv, passphrase NomadStayOut! (auth AND priv).
+#    NOT v2c-community — `-v2c -c NomadStayOut!` ALWAYS times out (NomadStayOut! is the v3 passphrase, not a community).
+#    Verified live fleet-wide 2026-06-08. (NomadComeIn is the SSH/GUI password, never an SNMP credential.)
+snmpget -v3 -u admin -l authPriv -a SHA -A NomadStayOut! -x AES -X NomadStayOut! -t 3 -r 1 <ap-ip> .1.3.6.1.2.1.1.1.0
 #   exit 0 + value → ap_config_state = "nomad"
 #   timeout/error  → likely factory; verify with B
 
@@ -2335,10 +1989,11 @@ Expect HTTP 200. **Connection-close after the apply call is normal** (the AP sta
 
 **`verify_reboot`** — Same as Path A: ICMP poll until down then up. Budget: 5 min.
 
-**`verify_nomad`** — **Prefer SNMP over LuCI** (runbook quirk 3 — LuCI password may have changed post-apply, but the new SNMP community `NomadStayOut!` is deterministic):
+**`verify_nomad`** — **Prefer SNMP over LuCI** (runbook quirk 3 — LuCI password may have changed post-apply, but the SNMPv3 identity `admin`/`NomadStayOut!` is deterministic):
 
 ```bash
-snmpget -v2c -c NomadStayOut! -t 3 -r 1 <ap-ip> .1.3.6.1.2.1.1.1.0
+# AP SNMP = v3, user=admin, authPriv, SHA/AES, passphrase NomadStayOut! (NOT v2c-community — that times out).
+snmpget -v3 -u admin -l authPriv -a SHA -A NomadStayOut! -x AES -X NomadStayOut! -t 3 -r 1 <ap-ip> .1.3.6.1.2.1.1.1.0
 ```
 
 If exit 0 with a `sysDescr` value: emit `snmp_verify_ok`, then `completed`.
@@ -2359,7 +2014,7 @@ Path B (LuCI HTTP) — 5 commands, all via curl from CCU:
 - `curl -X POST .../cgi-bin/luci/admin/system/flashops -F config=@<cfg>` — upload
 - `curl -X POST .../cgi-bin/luci/admin/rpc -d '{"key":"rpcCfgApply","value":1}'` — apply
 - `ping -c 1 -W 2 <ap-ip>` — reboot detection (loop)
-- `snmpget -v2c -c NomadStayOut! ...` — Nomad-config verification
+- `snmpget -v3 -u admin -l authPriv -a SHA -A NomadStayOut! -x AES -X NomadStayOut! ...` — Nomad-config verification (v3, NOT v2c)
 
 No batch flags. No `obn update c all`. No glob form.
 
@@ -2434,7 +2089,7 @@ echo "  AP back up."
 
 # === STEP 5: VERIFY NOMAD CONFIG ===
 echo "[5/5] Verifying Nomad config via SNMP..."
-ssh_ccu "snmpget -v2c -c NomadStayOut! -t 3 -r 1 $AP .1.3.6.1.2.1.1.1.0" \
+ssh_ccu "snmpget -v3 -u admin -l authPriv -a SHA -A NomadStayOut! -x AES -X NomadStayOut! -t 3 -r 1 $AP .1.3.6.1.2.1.1.1.0" \
   && { echo "✅ AP $AP now on Nomad config"; exit 0; } \
   || { echo "🔴 SNMP verify failed — check LuCI title manually"; exit 12; }
 ```
@@ -2553,7 +2208,7 @@ The skill verifies all of these before any push:
 
 Without TFTP helper, even a single push can fail at the data-return-flow stage. Without OBN patches (specifically Bug 5 — pre-populated `tftp_allowed` ipset), the push itself drops below 100% reliability and Bugs 4/8 expose crash paths in the report layer. Without Nomad SNMP responding, the AP is in factory config — `dosto-ap-config-update` runs first; do not push firmware to a factory-config AP, the SSH credentials and config layout are wrong.
 
-**Why "trust obn discover, not standalone snmpget":** validated 2026-05-09 on Fzg 132 / box1-t10 — `snmpget -v2c -c NomadStayOut! -t 3 -r 1 <ap-ip>` timed out on a known-Nomad AP (.226) that `obn discover` had successfully polled 30 seconds earlier. OBN's SNMP library evidently uses different timing/retry parameters than vanilla `snmpget`. Treating the standalone probe as authoritative produced a false `ap_in_factory_config` verdict and would have aborted a legitimate push. The fix: read the AP's row from `/tmp/discovery.json` (refreshed via `sudo obn discover`); if `.config` matches the Nomad form `AP[1-4]m?-v1-...` and `.firmware` is non-null, the AP is reachable enough for OBN to push. Only fall back to `snmpget` when discover.json has no recent entry for the AP.
+**Why "trust obn discover, not standalone snmpget":** observed 2026-05-09 on Fzg 132 / box1-t10 — `snmpget -v2c -c NomadStayOut! -t 3 -r 1 <ap-ip>` timed out on a known-Nomad AP (.226) that `obn discover` had successfully polled 30 seconds earlier. **Root cause corrected 2026-06-08: that probe used the WRONG SNMP form.** AP SNMP is **v3 / user `admin` / authPriv / SHA / AES, passphrase `NomadStayOut!`** — `NomadStayOut!` is the v3 passphrase, NOT a v2c community, so `-v2c -c NomadStayOut!` ALWAYS times out (it was never an OBN-timing quirk). The correct probe `snmpget -v3 -u admin -l authPriv -a SHA -A NomadStayOut! -x AES -X NomadStayOut!` works reliably (verified fleet-wide 2026-06-08). **The "trust obn discover" guidance still stands** as the primary signal (it's the cleanest source and avoids ad-hoc SNMP entirely), but the fallback probe below now uses the correct v3 form. The fix: read the AP's row from `/tmp/discovery.json` (refreshed via `sudo obn discover`); if `.config` matches the Nomad form `AP[1-4]m?-v1-...` and `.firmware` is non-null, the AP is reachable enough for OBN to push. Only fall back to the v3 `snmpget` when discover.json has no recent entry for the AP.
 
 ## Output modes
 
@@ -2594,7 +2249,7 @@ Both modes support `--json` for machine-readable output. In `--execute` mode, JS
 `verdict` semantics:
 
 - `ready_to_push` — preconditions ✅, current ≠ target, no staged image. Standard fresh push path.
-- `partial_flash_detected` 🟡 — current ≠ target BUT staged == target. A previous flash uploaded but didn't activate. Force-second-reboot resolves it; no fresh push needed. Skill recommends Gate-3-style flow (engineer ack to reboot) rather than re-pushing.
+- `partial_flash_detected` 🟡 — current ≠ target BUT staged == target. A previous flash uploaded but didn't activate. **First check uptime (lesson 18):** if the AP's uptime is LOW (recently rebooted), it is case (a) slow-but-fine — it is mid-activation; just re-validate after a short wait, do NOT re-push. If uptime is LARGE/unchanged (never rebooted), it is case (b) genuine hang — a retry of `obn update f` sometimes succeeds (the RT-610 flash trigger is flaky); the skill recommends one retry, then escalate. Do not force a bare `ssh reboot` as the fix — a plain reboot on a case-(b) AP just boots the old image again (proven 4736-109 .226).
 - `already_at_target` ✅ — current == target. No-op.
 - `preconditions_unmet` 🔴 — TFTP helper or OBN patches not in good state. Fix those first.
 - `ap_in_factory_config` 🔴 — SNMP doesn't respond. Run `dosto-ap-config-update` first.
@@ -2679,7 +2334,7 @@ Failure-mode events:
 
 ### Stage details
 
-**`pre_check`** — Run all five preconditions in one SSH heredoc to the CCU. AP-reachability check uses fresh `sudo obn discover` + `jq` parse of `/tmp/discovery.json`, NOT standalone `snmpget`. The standalone probe times out on Nomad APs that OBN's own SNMP library can poll (validated 2026-05-09 on Fzg 132 / box1-t10 — false-positive `ap_in_factory_config` on AP .226). Pass criterion: discover.json has the AP with `config` matching `^AP[1-4]m?-v1-` (Nomad form) AND non-null `firmware`. If the AP is missing from discover.json entirely, fall back to `snmpget -v2c -c NomadStayOut! -t 8 -r 2` with longer timeout/retry as a second-chance check before aborting. If any precondition fails, emit `aborted` with `reason: "preconditions_unmet:<which>"` and exit. No further state.
+**`pre_check`** — Run all five preconditions in one SSH heredoc to the CCU. AP-reachability check uses fresh `sudo obn discover` + `jq` parse of `/tmp/discovery.json`, NOT standalone `snmpget` (cleanest source; avoids ad-hoc SNMP). The earlier "standalone snmpget times out" observation was a WRONG-cred bug, not OBN timing — the probe was `-v2c -c NomadStayOut!` but AP SNMP is v3/admin/authPriv (corrected 2026-06-08). Pass criterion: discover.json has the AP with `config` matching `^AP[1-4]m?-v1-` (Nomad form) AND non-null `firmware`. If the AP is missing from discover.json entirely, fall back to `snmpget -v3 -u admin -l authPriv -a SHA -A NomadStayOut! -x AES -X NomadStayOut! -t 8 -r 2` (v3, longer timeout/retry) as a second-chance check before aborting. If any precondition fails, emit `aborted` with `reason: "preconditions_unmet:<which>"` and exit. No further state.
 
 **`push` (Gate 1)** — Emit `gate_1_awaiting_ack` with the exact command. Wait for ack. On ack, run `sudo obn update f <ap-ip>` over SSH from the CCU. Capture stdout/stderr. Emit `push_command_returned` with the captured "Successful: ..." line (or whatever OBN said). Note: even an exit-code-zero "Successful" line does NOT mean the push worked — the next stage verifies that.
 
@@ -2687,9 +2342,16 @@ Failure-mode events:
 
 **`stuck_recover`** (only after Gate 2 ack) — Run `sshpass -p NomadComeIn ssh -o StrictHostKeyChecking=no nomad@<ap-ip> reboot` (Nomad-config AP credentials). Sleep 90s (handoff lesson 13). Re-enter `push` *exactly once*. If `verify_rrq` fails again after the recovery push, emit `aborted` with `reason: "stuck_state_recovery_failed"` — do not loop further; this is engineer territory.
 
-**`poll_completion`** — Loop: every 90s (lesson 15: faster polling is wasted SNMP storm), run `sudo obn discover` and parse the AP's firmware version. Emit `polling_completion` event with `current_firmware`, `staged_firmware`, `poll_count`, `elapsed_seconds`. Loop until either:
+**`poll_completion`** — Loop: every 90s (lesson 15: faster polling is wasted SNMP storm), run `sudo obn discover` and parse the AP's firmware version **AND its uptime**. Emit `polling_completion` event with `current_firmware`, `staged_firmware`, `uptime`, `poll_count`, `elapsed_seconds`. Loop until either:
 - `current_firmware == target_firmware` → emit `completed` and exit successfully, OR
 - `elapsed_seconds >= 900` (15 min) → emit `gate_3_awaiting_ack` with the current/staged/target tuple.
+
+**The uptime signal (lesson 18, proven 4736-109 2026-06-08).** The RT-610 flash→reboot→SNMP-re-report cycle can take **well over 5 min** — sometimes longer than an impatient poll. Two distinct outcomes hide behind "firmware OID still shows old version":
+- **(a) slow-but-fine:** the AP DID flash and reboot; `obn discover` just read the old version mid-cycle. Tell-tale: the AP's **uptime has RESET to a low value** (e.g. .236 came back at uptime 312s on the new firmware). This is NOT a failure — wait one more poll and it flips to target. The biggest real-world error is counting these as "stuck" and re-pushing a healthy AP.
+- **(b) genuine flash hang:** the AP ACK'd the flash, accepted the image, but the flash-commit hung — **`rpcFwFlash=2` (writing) with uptime unchanged / large** (e.g. .226 at uptime 21668s, still old fw). A real RT-610 flash-trigger hang. NOT recoverable by re-pushing over SNMP — needs the LuCI HTTPS upload bypass or a Westermo firmware fix.
+- **(c) download failure:** the image never arrived, so there was nothing to flash — **`rpcFwFlash=-1` (downloadError) with uptime unchanged**. On uptime alone this looks like (b), but the cause is upstream: the TFTP transfer was refused (look for `in.tftpd: read(ack): Connection refused`), typically the **conntrack-UDP-timeout-expiry-under-batch-concurrency** gap — see `dosto-tftp-helper-check` §4b. Unlike (b), this **IS recoverable**: fix the conntrack timeout / reduce concurrency and re-push. Confirmed 2026-06-09 on 4734-190 (9/16 hit `-1` under full batch; lower-concurrency retry delivered the image → `-1`→`2`, though those then hit case (b) underneath).
+
+So `poll_completion` MUST track **`rpcFwFlash` AND uptime** alongside firmware — uptime alone cannot tell (b) from (c). Read the `rpcFwFlash` OID `.1.3.6.1.4.1.16177.1.400.1.3.2.1.0` (v3 `admin`/authPriv/SHA/AES/`NomadStayOut!`) when an AP looks stuck: **reset uptime → case (a), keep polling**; **`=2`, no reboot, past budget → case (b), genuine flash hang (LuCI bypass)**; **`=-1`, no reboot → case (c), download failure (fix TFTP path + re-push)**. Never declare "stuck" without confirming the AP did NOT reboot AND reading which failure code it carries. The matching OBN-side fix is **bug #11** (`fix_obn_bug11_westermo_fw_verify.py`): it polls `rpcFwFlash` + uptime inside `set_firmware_version` so OBN itself returns the right boolean (True on reboot/nop, False only on a real -1/-2 or a no-reboot timeout) instead of trusting the SET echo. With bug #11 applied, `obn update f` blocks ~up to 10 min doing this correctly rather than returning instantly.
 
 **`gate_3_awaiting_ack`** — Engineer chooses:
 - `force-reboot` → run `sshpass -p NomadComeIn ssh nomad@<ap-ip> reboot`, sleep 90s, re-enter `poll_completion` once with a 5-min budget. (Force-reboot helps when staged_firmware == target_firmware but current didn't activate — handoff lesson 16.)
@@ -2750,8 +2412,9 @@ ssh_ccu() { ssh -i "$KEY" developer@$CCU "$@"; }
 echo "[1/5] Pre-check: TFTP helper, OBN patches, AP reachability via obn discover..."
 ssh_ccu 'lsmod | grep -q nf_conntrack_tftp && echo "tftp_helper:OK" || { echo "tftp_helper:MISSING — abort"; exit 2; }'
 ssh_ccu "sudo ipset list tftp_allowed | grep -q '$AP' && echo 'ipset:OK' || echo 'ipset:NOT_LISTED — Bug 5 patch not active'"
-# Trust obn discover, NOT standalone snmpget — `snmpget -v2c -c NomadStayOut!` times out on
-# Nomad APs even when OBN is successfully polling them via SNMP (validated 2026-05-09 on Fzg 132).
+# Trust obn discover as the primary signal. NOTE: `snmpget -v2c -c NomadStayOut!` times out because
+# it's the WRONG form — AP SNMP is v3/admin/authPriv/SHA/AES, NomadStayOut! is the v3 passphrase not a
+# community (corrected 2026-06-08). Correct probe: snmpget -v3 -u admin -l authPriv -a SHA -A NomadStayOut! -x AES -X NomadStayOut!
 # Pass if discover.json has the AP with Nomad-form config and non-null firmware.
 ssh_ccu "sudo obn discover >/dev/null 2>&1; sudo jq -r '.[] | select(.ip==\"$AP\") | [.config // \"null\", .firmware // \"null\"] | @tsv' /tmp/discovery.json" | \
   awk -F'\t' '
@@ -2856,7 +2519,7 @@ The exit codes 2-6 align 1:1 with the skill's verdict / event taxonomy, so an or
 - 🟡 **Lesson 17**: `/var/log/obn/*.log` does not capture in.tftpd activity. The skill captures both OBN log + journal in its diagnostic output.
 - 🟡 **AP credentials depend on config state.** Nomad-config APs use SSH `nomad/NomadComeIn`; factory APs use LuCI HTTP `admin/Nom@dCome1n` (skill aborts before reaching the latter — factory APs are out of scope here).
 - 🟡 **`ssh nomad@<ap-ip> reboot` returns the SSH connection cleanly before the AP's network stack tears down.** Don't assume connection-close means the reboot started; sleep the full 90s.
-- 🟡 **Standalone `snmpget` is unreliable on Nomad APs.** OBN's SNMP library polls them fine; vanilla `snmpget -v2c -c NomadStayOut! -t 3 -r 1` times out. The precondition uses `obn discover` + jq parse of `/tmp/discovery.json` as the primary AP-reachability signal, only falling back to `snmpget -t 8 -r 2` when discover.json has no recent entry. Validated 2026-05-09 on Fzg 132 — false-positive `ap_in_factory_config` on AP .226 with the standalone-only probe.
+- 🟡 **Use the correct AP SNMP form.** AP SNMP = **v3, user `admin`, authPriv, SHA auth, AES priv, passphrase `NomadStayOut!`**. The old `snmpget -v2c -c NomadStayOut! -t 3 -r 1` ALWAYS times out — that's a wrong-cred bug (NomadStayOut! is the v3 passphrase, not a v2c community), NOT an "OBN polls differently" quirk (corrected 2026-06-08; was misattributed on Fzg 132). The precondition still uses `obn discover` + jq parse of `/tmp/discovery.json` as the primary AP-reachability signal (cleanest); only fall back to `snmpget -v3 -u admin -l authPriv -a SHA -A NomadStayOut! -x AES -X NomadStayOut! -t 8 -r 2` when discover.json has no recent entry. ⚠️ Switches differ: SW SNMP user is `snmpadmin` (not `admin`); APs use `admin`. NomadComeIn is the SSH/GUI password, never SNMP.
 - 🟡 **`journalctl --since` rejects ISO-8601 with `+HH:MM` offset.** Don't use `date --iso-8601=seconds` (produces `2026-05-09T15:42:18+00:00` → `Failed to parse timestamp`). Use `date +"%Y-%m-%d %H:%M:%S"` (produces `2026-05-09 15:42:18` → parses fine). Validated 2026-05-09 on box1-t10.
 
 ## Pairs with
@@ -5396,16 +5059,16 @@ Create `.claude/skills/dosto-obn-patches/SKILL.md` with the following exact cont
 ~~~~markdown
 ---
 name: dosto-obn-patches
-description: Verify and apply the 10 known OBN bug fixes on a DOSTO CCU. Reads the running OBN code via SSH, greps for each bug's patch marker, reports what's patched / what's missing, and (in --apply mode) prints the exact recipe to scp the fix scripts and run them inside btrfs ro-toggle. In --persist mode detects whether the CCU has the canonical nd-systemupdate.sh or the fleet-wide .dont rename and prints the matching shell recipe (staging scripts in /var/tmp/, which is bind-mounted into the chroot — /tmp is NOT) to bake patches into a new snapshot. Use whenever you're about to run obn update on a CCU, after every CCU reboot (patches may have been wiped), or to fill in the OBN patches column of fleet-status.md. The skill never edits the CCU directly — the engineer runs the printed recipe.
+description: Verify and apply the 11 known OBN bug fixes on a DOSTO CCU. Reads the running OBN code via SSH, greps for each bug's patch marker, reports what's patched / what's missing, and (in --apply mode) prints the exact recipe to scp the fix scripts and run them inside btrfs ro-toggle. In --persist mode detects whether the CCU has the canonical nd-systemupdate.sh or the fleet-wide .dont rename and prints the matching shell recipe (staging scripts in /var/tmp/, which is bind-mounted into the chroot — /tmp is NOT) to bake patches into a new snapshot. Use whenever you're about to run obn update on a CCU, after every CCU reboot (patches may have been wiped), or to fill in the OBN patches column of fleet-status.md. The skill never edits the CCU directly — the engineer runs the printed recipe.
 ---
 
 # DOSTO OBN Patches — Verify and Apply
 
-The 10 known OBN bugs (documented in [troubleshooting-runbook.md](troubleshooting-runbook.md)) crash, hang, or silently corrupt `obn update f all`, `obn update c all`, and `obn report`. Without these fixes, partial updates leave the consist in a mixed v3/v4/v8 state which causes RSTP topology storms — and `obn report` can spin at 100% CPU with 27GB+ RSS when any AP/switch is missing or has a duplicate position (Bug 10).
+The 11 known OBN bugs (documented in [troubleshooting-runbook.md](troubleshooting-runbook.md)) crash, hang, or silently corrupt `obn update f all`, `obn update c all`, and `obn report`. Without these fixes, partial updates leave the consist in a mixed v3/v4/v8 state which causes RSTP topology storms — and `obn report` can spin at 100% CPU with 27GB+ RSS when any AP/switch is missing or has a duplicate position (Bug 10).
 
-**Always apply all 10 together.** Partial patches are worse than vanilla — applying only some leaves crash/hang modes open, so an `obn update` or `obn report` run dies (or hangs forever) mid-way and writes partial state to the consist.
+**Always apply all 11 together.** Partial patches are worse than vanilla — applying only some leaves crash/hang modes open, so an `obn update` or `obn report` run dies (or hangs forever) mid-way and writes partial state to the consist.
 
-**Hang/leak guarantee.** Bug 10 (BFS guard in `report_dosto_neu.py:number_coaches`) is the only patch that prevents the infinite-loop + unbounded RSS growth in `obn report` when a switch/AP is missing. Bug 9 (pysnmp dispatcher Lock) prevents the parallel-SNMP `IndexError` crash during multi-switch updates. Bugs 2/3/4/7/8 convert `None`/`KeyError` crashes into clean exits. With all 10 present, OBN exits cleanly (zero or non-zero, but bounded) on every known failure mode involving missing or unresponsive devices.
+**Hang/leak guarantee.** Bug 10 (BFS guard in `report_dosto_neu.py:number_coaches`) is the only patch that prevents the infinite-loop + unbounded RSS growth in `obn report` when a switch/AP is missing. Bug 9 (pysnmp dispatcher Lock) prevents the parallel-SNMP `IndexError` crash during multi-switch updates. Bugs 2/3/4/7/8 convert `None`/`KeyError` crashes into clean exits. With all 11 present, OBN exits cleanly (zero or non-zero, but bounded) on every known failure mode involving missing or unresponsive devices.
 
 ## When to use
 
@@ -5447,8 +5110,9 @@ Subagent emits this as one element of `skill_outputs[]`:
     "bug8_count": 0,
     "bug9_count": 0,
     "bug10_count": 0,
+    "bug11_count": 0,
     "patches_applied_total": 0,
-    "patches_expected_total": 10,
+    "patches_expected_total": 11,
     "is_persisted": false,
     "train_id_template": "{%- set train_id = 132 -%}",
     "train_id_template_consistent": true,
@@ -5463,9 +5127,9 @@ Subagent emits this as one element of `skill_outputs[]`:
 
 `verdict` semantics:
 - `vanilla` — `patches_applied_total == 0`
-- `partial` — `0 < patches_applied_total < 10`
-- `all_patched` — `patches_applied_total == 10` AND `is_persisted == false`
-- `all_persisted` — `patches_applied_total == 10` AND `is_persisted == true` (btrfs subvol is a `release`-tier `runN`, not the temporary `run` snapshot)
+- `partial` — `0 < patches_applied_total < 11`
+- `all_patched` — `patches_applied_total == 11` AND `is_persisted == false`
+- `all_persisted` — `patches_applied_total == 11` AND `is_persisted == true` (btrfs subvol is a `release`-tier `runN`, not the temporary `run` snapshot)
 
 `is_persisted` is computed from the btrfs subvol path — `/.snapshots/release` or `/.snapshots/runN` (where N > 1) suggests persistence; bare `/.snapshots/run` or `/.snapshots/work` doesn't.
 
@@ -5534,7 +5198,7 @@ Invocation examples:
 - `/dosto-obn-patches 10.179.10.1 --persist --with-fzg-id 132` → OBN + template `train_id` fix folded into one chroot session
 - `/dosto-obn-patches 10.179.10.1 --persist --with-vlan7 132 --with-fzg-id 132` → all three folded — single-promote pattern (handoff lesson 1)
 
-## The 10 bugs and their grep markers
+## The 11 bugs and their grep markers
 
 The skill detects whether each bug is patched by grepping for a deterministic string the patch inserts into the file. These are the canonical markers:
 
@@ -5550,6 +5214,9 @@ The skill detects whether each bug is patched by grepping for a deterministic st
 | 8 | `/usr/share/obn/lib/report/device.py` | `bool(self.config) and not self.config.endswith` | `scripts/fix_obn_bug8.py` | `.endswith()` on None config crash |
 | **9** | `/usr/share/obn/lib/device/snmpdevice.py` | `_SNMP_DISPATCH_LOCK` (module-level threading.Lock) | `scripts/fix_obn_bug9_pysnmp_thread_safety.py` | **Parallel `obn update c sw` crashes with `IndexError: pop from empty list`** (race on shared SnmpEngine dispatcher) — Fzg t16/t18 2026-05-20 |
 | **10** | `/usr/share/obn/lib/report/report_dosto_neu.py` | `NDP-PATCH-BUG10-BFS-GUARD` | `scripts/fix_obn_bug10_report_dosto_neu_bfs.py` | **`obn report` infinite loop @ 100% CPU + 27GB RSS leak** when an AP/switch is missing or has duplicate position — Fzg 130 2026-05-12, Fzg 8 2026-05-22 |
+| **11** | `/usr/share/obn/lib/device/vendor/westermo.py` | `NDP-PATCH-BUG11-FW-VERIFY` | `scripts/fix_obn_bug11_westermo_fw_verify.py` | **AP firmware update reports SUCCESS without verifying activation.** `set_firmware_version` checks only the SNMP SET echo of `rpcFwFlash` (always 2) → declares success the instant the flash is triggered, before any download/flash/reboot. Per WESTERMO-SW6-MIB, rpcFwFlash read-back is a status field (flash(2)=writing, downloadError(-1), flashError(-2), nop(0)=done) that OBN never reads. Result: APs stuck on old fw (RT-610 flash-trigger hang) are recorded as updated. Fix polls rpcFwFlash + uptime up to ~10 min: True on reboot(uptime reset)/nop(0), False on -1/-2 or no-reboot timeout. Proven 4736-109 2026-06-08. |
+
+> **Note (2026-06-08):** the bug count is now **11**. Bug 11 is the AP-firmware activation-verify fix. It is NOT yet upstreamed by R&D and NOT yet live-validated end-to-end across a full consist (single-AP confirmed on 4736-109 .236 → activated; .226-class hangs correctly reported as failure). Headings below still say "10" in places — treat as 11 until they're swept.
 
 ## Procedure
 
@@ -5582,6 +5249,8 @@ echo "=== Bug 9 (snmpdevice.py pysnmp thread-safety Lock) ==="
 sudo grep -c "_SNMP_DISPATCH_LOCK" /usr/share/obn/lib/device/snmpdevice.py
 echo "=== Bug 10 (report_dosto_neu.py BFS hang guard) ==="
 sudo grep -c "NDP-PATCH-BUG10-BFS-GUARD" /usr/share/obn/lib/report/report_dosto_neu.py
+echo "=== Bug 11 (westermo.py AP firmware activation verify) ==="
+sudo grep -c "NDP-PATCH-BUG11-FW-VERIFY" /usr/share/obn/lib/device/vendor/westermo.py
 echo "=== btrfs subvol (look for run<N> ===" 
 mount | grep " on / " | head -1
 echo "=== train_id template (should be hardcoded number, NOT 128+train_id) ==="
@@ -5607,6 +5276,7 @@ Interpret each `grep -c` count:
 - Bugs 3–8: 1+ → patched, 0 → missing
 - Bug 9 (`_SNMP_DISPATCH_LOCK`): 2+ → patched (one at module-level def + one at the `with` site), 1 → partial, 0 → missing
 - Bug 10 (`NDP-PATCH-BUG10-BFS-GUARD`): 1+ → patched, 0 → missing
+- Bug 11 (`NDP-PATCH-BUG11-FW-VERIFY`): 1+ → patched, 0 → missing
 
 Print a status table:
 
@@ -5630,13 +5300,13 @@ Uptime: <X days>  (recent reboot? then patches may have been wiped from the run<
 ```
 
 **Verdicts:**
-- ✅ **10/10 patched** → done. Suggest `--persist` only if fleet-status doesn't yet say `persisted`. Otherwise exit clean.
-- 🟡 **10/10 in this snapshot but uptime is fresh** → looks good but verify by running an `obn` command first; some users have seen patches survive in `/usr/share/obn` but lose them on next reboot.
-- 🔴 **<10/10** → recommend `--apply`. Don't proceed past Step 3 of the train-login checklist until 10/10. **In particular, never run `obn report` with Bug 10 missing if any device may be offline** — it will hang at 100% CPU and leak RAM until OOM-killed.
+- ✅ **11/11 patched** → done. Suggest `--persist` only if fleet-status doesn't yet say `persisted`. Otherwise exit clean.
+- 🟡 **11/11 in this snapshot but uptime is fresh** → looks good but verify by running an `obn` command first; some users have seen patches survive in `/usr/share/obn` but lose them on next reboot.
+- 🔴 **<11/11** → recommend `--apply`. Don't proceed past Step 3 of the train-login checklist until 11/11. **In particular, never run `obn report` with Bug 10 missing if any device may be offline** — it will hang at 100% CPU and leak RAM until OOM-killed.
 
 Update fleet-status `OBN patches` column accordingly:
-- 10/10 in btrfs `release` snapshot (default GRUB) → `persisted (run<N>)`
-- 10/10 in current state but not yet promoted via `nd-systemupdate.sh shell` → `10/10 (not persisted — will wipe on reboot)`
+- 11/11 in btrfs `release` snapshot (default GRUB) → `persisted (run<N>)`
+- 11/11 in current state but not yet promoted via `nd-systemupdate.sh shell` → `11/11 (not persisted — will wipe on reboot)`
 - partial → `<N>/10`
 - 0/10 → `0/10 (vanilla)`
 
@@ -5763,10 +5433,11 @@ scp -i "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh" \
     "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug8.py" \
     "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug9_pysnmp_thread_safety.py" \
     "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug10_report_dosto_neu_bfs.py" \
+    "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug11_westermo_fw_verify.py" \
     "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_bug1_regex.py" \
     developer@<ccu-ip>:/tmp/
 ssh -i "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh" developer@<ccu-ip> \
-    'sudo mv /tmp/fix_obn.py /tmp/fix_obn_bugs67.py /tmp/fix_obn_bug8.py /tmp/fix_obn_bug9_pysnmp_thread_safety.py /tmp/fix_obn_bug10_report_dosto_neu_bfs.py /tmp/fix_bug1_regex.py /var/tmp/ && sudo chmod +x /var/tmp/fix_*.py'
+    'sudo mv /tmp/fix_obn.py /tmp/fix_obn_bugs67.py /tmp/fix_obn_bug8.py /tmp/fix_obn_bug9_pysnmp_thread_safety.py /tmp/fix_obn_bug10_report_dosto_neu_bfs.py /tmp/fix_obn_bug11_westermo_fw_verify.py /tmp/fix_bug1_regex.py /var/tmp/ && sudo chmod +x /var/tmp/fix_*.py'
 
 # === STEP 2: SSH to the CCU and run them under btrfs ro-toggle ===
 ssh -i "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh" developer@<ccu-ip>
@@ -5794,10 +5465,14 @@ sudo python3 /var/tmp/fix_obn_bug9_pysnmp_thread_safety.py
 # Bug 10 (report_dosto_neu BFS hang guard — prevents obn report infinite-loop + RSS leak):
 sudo python3 /var/tmp/fix_obn_bug10_report_dosto_neu_bfs.py
 
+# Bug 11 (westermo AP firmware activation verify — makes obn update f verify the flash
+# instead of trusting the SET echo; returns False on a real hang instead of false success):
+sudo python3 /var/tmp/fix_obn_bug11_westermo_fw_verify.py
+
 # Re-lock root
 sudo btrfs property set / ro true
 
-# === STEP 3: Re-run the skill in --check mode to verify 10/10 ===
+# === STEP 3: Re-run the skill in --check mode to verify 11/11 ===
 exit
 ```
 
@@ -5844,7 +5519,7 @@ sudo python3 /var/tmp/fix_obn_bug10_report_dosto_neu_bfs.py
 #      patches on the next 0-4am cycle:
 sudo mv /usr/sbin/nd-systemupdate.sh /usr/sbin/nd-systemupdate.sh.dont
 
-# 4. Verify all 10 markers inside the chroot:
+# 4. Verify all 11 markers inside the chroot:
 sudo grep -c "default image is now"     /usr/share/obn/lib/device/vendor/vdsrail.py
 sudo grep -c "if not result:"           /usr/share/obn/lib/device/vendor/vdsrail.py
 sudo grep -c "except KeyError:"         /usr/share/obn/lib/device/snmpdevice.py
@@ -8526,6 +8201,28 @@ This is the harder case. If you see verdict `nft_compat_no_op` on a CCU, capture
 
 Validated against the legacy iptables backend on 2026-05-09 (box1-t10). The nft compat path is encoded here for completeness; if the fleet image is consistent, this branch will be unreachable.
 
+### 4b. The UDP-timeout-expiry caveat (helper present, batch still fails under concurrency)
+
+The helper module + CT rule being present (`all_present`) is necessary but **not sufficient for a full-fan-out batch**. Distinct second failure mode, confirmed 2026-06-09 on box1-t54 (4734-190):
+
+OBN's `process_batch()` (`/usr/share/obn/cli/update.py:328`) uses `ThreadPoolExecutor(max_workers=len(devices))` — **unbounded fan-out**; every AP is an OBNTree leaf, so the whole consist fires as **one batch** (e.g. 16 simultaneous ~100 MB TFTP pulls). The helper sets up a return-path *expectation* per transfer, but `net.netfilter.nf_conntrack_udp_timeout` defaults to **30 s**. Under 16-way contention each flow stalls for >30 s gaps → conntrack **expires the entry mid-transfer** → the AP's next data packet has no return mapping → ICMP port-unreachable → `in.tftpd: read(ack): Connection refused`, and the AP reports `rpcFwFlash=-1` (downloadError).
+
+**This is NOT table exhaustion** — on box1-t54 the table was 828/262144. It's purely the per-flow UDP timeout being too short for many slow concurrent transfers.
+
+**Tell-tale (distinguishes this from the helper-absent gap and from a flash hang):**
+- helper module loaded ✅ AND CT rule present ✅ (so `--check` says `all_present`), BUT
+- `journalctl _COMM=in.tftpd` shows `read(ack): Connection refused`, AND
+- failed APs read `rpcFwFlash=-1` (downloadError) — *not* `-2`, *not* `2` (a `2` that never reboots is a flash-trigger hang, a different problem — see `dosto-ap-firmware-update`).
+
+**Runtime fix (non-persistent):**
+```bash
+sudo sysctl -w net.netfilter.nf_conntrack_udp_timeout=180        # 30 → 180s
+sudo sysctl -w net.netfilter.nf_conntrack_udp_timeout_stream=600 # 120 → 600s
+```
+**Persistent home:** Puppet `60-allow-management`, alongside the `modprobe`/`CT --helper` lines (same gap). Until R&D ships it, re-apply after every reboot.
+
+**The two durable alternatives** (don't rely on the timeout bump alone): (1) **R&D** cap OBN's pool — `max_workers=min(4, len(devices))` at `update.py:328` (ideally a config key); (2) **operational** — chunk pushes to ~4 APs or single-AP serial (`dosto-ap-firmware-update`), which is the CLAUDE.md handoff-lesson-11 default. The 2026-06-09 test is the measured evidence for why serial-only is the standing rule: pass-1 full-batch = 7/16 with 9× `Connection refused`; lower-concurrency retry = 0 refused (download layer recovered). Full writeup: `findings/bug11_batch_fw_test_4734-190_2026-06-09.md`.
+
 ### 5. After applying the runtime workaround — verify
 
 Tell the engineer to:
@@ -9123,13 +8820,42 @@ def fix_bug_7():
                  label="Bug 7 (reboot hostname None guard)")
 
 
+def _run_sibling(script_name: str, label: str):
+    """Run a sibling fix_obn_bug*.py from the same directory, if present.
+
+    Bugs 8/9/10/11 live in their own scripts (multi-line method-body replacements
+    that don't fit the simple patch() helper). We chain them here so a single
+    `python3 fix_obn.py` applies the full 1-11 set. Each sibling is idempotent.
+    Looks in the script's own dir first (works whether run from repo or /var/tmp).
+    """
+    import subprocess
+    import sys
+    here = Path(__file__).resolve().parent
+    candidate = here / script_name
+    if not candidate.exists():
+        print(f"  {label}: SKIP (sibling not found: {candidate})")
+        return
+    try:
+        out = subprocess.run([sys.executable, str(candidate)],
+                             capture_output=True, text=True, timeout=60)
+        line = (out.stdout or out.stderr or "").strip().splitlines()
+        print(f"  {label}: {line[-1] if line else 'ran (no output)'}")
+    except Exception as e:
+        print(f"  {label}: ERROR — {e}")
+
+
 def main():
-    print("Applying OBN bug fixes 1-7 (idempotent):")
+    print("Applying OBN bug fixes 1-11 (idempotent):")
     for fn in [fix_bug_1, fix_bug_2, fix_bug_3, fix_bug_4, fix_bug_5, fix_bug_6, fix_bug_7]:
         try:
             print(fn() if fn.__doc__ else f"  {fn.__name__}: ?")
         except Exception as e:
             print(f"  {fn.__name__}: ERROR — {e}")
+    # Bugs 8-11 are standalone sibling scripts (multi-line replacements). Chain them.
+    _run_sibling("fix_obn_bug8.py", "Bug 8 (device.py config None)")
+    _run_sibling("fix_obn_bug9_pysnmp_thread_safety.py", "Bug 9 (pysnmp dispatcher Lock)")
+    _run_sibling("fix_obn_bug10_report_dosto_neu_bfs.py", "Bug 10 (report_dosto_neu BFS guard)")
+    _run_sibling("fix_obn_bug11_westermo_fw_verify.py", "Bug 11 (westermo fw activation verify)")
     print("\nDone. Re-lock root with: sudo btrfs property set / ro true")
 
 
@@ -10508,6 +10234,10 @@ This is a workflow extension, not part of the original four. Applied to our stac
 
 When in doubt, prefer serial — but document the reason. Default-parallel should be the goal once evidence supports it.
 
+### Written comms rule (Jira / Confluence / email)
+
+Anything written to an external audience — Jira tickets and comments, Confluence pages, email — must be **professional, concise, and warm**: no emoticons or emoji, no walls of text. Lead with the ask in 1–2 lines; use short numbered lists; put deep technical detail in a linked doc or attachment, never in the comment body. (Lesson from RD-12433, 2026-06-09: a long ticket body got "i'm not going to read this huge wall of text" from R&D.)
+
 ## Architecture cheat-sheet
 
 A typical DOSTO consist has:
@@ -10843,6 +10573,7 @@ The project is organised into the following subfolders. Anything not listed here
 - `switch_user_manual.pdf` — VDS Consist Switch User Manual v2.0.4. Full-text extract cached at `.claude/switch_manual.txt`.
 - `Westermo-Management-Guide-6.9.5.pdf` — Westermo AP management reference.
 - `ND-DEL-OBB-035-CFG-001-01 OBB Fleet Control Sheet 20260211.xlsx` — fleet control sheet.
+- `docs/reference/` — supplementary hardware/feature manuals not tied to a single train: `R5001C Rack Chassis, CMM I2C Manual_V2.5.pdf` (CCU CMM ignition/power readout), `Explainer, Ignition controlled power management_Issue1.0.pdf`.
 
 ### `scripts/` — all scripts
 
@@ -10883,6 +10614,14 @@ python scripts/regenerate_bootstrap.py --check    # dry run, just report sizes
 ```
 
 The regenerator embeds: 4 contracts + 2 agent definitions + 14 SKILL.mds + CLAUDE.md + 5 fix scripts + the regenerator script itself (self-replicating). It does NOT embed: the SSH key, schema PDFs, IP-Port-Allocation PDFs, customer reports, log files, node_modules. Those are engineer-supplied or generated.
+
+### `.archive/` — retired scratch (not load-bearing)
+
+Holding ground for files that are no longer referenced by any skill, script, or contract but are kept for history rather than deleted. Nothing here is read at runtime; safe to ignore during a normal session.
+
+- `.archive/sdd-edit-scratch/` — one-off PowerShell + `.txt` extracts from a 2026-05 SDD-docx editing session (`mar3`/`mar5`/`section510`/`internetzugang` helpers).
+- `.archive/old-handoffs/` — superseded planning/handoff notes (`monday-plan.md`, `clone-disk*.md`) and a retired one-off script (`l2_error_scan_fzg12.py`).
+- `.archive/enhancement-notes-*.md` — applied enhancement notes kept for provenance.
 
 ### `.claude/` — Claude harness state
 
@@ -11510,4 +11249,4 @@ That writes `BOOTSTRAP_DOSTO_v1.md` reflecting the current tree. Pass `--include
 ---
 
 
-*End of bootstrap — generated 2026-05-22 13:41 UTC from 30 files.*
+*End of bootstrap — generated 2026-06-19 05:23 UTC from 30 files.*
