@@ -8,6 +8,10 @@ train-ip-allocation-commission/OneDrive_2_04-05-2026.zip
 __pycache__/
 *.pyc
 
+# Script run-output (not source)
+scripts/zbx_reconcile_run.log
+scripts/zbx_reconcile.jsonl
+
 # Machine-local Claude harness state
 .claude/settings.local.json
 .claude/worktrees/
