@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DOSTO Morning Brief — 2026-05-21</title>
+<title>DOSTO Morning Brief — 2026-06-16</title>
 <style>
 :root { --bg:#0f172a; --surface:#1e293b; --surface2:#273344; --border:#334155;
         --text:#e2e8f0; --text-muted:#94a3b8; --accent:#38bdf8; --recommend:#0e3a2a; }
@@ -25,6 +25,11 @@ thead tr { background:var(--surface2); }
 thead th { padding:10px 14px; text-align:left; font-size:11px; text-transform:uppercase;
            letter-spacing:.06em; color:var(--text-muted); font-weight:600;
            white-space:nowrap; border-bottom:1px solid var(--border); }
+table.sortable thead th { cursor:pointer; user-select:none; position:relative; padding-right:24px; }
+table.sortable thead th:hover { color:var(--accent); }
+table.sortable thead th::after { content:'\2195'; position:absolute; right:8px; opacity:.35; font-size:10px; }
+table.sortable thead th.sort-asc::after  { content:'\25B2'; opacity:1; color:var(--accent); }
+table.sortable thead th.sort-desc::after { content:'\25BC'; opacity:1; color:var(--accent); }
 tbody tr { border-bottom:1px solid var(--border); transition:background .1s; }
 tbody tr:last-child { border-bottom:none; }
 tbody tr:hover { background:var(--surface2); }
@@ -61,37 +66,24 @@ details .urlist { font-family:Consolas,"Courier New",monospace; font-size:12px;
     <h1>DOSTO Morning Brief</h1>
     <div class="subtitle">Dry-run reachability scan &middot; start-first recommendation</div>
   </div>
-  <div class="updated">2026-05-21 14:06<br><span style="color:var(--accent)">14 of 28 known-CCU trains reachable</span></div>
+  <div class="updated">2026-06-16 07:46<br><span style="color:var(--accent)">0 of 41 known-CCU trains reachable</span></div>
 </header>
 <div class="container">
 
 <div class="section">
-  <div class="section-header"><h2>Reachable trains</h2><span class="count">14 online</span></div>
-  <div class="table-wrap"><table>
-    <thead><tr><th>Fzg</th><th>Trainset</th><th>CCU IP</th><th>Nomad status</th><th>Stadler status</th><th>Next Action</th><th>Resume Stage</th><th>Recommended?</th></tr></thead>
-    <tbody><tr class="recommended"><td class="mono center">130</td><td class="mono">4736-102</td><td class="mono">10.179.47.1</td><td><span class="badge" style="background:#eab308">PAUSED</span></td><td class="small">🔴 E3 sw + 2 APs absent</td><td class="small">2026-05-21 probe + dispatch: TFTP helper re-applied ✅. Fresh obn discover confirms 17/18 sw all on nv6-X-v8-130 fw 7.4.2 (incl .180/.186/.187 — the prior -man switches got pushed in an unrecorded session). E3 switch missing (no DHCP, no discovery) — escalate to Stadler. 22/24 APs visible; AP .218 (mac 00:14:5a:04:52:9c) is Nomad-form AP4-v1 per DHCP but SNMP-silent — NOT factory; likely snmpd hung. OBN 8/8 persisted ✅, vlan7 ✅, train_id ✅. Next: identify the 2 missing APs (.218-.241 range diff), targeted snmpwalk on .218 to confirm SNMP fault, then push AP fw to the 21 healthy APs (skip .218 until SNMP recovers; do NOT run obn update c all until E3 is back).</td><td><span class="stage-tag">apply_obn_patches</span></td><td class="small"><strong style="color:#22c55e">YES</strong><br><span class="small">✅ apply_obn_patches, apply_train_id_fix, apply_vlan7_fix — no gate, 20 to done</span></td></tr>
-<tr class="row-blocked"><td class="mono center">132</td><td class="mono">4736-104</td><td class="mono">10.179.10.1</td><td><span class="badge" style="background:#ef4444">BLOCKED</span></td><td class="small">🔴 D4 AP missing (cable reg #5)</td><td class="small">verify .231; push .237 .238 .240 — see detail. pre-flight 2026-05-21: train back online but 15/18 sw + 21/24 AP visible (3 sw + 3 APs absent — D4 group); skipped this run</td><td><span class="stage-tag unknown">?</span></td><td class="small">no<br><span class="small">Next action prose unmapped — engineer review</span></td></tr>
-<tr class="row-paused"><td class="mono center">136</td><td class="mono">4736-108</td><td class="mono">10.179.8.1</td><td><span class="badge" style="background:#eab308">PAUSED</span></td><td class="small">🔴 cable reg #2 + #3 STILL OPEN (LLDP-confirmed 2026-05-21)</td><td class="small">2026-05-21 LLDP probe: 18/18 sw on nv6-X-v8-136 ✅, 24/24 APs visible ✅, OBN 7/8 persisted (run1) — only bug 8 (device.config endswith) missing. vlan7 ✅, train_id 136 ✅, NDSU .dont ✅. TFTP helper absent (lost on ~5h reboot). Cable register #2 (C3 trunk swap e0-0/e0-1) and #3 (D1↔E2 missing) confirmed STILL OPEN via per-switch show lldp neighbours sweep — Stadler has NOT corrected. Next: apply bug 8 patch + persist (Gate 1) + reboot (Gate 2), then HALT — full v8 push blocked on Stadler re-cabling. Escalate cable register #2/#3 with hard LLDP evidence.</td><td><span class="stage-tag blocked">BLOCKED</span></td><td class="small">no<br><span class="small">BLOCKED — Stadler-dependent</span></td></tr>
-<tr class="row-done"><td class="mono center">138</td><td class="mono">4736-110</td><td class="mono">10.179.23.1</td><td><span class="badge" style="background:#22c55e">DONE</span></td><td class="small">✅ clear</td><td class="small">OBN 8/8+bug9 persisted (run1) · 18/18 sw v8-138 ✅ · 24/24 APs at 6.11.2-0 ✅ (2026-05-20)</td><td><span class="stage-tag">await_promote_snapshot</span></td><td class="small">no<br><span class="small">Gate at step 1 (await_promote_snapshot) — needs engineer attention</span></td></tr>
-<tr class="row-paused"><td class="mono center">139</td><td class="mono">4736-111</td><td class="mono">10.179.24.1</td><td><span class="badge" style="background:#eab308">PAUSED</span></td><td class="small">✅ clear</td><td class="small">2026-05-21: run1 active, OBN 8/8+bug9 persisted, 18/18 sw v8-139 ✅. 23/24 APs confirmed 6.11.2-0 (.229 + .224 transiently SNMP-deaf but confirmed 6.11.2-0 earlier in session). Coach1 AP4 (.222, serial 3623-073001-1-04-00000091-2206) hw fault: SNMP deaf, partition swap stuck despite staged 6.11.2-0. Needs physical inspection/replacement. Last touched: 2026-05-21 AR</td><td><span class="stage-tag">await_promote_snapshot</span></td><td class="small">no<br><span class="small">Gate at step 1 (await_promote_snapshot) — needs engineer attention</span></td></tr>
-<tr class="row-inprogress"><td class="mono center">143</td><td class="mono">4736-115</td><td class="mono">10.179.18.1</td><td><span class="badge" style="background:#3b82f6">IN PROGRESS</span></td><td class="small">✅ clear</td><td class="small">2026-05-21 09:35Z: OBN 8/8 persisted (run1 id312), 18/18 sw v8-143 fw=7.4.2 ✓, vlan7 ✓ 172.19.199.130/17, TFTP helper active. Gate 3+4 approved 09:25-09:29Z. AP fw push running under nohup on CCU (/tmp/fzg143_push.sh PID 330309, log /tmp/ap_fw_push_fzg143.log): 16 APs serial 6.10.0-0→6.11.2-0, ~144 min total. After fw: 24 APs need AP*-v1→AP*m-v1 config refresh (Gate 3 covers).</td><td><span class="stage-tag">await_promote_snapshot</span></td><td class="small">no<br><span class="small">Gate at step 1 (await_promote_snapshot) — needs engineer attention</span></td></tr>
-<tr class="row-inprogress"><td class="mono center">144</td><td class="mono">4736-116</td><td class="mono">10.179.16.1</td><td><span class="badge" style="background:#3b82f6">IN PROGRESS</span></td><td class="small">🔴 Coach 6 AP3 (cable reg #6 — may be resolved, verify)</td><td class="small">2026-05-21 09:42Z: OBN 8/8+bug8+bug9 persisted (run2 id306), 18/18 sw v8-144 fw=7.4.2 ✓, 24/24 APs visible (Coach 6 AP3 .224 now visible — cable register #6 self-resolved), vlan7 ✓ 172.19.200.2/17, TFTP helper active. Gate 4 approved 09:25Z. AP fw push running under nohup on CCU (/tmp/fzg144_push.sh PID 516080, log /tmp/ap_fw_push_fzg144.log): 15 APs serial 6.10.0-0→6.11.2-0, ~135 min total. Currently AP 1/15 (.218) in flight. Special: Coach 6 AP4 (.222) was previously 'incomplete' fw — will be visible in log if it sticks.</td><td><span class="stage-tag">await_promote_snapshot</span></td><td class="small">no<br><span class="small">Gate at step 1 (await_promote_snapshot) — needs engineer attention</span></td></tr>
-<tr class="row-unknown"><td class="mono center">146</td><td class="mono">4736-118</td><td class="mono">10.179.21.1</td><td><span class="badge" style="background:#94a3b8">UNKNOWN</span></td><td class="small">🔴 2 APs absent (22/24); factory cabling unverified</td><td class="small">2026-05-21 first-visit probe: CCU box hostname box1-t21; switches all on nv6-X-v7-149 (v7 era, train_id=21 in templates renders to Fzg 149 via broken 128+train_id formula). 22/24 APs visible — all RT610LV-dosto-* factory config (LuCI bypass required). OBN 0/8 vanilla, no backbone-discovery.yaml, vlan7 live = 172.19.202.130/17 (matches broken formula from train_id=21, NOT the expected 172.19.201.2/17 for Fzg 146 even). NDSU .dont ✅. Pre-commission action: engineer must confirm Fzg ID via physical inspection or PDF cross-ref before any destructive op — current rendered identity (149) conflicts with sheet/fleet-status target (146). Treat as green-field v8 commission once identity is settled.</td><td><span class="stage-tag">ap_factory_bypass</span></td><td class="small">no<br><span class="small">eligible but not top: ap_factory_bypass, push_ap_firmware, push_ap_config</span></td></tr>
-<tr class="row-done"><td class="mono center">147</td><td class="mono">4736-119</td><td class="mono">10.179.12.1</td><td><span class="badge" style="background:#22c55e">DONE</span></td><td class="small">✅ clear</td><td class="small">2026-05-21: run3 active, 18/18 sw v8-147 ✅, 24/24 APs at 6.11.2-0 ✅. Last touched: 2026-05-21 AR</td><td><span class="stage-tag">await_obn_update_f</span></td><td class="small">no<br><span class="small">Gate at step 1 (await_obn_update_f) — needs engineer attention</span></td></tr>
-<tr class="row-paused"><td class="mono center">13</td><td class="mono">4734-113</td><td class="mono">10.179.46.1</td><td><span class="badge" style="background:#eab308">PAUSED</span></td><td class="small">❓</td><td class="small">2026-05-21: (a) templates 0.0.6→0.0.19 + reboot 09:20Z, (b) vlan7 fix 10:10Z → 172.19.134.130/17 ✅ (FW peer at .129 Stadler pattern, same as Fzg 139/147), (c) train_id pin 10:16Z — {%- set train_id = 13 -%} in all 12 nv4-*.cfg ✅, (d) OBN 8/8 confirmed persisted run1 id317, (e) obn update c all ran 10:22–10:40Z: all 12 sw at fw 7.4.2 ✅, 8/12 config ✅ (v8-013), 4/12 stuck v7m (.193 G1, .194 G3, .187 E2, .201 E3) — pysnmp IndexError mid-run caused partial update. Train went offline before retry. Next: sudo obn discover && sudo obn report && sudo obn update c all (idempotent, will fix the 4 v7m switches). backbone-discovery.yaml train_id=46 untouched per mar5 rule.</td><td><span class="stage-tag">apply_vlan7_fix</span></td><td class="small">no<br><span class="small">Gate at step 2 (await_promote_snapshot) — needs engineer attention</span></td></tr>
-<tr class="row-done"><td class="mono center">14</td><td class="mono">4734-114</td><td class="mono">10.179.44.1</td><td><span class="badge" style="background:#22c55e">DONE</span></td><td class="small">✅ clear</td><td class="small">2026-05-21 /dosto-orchestrate (initial visit): 12/12 sw at v8-014 fw 7.4.2 ✅, vlan7 172.19.135.2/17 ✅, FW ARP REACHABLE, 9/9 OBN persisted (run2/id325, incl bug 9). AP push 1/16: .220 ✅ at 6.11.2-0; .225 in flight. Parent driving inline due to worker-loop platform constraints.</td><td><span class="stage-tag">initial_diagnostics</span></td><td class="small">no<br><span class="small">Gate at step 2 (await_device_count_mismatch) — needs engineer attention</span></td></tr>
-<tr class="row-done"><td class="mono center">19</td><td class="mono">4734-119</td><td class="mono">10.179.45.1</td><td><span class="badge" style="background:#22c55e">DONE</span></td><td class="small">✅ clear</td><td class="small">2026-05-21 obn validate: 16/16 APs ✅, 12/12 sw ✅. vlan7 172.19.150.130/17 (per Nomad internal train_id 45 convention, NOT formula from Fzg 19 — confirmed correct in detail block). State-inventory said OBN 3/8 — false-negative; re-verify with dosto-obn-patches --check.</td><td><span class="stage-tag unknown">?</span></td><td class="small">no<br><span class="small">Next action prose unmapped — engineer review</span></td></tr>
-<tr class="row-done"><td class="mono center">20</td><td class="mono">4734-120</td><td class="mono">10.179.49.1</td><td><span class="badge" style="background:#22c55e">DONE</span></td><td class="small">✅ clear</td><td class="small">2026-05-21 status check: 12/12 sw + 16/16 APs ✅, vlan7 ✅. State-inventory said OBN 3/8 — false-negative; train_id template "missing" claim also suspect (verify via direct cat /etc/obn/template/nv4-*.cfg).</td><td><span class="stage-tag unknown">?</span></td><td class="small">no<br><span class="small">Next action prose unmapped — engineer review</span></td></tr>
-<tr class="row-done"><td class="mono center">21</td><td class="mono">4734-121</td><td class="mono">10.179.50.1</td><td><span class="badge" style="background:#22c55e">DONE</span></td><td class="small">✅ clear</td><td class="small">2026-05-21 dosto-obn-patches --check confirmed 8/8 OBN markers all present in run2/id297; state-inventory's 4/8 reading was false-negative. 12/12 sw + 16/16 APs ✅, vlan7 ✅.</td><td><span class="stage-tag unknown">?</span></td><td class="small">no<br><span class="small">Next action prose unmapped — engineer review</span></td></tr></tbody>
+  <div class="section-header"><h2>Reachable trains</h2><span class="count">0 online</span></div>
+  <div class="table-wrap"><table class="sortable">
+    <thead><tr><th>Train#</th><th>Fzg</th><th>CCU IP</th><th>Nomad status</th><th>Stadler status</th><th>Next Action</th><th>Resume Stage</th><th>Recommended?</th></tr></thead>
+    <tbody><tr><td colspan="8" class="small center">No reachable trains.</td></tr></tbody>
   </table></div>
 </div>
 
 <div class="section">
   <div class="section-header"><h2>To proceed, type:</h2>
     <span class="count">dry run &middot; not invoked</span></div>
-  <div class="cmd-block">/dosto-orchestrate fzg=130,132,136,138,139,143,144,146,147,13,14,19,20,21</div>
+  <div class="cmd-block">(no reachable trains)</div>
   <div class="dry-run-note">
-    Recommended start-first: <strong style="color:#22c55e">Fzg 130</strong> &mdash; Next 3 stages (apply_obn_patches, apply_train_id_fix, apply_vlan7_fix) — no approval gate, 20 stages to done.
+    No train eligible for autonomous start-first (all reachable trains hit an approval gate within the next 3 stages or are BLOCKED).
   </div>
   <div class="dry-run-note">Paste the command above manually to dispatch. This page does not invoke /dosto-orchestrate.</div>
 </div>
@@ -99,8 +91,50 @@ details .urlist { font-family:Consolas,"Courier New",monospace; font-size:12px;
 
 
 <details>
-  <summary>Unreachable trains (14 known-CCU, failed TCP/22 probe)</summary>
-  <div class="urlist">Fzg 131 / 4736-103 (10.179.11.1) — reboot to activate run3 (8/8 OBN persisted); push AP fw 6.10.0-0→6.11.2-0 after <br>Fzg 133 / 4736-105 (10.179.1.1) — wait for Stadler on Coach5 AP2 + FW path<br>Fzg 134 / 4736-106 (10.179.19.1) — confirm v8 state<br>Fzg 137 / 4736-109 (10.179.28.1) — wait for Stadler on register #4 (AP install at B3); CCU IP populated from fleet <br>Fzg 148 / 4736-120 (10.179.2.1) — 2026-05-21 status check: 17/18 sw (E3 absent), 22/24 APs (2 E-coach APs absent) <br>Fzg 3 / 4734-103 (10.179.5.1) — initial visit — CCU IP from control sheet 2026-05-21 (sheet: Done, v2/6.10.0, NC<br>Fzg 9 / 4734-109 (10.179.38.1) — L2 healthy (12/12 sw, 16 APs, 0 errors) — v5 config; B1+B3 ZFR e1-11 DOWN; FW pr<br>Fzg 10 / 4734-110 (10.179.36.1) — initial visit — CCU IP from control sheet 2026-05-21 (sheet: Done, v6/6.10.0, NC<br>Fzg 11 / 4734-111 (10.179.39.1) — initial visit — CCU IP from control sheet 2026-05-21 (sheet: Done, sw v8 → regre<br>Fzg 12 / 4734-112 (10.179.37.1) — 2026-05-21 /dosto-orchestrate: 12/12 sw at v8-012 fw 7.4.2 ✅, vlan7 ✅, train_id <br>Fzg 15 / 4734-115 (10.179.61.1) — initial visit — CCU IP from control sheet 2026-05-21 (sheet: Done, v7/6.10.0, NC<br>Fzg 16 / 4734-116 (10.179.3.1) — initial visit — CCU IP from control sheet 2026-05-21 (sheet: Done, v7/6.10.0, NC<br>Fzg 17 / 4734-117 (10.179.14.1) — initial visit — CCU IP from control sheet 2026-05-21 (sheet: Done, v7/6.10.0, NC<br>Fzg 18 / 4734-118 (10.179.48.1) — initial visit — CCU IP from control sheet 2026-05-21 (sheet: Done, v6/6.10.0, NC</div>
+  <summary>Unreachable trains (41 known-CCU, failed TCP/22 probe)</summary>
+  <div class="urlist">4736-105 (Fzg 133) (10.179.1.1) — wait for Stadler on Coach5 AP2 + FW path<br>4736-120 (Fzg 148) (10.179.2.1) — 2026-05-22 live check: E3 coach power restored by Stadler — nv6-E3-v8-148 now on<br>4734-116 (Fzg 16) (10.179.3.1) — initial visit — CCU IP from control sheet 2026-05-21 (sheet: Done, v7/6.10.0, NC<br>4734-101 (Fzg 1) (10.179.4.1) — wait for Stadler on register #1 (re-patch E↔B trunk)<br>4734-103 (Fzg 3) (10.179.5.1) — initial visit — CCU IP from control sheet 2026-05-21 (sheet: Done, v2/6.10.0, NC<br>4736-108 (Fzg 136) (10.179.8.1) — 2026-06-08 sess 0900Z: OBN 10/10 persisted (run1/551) ✅, train_id=136 ✅, vlan7 1<br>4736-104 (Fzg 132) (10.179.10.1) — 2026-05-21 13:00Z /dosto-orchestrate: D4 SWITCH group recovered today (was 15/18<br>4736-103 (Fzg 131) (10.179.11.1) — reboot to activate run3 (8/8 OBN persisted); push AP fw 6.10.0-0→6.11.2-0 after <br>4736-119 (Fzg 147) (10.179.12.1) — 2026-05-22 verified live: 18/18 sw v8-147 fw 7.4.2 ✅, 24/24 APs 6.11.2-0 ✅, vlan<br>4734-117 (Fzg 17) (10.179.14.1) — initial visit — CCU IP from control sheet 2026-05-21 (sheet: Done, v7/6.10.0, NC<br>4736-116 (Fzg 144) (10.179.16.1) — 2026-06-09 re-probe: the 3 previously-"deferred" APs (.231 .234 .228) are ALL no<br>4706-103 (Fzg 191) (10.179.17.1) — pre-flight 2026-05-22 sess 0834: 0 sw / 0 AP on vlan100 — consist offline; not d<br>4736-115 (Fzg 143) (10.179.18.1) — 2026-06-08 sess 0900Z: 18/18 sw nv6-X-v8-143 fw 7.4.2 ✅, OBN 8/8 ✅, vlan7 172.19<br>4736-106 (Fzg 134) (10.179.19.1) — confirm v8 state — pre-flight 2026-05-28: HARD-FAIL sw 5/18 + ap 0/24 visible on<br>4736-118 (Fzg 146) (10.179.21.1) — pre-flight 2026-05-29: CCU unreachable on TCP/22 + ICMP — skipped this dispatch.<br>4736-113 (Fzg 141) (10.179.22.1) — 2026-06-15: identified via fleet-wide live sweep (was box=❓). v8 + hardcoded lit<br>4736-110 (Fzg 138) (10.179.23.1) — 2026-05-22 verified live: 18/18 sw v8-138 fw 7.4.2 ✅, 24/24 APs 6.11.2-0 ✅, snap<br>4736-111 (Fzg 139) (10.179.24.1) — 2026-05-22 verified live: 18/18 sw v8-139 fw 7.4.2 ✅, 24/24 APs 6.11.2-0 ✅ (incl<br>4736-109 (Fzg 137) (10.179.28.1) — 2026-06-08 sess 0900Z + bug11 follow-up: OBN now 11/11 (bug11 westermo-fw-verify<br>4734-108 (Fzg 8) (10.179.29.1) — 2026-05-22 sess 1212Z DONE-PARTIAL: (1) Recovered 2 stuck AP3s via A3/E3 e0-4 po<br>4734-105 (Fzg 5) (10.179.30.1) — initial visit<br>4736-117 (Fzg 145) (10.179.32.1) — 2026-05-29 0625Z initial visit + clean-fabric verification (Abbas): CCU 2-min up<br>4734-110 (Fzg 10) (10.179.36.1) — initial visit — CCU IP from control sheet 2026-05-21 (sheet: Done, v6/6.10.0, NC<br>4734-112 (Fzg 12) (10.179.37.1) — 2026-06-08 sess 0900Z: 12/12 sw v8-012 fw 7.4.2 ✅, OBN 9/9 (run2/id333) ✅, vlan7<br>4734-109 (Fzg 9) (10.179.38.1) — 2026-06-08 sess 1155Z: manual TFTP/SNMP bypass pushed v8-009 to 11/12 switches (<br>4734-111 (Fzg 11) (10.179.39.1) — 2026-05-22 sess 0951Z DONE: Gate 4 obn_update_f approved 10:05Z. nohup serial AP<br>4736-112 (Fzg 140) (10.179.40.1) — 2026-06-09 AR: CCU IP confirmed 10.179.40.1 (box1-t40); engineer confirmed true <br>4705-103 (Fzg 231) (10.179.41.1) — **2026-05-22 sess 0834: orchestrator pre-flight blocked — dosto-commission-train<br>4705-101 (Fzg 229) (10.179.42.1) — **2026-05-22 sess 0834: orchestrator pre-flight blocked — dosto-commission-train<br>4705-102 (Fzg 230) (10.179.43.1) — sheet Done; initial visit<br>4734-114 (Fzg 14) (10.179.44.1) — 2026-06-08 sess 0900Z: 12/12 sw v8-014 fw 7.4.2 ✅, OBN 10/10 (run1/328) ✅, vlan7<br>4734-119 (Fzg 19) (10.179.45.1) — done — 16/16 APs ✅, 12/12 sw ✅, vlan7 ✅. vlan7 172.19.150.130/17 is train_id-45 <br>4734-113 (Fzg 13) (10.179.46.1) — 2026-05-22 live probe: 12/12 sw on vlan100 ✅, vlan7 172.19.134.130/17 ✅, FW ARP <br>4736-102 (Fzg 130) (10.179.47.1) — 2026-05-21 /dosto-orchestrate: Gate 1 (bug9 fold-in) + Gate 2 (safe_reboot) appr<br>4734-118 (Fzg 18) (10.179.48.1) — initial visit — CCU IP from control sheet 2026-05-21 (sheet: Done, v6/6.10.0, NC<br>4734-120 (Fzg 20) (10.179.49.1) — done — 12/12 sw + 16/16 APs ✅, vlan7 ✅. State-inventory OBN 3/8 = false-negative<br>4734-121 (Fzg 21) (10.179.50.1) — done — 8/8 OBN markers confirmed (run2/id297); state-inventory 4/8 was false-neg<br>4734-122 (Fzg 22) (10.179.53.1) — 2026-06-09 re-probe (CCU rebooted, uptime 22min, runtime patches WIPED): 12/12 s<br>4734-190 (Fzg 90) (10.179.54.1) — 2026-06-02: UNBLOCKED. G2 e0-0 trunk now CONNECTED (LLDP: G2 e0-0 → nv4-G3-v8-09<br>4734-115 (Fzg 15) (10.179.61.1) — 2026-06-08 sess 0900Z: 12/12 sw nv4-XX-v8-015 fw 7.4.2 ✅ (orchestrator drove las<br>4734-123 (Fzg 23) (10.179.67.1) — 2026-06-10 sess (AR): single-promote chroot → run2 (subvolid 300), rebooted, ver</div>
 </details>
 
-</div></body></html>
+</div>
+<script>
+(function() {
+  function cellKey(td) {
+    if (td.dataset.sort !== undefined) return td.dataset.sort;
+    return (td.textContent || '').trim();
+  }
+  function ipKey(s) {
+    var m = s.match(/(\d+)\.(\d+)\.(\d+)\.(\d+)/);
+    if (!m) return null;
+    return ((+m[1])*16777216 + (+m[2])*65536 + (+m[3])*256 + (+m[4]));
+  }
+  function numKey(s) {
+    var m = s.match(/-?\d+(?:\.\d+)?/);
+    return m ? parseFloat(m[0]) : null;
+  }
+  function compare(a, b) {
+    var ipA = ipKey(a), ipB = ipKey(b);
+    if (ipA !== null && ipB !== null) return ipA - ipB;
+    var nA = numKey(a), nB = numKey(b);
+    if (nA !== null && nB !== null) return nA - nB;
+    return a.localeCompare(b, undefined, {numeric:true, sensitivity:'base'});
+  }
+  document.querySelectorAll('table.sortable').forEach(function(table) {
+    var ths = table.querySelectorAll('thead th');
+    ths.forEach(function(th, idx) {
+      th.addEventListener('click', function() {
+        var asc = !th.classList.contains('sort-asc');
+        ths.forEach(function(o) { o.classList.remove('sort-asc','sort-desc'); });
+        th.classList.add(asc ? 'sort-asc' : 'sort-desc');
+        var tbody = table.tBodies[0];
+        var rows = Array.from(tbody.rows);
+        rows.sort(function(r1, r2) {
+          var c = compare(cellKey(r1.cells[idx]), cellKey(r2.cells[idx]));
+          return asc ? c : -c;
+        });
+        rows.forEach(function(r) { tbody.appendChild(r); });
+      });
+    });
+  });
+})();
+</script>
+</body></html>
