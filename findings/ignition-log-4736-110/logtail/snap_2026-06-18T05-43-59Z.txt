@@ -1,0 +1,86 @@
+##### LOGTAIL SNAPSHOT 2026-06-18T05-43-59Z (boot=ef3dc94c-6332-4bd2-9ceb-840b15bbbafc) #####
+----- uptime / loadavg -----
+495.15 5500.68
+1.02 0.91 0.58 2/966 40776
+----- dmesg tail (last 40) -----
+[  189.868520] warning: `/usr/bin/fping' has both setuid-root and effective capabilities. Therefore not raising all capabilities.
+[  191.509236] ndktun: t23 u1 l2: No route to 77.237.62.210, error -101
+[  191.765235] ndktun: t23 u1 l2: No route to 77.237.62.210, error -101
+[  192.025233] ndktun: t23 u1 l2: No route to 77.237.62.210, error -101
+[  192.309234] ndktun: t23 u1 l2: No route to 77.237.62.210, error -101
+[  192.565233] ndktun: t23 u1 l2: No route to 77.237.62.210, error -101
+[  197.357740] audit: type=1400 audit(1781761141.367:117): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-pmWSwQTtSP" pid=1052 comm="isc-net-0007" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  197.357748] audit: type=1400 audit(1781761141.367:118): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-RssMWGaHFO" pid=1052 comm="isc-net-0002" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  197.357763] audit: type=1400 audit(1781761141.367:119): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-eigY5AhBVA" pid=1052 comm="isc-net-0006" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  197.357808] audit: type=1400 audit(1781761141.367:120): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-s76sui9UGq" pid=1052 comm="isc-net-0004" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  197.357853] audit: type=1400 audit(1781761141.367:121): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-sxaOICSyR0" pid=1052 comm="isc-net-0009" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  197.358981] audit: type=1400 audit(1781761141.367:122): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-wcu1NydZr0" pid=1052 comm="isc-net-0000" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  197.360605] audit: type=1400 audit(1781761141.367:123): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-apIofV47Oh" pid=1052 comm="isc-net-0005" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  200.496088] ndktun: t23 u1 l4: Link address updated: IPv4: 10.5.169.146:57157, IPv6: NONE
+[  200.496099] ndktun: Buffer set to 64 on mar5-tun:4
+[  224.053234] ndktun: t23 u1 l4: No route to 77.237.62.210, error -101
+[  224.313236] ndktun: t23 u1 l4: No route to 77.237.62.210, error -101
+[  224.601234] ndktun: t23 u1 l4: No route to 77.237.62.210, error -101
+[  224.885235] ndktun: t23 u1 l4: No route to 77.237.62.210, error -101
+[  225.141235] ndktun: t23 u1 l4: No route to 77.237.62.210, error -101
+[  229.617123] audit: type=1400 audit(1781761173.623:124): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-gD9umc9Yxn" pid=1052 comm="isc-net-0004" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  229.617131] audit: type=1400 audit(1781761173.623:125): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-kZRBS1b9ad" pid=1052 comm="isc-net-0007" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  229.617135] audit: type=1400 audit(1781761173.623:126): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-s7mZoDd2nd" pid=1052 comm="isc-net-0010" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  229.617149] audit: type=1400 audit(1781761173.623:127): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-8MqwmifDui" pid=1052 comm="isc-net-0011" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  229.617176] audit: type=1400 audit(1781761173.623:128): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-OIOp8Q1Jja" pid=1052 comm="isc-net-0001" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  229.617907] audit: type=1400 audit(1781761173.627:129): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-BM74lIagJw" pid=1052 comm="isc-net-0001" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  229.618798] audit: type=1400 audit(1781761173.627:130): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-hVrWAMtTfJ" pid=1052 comm="isc-net-0007" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  232.641202] ndktun: t23 u1 l2: Link address updated: IPv4: 10.26.234.63:38682, IPv6: NONE
+[  261.776027] audit: type=1400 audit(1781761205.783:131): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-vfMrjH9xDs" pid=1052 comm="isc-net-0005" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  261.777275] audit: type=1400 audit(1781761205.787:132): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-MO5pLXuy26" pid=1052 comm="isc-net-0010" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  261.777320] audit: type=1400 audit(1781761205.787:133): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-hq62xxCSRf" pid=1052 comm="isc-net-0008" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  261.777384] audit: type=1400 audit(1781761205.787:134): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-39MqGV7bgf" pid=1052 comm="isc-net-0011" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  261.777670] audit: type=1400 audit(1781761205.787:135): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-qXkL4SIqp0" pid=1052 comm="isc-net-0001" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  261.777674] audit: type=1400 audit(1781761205.787:136): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-Rixfz4WC45" pid=1052 comm="isc-net-0000" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  261.780660] audit: type=1400 audit(1781761205.787:137): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-GxwGkgstaG" pid=1052 comm="isc-net-0001" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  261.801106] audit: type=1400 audit(1781761205.807:138): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-lLY7LZ0sj9" pid=1052 comm="isc-net-0009" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  261.801933] audit: type=1400 audit(1781761205.811:139): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-mkioWhk1yH" pid=1052 comm="isc-net-0000" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  261.802803] audit: type=1400 audit(1781761205.811:140): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-aYs4Zow6u4" pid=1052 comm="isc-net-0006" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  264.806504] ndktun: t23 u1 l4: Link address updated: IPv4: 10.188.124.23:51753, IPv6: NONE
+[  480.412355] ath10k_pci 0000:10:00.0: pdev param 0 not supported by firmware
+----- journal priority<=4 (warn+), last 40 this boot -----
+Jun 18 05:39:54 box1-t23 NetworkManager[859]: <warn>  [1781761194.0084] device (enp19s0f2): Activation: failed for connection 'Wired connection 4'
+Jun 18 05:39:54 box1-t23 NetworkManager[859]: <warn>  [1781761194.0089] device (enp19s0f0): Activation: failed for connection 'Wired connection 2'
+Jun 18 05:39:54 box1-t23 NetworkManager[859]: <warn>  [1781761194.0094] device (enp19s0f1): Activation: failed for connection 'Wired connection 3'
+Jun 18 05:40:01 box1-t23 systemd[1]: nd-systemtest.service: Failed with result 'exit-code'.
+Jun 18 05:40:05 box1-t23 NetworkManager[859]: <warn>  [1781761205.4681] modem-broadband[cdc-wdm2]: failed to connect modem: QMI protocol error (70): 'InvalidOperation'
+Jun 18 05:40:05 box1-t23 NetworkManager[859]: <warn>  [1781761205.4687] device (cdc-wdm2): Activation: failed for connection 'ce2p0-1'
+Jun 18 05:40:05 box1-t23 systemd[1]: isc-dhcp-server.service: Found left-over process 18220 (dhcpd) in control group while starting unit. Ignoring.
+Jun 18 05:40:05 box1-t23 systemd[1]: This usually indicates unclean termination of a previous run, or service implementation deficiencies.
+Jun 18 05:40:21 box1-t23 NetworkManager[859]: <warn>  [1781761221.5000] modem-broadband[cdc-wdm2]: failed to connect modem: QMI protocol error (70): 'InvalidOperation'
+Jun 18 05:40:21 box1-t23 NetworkManager[859]: <warn>  [1781761221.5007] device (cdc-wdm2): Activation: failed for connection 'ce2p0-1'
+Jun 18 05:40:37 box1-t23 NetworkManager[859]: <warn>  [1781761237.2431] modem-broadband[cdc-wdm2]: failed to connect modem: QMI protocol error (70): 'InvalidOperation'
+Jun 18 05:40:37 box1-t23 NetworkManager[859]: <warn>  [1781761237.2440] device (cdc-wdm2): Activation: failed for connection 'ce2p0-1'
+Jun 18 05:40:53 box1-t23 NetworkManager[859]: <warn>  [1781761253.0827] modem-broadband[cdc-wdm2]: failed to connect modem: QMI protocol error (70): 'InvalidOperation'
+Jun 18 05:40:53 box1-t23 NetworkManager[859]: <warn>  [1781761253.0831] device (cdc-wdm2): Activation: failed for connection 'ce2p0-1'
+Jun 18 05:41:06 box1-t23 systemd[1]: nd-systemtest.service: Failed with result 'exit-code'.
+Jun 18 05:41:08 box1-t23 NetworkManager[859]: <warn>  [1781761268.8282] modem-broadband[cdc-wdm2]: failed to connect modem: QMI protocol error (70): 'InvalidOperation'
+Jun 18 05:41:08 box1-t23 NetworkManager[859]: <warn>  [1781761268.8292] device (cdc-wdm2): Activation: failed for connection 'ce2p0-1'
+Jun 18 05:41:24 box1-t23 NetworkManager[859]: <warn>  [1781761284.6350] modem-broadband[cdc-wdm2]: failed to connect modem: QMI protocol error (70): 'InvalidOperation'
+Jun 18 05:41:24 box1-t23 NetworkManager[859]: <warn>  [1781761284.6356] device (cdc-wdm2): Activation: failed for connection 'ce2p0-1'
+Jun 18 05:41:40 box1-t23 NetworkManager[859]: <warn>  [1781761300.3792] modem-broadband[cdc-wdm2]: failed to connect modem: QMI protocol error (70): 'InvalidOperation'
+Jun 18 05:41:40 box1-t23 NetworkManager[859]: <warn>  [1781761300.3797] device (cdc-wdm2): Activation: failed for connection 'ce2p0-1'
+Jun 18 05:41:56 box1-t23 NetworkManager[859]: <warn>  [1781761316.5067] modem-broadband[cdc-wdm2]: failed to connect modem: QMI protocol error (70): 'InvalidOperation'
+Jun 18 05:41:56 box1-t23 NetworkManager[859]: <warn>  [1781761316.5074] device (cdc-wdm2): Activation: failed for connection 'ce2p0-1'
+Jun 18 05:42:08 box1-t23 systemd[1]: nd-systemtest.service: Failed with result 'exit-code'.
+Jun 18 05:42:12 box1-t23 NetworkManager[859]: <warn>  [1781761332.2507] modem-broadband[cdc-wdm2]: failed to connect modem: QMI protocol error (70): 'InvalidOperation'
+Jun 18 05:42:12 box1-t23 NetworkManager[859]: <warn>  [1781761332.2517] device (cdc-wdm2): Activation: failed for connection 'ce2p0-1'
+Jun 18 05:42:27 box1-t23 NetworkManager[859]: <warn>  [1781761347.9939] modem-broadband[cdc-wdm2]: failed to connect modem: QMI protocol error (70): 'InvalidOperation'
+Jun 18 05:42:27 box1-t23 NetworkManager[859]: <warn>  [1781761347.9948] device (cdc-wdm2): Activation: failed for connection 'ce2p0-1'
+Jun 18 05:42:43 box1-t23 NetworkManager[859]: <warn>  [1781761363.7392] modem-broadband[cdc-wdm2]: failed to connect modem: QMI protocol error (70): 'InvalidOperation'
+Jun 18 05:42:43 box1-t23 NetworkManager[859]: <warn>  [1781761363.7398] device (cdc-wdm2): Activation: failed for connection 'ce2p0-1'
+Jun 18 05:42:59 box1-t23 NetworkManager[859]: <warn>  [1781761379.4821] modem-broadband[cdc-wdm2]: failed to connect modem: QMI protocol error (70): 'InvalidOperation'
+Jun 18 05:42:59 box1-t23 NetworkManager[859]: <warn>  [1781761379.4829] device (cdc-wdm2): Activation: failed for connection 'ce2p0-1'
+Jun 18 05:43:08 box1-t23 systemd[1]: nd-systemtest.service: Failed with result 'exit-code'.
+Jun 18 05:43:15 box1-t23 NetworkManager[859]: <warn>  [1781761395.6103] modem-broadband[cdc-wdm2]: failed to connect modem: QMI protocol error (70): 'InvalidOperation'
+Jun 18 05:43:15 box1-t23 NetworkManager[859]: <warn>  [1781761395.6113] device (cdc-wdm2): Activation: failed for connection 'ce2p0-1'
+Jun 18 05:43:31 box1-t23 NetworkManager[859]: <warn>  [1781761411.4187] modem-broadband[cdc-wdm2]: failed to connect modem: QMI protocol error (70): 'InvalidOperation'
+Jun 18 05:43:31 box1-t23 NetworkManager[859]: <warn>  [1781761411.4195] device (cdc-wdm2): Activation: failed for connection 'ce2p0-1'
+Jun 18 05:43:44 box1-t23 kernel: ath10k_pci 0000:10:00.0: pdev param 0 not supported by firmware
+Jun 18 05:43:47 box1-t23 NetworkManager[859]: <warn>  [1781761427.1621] modem-broadband[cdc-wdm2]: failed to connect modem: QMI protocol error (70): 'InvalidOperation'
+Jun 18 05:43:47 box1-t23 NetworkManager[859]: <warn>  [1781761427.1629] device (cdc-wdm2): Activation: failed for connection 'ce2p0-1'

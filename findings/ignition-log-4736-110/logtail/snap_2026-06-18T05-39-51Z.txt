@@ -1,0 +1,86 @@
+##### LOGTAIL SNAPSHOT 2026-06-18T05-39-51Z (boot=ef3dc94c-6332-4bd2-9ceb-840b15bbbafc) #####
+----- uptime / loadavg -----
+247.42 2667.93
+1.15 1.21 0.56 2/976 20066
+----- dmesg tail (last 40) -----
+[  176.393251] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[  176.401239] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[  176.409243] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[  176.417232] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[  176.429235] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[  176.437236] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[  176.437244] bond0: (slave lan0): invalid new link 1 on slave
+[  176.649309] bond0: (slave lan0): link status definitely down, disabling slave
+[  180.870246] i40e 0000:09:00.0 lan0: NIC Link is Up, 10 Gbps Full Duplex, Flow Control: None
+[  180.961240] bond0: (slave lan0): link status up, enabling it in 200 ms
+[  180.961249] bond0: (slave lan0): invalid new link 3 on slave
+[  181.173322] bond0: (slave lan0): link status definitely up, 10000 Mbps full duplex
+[  189.868520] warning: `/usr/bin/fping' has both setuid-root and effective capabilities. Therefore not raising all capabilities.
+[  191.509236] ndktun: t23 u1 l2: No route to 77.237.62.210, error -101
+[  191.765235] ndktun: t23 u1 l2: No route to 77.237.62.210, error -101
+[  192.025233] ndktun: t23 u1 l2: No route to 77.237.62.210, error -101
+[  192.309234] ndktun: t23 u1 l2: No route to 77.237.62.210, error -101
+[  192.565233] ndktun: t23 u1 l2: No route to 77.237.62.210, error -101
+[  197.357740] audit: type=1400 audit(1781761141.367:117): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-pmWSwQTtSP" pid=1052 comm="isc-net-0007" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  197.357748] audit: type=1400 audit(1781761141.367:118): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-RssMWGaHFO" pid=1052 comm="isc-net-0002" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  197.357763] audit: type=1400 audit(1781761141.367:119): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-eigY5AhBVA" pid=1052 comm="isc-net-0006" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  197.357808] audit: type=1400 audit(1781761141.367:120): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-s76sui9UGq" pid=1052 comm="isc-net-0004" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  197.357853] audit: type=1400 audit(1781761141.367:121): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-sxaOICSyR0" pid=1052 comm="isc-net-0009" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  197.358981] audit: type=1400 audit(1781761141.367:122): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-wcu1NydZr0" pid=1052 comm="isc-net-0000" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  197.360605] audit: type=1400 audit(1781761141.367:123): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-apIofV47Oh" pid=1052 comm="isc-net-0005" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  200.496088] ndktun: t23 u1 l4: Link address updated: IPv4: 10.5.169.146:57157, IPv6: NONE
+[  200.496099] ndktun: Buffer set to 64 on mar5-tun:4
+[  224.053234] ndktun: t23 u1 l4: No route to 77.237.62.210, error -101
+[  224.313236] ndktun: t23 u1 l4: No route to 77.237.62.210, error -101
+[  224.601234] ndktun: t23 u1 l4: No route to 77.237.62.210, error -101
+[  224.885235] ndktun: t23 u1 l4: No route to 77.237.62.210, error -101
+[  225.141235] ndktun: t23 u1 l4: No route to 77.237.62.210, error -101
+[  229.617123] audit: type=1400 audit(1781761173.623:124): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-gD9umc9Yxn" pid=1052 comm="isc-net-0004" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  229.617131] audit: type=1400 audit(1781761173.623:125): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-kZRBS1b9ad" pid=1052 comm="isc-net-0007" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  229.617135] audit: type=1400 audit(1781761173.623:126): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-s7mZoDd2nd" pid=1052 comm="isc-net-0010" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  229.617149] audit: type=1400 audit(1781761173.623:127): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-8MqwmifDui" pid=1052 comm="isc-net-0011" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  229.617176] audit: type=1400 audit(1781761173.623:128): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-OIOp8Q1Jja" pid=1052 comm="isc-net-0001" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  229.617907] audit: type=1400 audit(1781761173.627:129): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-BM74lIagJw" pid=1052 comm="isc-net-0001" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  229.618798] audit: type=1400 audit(1781761173.627:130): apparmor="DENIED" operation="mknod" profile="named" name="/run/bind/tmp-hVrWAMtTfJ" pid=1052 comm="isc-net-0007" requested_mask="c" denied_mask="c" fsuid=107 ouid=107
+[  232.641202] ndktun: t23 u1 l2: Link address updated: IPv4: 10.26.234.63:38682, IPv6: NONE
+----- journal priority<=4 (warn+), last 40 this boot -----
+Jun 18 05:37:51 box1-t23 ntpd[1239]: IO: unable to create socket on veth5ac68c8 (29) for fe80::18f1:44ff:fe6f:694d%25#123
+Jun 18 05:37:57 box1-t23 NetworkManager[859]: <warn>  [1781761077.9285] device (cdc-wdm0): retrieving IP configuration failed: modem IP method unsupported
+Jun 18 05:37:58 box1-t23 systemd[1]: isc-dhcp-server.service: Found left-over process 4584 (dhcpd) in control group while starting unit. Ignoring.
+Jun 18 05:37:58 box1-t23 systemd[1]: This usually indicates unclean termination of a previous run, or service implementation deficiencies.
+Jun 18 05:37:58 box1-t23 systemd[1]: nd-systemtest.service: Failed with result 'exit-code'.
+Jun 18 05:38:24 box1-t23 NetworkManager[859]: <warn>  [1781761104.0080] device (enp19s0f3): Activation: failed for connection 'Wired connection 5'
+Jun 18 05:38:24 box1-t23 NetworkManager[859]: <warn>  [1781761104.0084] device (enp19s0f2): Activation: failed for connection 'Wired connection 4'
+Jun 18 05:38:24 box1-t23 NetworkManager[859]: <warn>  [1781761104.0087] device (enp19s0f0): Activation: failed for connection 'Wired connection 2'
+Jun 18 05:38:24 box1-t23 NetworkManager[859]: <warn>  [1781761104.0090] device (enp19s0f1): Activation: failed for connection 'Wired connection 3'
+Jun 18 05:38:29 box1-t23 NetworkManager[859]: <warn>  [1781761109.0737] device (cdc-wdm1): retrieving IP configuration failed: modem IP method unsupported
+Jun 18 05:38:29 box1-t23 systemd[1]: isc-dhcp-server.service: Found left-over process 6671 (dhcpd) in control group while starting unit. Ignoring.
+Jun 18 05:38:29 box1-t23 systemd[1]: This usually indicates unclean termination of a previous run, or service implementation deficiencies.
+Jun 18 05:38:34 box1-t23 kernel: bond0: (slave lan1): invalid new link 1 on slave
+Jun 18 05:38:38 box1-t23 kernel: bond0: (slave lan1): invalid new link 3 on slave
+Jun 18 05:38:40 box1-t23 kernel: bond0: (slave lan0): invalid new link 1 on slave
+Jun 18 05:38:44 box1-t23 kernel: bond0: (slave lan0): invalid new link 3 on slave
+Jun 18 05:38:45 box1-t23 NetworkManager[859]: <warn>  [1781761125.3714] modem-broadband[cdc-wdm2]: failed to connect modem: QMI protocol error (70): 'InvalidOperation'
+Jun 18 05:38:45 box1-t23 NetworkManager[859]: <warn>  [1781761125.3719] device (cdc-wdm2): Activation: failed for connection 'ce2p0-1'
+Jun 18 05:38:48 box1-t23 systemd[1]: nd-telit-fn990-disable-hotswap.service: Failed with result 'exit-code'.
+Jun 18 05:38:55 box1-t23 NetworkManager[859]: <warn>  [1781761135.2464] device (cdc-wdm1): Activation: failed for connection 'ce1p0-4'
+Jun 18 05:38:58 box1-t23 systemd[1]: nd-systemtest.service: Failed with result 'exit-code'.
+Jun 18 05:39:01 box1-t23 NetworkManager[859]: <warn>  [1781761141.1484] modem-broadband[cdc-wdm2]: failed to connect modem: QMI protocol error (70): 'InvalidOperation'
+Jun 18 05:39:01 box1-t23 NetworkManager[859]: <warn>  [1781761141.1491] device (cdc-wdm2): Activation: failed for connection 'ce2p0-1'
+Jun 18 05:39:01 box1-t23 NetworkManager[859]: <warn>  [1781761141.3232] device (cdc-wdm3): retrieving IP configuration failed: modem IP method unsupported
+Jun 18 05:39:01 box1-t23 systemd[1]: isc-dhcp-server.service: Found left-over process 9137 (dhcpd) in control group while starting unit. Ignoring.
+Jun 18 05:39:01 box1-t23 systemd[1]: This usually indicates unclean termination of a previous run, or service implementation deficiencies.
+Jun 18 05:39:09 box1-t23 NetworkManager[859]: <warn>  [1781761149.0097] device (enp19s0f3): Activation: failed for connection 'Wired connection 5'
+Jun 18 05:39:09 box1-t23 NetworkManager[859]: <warn>  [1781761149.0105] device (enp19s0f2): Activation: failed for connection 'Wired connection 4'
+Jun 18 05:39:09 box1-t23 NetworkManager[859]: <warn>  [1781761149.0113] device (enp19s0f0): Activation: failed for connection 'Wired connection 2'
+Jun 18 05:39:09 box1-t23 NetworkManager[859]: <warn>  [1781761149.0121] device (enp19s0f1): Activation: failed for connection 'Wired connection 3'
+Jun 18 05:39:17 box1-t23 NetworkManager[859]: <warn>  [1781761157.0836] modem-broadband[cdc-wdm2]: failed to connect modem: QMI protocol error (70): 'InvalidOperation'
+Jun 18 05:39:17 box1-t23 NetworkManager[859]: <warn>  [1781761157.0845] device (cdc-wdm2): Activation: failed for connection 'ce2p0-1'
+Jun 18 05:39:27 box1-t23 NetworkManager[859]: <warn>  [1781761167.8134] device (cdc-wdm3): Activation: failed for connection 'ce3p0-4'
+Jun 18 05:39:32 box1-t23 NetworkManager[859]: <warn>  [1781761172.8599] modem-broadband[cdc-wdm2]: failed to connect modem: QMI protocol error (70): 'InvalidOperation'
+Jun 18 05:39:32 box1-t23 NetworkManager[859]: <warn>  [1781761172.8607] device (cdc-wdm2): Activation: failed for connection 'ce2p0-1'
+Jun 18 05:39:33 box1-t23 NetworkManager[859]: <warn>  [1781761173.5870] device (cdc-wdm1): retrieving IP configuration failed: modem IP method unsupported
+Jun 18 05:39:33 box1-t23 systemd[1]: isc-dhcp-server.service: Found left-over process 14723 (dhcpd) in control group while starting unit. Ignoring.
+Jun 18 05:39:33 box1-t23 systemd[1]: This usually indicates unclean termination of a previous run, or service implementation deficiencies.
+Jun 18 05:39:49 box1-t23 NetworkManager[859]: <warn>  [1781761189.3398] modem-broadband[cdc-wdm2]: failed to connect modem: QMI protocol error (70): 'InvalidOperation'
+Jun 18 05:39:49 box1-t23 NetworkManager[859]: <warn>  [1781761189.3406] device (cdc-wdm2): Activation: failed for connection 'ce2p0-1'

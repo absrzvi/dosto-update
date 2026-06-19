@@ -1,0 +1,86 @@
+##### LOGTAIL SNAPSHOT 2026-06-18T05-36-48Z (boot=ef3dc94c-6332-4bd2-9ceb-840b15bbbafc) #####
+----- uptime / loadavg -----
+64.32 699.25
+2.24 0.68 0.24 16/287 839
+----- dmesg tail (last 40) -----
+[   62.977609] intel_rapl_common: Found RAPL domain uncore
+[   62.977611] intel_rapl_common: Found RAPL domain psys
+[   63.079268] ath10k_pci 0000:10:00.0: firmware: failed to load ath10k/pre-cal-pci-0000:10:00.0.bin (-2)
+[   63.088611] ath10k_pci 0000:10:00.0: firmware: failed to load ath10k/pre-cal-pci-0000:10:00.0.bin (-2)
+[   63.097953] ath10k_pci 0000:10:00.0: firmware: failed to load ath10k/cal-pci-0000:10:00.0.bin (-2)
+[   63.106933] ath10k_pci 0000:10:00.0: firmware: failed to load ath10k/cal-pci-0000:10:00.0.bin (-2)
+[   63.116186] ath10k_pci 0000:10:00.0: firmware: failed to load ath10k/QCA988X/hw2.0/firmware-6.bin (-2)
+[   63.125510] ath10k_pci 0000:10:00.0: firmware: failed to load ath10k/QCA988X/hw2.0/firmware-6.bin (-2)
+[   63.135899] ath10k_pci 0000:10:00.0: firmware: direct-loading firmware ath10k/QCA988X/hw2.0/firmware-5.bin
+[   63.135906] ath10k_pci 0000:10:00.0: qca988x hw2.0 target 0x4100016c chip_id 0x043222ff sub 0000:0000
+[   63.135909] ath10k_pci 0000:10:00.0: kconfig debug 0 debugfs 0 tracing 0 dfs 0 testmode 0
+[   63.136093] ath10k_pci 0000:10:00.0: firmware ver 10.2.4-1.0-00047 api 5 features no-p2p,raw-mode,mfp,allows-mesh-bcast crc32 35bd9258
+[   63.169354] ath10k_pci 0000:10:00.0: firmware: failed to load ath10k/QCA988X/hw2.0/board-2.bin (-2)
+[   63.178428] ath10k_pci 0000:10:00.0: firmware: failed to load ath10k/QCA988X/hw2.0/board-2.bin (-2)
+[   63.187500] ath10k_pci 0000:10:00.0: firmware: failed to load ath10k/QCA988X/hw2.0/board-pci-0000:10:00.0.bin (-2)
+[   63.197858] ath10k_pci 0000:10:00.0: firmware: failed to load ath10k/QCA988X/hw2.0/board-pci-0000:10:00.0.bin (-2)
+[   63.208263] ath10k_pci 0000:10:00.0: firmware: direct-loading firmware ath10k/QCA988X/hw2.0/board.bin
+[   63.208268] ath10k_pci 0000:10:00.0: board_file api 1 bmi_id N/A crc32 bebc7c08
+[   63.316959] audit: type=1400 audit(1781761007.051:2): apparmor="STATUS" operation="profile_load" profile="unconfined" name="lsb_release" pid=648 comm="apparmor_parser"
+[   63.317453] audit: type=1400 audit(1781761007.051:3): apparmor="STATUS" operation="profile_load" profile="unconfined" name="nvidia_modprobe" pid=649 comm="apparmor_parser"
+[   63.317458] audit: type=1400 audit(1781761007.051:4): apparmor="STATUS" operation="profile_load" profile="unconfined" name="nvidia_modprobe//kmod" pid=649 comm="apparmor_parser"
+[   63.317578] audit: type=1400 audit(1781761007.051:5): apparmor="STATUS" operation="profile_load" profile="unconfined" name="/usr/bin/man" pid=651 comm="apparmor_parser"
+[   63.317582] audit: type=1400 audit(1781761007.051:6): apparmor="STATUS" operation="profile_load" profile="unconfined" name="man_filter" pid=651 comm="apparmor_parser"
+[   63.317585] audit: type=1400 audit(1781761007.051:7): apparmor="STATUS" operation="profile_load" profile="unconfined" name="man_groff" pid=651 comm="apparmor_parser"
+[   63.317960] audit: type=1400 audit(1781761007.051:8): apparmor="STATUS" operation="profile_load" profile="unconfined" name="named" pid=655 comm="apparmor_parser"
+[   63.318021] audit: type=1400 audit(1781761007.051:9): apparmor="STATUS" operation="profile_load" profile="unconfined" name="/usr/sbin/dhcpd" pid=653 comm="apparmor_parser"
+[   63.318562] audit: type=1400 audit(1781761007.051:10): apparmor="STATUS" operation="profile_load" profile="unconfined" name="/usr/sbin/gpsd" pid=654 comm="apparmor_parser"
+[   63.319627] audit: type=1400 audit(1781761007.051:11): apparmor="STATUS" operation="profile_load" profile="unconfined" name="/usr/sbin/ntpd" pid=656 comm="apparmor_parser"
+[   63.552283] i915 0000:00:02.0: [drm] failed to retrieve link info, disabling eDP
+[   63.857763] [drm] Initialized i915 1.6.0 20201103 for 0000:00:02.0 on minor 0
+[   63.859111] ACPI: video: Video Device [GFX0] (multi-head: yes  rom: no  post: no)
+[   63.859756] input: Video Bus as /devices/LNXSYSTM:00/LNXSYBUS:00/PNP0A08:00/LNXVIDEO:00/input/input4
+[   63.859854] snd_hda_intel 0000:00:1f.3: bound 0000:00:02.0 (ops i915_audio_component_bind_ops [i915])
+[   63.868730] i915 0000:00:02.0: [drm] Cannot find any crtc or sizes
+[   63.891429] i915 0000:00:02.0: [drm] Cannot find any crtc or sizes
+[   63.891494] i915 0000:00:02.0: [drm] Cannot find any crtc or sizes
+[   63.926215] input: HDA Intel PCH HDMI/DP,pcm=3 as /devices/pci0000:00/0000:00:1f.3/sound/card0/input5
+[   63.926274] input: HDA Intel PCH HDMI/DP,pcm=7 as /devices/pci0000:00/0000:00:1f.3/sound/card0/input6
+[   63.926327] input: HDA Intel PCH HDMI/DP,pcm=8 as /devices/pci0000:00/0000:00:1f.3/sound/card0/input7
+[   63.926375] input: HDA Intel PCH HDMI/DP,pcm=9 as /devices/pci0000:00/0000:00:1f.3/sound/card0/input8
+----- journal priority<=4 (warn+), last 40 this boot -----
+Jun 18 05:36:46 box1-t23 kernel: xhci_hcd: probe of 0000:0c:00.0 failed with error -110
+Jun 18 05:36:46 box1-t23 kernel: xhci_hcd 0000:0e:00.0: can't setup: -110
+Jun 18 05:36:46 box1-t23 kernel: xhci_hcd 0000:0e:00.0: init 0000:0e:00.0 fail, -110
+Jun 18 05:36:46 box1-t23 kernel: xhci_hcd: probe of 0000:0e:00.0 failed with error -110
+Jun 18 05:36:46 box1-t23 systemd-sysv-generator[332]: stat() failed on /etc/init.d/mar3, ignoring: No such file or directory
+Jun 18 05:36:46 box1-t23 systemd-sysv-generator[332]: stat() failed on /etc/init.d/gpsd-ws, ignoring: No such file or directory
+Jun 18 05:36:46 box1-t23 systemd-sysv-generator[332]: stat() failed on /etc/init.d/train-identification-api, ignoring: No such file or directory
+Jun 18 05:36:46 box1-t23 systemd-sysv-generator[332]: stat() failed on /etc/init.d/train-information-api, ignoring: No such file or directory
+Jun 18 05:36:46 box1-t23 systemd[1]: Configuration file /etc/systemd/system/nd-telemetry.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:36:46 box1-t23 systemd[1]: Configuration file /lib/systemd/system/nd-actions.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:36:46 box1-t23 systemd[1]: Configuration file /lib/systemd/system/mqtt-bridge.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:36:46 box1-t23 systemd[1]: Configuration file /lib/systemd/system/gpsd-ws.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:36:46 box1-t23 systemd[1]: Configuration file /lib/systemd/system/gps-reflector.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:36:46 box1-t23 systemd[1]: Configuration file /etc/systemd/system/engineering_pages.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:36:46 box1-t23 systemd[1]: Configuration file /etc/systemd/system/engineering_server.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:36:46 box1-t23 systemd[1]: Configuration file /etc/systemd/system/engineering_collector.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:36:46 box1-t23 systemd[1]: Configuration file /lib/systemd/system/nd-systemtest.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:36:46 box1-t23 systemd[1]: Configuration file /lib/systemd/system/nd-registry-cleaner.timer is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:36:46 box1-t23 systemd[1]: Configuration file /lib/systemd/system/nd-registry-cleaner.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:36:46 box1-t23 systemd[1]: Configuration file /lib/systemd/system/nd-recovery.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:36:46 box1-t23 systemd[1]: Configuration file /lib/systemd/system/nd-auto-system-update.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:36:46 box1-t23 kernel: device-mapper: core: CONFIG_IMA_DISABLE_HTABLE is disabled. Duplicate IMA measurements will not be recorded in the IMA log.
+Jun 18 05:36:46 box1-t23 systemd-udevd[369]: Configuration file /etc/udev/rules.d/99-zzz-at-fn990.rules is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:36:46 box1-t23 kernel: perf uncore: Cannot find matched IMC device.
+Jun 18 05:36:46 box1-t23 kernel: perf uncore: Cannot find matched IMC device.
+Jun 18 05:36:46 box1-t23 kernel: ath: loading out-of-tree module taints kernel.
+Jun 18 05:36:47 box1-t23 kernel: i915 0000:00:02.0: firmware: failed to load i915/tgl_dmc_ver2_12.bin (-2)
+Jun 18 05:36:47 box1-t23 kernel: firmware_class: See https://wiki.debian.org/Firmware for information about missing firmware
+Jun 18 05:36:47 box1-t23 kernel: i915 0000:00:02.0: firmware: failed to load i915/tgl_dmc_ver2_12.bin (-2)
+Jun 18 05:36:47 box1-t23 kernel: i915 0000:00:02.0: Direct firmware load for i915/tgl_dmc_ver2_12.bin failed with error -2
+Jun 18 05:36:47 box1-t23 kernel: ath10k_pci 0000:10:00.0: firmware: failed to load ath10k/pre-cal-pci-0000:10:00.0.bin (-2)
+Jun 18 05:36:47 box1-t23 kernel: ath10k_pci 0000:10:00.0: firmware: failed to load ath10k/pre-cal-pci-0000:10:00.0.bin (-2)
+Jun 18 05:36:47 box1-t23 kernel: ath10k_pci 0000:10:00.0: firmware: failed to load ath10k/cal-pci-0000:10:00.0.bin (-2)
+Jun 18 05:36:47 box1-t23 kernel: ath10k_pci 0000:10:00.0: firmware: failed to load ath10k/cal-pci-0000:10:00.0.bin (-2)
+Jun 18 05:36:47 box1-t23 kernel: ath10k_pci 0000:10:00.0: firmware: failed to load ath10k/QCA988X/hw2.0/firmware-6.bin (-2)
+Jun 18 05:36:47 box1-t23 kernel: ath10k_pci 0000:10:00.0: firmware: failed to load ath10k/QCA988X/hw2.0/firmware-6.bin (-2)
+Jun 18 05:36:47 box1-t23 kernel: ath10k_pci 0000:10:00.0: firmware: failed to load ath10k/QCA988X/hw2.0/board-2.bin (-2)
+Jun 18 05:36:47 box1-t23 kernel: ath10k_pci 0000:10:00.0: firmware: failed to load ath10k/QCA988X/hw2.0/board-2.bin (-2)
+Jun 18 05:36:47 box1-t23 kernel: ath10k_pci 0000:10:00.0: firmware: failed to load ath10k/QCA988X/hw2.0/board-pci-0000:10:00.0.bin (-2)
+Jun 18 05:36:47 box1-t23 kernel: ath10k_pci 0000:10:00.0: firmware: failed to load ath10k/QCA988X/hw2.0/board-pci-0000:10:00.0.bin (-2)

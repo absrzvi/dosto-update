@@ -1,0 +1,6 @@
+[Unit]
+Description=DOSTO CCU volatile-log tail flush to persistent /data
+
+[Service]
+Type=oneshot
+ExecStart=/data/ignition-log/logtail.sh

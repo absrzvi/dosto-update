@@ -1,0 +1,81 @@
+VDS Rail Consist Switch — PoE PSE fault diagnostic capture
+Position: E1, 6-car DOSTO consist
+Captured: 2026-06-15
+
+================================================================
+E1 — show version
+================================================================
+Consist Switch by VDS Rail.
+Firmware Version: 7.4.2
+Build Release:    77411
+
+================================================================
+E1 (FAULTY) — show poe
+================================================================
+Port    Mode   Status   Class     Power (W)  Priority
+-----------------------------------------------------
+e0-4    on     E(11)          -        0.00  critical     <-- access point feed
+e1-0    on     E(11)          -        0.00  critical
+e1-1    on     E(11)          -        0.00  critical
+e1-2    on     E(11)          -        0.00  critical
+e1-3    on     E(11)          -        0.00  critical
+e1-4    on     E(11)          -        0.00  critical
+e1-5    on     E(11)          -        0.00  critical
+e1-6    on     E(11)          -        0.00  critical
+e1-7    on     E(11)          -        0.00  critical
+e1-8    on     E(11)          -        0.00  critical
+e1-9    on     E(11)          -        0.00       low
+e1-10   on     E(11)          -        0.00  critical
+e1-11   on     E(11)          -        0.00  critical
+e1-12   on     E(11)          -        0.00       low
+e1-13   on     E(11)          -        0.00       low
+e1-14   on     E(11)          -        0.00       low
+e1-15   on     E(11)          -        0.00       low
+-----------------------------------------------------
+Total: 0W  Max: 202W  Available: 0W                       <-- no power budget online
+
+================================================================
+E2 (HEALTHY SIBLING, same consist, same firmware) — show poe
+================================================================
+Port    Mode   Status   Class     Power (W)  Priority
+-----------------------------------------------------
+e0-4    on     on       class 3        5.10  critical
+e1-0    on     on       class 2        2.30  critical
+e1-1    on     on       class 2        2.20  critical
+e1-2    on     on       class 2        2.70  critical
+e1-3    on     on       class 2        2.80  critical
+e1-4    on     off            -        0.00       low
+e1-5    on     on       class 2        3.80  critical
+e1-6    on     on       class 2        3.80  critical
+e1-7    on     on       class 2        3.60  critical
+e1-8    on     on       class 3        0.70  critical
+e1-9    on     on       class 3        1.60  critical
+e1-10   on     on       class 3        0.60  critical
+e1-11   on     on       class 3        1.60  critical
+e1-12   on     off            -        0.00       low
+e1-13   on     off            -        0.00       low
+e1-14   on     off            -        0.00       low
+e1-15   on     off            -        0.00       low
+-----------------------------------------------------
+Total: 32W  Max: 202W  Available: 170W                    <-- full budget online
+
+================================================================
+Persistent log (E1)
+================================================================
+The "KMkon" module has been restarted (1)
+
+================================================================
+Boot log (E1) — PoE init, every boot
+================================================================
+KMdev: Initializing PoE subsystem
+KMdev: Emitting trap for KMdev triggered event: coldStart
+(no power-good line; no PSE fault/short/over-current trap)
+
+================================================================
+Recovery attempted on E1 (no effect on PoE)
+================================================================
+1. Port bounce of e0-4: admin disable/enable + PoE mode off/on. No change.
+2. SNMP reboot OID (.1.3.6.1.4.1.8072.1.3.2.2.1.7.6... = 3): accepted but
+   switch did not reboot (uptime continued climbing) -- SNMP reboot ignored.
+3. CLI 'sysadmin reboot': switch rebooted, but PoE came up dead again
+   immediately on the fresh boot.

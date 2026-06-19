@@ -1,0 +1,249 @@
+===== nv6-A1-v8-147 =====
+Jan  1 02:00:55 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 02:00:56 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:00:56 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 02:00:57 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 02:00:58 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:00:58 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 02:00:58 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 02:00:59 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:00:59 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 02:01:00 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 02:01:01 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:01:01 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 02:01:01 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 02:01:02 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:01:02 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 02:01:03 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 02:01:04 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:01:04 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 02:01:04 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 02:01:05 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:01:05 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 02:01:06 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 02:01:06 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:01:06 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 02:01:06 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received agreement
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 transmitting an agreement
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+===== nv6-A2-v8-147 =====
+Jan  1 02:01:02 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received agreement
+Jan  1 02:01:02 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 02:01:02 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 02:01:02 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 transmitting an agreement
+Jan  1 02:01:02 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 02:01:03 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received agreement
+Jan  1 02:01:03 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 02:01:03 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 02:01:03 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 transmitting an agreement
+Jan  1 02:01:03 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 02:01:05 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received agreement
+Jan  1 02:01:05 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 02:01:05 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 02:01:05 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 transmitting an agreement
+Jan  1 02:01:05 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 02:02:11 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:02:11 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+===== nv6-A3-v8-147 =====
+Jan  1 02:00:57 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 02:00:57 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 02:00:58 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 02:00:58 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 02:00:58 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 transmitting an agreement
+Jan  1 02:00:58 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 02:01:00 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 transmitting an agreement
+Jan  1 02:01:00 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 02:01:00 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 02:01:00 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 02:01:01 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 02:01:01 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 02:01:01 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 transmitting an agreement
+Jan  1 02:01:01 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 02:01:03 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 transmitting an agreement
+Jan  1 02:01:03 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 02:01:03 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 02:01:03 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 02:01:04 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 02:01:04 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 02:01:04 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 transmitting an agreement
+Jan  1 02:01:04 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 02:01:06 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 transmitting an agreement
+Jan  1 02:01:06 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 02:01:06 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 02:01:06 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received agreement
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+===== nv6-B1-v8-147 =====
+Jan  1 02:00:58 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 02:00:59 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 transmitting an agreement
+Jan  1 02:00:59 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 02:01:00 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received agreement
+Jan  1 02:01:00 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:01:00 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 02:01:00 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 transmitting an agreement
+Jan  1 02:01:00 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 02:01:01 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received agreement
+Jan  1 02:01:01 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:01:01 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 02:01:02 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 transmitting an agreement
+Jan  1 02:01:02 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 02:01:03 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received agreement
+Jan  1 02:01:03 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:01:03 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 02:01:03 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 transmitting an agreement
+Jan  1 02:01:03 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 02:01:04 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received agreement
+Jan  1 02:01:04 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:01:04 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 02:01:05 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 transmitting an agreement
+Jan  1 02:01:05 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 02:02:10 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 sending designated proposal
+Jan  1 02:02:11 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 received designated proposal
+Jan  1 02:02:11 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending designated proposal
+Jan  1 02:02:13 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 transmitting an agreement
+Jan  1 02:02:13 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 sending Tc
+Jan  1 02:02:13 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 02:02:13 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+===== nv6-B2-v8-147 =====
+Jan  1 02:02:13 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:02:14 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+===== nv6-B3-v8-147 =====
+Jan  1 02:01:02 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 sending Tc
+Jan  1 02:01:02 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 02:01:02 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received agreement
+Jan  1 02:01:02 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 02:01:02 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 Flushing all entries.
+Jan  1 02:01:02 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 02:01:04 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received agreement
+Jan  1 02:01:04 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 02:01:04 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 Flushing all entries.
+Jan  1 02:01:04 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 transmitting an agreement
+Jan  1 02:01:04 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 sending Tc
+Jan  1 02:01:04 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 02:01:04 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 02:01:05 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 transmitting an agreement
+Jan  1 02:01:05 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 sending Tc
+Jan  1 02:01:05 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 02:01:05 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received agreement
+Jan  1 02:01:05 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 02:01:05 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 Flushing all entries.
+Jan  1 02:01:05 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 02:01:06 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received designated proposal
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 Flushing all entries.
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 transmitting an agreement
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received designated proposal
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 transmitting an agreement
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 received Tc 
+Jan  1 02:02:13 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 02:02:14 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 received Tc 
+===== nv6-C1-v8-147 =====
+Jan  1 02:02:13 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received agreement
+Jan  1 02:02:13 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 transmitting an agreement
+Jan  1 02:02:13 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 02:02:13 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 02:02:13 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 02:02:14 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 02:02:14 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 02:02:15 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+===== nv6-C3-v8-147 =====
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 02:02:14 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 02:02:14 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:02:14 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+===== nv6-D1-v8-147 =====
+Jan  1 02:00:57 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 02:00:57 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 02:00:59 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:00:59 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 02:00:59 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 02:01:00 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:01:00 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 02:01:00 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 02:01:02 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:01:02 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 02:01:02 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 02:01:03 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:01:03 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 02:01:03 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 02:01:05 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:01:05 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 02:01:05 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 02:01:06 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:01:06 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 02:01:06 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 02:01:06 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received agreement
+Jan  1 02:01:06 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:01:06 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 02:02:11 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 transmitting an agreement
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 02:02:13 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 02:02:14 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 02:02:14 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+===== nv6-D2-v8-147 =====
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 02:02:13 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:02:13 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 02:02:14 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+===== nv6-D3-v8-147 =====
+Jan  1 02:02:13 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:02:13 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 02:02:13 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 02:02:15 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:02:15 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 02:02:15 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+===== nv6-E1-v8-147 =====
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 02:02:13 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 02:02:13 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 02:02:14 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+===== nv6-E2-v8-147 =====
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 02:02:13 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:02:13 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 02:02:14 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+===== nv6-E3-v8-147 =====
+Jan  1 02:02:11 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:02:11 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 02:02:11 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 02:02:13 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 02:02:13 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:02:13 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+===== nv6-F1-v8-147 =====
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 02:02:13 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 02:02:13 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 02:02:13 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+===== nv6-F2-v8-147 =====
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 02:02:13 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:02:13 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 02:02:14 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+===== nv6-F3-v8-147 =====
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 02:02:12 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 02:02:14 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 02:02:14 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 02:02:14 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.

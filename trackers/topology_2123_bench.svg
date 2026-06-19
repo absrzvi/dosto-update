@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="560" font-family="Segoe UI, Arial, sans-serif" viewBox="0 0 820 560">
+  <defs>
+    <style>
+      .title { font-size: 19px; font-weight: 700; fill: #1a2b4a; }
+      .sub   { font-size: 12px; fill: #5a6b80; }
+      .ccu   { fill: #2e5e8c; }
+      .sw    { fill: #27ae60; }
+      .lbl   { fill: #ffffff; font-size: 13px; font-weight: 700; text-anchor: middle; }
+      .ip    { fill: #ffffff; font-size: 9.5px; text-anchor: middle; opacity: 0.92; }
+      .port  { font-size: 10px; fill: #5a6b80; }
+      .link  { stroke: #34495e; stroke-width: 2.5; }
+      .inter { stroke: #2980b9; stroke-width: 3; }
+      .ccul  { stroke: #8e44ad; stroke-width: 2.5; }
+      .coach { fill: none; stroke: #cbd5e1; stroke-width: 1.5; stroke-dasharray: 6 4; }
+      .ctxt  { font-size: 12px; font-weight: 600; fill: #94a3b8; }
+      .leg   { font-size: 11px; fill: #5a6b80; }
+    </style>
+  </defs>
+
+  <text x="30" y="32" class="title">OEBB Bench 2123 — CORRECT (target) topology</text>
+  <text x="30" y="51" class="sub">CCU box1-t123 on A2 e0-3 · inter-coach A1↔B2 (top) + A2↔B1 (bottom) · 6 VDS switches A1-A3 / B1-B3 · APs per coach</text>
+
+  <!-- coach boxes -->
+  <rect x="30" y="70" width="370" height="450" rx="10" class="coach"/>
+  <text x="48" y="92" class="ctxt">A coach</text>
+  <rect x="420" y="70" width="370" height="450" rx="10" class="coach"/>
+  <text x="438" y="92" class="ctxt">B coach</text>
+
+  <!-- A switches: A1 top, A2 bottom, A3 mid-left -->
+  <rect x="200" y="110" width="130" height="52" rx="6" class="sw"/>
+  <text x="265" y="132" class="lbl">SW-A1</text><text x="265" y="149" class="ip">.186</text>
+
+  <rect x="60" y="270" width="130" height="52" rx="6" class="sw"/>
+  <text x="125" y="292" class="lbl">SW-A3</text><text x="125" y="309" class="ip">.179</text>
+
+  <rect x="200" y="420" width="130" height="52" rx="6" class="sw"/>
+  <text x="265" y="442" class="lbl">SW-A2</text><text x="265" y="459" class="ip">.181</text>
+
+  <!-- B switches: B2 top, B1 bottom, B3 mid-right -->
+  <rect x="490" y="110" width="130" height="52" rx="6" class="sw"/>
+  <text x="555" y="132" class="lbl">SW-B2</text><text x="555" y="149" class="ip">.182</text>
+
+  <rect x="630" y="270" width="130" height="52" rx="6" class="sw"/>
+  <text x="695" y="292" class="lbl">SW-B3</text><text x="695" y="309" class="ip">.178</text>
+
+  <rect x="490" y="420" width="130" height="52" rx="6" class="sw"/>
+  <text x="555" y="442" class="lbl">SW-B1</text><text x="555" y="459" class="ip">.183</text>
+
+  <!-- CCU on A2 e0-3 -->
+  <rect x="180" y="500" width="170" height="44" rx="6" class="ccu"/>
+  <text x="265" y="520" class="lbl">CCU box1-t123</text>
+  <text x="265" y="535" class="ip">10.179.123.1</text>
+  <line x1="265" y1="472" x2="265" y2="500" class="ccul"/>
+  <text x="272" y="490" class="port">A2 e0-3</text>
+
+  <!-- A intra ring -->
+  <line x1="200" y1="150" x2="190" y2="285" class="link"/>
+  <text x="120" y="220" class="port">A1 e0-0 ↔ A3 e0-0</text>
+  <line x1="190" y1="305" x2="200" y2="445" class="link"/>
+  <text x="120" y="385" class="port">A3 e0-1 ↔ A2 e0-1*</text>
+
+  <!-- B intra ring -->
+  <line x1="620" y1="150" x2="630" y2="285" class="link"/>
+  <text x="640" y="220" class="port">B2 e0-1 ↔ B3 e0-1</text>
+  <line x1="630" y1="305" x2="620" y2="445" class="link"/>
+  <text x="640" y="385" class="port">B3 e0-0 ↔ B1 e0-0</text>
+
+  <!-- inter-coach links -->
+  <line x1="330" y1="136" x2="490" y2="136" class="inter"/>
+  <text x="345" y="128" class="port">A1 e0-1 ↔ B2 e0-1  (top inter-coach)</text>
+  <line x1="330" y1="446" x2="490" y2="446" class="inter"/>
+  <text x="345" y="438" class="port">A2 e0-1 ↔ B1 e0-1  (bottom inter-coach)</text>
+
+  <!-- legend -->
+  <rect x="30" y="540" width="0" height="0"/>
+  <rect x="430" y="500" width="14" height="14" rx="3" class="sw"/>
+  <text x="450" y="512" class="leg">VDS switch</text>
+  <rect x="540" y="500" width="14" height="14" rx="3" class="ccu"/>
+  <text x="560" y="512" class="leg">CCU (A2 e0-3)</text>
+  <line x1="640" y1="507" x2="668" y2="507" class="inter"/>
+  <text x="674" y="512" class="leg">inter-coach</text>
+  <text x="430" y="535" class="leg" font-style="italic">* A2 e0-1 carries inter-coach to B1; A2 e0-3 holds the CCU. APs (e0-4 / A3·B3 e1-2) per coach, not drawn.</text>
+</svg>

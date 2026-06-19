@@ -1,0 +1,86 @@
+##### LOGTAIL SNAPSHOT 2026-06-18T05-37-48Z (boot=ef3dc94c-6332-4bd2-9ceb-840b15bbbafc) #####
+----- uptime / loadavg -----
+124.60 1315.95
+2.54 1.20 0.46 11/736 4554
+----- dmesg tail (last 40) -----
+[   79.373144] xhci_hcd 0000:0e:00.0: Zeroing 64bit base registers, expecting fault
+[   79.410674] xhci_hcd 0000:0e:00.0: hcc params 0x014051cf hci version 0x100 quirks 0x0000001100000410
+[   79.411174] xhci_hcd 0000:0e:00.0: xHCI Host Controller
+[   79.411177] xhci_hcd 0000:0e:00.0: new USB bus registered, assigned bus number 12
+[   79.411181] xhci_hcd 0000:0e:00.0: Host supports USB 3.0 SuperSpeed
+[   79.414172] usb usb11: New USB device found, idVendor=1d6b, idProduct=0002, bcdDevice= 6.01
+[   79.414175] usb usb11: New USB device strings: Mfr=3, Product=2, SerialNumber=1
+[   79.414176] usb usb11: Product: xHCI Host Controller
+[   79.414177] usb usb11: Manufacturer: Linux 6.1.0-31-amd64 xhci-hcd
+[   79.414178] usb usb11: SerialNumber: 0000:0e:00.0
+[   79.414288] hub 11-0:1.0: USB hub found
+[   79.414378] hub 11-0:1.0: 4 ports detected
+[   79.414537] usb usb12: We don't know the algorithms for LPM for this host, disabling LPM.
+[   79.414559] usb usb12: New USB device found, idVendor=1d6b, idProduct=0003, bcdDevice= 6.01
+[   79.414561] usb usb12: New USB device strings: Mfr=3, Product=2, SerialNumber=1
+[   79.414562] usb usb12: Product: xHCI Host Controller
+[   79.414563] usb usb12: Manufacturer: Linux 6.1.0-31-amd64 xhci-hcd
+[   79.414564] usb usb12: SerialNumber: 0000:0e:00.0
+[   79.414659] hub 12-0:1.0: USB hub found
+[   79.414739] hub 12-0:1.0: 4 ports detected
+[   80.434169] usb 12-1: new SuperSpeed USB device number 2 using xhci_hcd
+[   80.455773] usb 12-1: LPM exit latency is zeroed, disabling LPM.
+[   80.465402] usb 12-1: New USB device found, idVendor=1bc7, idProduct=1070, bcdDevice= 5.04
+[   80.465406] usb 12-1: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+[   80.465409] usb 12-1: Product: FN990
+[   80.465411] usb 12-1: Manufacturer: Telit Wireless Solutions
+[   80.465413] usb 12-1: SerialNumber: f13d848c
+[   80.520771] option 12-1:1.0: GSM modem (1-port) converter detected
+[   80.520888] usb 12-1: GSM modem (1-port) converter now attached to ttyUSB16
+[   80.525377] qmi_wwan 12-1:1.2: cdc-wdm3: USB WDM device
+[   80.526052] qmi_wwan 12-1:1.2 wwan0: register 'qmi_wwan' at usb-0000:0e:00.0-1, WWAN/QMI device, 52:1c:f1:f4:0c:d6
+[   80.526146] option 12-1:1.3: GSM modem (1-port) converter detected
+[   80.526255] usb 12-1: GSM modem (1-port) converter now attached to ttyUSB17
+[   80.526340] option 12-1:1.4: GSM modem (1-port) converter detected
+[   80.526395] usb 12-1: GSM modem (1-port) converter now attached to ttyUSB18
+[   80.526473] option 12-1:1.5: GSM modem (1-port) converter detected
+[   80.526535] usb 12-1: GSM modem (1-port) converter now attached to ttyUSB19
+[   80.526609] option 12-1:1.6: GSM modem (1-port) converter detected
+[   80.526666] usb 12-1: GSM modem (1-port) converter now attached to ttyUSB20
+[   80.535138] qmi_wwan 12-1:1.2 ce3p0: renamed from wwan0
+----- journal priority<=4 (warn+), last 40 this boot -----
+Jun 18 05:36:47 box1-t23 kernel: ath10k_pci 0000:10:00.0: firmware: failed to load ath10k/pre-cal-pci-0000:10:00.0.bin (-2)
+Jun 18 05:36:47 box1-t23 kernel: ath10k_pci 0000:10:00.0: firmware: failed to load ath10k/pre-cal-pci-0000:10:00.0.bin (-2)
+Jun 18 05:36:47 box1-t23 kernel: ath10k_pci 0000:10:00.0: firmware: failed to load ath10k/cal-pci-0000:10:00.0.bin (-2)
+Jun 18 05:36:47 box1-t23 kernel: ath10k_pci 0000:10:00.0: firmware: failed to load ath10k/cal-pci-0000:10:00.0.bin (-2)
+Jun 18 05:36:47 box1-t23 kernel: ath10k_pci 0000:10:00.0: firmware: failed to load ath10k/QCA988X/hw2.0/firmware-6.bin (-2)
+Jun 18 05:36:47 box1-t23 kernel: ath10k_pci 0000:10:00.0: firmware: failed to load ath10k/QCA988X/hw2.0/firmware-6.bin (-2)
+Jun 18 05:36:47 box1-t23 kernel: ath10k_pci 0000:10:00.0: firmware: failed to load ath10k/QCA988X/hw2.0/board-2.bin (-2)
+Jun 18 05:36:47 box1-t23 kernel: ath10k_pci 0000:10:00.0: firmware: failed to load ath10k/QCA988X/hw2.0/board-2.bin (-2)
+Jun 18 05:36:47 box1-t23 kernel: ath10k_pci 0000:10:00.0: firmware: failed to load ath10k/QCA988X/hw2.0/board-pci-0000:10:00.0.bin (-2)
+Jun 18 05:36:47 box1-t23 kernel: ath10k_pci 0000:10:00.0: firmware: failed to load ath10k/QCA988X/hw2.0/board-pci-0000:10:00.0.bin (-2)
+Jun 18 05:36:48 box1-t23 systemd[1]: nd-build-media-mount.service: Failed with result 'exit-code'.
+Jun 18 05:36:48 box1-t23 systemd[1]: Failed to start nd-build-media-mount.service - ND Create media mount.
+Jun 18 05:36:48 box1-t23 systemd[1]: Dependency failed for media.mount - ND Media mount.
+Jun 18 05:36:48 box1-t23 systemd[1]: nd-systemtest.service: Failed with result 'exit-code'.
+Jun 18 05:36:48 box1-t23 watchfrr.sh[975]: Cannot stop zebra: pid file not found
+Jun 18 05:36:48 box1-t23 systemd[1]: gps-reflector.service: Failed with result 'exit-code'.
+Jun 18 05:36:48 box1-t23 watchfrr.sh[1040]: /etc/frr/frr.conf does not exist; skipping config apply
+Jun 18 05:36:48 box1-t23 systemd[1]: nd-telit-fn990-disable-hotswap.service: Failed with result 'exit-code'.
+Jun 18 05:36:50 box1-t23 ntpd[1239]: CONFIG: restrict notrap ignored
+Jun 18 05:36:50 box1-t23 ntpd[1239]: CONFIG: restrict: ignoring line 33, address/host '0.debian.pool.ntp.org' unusable.
+Jun 18 05:36:50 box1-t23 ntpd[1239]: CONFIG: restrict notrap ignored
+Jun 18 05:36:50 box1-t23 ntpd[1239]: CONFIG: restrict: ignoring line 35, address/host '1.debian.pool.ntp.org' unusable.
+Jun 18 05:36:50 box1-t23 ntpd[1239]: CONFIG: restrict notrap ignored
+Jun 18 05:36:50 box1-t23 ntpd[1239]: CONFIG: restrict: ignoring line 37, address/host '2.debian.pool.ntp.org' unusable.
+Jun 18 05:36:50 box1-t23 ntpd[1239]: CONFIG: restrict notrap ignored
+Jun 18 05:36:50 box1-t23 ntpd[1239]: CONFIG: restrict: ignoring line 39, address/host '3.debian.pool.ntp.org' unusable.
+Jun 18 05:36:50 box1-t23 ntpd[1239]: CONFIG: restrict nopeer ignored
+Jun 18 05:36:50 box1-t23 ntpd[1239]: CLOCK: leapsecond file ('/usr/share/zoneinfo/leap-seconds.list'): expired less than 356 days ago
+Jun 18 05:36:50 box1-t23 kernel: ath10k_pci 0000:10:00.0: pdev param 0 not supported by firmware
+Jun 18 05:36:51 box1-t23 kernel: ath10k_pci 0000:10:00.0: pdev param 0 not supported by firmware
+Jun 18 05:36:51 box1-t23 ntpd[1239]: statistics directory /var/log/ntpsec/ does not exist or is unwriteable, error No such file or directory
+Jun 18 05:36:52 box1-t23 NetworkManager[859]: <warn>  [1781761012.1562] device (wlp16s0): wifi-scan: active scanning for networks due to profiles with wifi.hidden=yes. This makes you trackable
+Jun 18 05:36:52 box1-t23 kernel: kauditd_printk_skb: 11 callbacks suppressed
+Jun 18 05:36:53 box1-t23 (udev-worker)[385]: ttyUSB5: Process '/lib/udev/gpsd.hotplug' failed with exit code 1.
+Jun 18 05:37:39 box1-t23 NetworkManager[859]: <warn>  [1781761059.0096] device (enp19s0f3): Activation: failed for connection 'Wired connection 5'
+Jun 18 05:37:39 box1-t23 NetworkManager[859]: <warn>  [1781761059.0104] device (enp19s0f2): Activation: failed for connection 'Wired connection 4'
+Jun 18 05:37:39 box1-t23 NetworkManager[859]: <warn>  [1781761059.0112] device (enp19s0f0): Activation: failed for connection 'Wired connection 2'
+Jun 18 05:37:39 box1-t23 NetworkManager[859]: <warn>  [1781761059.0122] device (enp19s0f1): Activation: failed for connection 'Wired connection 3'
+Jun 18 05:37:48 box1-t23 systemd[1]: NetworkManager-wait-online.service: Failed with result 'exit-code'.
+Jun 18 05:37:48 box1-t23 systemd[1]: Failed to start NetworkManager-wait-online.service - Network Manager Wait Online.

@@ -1,0 +1,4436 @@
+---
+swagger: "2.0"
+info:
+  description: "(Updated 19th October 2023)\n\nThis document provides an overview\
+    \ of the Network Management System (NMS) API.\n\n## Authentication\nAuthentication\
+    \ is done by first getting an authentication token and then passing this along\
+    \ in the header (the `Auth-Token` field) for each subsequent call towards the\
+    \ API. The authentication token is valid for 1 week. A valid username and password\
+    \ needs to be passed to the authenticate request. Contact Nomad Digital's Service\
+    \ Desk to get a valid username and password.\n\nAn example of doing an authentication\
+    \ request with curl would be:\n\n    curl -X POST https://nms-example.nomadrail.com/nms/rest/user/authenticate\
+    \ \\\n         -H \"cache-control: no-cache\" \\\n         -H \"content-type:\
+    \ application/json;charset=UTF-8\" \\\n         -d '{\"username\": \"$USERNAME\"\
+    , \"password\": \"$PASSWORD\"}'\n\n\n## Calling the API\nAs mentioned, after you\
+    \ have retrieved the authentication token from the authenticate call, you need\
+    \ to add this to the header of your request. An example:\n\n    curl -X GET https://nms-example.nomadrail.com/nms/rest/monitoring/trains?projectId=1\
+    \ \\\n         -H \"cache-control: no-cache\" \\\n         -H \"content-type:\
+    \ application/json;charset=UTF-8\" \\\n         -H \"Auth-Token: $AUTH_TOKEN\"\
+    \n\n\n## Project and Train IDs\nIt is important to know that the API, when asking\
+    \ for a project or train ID, will need an internal ID (the \"relativeId\" of the\
+    \ train). For the project and for the trains, you can retrieve all of these relative\
+    \ IDs as follows:\n\nRetrieve the project ID:\n\n    curl -X GET https://nms-example.nomadrail.com/nms/rest/project\
+    \ \\\n         -H \"cache-control: no-cache\" \\\n         -H \"content-type:\
+    \ application/json;charset=UTF-8\" \\\n         -H \"Auth-Token: $AUTH_TOKEN\"\
+    \n\nRetrieve all the train IDs (linked to their official IDs):\n\n    curl -X\
+    \ GET https://nms-example.nomadrail.com/nms/rest/train/project/{projectId} \\\n\
+    \         -H \"cache-control: no-cache\" \\\n         -H \"content-type: application/json;charset=UTF-8\"\
+    \ \\\n         -H \"Auth-Token: $AUTH_TOKEN\"\n\nYou can then query the API using\
+    \ the \"relativeId\" field of the train.\n\n## Timezone\nThe API uses UTC (Coordinated\
+    \ Universal Time) for retrieving and sending timestamps. For each call that needs\
+    \ a timestamp, the user must specify which timezone they are using in the following\
+    \ format: `yyyy-MM-dd'T'HH:mm:ssZ`.\n\nFor example, `2019-10-11T06:00:00Z` for\
+    \ Zulu time (UTC) or `2019-10-11T06:00:00+03:00` for UTC + 3 hours.\n\nThe user\
+    \ must encode their timezone when requesting data from the API. An example of\
+    \ a query with a timestamp added:\n\n    curl -X GET https://nms-example.nomadrail.com/nms/rest/gpsData?projectId=1&trainId=1044&from=2019-08-29T18:40:00%2B02:00&to=2019-08-29T20:00:00%2B02:00\
+    \ \\\n         -H \"cache-control: no-cache\" \\\n         -H \"content-type:\
+    \ application/json;charset=UTF-8\" \\\n         -H \"Auth-Token: $AUTH_TOKEN\"\
+    \n\nThis request in particular is retrieving information for timestamps in the\
+    \ CEST (Central European Summer Time) timezone (UTC + 2 hours)."
+  version: "2023.3.0"
+  title: "Network Management System API"
+  contact:
+    name: "Jan Haegeman"
+    email: "ext.jan.haegeman@nomadrail.com"
+host: "nms-example.nomadrail.com"
+basePath: "/nms/rest"
+tags:
+- name: "Authentication"
+- name: "Metrics"
+- name: "Monitoring & Alarms"
+- name: "OBIS"
+- name: "Performance"
+- name: "Project"
+- name: "Train Management"
+- name: "vlan monitor"
+schemes:
+- "https"
+paths:
+  /mar3/capacitytest:
+    get:
+      tags:
+      - "Metrics"
+      summary: "Get metrics on the capacity of the network"
+      description: ""
+      operationId: "getCapacityTestMessages"
+      parameters:
+      - name: "trainId"
+        in: "query"
+        description: "The relative ID of the train"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "projectId"
+        in: "query"
+        description: "ID of the project"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "from"
+        in: "query"
+        description: "Start date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      - name: "to"
+        in: "query"
+        description: "End date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/CapacityTest"
+  /mar3/gps:
+    get:
+      tags:
+      - "Metrics"
+      summary: "Get the GPS messages for a given period"
+      description: ""
+      operationId: "getGps"
+      parameters:
+      - name: "trainId"
+        in: "query"
+        description: "The relative ID of the train"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "projectId"
+        in: "query"
+        description: "ID of the project"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "from"
+        in: "query"
+        description: "Start date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      - name: "to"
+        in: "query"
+        description: "End date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/GpsComposite"
+  /mar3/gsmstatistic:
+    get:
+      tags:
+      - "Metrics"
+      summary: "Get GSM metrics (only for cellular modems)"
+      description: ""
+      operationId: "getGsmStatistics"
+      parameters:
+      - name: "trainId"
+        in: "query"
+        description: "The relative ID of the train"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "projectId"
+        in: "query"
+        description: "ID of the project"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "from"
+        in: "query"
+        description: "Start date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      - name: "to"
+        in: "query"
+        description: "End date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Mar3GsmStatistic"
+  /mar3/link/combined:
+    get:
+      tags:
+      - "Metrics"
+      summary: "Get summarised statistics for a given period"
+      description: ""
+      operationId: "getCombinedLinkStatistics"
+      parameters:
+      - name: "trainId"
+        in: "query"
+        description: "The relative ID of the train"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "projectId"
+        in: "query"
+        description: "ID of the project"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "from"
+        in: "query"
+        description: "Start date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      - name: "to"
+        in: "query"
+        description: "End date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Mar3TotalComposite"
+  /mar3/linkstatistic:
+    get:
+      tags:
+      - "Metrics"
+      summary: "Get general link metrics for a given period"
+      description: ""
+      operationId: "getLinkStatistics"
+      parameters:
+      - name: "trainId"
+        in: "query"
+        description: "The relative ID of the train"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "projectId"
+        in: "query"
+        description: "ID of the project"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "from"
+        in: "query"
+        description: "Start date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      - name: "to"
+        in: "query"
+        description: "End date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      - name: "rate"
+        in: "query"
+        description: "rate"
+        required: false
+        type: "integer"
+        format: "int32"
+      - name: "aggregate"
+        in: "query"
+        required: false
+        type: "boolean"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Mar3LinkStatistic"
+  /mar3/ltestatistic:
+    get:
+      tags:
+      - "Metrics"
+      summary: "Get LTE metrics (only for cellular modems)"
+      description: ""
+      operationId: "getLteStatistics"
+      parameters:
+      - name: "trainId"
+        in: "query"
+        description: "The relative ID of the train"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "projectId"
+        in: "query"
+        description: "ID of the project"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "from"
+        in: "query"
+        description: "Start date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      - name: "to"
+        in: "query"
+        description: "End date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Mar3LteStatistic"
+  /mar3/wcdmastatistic:
+    get:
+      tags:
+      - "Metrics"
+      summary: "Get WCDMA metrics (only for cellular modems)"
+      description: ""
+      operationId: "getWcdmaStatistics"
+      parameters:
+      - name: "trainId"
+        in: "query"
+        description: "The relative ID of the train"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "projectId"
+        in: "query"
+        description: "ID of the project"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "from"
+        in: "query"
+        description: "Start date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      - name: "to"
+        in: "query"
+        description: "End date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Mar3WcdmaStatistic"
+  /monitoring/alarm/acknowledge/{url}:
+    post:
+      tags:
+      - "Monitoring & Alarms"
+      summary: "Acknowledge a specific set of alarms for a given monitoring section"
+      description: ""
+      operationId: "acknowledgeMonitoringEvents"
+      parameters:
+      - name: "projectId"
+        in: "query"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "url"
+        in: "path"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "A list of the alarm event IDs to acknowledge"
+        required: false
+        schema:
+          type: "array"
+          items:
+            type: "integer"
+            format: "int64"
+      responses:
+        default:
+          description: "successful operation"
+  /monitoring/table:
+    get:
+      tags:
+      - "Monitoring & Alarms"
+      summary: "Get a complete overview of the state of the fleet"
+      description: ""
+      operationId: "getMonitoringTableOverview"
+      parameters:
+      - name: "projectId"
+        in: "query"
+        description: "ID of the project"
+        required: true
+        type: "integer"
+        format: "int32"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/MonitoringTableOverview"
+  /obis/assignedjourney:
+    get:
+      tags:
+      - "OBIS"
+      summary: "Get metrics on the OBIS Assigned Journey statistics"
+      description: ""
+      operationId: "getAssignedJourneyStatistics"
+      parameters:
+      - name: "trainId"
+        in: "query"
+        description: "The relative ID of the train"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "projectId"
+        in: "query"
+        description: "ID of the project"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "from"
+        in: "query"
+        description: "Start date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      - name: "to"
+        in: "query"
+        description: "End date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/AssignedJourney"
+  /obis/degraded:
+    get:
+      tags:
+      - "OBIS"
+      summary: "Get metrics on the OBIS Degraded (Global OK) statistics"
+      description: ""
+      operationId: "getDegradedStatistics"
+      parameters:
+      - name: "trainId"
+        in: "query"
+        description: "The relative ID of the train"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "projectId"
+        in: "query"
+        description: "ID of the project"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "from"
+        in: "query"
+        description: "Start date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      - name: "to"
+        in: "query"
+        description: "End date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Degraded"
+  /obis/lifesign:
+    get:
+      tags:
+      - "OBIS"
+      summary: "Get metrics on the OBIS LifeSign statistics"
+      description: ""
+      operationId: "getLifeSignStatistics"
+      parameters:
+      - name: "trainId"
+        in: "query"
+        description: "The relative ID of the train"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "projectId"
+        in: "query"
+        description: "ID of the project"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "from"
+        in: "query"
+        description: "Start date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      - name: "to"
+        in: "query"
+        description: "End date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/LifeSign"
+  /obis/line:
+    get:
+      tags:
+      - "OBIS"
+      summary: "Get metrics on the OBIS Line statistics"
+      description: ""
+      operationId: "getLineStatistics"
+      parameters:
+      - name: "trainId"
+        in: "query"
+        description: "The relative ID of the train"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "projectId"
+        in: "query"
+        description: "ID of the project"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "from"
+        in: "query"
+        description: "Start date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      - name: "to"
+        in: "query"
+        description: "End date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Line"
+  /obis/loopstatus:
+    get:
+      tags:
+      - "OBIS"
+      summary: "Get metrics on the OBIS LoopStatus statistics"
+      description: ""
+      operationId: "getLoopStatusStatistics"
+      parameters:
+      - name: "trainId"
+        in: "query"
+        description: "The relative ID of the train"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "projectId"
+        in: "query"
+        description: "ID of the project"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "from"
+        in: "query"
+        description: "Start date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      - name: "to"
+        in: "query"
+        description: "End date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/LoopStatus"
+  /obis/mmdbacklight:
+    get:
+      tags:
+      - "OBIS"
+      summary: "Get metrics on the OBIS MMD Backlight statistics"
+      description: ""
+      operationId: "getMmdBacklightStatistics"
+      parameters:
+      - name: "trainId"
+        in: "query"
+        description: "The relative ID of the train"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "projectId"
+        in: "query"
+        description: "ID of the project"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "from"
+        in: "query"
+        description: "Start date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      - name: "to"
+        in: "query"
+        description: "End date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/MMDBacklight"
+  /obis/mtsdownloadstatus:
+    get:
+      tags:
+      - "OBIS"
+      summary: "Get metrics on the OBIS MTS Download Status statistics"
+      description: ""
+      operationId: "getMtsDownloadStatusStatistics"
+      parameters:
+      - name: "trainId"
+        in: "query"
+        description: "The relative ID of the train"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "projectId"
+        in: "query"
+        description: "ID of the project"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "from"
+        in: "query"
+        description: "Start date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      - name: "to"
+        in: "query"
+        description: "End date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/MtsDownloadStatus"
+  /obis/operationhours:
+    get:
+      tags:
+      - "OBIS"
+      summary: "Get metrics on the OBIS Operation Hours statistics"
+      description: ""
+      operationId: "getOperationHoursStatistics"
+      parameters:
+      - name: "trainId"
+        in: "query"
+        description: "The relative ID of the train"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "projectId"
+        in: "query"
+        description: "ID of the project"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "from"
+        in: "query"
+        description: "Start date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      - name: "to"
+        in: "query"
+        description: "End date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/OperationHours"
+  /obis/psudetails:
+    get:
+      tags:
+      - "OBIS"
+      summary: "Get metrics on the OBIS PSUDetails statistics"
+      description: ""
+      operationId: "getPsuDetailsStatistics"
+      parameters:
+      - name: "trainId"
+        in: "query"
+        description: "The relative ID of the train"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "projectId"
+        in: "query"
+        description: "ID of the project"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "from"
+        in: "query"
+        description: "Start date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      - name: "to"
+        in: "query"
+        description: "End date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/PSUDetails"
+  /obis/psudetailssummary:
+    get:
+      tags:
+      - "OBIS"
+      summary: "Get metrics on the OBIS PSUDetailsSummary statistics"
+      description: ""
+      operationId: "getPsuDetailsSummaryStatistics"
+      parameters:
+      - name: "trainId"
+        in: "query"
+        description: "The relative ID of the train"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "projectId"
+        in: "query"
+        description: "ID of the project"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "from"
+        in: "query"
+        description: "Start date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      - name: "to"
+        in: "query"
+        description: "End date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/PSUDetailsSummary"
+  /obis/swplatformstatus:
+    get:
+      tags:
+      - "OBIS"
+      summary: "Get metrics on the OBIS SWPlatformStatus statistics"
+      description: ""
+      operationId: "getSwPlatformStatusStatistics"
+      parameters:
+      - name: "trainId"
+        in: "query"
+        description: "The relative ID of the train"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "projectId"
+        in: "query"
+        description: "ID of the project"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "from"
+        in: "query"
+        description: "Start date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      - name: "to"
+        in: "query"
+        description: "End date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/SWPlatformStatus"
+  /obis/temperature:
+    get:
+      tags:
+      - "OBIS"
+      summary: "Get metrics on the OBIS Temperature statistics"
+      description: ""
+      operationId: "getTemperatureStatistics"
+      parameters:
+      - name: "trainId"
+        in: "query"
+        description: "The relative ID of the train"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "projectId"
+        in: "query"
+        description: "ID of the project"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "from"
+        in: "query"
+        description: "Start date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      - name: "to"
+        in: "query"
+        description: "End date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Temperature"
+  /obis/trainposition:
+    get:
+      tags:
+      - "OBIS"
+      summary: "Get metrics on the OBIS Train Position statistics"
+      description: ""
+      operationId: "getTrainPositionStatistics"
+      parameters:
+      - name: "trainId"
+        in: "query"
+        description: "The relative ID of the train"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "projectId"
+        in: "query"
+        description: "ID of the project"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "from"
+        in: "query"
+        description: "Start date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      - name: "to"
+        in: "query"
+        description: "End date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/TrainPosition"
+  /portal/consumption:
+    get:
+      tags:
+      - "Metrics"
+      summary: "Get session information per user for a given period"
+      description: ""
+      operationId: "getPortalConsumption"
+      parameters:
+      - name: "trainId"
+        in: "query"
+        description: "The relative ID of the train"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "projectId"
+        in: "query"
+        description: "ID of the project"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "from"
+        in: "query"
+        description: "Start date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      - name: "to"
+        in: "query"
+        description: "End date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/PortalConsumptionPrivate"
+  /project:
+    get:
+      tags:
+      - "Project"
+      summary: "Return the list of project IDs"
+      description: ""
+      operationId: "getProjects"
+      parameters: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/ProjectComposite"
+  /radioUserCount:
+    get:
+      tags:
+      - "Metrics"
+      summary: "Get amount of users connected per radio of access point"
+      description: ""
+      operationId: "getRadioUserCountForPeriod"
+      parameters:
+      - name: "trainId"
+        in: "query"
+        description: "The relative ID of the train"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "projectId"
+        in: "query"
+        description: "ID of the project"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "from"
+        in: "query"
+        description: "Start date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      - name: "to"
+        in: "query"
+        description: "End date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/RadioUserCountCombined"
+  /train/project/{projectId}:
+    get:
+      tags:
+      - "Train Management"
+      summary: "Return the list of train IDs for a given project"
+      description: ""
+      operationId: "getTrains"
+      parameters:
+      - name: "projectId"
+        in: "path"
+        description: "ID of the project"
+        required: true
+        type: "integer"
+        format: "int32"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/TrainComposite"
+  /train/{trainId}:
+    get:
+      tags:
+      - "Train Management"
+      summary: "Retrieve information for a specific train ID"
+      description: ""
+      operationId: "getTrain"
+      parameters:
+      - name: "trainId"
+        in: "path"
+        description: "The relative ID of the train"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/TrainComposite"
+  /traingeo:
+    get:
+      tags:
+      - "Monitoring & Alarms"
+      summary: "Get a GPS overview on entire fleet"
+      description: ""
+      operationId: "getTrainGeoData"
+      parameters:
+      - name: "projectId"
+        in: "query"
+        description: "ID of the project"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "threshold"
+        in: "query"
+        description: "Threshold value"
+        required: false
+        type: "integer"
+        default: 30
+        format: "int32"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/TrainGeoData"
+  /trainuser:
+    get:
+      tags:
+      - "Metrics"
+      summary: "Get amount of users connected to on-board system"
+      description: ""
+      operationId: "getData"
+      parameters:
+      - name: "trainId"
+        in: "query"
+        description: "The relative ID of the train"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "projectId"
+        in: "query"
+        description: "ID of the project"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "from"
+        in: "query"
+        description: "Start date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      - name: "to"
+        in: "query"
+        description: "End date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/TrainUser"
+  /trip/{projectId}/{tripId}:
+    get:
+      tags:
+      - "Performance"
+      summary: "Get all the KPIs for a given trip"
+      description: ""
+      operationId: "getTrip"
+      parameters:
+      - name: "projectId"
+        in: "path"
+        description: "ID of the project"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "tripId"
+        in: "path"
+        description: "Id of the train trip"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/TrainTripComposite"
+  /trips:
+    get:
+      tags:
+      - "Performance"
+      summary: "Get all trips for a given list of trains"
+      description: ""
+      operationId: "getTrips"
+      parameters:
+      - name: "trainIds"
+        in: "query"
+        description: "list of ids of the train"
+        required: true
+        type: "array"
+        items:
+          type: "integer"
+          format: "int64"
+        collectionFormat: "multi"
+      - name: "projectId"
+        in: "query"
+        description: "ID of the project"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "from"
+        in: "query"
+        description: "Start date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      - name: "to"
+        in: "query"
+        description: "End date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      - name: "main"
+        in: "query"
+        description: "Trip type is main"
+        required: true
+        type: "boolean"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/TrainTripComposite"
+  /user/authenticate:
+    post:
+      tags:
+      - "Authentication"
+      summary: "Get an authentication token"
+      description: ""
+      operationId: "authenticate"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Username and password"
+        required: false
+        schema:
+          $ref: "#/definitions/AuthenticationRequestComposite"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/AuthenticatedUserComposite"
+  /vlan/vlanmonitor:
+    get:
+      tags:
+      - "vlan monitor"
+      summary: "Get all vlan monitor"
+      description: ""
+      operationId: "getVlanMonitor"
+      parameters:
+      - name: "trainId"
+        in: "query"
+        description: "The relative ID of the train"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "projectId"
+        in: "query"
+        description: "ID of the project"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "from"
+        in: "query"
+        description: "Start date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      - name: "to"
+        in: "query"
+        description: "End date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/VlanMonitor"
+  /vu:
+    get:
+      tags:
+      - "Metrics"
+      summary: "Get metrics on Virtual User"
+      description: ""
+      operationId: "getVuMessages"
+      parameters:
+      - name: "trainId"
+        in: "query"
+        description: "The relative ID of the train"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "projectId"
+        in: "query"
+        description: "ID of the project"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "from"
+        in: "query"
+        description: "Start date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      - name: "to"
+        in: "query"
+        description: "End date of period"
+        required: true
+        type: "string"
+        format: "date-time"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/VirtualUserMessage"
+definitions:
+  AlarmEvent:
+    type: "object"
+    properties:
+      messageInfo:
+        type: "string"
+        description: "Internal string identifier for the type of message"
+        enum:
+        - "TRAINUSER_V1"
+        - "VIRTUALUSER_NEXTGEN_V1"
+        - "DIO_RTL_V1"
+        - "TRIP_SQI"
+        - "MAR3_LINK_STATISTICS_V1"
+        - "MAR3_GPS"
+        - "MAR3_GSM_STATISTICS_V1"
+        - "MAR3_LTE_STATISTICS_V1"
+        - "MAR3_WCDMA_STATISTICS_V1"
+        - "MAR3_LINK_SESSION_V1"
+        - "MAR3_SIM_STATISTIC"
+        - "SIM_V1"
+        - "BATCH_STATISTIC_MESSAGE"
+        - "ALARM_EVENT"
+        - "ALARM_INCIDENT"
+        - "CAPTIVE_PORTAL_V1"
+        - "ZABBIX_TRIGGER_EVENT_V1"
+        - "NOT_IMPORTANT"
+        - "HYBRID_CONSIST_V1"
+        - "DEVICE_CONSIST_V1"
+        - "TRAIN_MASTER_MAPPING_V1"
+        - "SYNC_CLIENT_V1"
+        - "RADIO_USER_COUNT_V1"
+        - "VLAN_MONITOR"
+        - "MAR3_CONGESTION_V1"
+        - "PORTAL_SATISFACTION_V1"
+        - "CAPACITY_TEST_V1"
+        - "EVENT_V1"
+      trainId:
+        type: "integer"
+        format: "int32"
+        description: "The relative ID of the train"
+      boxId:
+        type: "integer"
+        format: "int32"
+        description: "CCU Identifier"
+      id:
+        type: "integer"
+        format: "int64"
+        description: "Unique identifier"
+      type:
+        type: "string"
+        description: "The type of alarm"
+      level:
+        type: "integer"
+        format: "int32"
+        description: "Numerical value for severity of alarm. Between 0-5. 0 being\
+          \ lowest severity 5 being highest"
+      description:
+        type: "string"
+        description: "A brief accurate description of the issue"
+      alarmId:
+        type: "string"
+        description: "An identifier for the alarm"
+      acknowledged:
+        type: "boolean"
+        description: "The type of alarm"
+      deviceId:
+        type: "string"
+        description: "The identifier of the device effected"
+      projectId:
+        type: "integer"
+        format: "int32"
+        description: "ID of the project"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Capture time as unix timestamp (milliseconds)"
+  Area:
+    type: "object"
+    properties:
+      positions:
+        type: "array"
+        description: "An array of positions used to define an area"
+        items:
+          $ref: "#/definitions/Position"
+      center:
+        $ref: "#/definitions/Position"
+  AssignedJourney:
+    type: "object"
+    properties:
+      deviceId:
+        type: "string"
+        description: "Unique device identifier"
+      coachId:
+        type: "integer"
+        format: "int32"
+        description: "Unique coach identifier"
+      trainId:
+        type: "integer"
+        format: "int32"
+        description: "The relative ID of the train"
+      projectId:
+        type: "integer"
+        format: "int32"
+        description: "ID of the project"
+      id:
+        type: "integer"
+        format: "int64"
+        description: "An internal unique identifier"
+      journeyCode:
+        type: "string"
+        description: "Uniquely identifies an instance of a journey"
+      deviceIdInt:
+        type: "integer"
+        format: "int32"
+        description: "Numerical identifier for this device type, taken from the deviceId\
+          \ field"
+      payloadVersion:
+        type: "integer"
+        format: "int32"
+        readOnly: true
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Capture time as unix timestamp (milliseconds)"
+        readOnly: true
+      messageInfo:
+        type: "string"
+        description: "Simple name of message type"
+        readOnly: true
+      deviceType:
+        type: "string"
+        description: "The type of device taken from the deviceId field"
+        readOnly: true
+  AuthenticatedUserComposite:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+        description: "Internal identifier for the user"
+      fullname:
+        type: "string"
+        description: "The full name of the user"
+      name:
+        type: "string"
+        description: "The username of the user"
+      projectPageSet:
+        type: "object"
+        description: "A list of pages the user has access to"
+        additionalProperties:
+          type: "array"
+          uniqueItems: true
+          items:
+            type: "string"
+      projectRoleSet:
+        type: "object"
+        description: "A list of user roles in different projects"
+        additionalProperties:
+          type: "string"
+      token:
+        type: "string"
+        description: "A security token for an authenticated user. Used in requests\
+          \ to the API"
+      admin:
+        type: "boolean"
+        description: "Shows if the user has admin privileges"
+      firstlogin:
+        type: "boolean"
+        description: "Shows if this is the first time the user has logged in"
+  AuthenticationRequestComposite:
+    type: "object"
+    properties:
+      username:
+        type: "string"
+        description: "The username of the user trying to authenticate"
+      password:
+        type: "string"
+        description: "The password of the user trying to authenticate"
+  BrightnessTable:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+        description: "Internal identifier for the message"
+      mmdBacklight:
+        description: "The"
+        $ref: "#/definitions/MMDBacklight"
+      error:
+        type: "integer"
+        format: "int32"
+        description: "Backlight error detection. 0 = ok, 1 = error"
+        readOnly: true
+      status:
+        type: "integer"
+        format: "int32"
+        description: "Backlight on or off status. 0 = off, 1 = on"
+        readOnly: true
+      current:
+        type: "integer"
+        format: "int32"
+        description: "Brightness value (current). Range: 0-254"
+        readOnly: true
+      min:
+        type: "integer"
+        format: "int32"
+        description: "Minimum brightness value. Range: 0-254"
+        readOnly: true
+      max:
+        type: "integer"
+        format: "int32"
+        description: "Maximum brightness value. Range: 0-254"
+        readOnly: true
+      start:
+        type: "integer"
+        format: "int32"
+        description: "Initial brightness value. Range: 0-254"
+        readOnly: true
+      dynamicControl:
+        type: "integer"
+        format: "int32"
+        description: "DynamicBrightness control on or off status. 0 = off, 1 = on"
+        readOnly: true
+      ambient:
+        type: "integer"
+        format: "int32"
+        description: "Value of measured ambient brightness. Range: 0-1023"
+        readOnly: true
+  CapacityTest:
+    type: "object"
+    properties:
+      messageInfo:
+        type: "string"
+        description: "Internal string identifier for the type of message"
+        enum:
+        - "TRAINUSER_V1"
+        - "VIRTUALUSER_NEXTGEN_V1"
+        - "DIO_RTL_V1"
+        - "TRIP_SQI"
+        - "MAR3_LINK_STATISTICS_V1"
+        - "MAR3_GPS"
+        - "MAR3_GSM_STATISTICS_V1"
+        - "MAR3_LTE_STATISTICS_V1"
+        - "MAR3_WCDMA_STATISTICS_V1"
+        - "MAR3_LINK_SESSION_V1"
+        - "MAR3_SIM_STATISTIC"
+        - "SIM_V1"
+        - "BATCH_STATISTIC_MESSAGE"
+        - "ALARM_EVENT"
+        - "ALARM_INCIDENT"
+        - "CAPTIVE_PORTAL_V1"
+        - "ZABBIX_TRIGGER_EVENT_V1"
+        - "NOT_IMPORTANT"
+        - "HYBRID_CONSIST_V1"
+        - "DEVICE_CONSIST_V1"
+        - "TRAIN_MASTER_MAPPING_V1"
+        - "SYNC_CLIENT_V1"
+        - "RADIO_USER_COUNT_V1"
+        - "VLAN_MONITOR"
+        - "MAR3_CONGESTION_V1"
+        - "PORTAL_SATISFACTION_V1"
+        - "CAPACITY_TEST_V1"
+        - "EVENT_V1"
+      trainId:
+        type: "integer"
+        format: "int32"
+        description: "The relative ID of the train"
+      boxId:
+        type: "integer"
+        format: "int32"
+        description: "CCU Identifier"
+      id:
+        type: "integer"
+        format: "int64"
+        description: "Internal identifier for the message"
+      link:
+        type: "string"
+        description: "The Link the test was performed on"
+        enum:
+        - "CELL_0"
+        - "CELL_1"
+        - "CELL_2"
+        - "CELL_3"
+        - "CELL_4"
+        - "CELL_5"
+        - "CELL_6"
+        - "CELL_7"
+        - "CELL_8"
+        - "CELL_9"
+        - "CELL_10"
+        - "CELL_11"
+        - "CELL_12"
+        - "CELL_13"
+        - "CELL_14"
+        - "CELL_15"
+        - "CELL_16"
+        - "CE0P0"
+        - "CE1P0"
+        - "CE2P0"
+        - "CE3P0"
+        - "CE4P0"
+        - "CE5P0"
+        - "CE6P0"
+        - "CE7P0"
+        - "CE8P0"
+        - "CE9P0"
+        - "VLINK_0"
+        - "VLINK_1"
+        - "VLINK_2"
+        - "VLINK_3"
+        - "VLINK_4"
+        - "VLINK_5"
+        - "VLINK_6"
+        - "VLINK_7"
+        - "VLINK_8"
+        - "VLINK_9"
+        - "VLINK_10"
+        - "VLINK_11"
+        - "VLINK_12"
+        - "VLINK_13"
+        - "VLINK_14"
+        - "VLINK_15"
+        - "VLINK_16"
+        - "VLAN20"
+        - "VLAN21"
+        - "VLAN22"
+        - "VLAN23"
+        - "VLAN24"
+        - "VLAN25"
+        - "VLAN26"
+        - "VLAN27"
+        - "VLAN28"
+        - "VLAN29"
+        - "WIFI"
+        - "WLAN0"
+        - "SATELLITE"
+        - "ETH0"
+        - "ETH1"
+        - "ETH2"
+        - "DC_CE0P0"
+        - "DC_CE1P0"
+        - "DC_CE2P0"
+        - "DC_CE3P0"
+        - "DC_CE4P0"
+        - "DC_CE5P0"
+        - "DC_CE6P0"
+        - "DC_CE7P0"
+        - "DC_CE8P0"
+        - "DC_CE9P0"
+        - "DC_VLAN20"
+        - "DC_VLAN21"
+        - "DC_VLAN22"
+        - "DC_VLAN23"
+        - "DC_VLAN24"
+        - "DC_VLAN25"
+        - "DC_VLAN26"
+        - "DC_VLAN27"
+        - "DC_VLAN28"
+        - "DC_VLAN29"
+        - "DC_ETH0"
+        - "DC_ETH1"
+        - "DC_ETH2"
+        - "DC_WLAN0"
+      rateMbps:
+        type: "number"
+        format: "double"
+        description: "The download rate in Mbps achieved during the test"
+      placeholder:
+        type: "boolean"
+      rateKbps:
+        type: "integer"
+        format: "int64"
+        description: "The download rate in Kbps achieved during the test"
+      projectId:
+        type: "integer"
+        format: "int32"
+        description: "ID of the project"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Capture time as unix timestamp (milliseconds)"
+  Degraded:
+    type: "object"
+    properties:
+      deviceId:
+        type: "string"
+        description: "Unique device identifier"
+      coachId:
+        type: "integer"
+        format: "int32"
+        description: "Unique coach identifier"
+      trainId:
+        type: "integer"
+        format: "int32"
+        description: "The relative ID of the train"
+      projectId:
+        type: "integer"
+        format: "int32"
+        description: "ID of the project"
+      id:
+        type: "integer"
+        format: "int64"
+        description: "Internal identifier for the message"
+      mode:
+        type: "integer"
+        format: "int32"
+        example: "0 for manual_mode\n1 for local_mode\n2 for trainbus_mode\n3 for\
+          \ backend_mode"
+        description: "Mode in which OBIS Service is currently running."
+      deviceIdInt:
+        type: "integer"
+        format: "int32"
+        description: "Numerical identifier for this device type, taken from the deviceId\
+          \ field"
+      payloadVersion:
+        type: "integer"
+        format: "int32"
+        readOnly: true
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Capture time as unix timestamp (milliseconds)"
+        readOnly: true
+      messageInfo:
+        type: "string"
+        description: "Simple name of message type"
+        readOnly: true
+      deviceType:
+        type: "string"
+        description: "The type of device taken from the deviceId field"
+        readOnly: true
+  DioMessage:
+    type: "object"
+    properties:
+      messageInfo:
+        type: "string"
+        description: "Internal string identifier for the type of message"
+        enum:
+        - "TRAINUSER_V1"
+        - "VIRTUALUSER_NEXTGEN_V1"
+        - "DIO_RTL_V1"
+        - "TRIP_SQI"
+        - "MAR3_LINK_STATISTICS_V1"
+        - "MAR3_GPS"
+        - "MAR3_GSM_STATISTICS_V1"
+        - "MAR3_LTE_STATISTICS_V1"
+        - "MAR3_WCDMA_STATISTICS_V1"
+        - "MAR3_LINK_SESSION_V1"
+        - "MAR3_SIM_STATISTIC"
+        - "SIM_V1"
+        - "BATCH_STATISTIC_MESSAGE"
+        - "ALARM_EVENT"
+        - "ALARM_INCIDENT"
+        - "CAPTIVE_PORTAL_V1"
+        - "ZABBIX_TRIGGER_EVENT_V1"
+        - "NOT_IMPORTANT"
+        - "HYBRID_CONSIST_V1"
+        - "DEVICE_CONSIST_V1"
+        - "TRAIN_MASTER_MAPPING_V1"
+        - "SYNC_CLIENT_V1"
+        - "RADIO_USER_COUNT_V1"
+        - "VLAN_MONITOR"
+        - "MAR3_CONGESTION_V1"
+        - "PORTAL_SATISFACTION_V1"
+        - "CAPACITY_TEST_V1"
+        - "EVENT_V1"
+      trainId:
+        type: "integer"
+        format: "int32"
+        description: "The relative ID of the train"
+      id:
+        type: "integer"
+        format: "int64"
+      message:
+        type: "string"
+      projectId:
+        type: "integer"
+        format: "int32"
+        description: "ID of the project"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Capture time as unix timestamp (milliseconds)"
+  GpsComposite:
+    type: "object"
+    properties:
+      longitude:
+        type: "number"
+        format: "float"
+      latitude:
+        type: "number"
+        format: "float"
+      altitude:
+        type: "number"
+        format: "float"
+      speed:
+        type: "number"
+        format: "float"
+        description: "The speed the train is traveling at in kph"
+      heading:
+        type: "number"
+        format: "float"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Capture time as unix timestamp (milliseconds)"
+      valid:
+        type: "boolean"
+        description: "Boolean value to determine if geographic coordinates are valid\
+          \ (Latitude between -90 & 90 degrees, Longitude between -180 and 180 degrees"
+  Issue:
+    type: "object"
+    properties:
+      trainId:
+        type: "integer"
+        format: "int32"
+        description: "The relative ID of the train"
+      boxId:
+        type: "integer"
+        format: "int32"
+        description: "CCU Identifier"
+      hostId:
+        type: "integer"
+        format: "int64"
+        description: "The ID of the host in Zabbix"
+      hostname:
+        type: "string"
+        description: "The name of the host in Zabbix"
+      description:
+        type: "string"
+        description: "A descirption of the issue"
+      comment:
+        type: "string"
+        description: "An expanded description/comment of the issue"
+      alarmId:
+        type: "string"
+        description: "An identifier for the instance of the issue"
+      severity:
+        type: "string"
+        example: "0 - Not Classified, 1 - Information, 2 - Warning, 3 - Average, 4\
+          \ - High, 5 - Fatal"
+        description: "The severity of the issue"
+        enum:
+        - "NOT_CLASSIFIED"
+        - "INFORMATION"
+        - "WARNING"
+        - "AVERAGE"
+        - "HIGH"
+        - "FATAL"
+      lastChange:
+        type: "string"
+        format: "date-time"
+        description: "A unix timestamp for the last time there was a change to the\
+          \ issue"
+      acknowledged:
+        type: "boolean"
+        description: "If the issue has been acknowledged"
+      eventId:
+        type: "integer"
+        format: "int64"
+        description: "A numerical identifier from Zabbix to indicate the instance\
+          \ of the issue occurring"
+      triggerId:
+        type: "integer"
+        format: "int64"
+        description: "A numerical identifier from Zabbix to indicate the trigger that\
+          \ casued the issue"
+      type:
+        type: "string"
+        description: "The type of Issue. NMS or Zabbix"
+      deviceName:
+        type: "string"
+        description: "The name of the device the issue occurred on"
+      incidentId:
+        type: "string"
+      incidentPK:
+        type: "string"
+      incidentStatus:
+        type: "string"
+      zabbixURL:
+        type: "string"
+        description: "The URL for the Zabbix instance where the issue was generated.\
+          \ Zabbix alarms only"
+      paintedCoachId:
+        type: "string"
+        description: "The name given to the coach as told by the customer where the\
+          \ issue occured."
+      status:
+        type: "integer"
+        format: "int32"
+        description: "Status \"1\" issue is on going \"problem\". Status \"0\" issue\
+          \ has been resolved \"ok\""
+      projectName:
+        type: "string"
+        description: "Name of the project"
+      projectId:
+        type: "integer"
+        format: "int32"
+        description: "ID of the project"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Capture time as unix timestamp (milliseconds)"
+  LifeSign:
+    type: "object"
+    properties:
+      deviceId:
+        type: "string"
+        description: "Unique device identifier"
+      coachId:
+        type: "integer"
+        format: "int32"
+        description: "Unique coach identifier"
+      trainId:
+        type: "integer"
+        format: "int32"
+        description: "The relative ID of the train"
+      projectId:
+        type: "integer"
+        format: "int32"
+        description: "ID of the project"
+      id:
+        type: "integer"
+        format: "int64"
+        description: "Internal identifier for the message"
+      deviceIdInt:
+        type: "integer"
+        format: "int32"
+        description: "Numerical identifier for this device type, taken from the deviceId\
+          \ field"
+      payloadVersion:
+        type: "integer"
+        format: "int32"
+        readOnly: true
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Capture time as unix timestamp (milliseconds)"
+        readOnly: true
+      lifeSign:
+        type: "integer"
+        format: "int32"
+        description: "Uptime in number of seconds"
+        readOnly: true
+      messageInfo:
+        type: "string"
+        description: "Simple name of message type"
+        readOnly: true
+      deviceType:
+        type: "string"
+        description: "The type of device taken from the deviceId field"
+        readOnly: true
+  Line:
+    type: "object"
+    properties:
+      deviceId:
+        type: "string"
+        description: "Unique device identifier"
+      coachId:
+        type: "integer"
+        format: "int32"
+        description: "Unique coach identifier"
+      trainId:
+        type: "integer"
+        format: "int32"
+        description: "The relative ID of the train"
+      projectId:
+        type: "integer"
+        format: "int32"
+        description: "ID of the project"
+      id:
+        type: "integer"
+        format: "int64"
+        description: "Internal identifier for the message"
+      name:
+        type: "string"
+      direction:
+        type: "integer"
+        format: "int32"
+      deviceIdInt:
+        type: "integer"
+        format: "int32"
+        description: "Numerical identifier for this device type, taken from the deviceId\
+          \ field"
+      payloadVersion:
+        type: "integer"
+        format: "int32"
+        readOnly: true
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Capture time as unix timestamp (milliseconds)"
+        readOnly: true
+      messageInfo:
+        type: "string"
+        description: "Simple name of message type"
+        readOnly: true
+      deviceType:
+        type: "string"
+        description: "The type of device taken from the deviceId field"
+        readOnly: true
+  LinkStatus:
+    type: "object"
+    properties:
+      messageInfo:
+        type: "string"
+        description: "Internal string identifier for the type of message"
+        enum:
+        - "TRAINUSER_V1"
+        - "VIRTUALUSER_NEXTGEN_V1"
+        - "DIO_RTL_V1"
+        - "TRIP_SQI"
+        - "MAR3_LINK_STATISTICS_V1"
+        - "MAR3_GPS"
+        - "MAR3_GSM_STATISTICS_V1"
+        - "MAR3_LTE_STATISTICS_V1"
+        - "MAR3_WCDMA_STATISTICS_V1"
+        - "MAR3_LINK_SESSION_V1"
+        - "MAR3_SIM_STATISTIC"
+        - "SIM_V1"
+        - "BATCH_STATISTIC_MESSAGE"
+        - "ALARM_EVENT"
+        - "ALARM_INCIDENT"
+        - "CAPTIVE_PORTAL_V1"
+        - "ZABBIX_TRIGGER_EVENT_V1"
+        - "NOT_IMPORTANT"
+        - "HYBRID_CONSIST_V1"
+        - "DEVICE_CONSIST_V1"
+        - "TRAIN_MASTER_MAPPING_V1"
+        - "SYNC_CLIENT_V1"
+        - "RADIO_USER_COUNT_V1"
+        - "VLAN_MONITOR"
+        - "MAR3_CONGESTION_V1"
+        - "PORTAL_SATISFACTION_V1"
+        - "CAPACITY_TEST_V1"
+        - "EVENT_V1"
+      trainId:
+        type: "integer"
+        format: "int32"
+        description: "The relative ID of the train"
+      id:
+        type: "integer"
+        format: "int64"
+        description: "Internal identifier for the message"
+      name:
+        type: "string"
+        description: "Name of the link"
+      quality:
+        type: "number"
+        format: "double"
+        description: "Percentage of link uptime"
+      latestQuality:
+        type: "number"
+        format: "double"
+        description: "The latest percentage of link uptime"
+      active:
+        type: "boolean"
+        description: "If the link active"
+      mean:
+        $ref: "#/definitions/Mean"
+      average:
+        type: "number"
+        format: "double"
+      downloadRate:
+        type: "number"
+        format: "double"
+        description: "Download rate of the link in bytes"
+      uploadRate:
+        type: "number"
+        format: "double"
+        description: "Upload rate of the link in bytes"
+      operatorName:
+        type: "string"
+        description: "Name of the cellular operator currently being used by the link"
+      backup:
+        type: "boolean"
+        description: "If the link is a backup"
+      vpnUp:
+        type: "boolean"
+        description: "If a VPN is being used by the link"
+      disabled:
+        type: "boolean"
+        description: "If the link is disabled"
+      nameWithoutDash:
+        type: "string"
+        description: "Formatted name of the link"
+      activeBorder:
+        type: "string"
+        description: "A CSS class if the link is active"
+      labelClass:
+        type: "string"
+        description: "A CSS class to be applied on the link based on VPN being up\
+          \ and backup"
+      meanResult:
+        type: "number"
+        format: "double"
+      projectId:
+        type: "integer"
+        format: "int32"
+        description: "ID of the project"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Capture time as unix timestamp (milliseconds)"
+  LocationComposite:
+    type: "object"
+    properties:
+      abbreviatedLocation:
+        type: "string"
+        description: "An abbreviated name of a location"
+      fullLocation:
+        type: "string"
+        description: "A full name of a location"
+  LoopStatus:
+    type: "object"
+    properties:
+      deviceId:
+        type: "string"
+        description: "Unique device identifier"
+      coachId:
+        type: "integer"
+        format: "int32"
+        description: "Unique coach identifier"
+      trainId:
+        type: "integer"
+        format: "int32"
+        description: "The relative ID of the train"
+      projectId:
+        type: "integer"
+        format: "int32"
+        description: "ID of the project"
+      id:
+        type: "integer"
+        format: "int64"
+        description: "Internal identifier for the message"
+      category:
+        type: "string"
+        description: "Spot list category"
+      contentUpdate:
+        type: "string"
+        description: "The last RS content update time in the format YYYY-MM-DD HH:mm:ss"
+      cycleEvent:
+        type: "string"
+        description: "The last RS cycle time in the format YYYY-MM-DD HH:mm:ss"
+      name:
+        type: "string"
+        description: "The loop name"
+      status:
+        type: "string"
+      time:
+        type: "string"
+        description: "The time of the event in the format YYYY-MM-DD HH:mm:ss"
+      version:
+        type: "string"
+        description: "Active rundown script version"
+      channelId:
+        type: "string"
+      pmInstance:
+        type: "integer"
+        format: "int32"
+      deviceIdInt:
+        type: "integer"
+        format: "int32"
+        description: "Numerical identifier for this device type, taken from the deviceId\
+          \ field"
+      payloadVersion:
+        type: "integer"
+        format: "int32"
+        readOnly: true
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Capture time as unix timestamp (milliseconds)"
+        readOnly: true
+      messageInfo:
+        type: "string"
+        description: "Simple name of message type"
+        readOnly: true
+      deviceType:
+        type: "string"
+        description: "The type of device taken from the deviceId field"
+        readOnly: true
+  MMDBacklight:
+    type: "object"
+    properties:
+      deviceId:
+        type: "string"
+        description: "Unique device identifier"
+      coachId:
+        type: "integer"
+        format: "int32"
+        description: "Unique coach identifier"
+      trainId:
+        type: "integer"
+        format: "int32"
+        description: "The relative ID of the train"
+      projectId:
+        type: "integer"
+        format: "int32"
+        description: "ID of the project"
+      id:
+        type: "integer"
+        format: "int64"
+        description: "Internal identifier for the message"
+      error:
+        type: "integer"
+        format: "int32"
+        description: "Backlight error detection. 0 = ok, 1 = error"
+      status:
+        type: "integer"
+        format: "int32"
+        description: "Backlight on or off status. 0 = off, 1 = on"
+      current:
+        type: "integer"
+        format: "int32"
+        description: "Brightness value (current). Range: 0-254"
+      min:
+        type: "integer"
+        format: "int32"
+        description: "Minimum brightness value. Range: 0-254"
+      max:
+        type: "integer"
+        format: "int32"
+        description: "Maximum brightness value. Range: 0-254"
+      start:
+        type: "integer"
+        format: "int32"
+        description: "Initial brightness value. Range: 0-254"
+      dynamicControl:
+        type: "integer"
+        format: "int32"
+        description: "DynamicBrightness control on or off status. 0 = off, 1 = on"
+      ambient:
+        type: "integer"
+        format: "int32"
+        description: "Value of measured ambient brightness. Range: 0-1023"
+      deviceIdInt:
+        type: "integer"
+        format: "int32"
+        description: "Numerical identifier for this device type, taken from the deviceId\
+          \ field"
+      payloadVersion:
+        type: "integer"
+        format: "int32"
+        readOnly: true
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Capture time as unix timestamp (milliseconds)"
+        readOnly: true
+      screensPerMMD:
+        type: "integer"
+        format: "int32"
+        description: "Primary MMD - only one (1). Primary and Secondary in back-to-back\
+          \ arrangement (2). Range: 1-2"
+        readOnly: true
+      brightnessTable:
+        type: "array"
+        readOnly: true
+        uniqueItems: true
+        items:
+          $ref: "#/definitions/BrightnessTable"
+      messageInfo:
+        type: "string"
+        description: "Simple name of message type"
+        readOnly: true
+      deviceType:
+        type: "string"
+        description: "The type of device taken from the deviceId field"
+        readOnly: true
+  Mar3GsmStatistic:
+    type: "object"
+    properties:
+      messageInfo:
+        type: "string"
+        description: "Internal string identifier for the type of message"
+        enum:
+        - "TRAINUSER_V1"
+        - "VIRTUALUSER_NEXTGEN_V1"
+        - "DIO_RTL_V1"
+        - "TRIP_SQI"
+        - "MAR3_LINK_STATISTICS_V1"
+        - "MAR3_GPS"
+        - "MAR3_GSM_STATISTICS_V1"
+        - "MAR3_LTE_STATISTICS_V1"
+        - "MAR3_WCDMA_STATISTICS_V1"
+        - "MAR3_LINK_SESSION_V1"
+        - "MAR3_SIM_STATISTIC"
+        - "SIM_V1"
+        - "BATCH_STATISTIC_MESSAGE"
+        - "ALARM_EVENT"
+        - "ALARM_INCIDENT"
+        - "CAPTIVE_PORTAL_V1"
+        - "ZABBIX_TRIGGER_EVENT_V1"
+        - "NOT_IMPORTANT"
+        - "HYBRID_CONSIST_V1"
+        - "DEVICE_CONSIST_V1"
+        - "TRAIN_MASTER_MAPPING_V1"
+        - "SYNC_CLIENT_V1"
+        - "RADIO_USER_COUNT_V1"
+        - "VLAN_MONITOR"
+        - "MAR3_CONGESTION_V1"
+        - "PORTAL_SATISFACTION_V1"
+        - "CAPACITY_TEST_V1"
+        - "EVENT_V1"
+      trainId:
+        type: "integer"
+        format: "int32"
+        description: "The relative ID of the train"
+      boxId:
+        type: "integer"
+        format: "int32"
+        description: "CCU Identifier"
+      id:
+        type: "integer"
+        format: "int64"
+        description: "Internal identifier for the message"
+      link:
+        type: "string"
+        description: "The link reporting GSM statistics"
+        enum:
+        - "CELL_0"
+        - "CELL_1"
+        - "CELL_2"
+        - "CELL_3"
+        - "CELL_4"
+        - "CELL_5"
+        - "CELL_6"
+        - "CELL_7"
+        - "CELL_8"
+        - "CELL_9"
+        - "CELL_10"
+        - "CELL_11"
+        - "CELL_12"
+        - "CELL_13"
+        - "CELL_14"
+        - "CELL_15"
+        - "CELL_16"
+        - "CE0P0"
+        - "CE1P0"
+        - "CE2P0"
+        - "CE3P0"
+        - "CE4P0"
+        - "CE5P0"
+        - "CE6P0"
+        - "CE7P0"
+        - "CE8P0"
+        - "CE9P0"
+        - "VLINK_0"
+        - "VLINK_1"
+        - "VLINK_2"
+        - "VLINK_3"
+        - "VLINK_4"
+        - "VLINK_5"
+        - "VLINK_6"
+        - "VLINK_7"
+        - "VLINK_8"
+        - "VLINK_9"
+        - "VLINK_10"
+        - "VLINK_11"
+        - "VLINK_12"
+        - "VLINK_13"
+        - "VLINK_14"
+        - "VLINK_15"
+        - "VLINK_16"
+        - "VLAN20"
+        - "VLAN21"
+        - "VLAN22"
+        - "VLAN23"
+        - "VLAN24"
+        - "VLAN25"
+        - "VLAN26"
+        - "VLAN27"
+        - "VLAN28"
+        - "VLAN29"
+        - "WIFI"
+        - "WLAN0"
+        - "SATELLITE"
+        - "ETH0"
+        - "ETH1"
+        - "ETH2"
+        - "DC_CE0P0"
+        - "DC_CE1P0"
+        - "DC_CE2P0"
+        - "DC_CE3P0"
+        - "DC_CE4P0"
+        - "DC_CE5P0"
+        - "DC_CE6P0"
+        - "DC_CE7P0"
+        - "DC_CE8P0"
+        - "DC_CE9P0"
+        - "DC_VLAN20"
+        - "DC_VLAN21"
+        - "DC_VLAN22"
+        - "DC_VLAN23"
+        - "DC_VLAN24"
+        - "DC_VLAN25"
+        - "DC_VLAN26"
+        - "DC_VLAN27"
+        - "DC_VLAN28"
+        - "DC_VLAN29"
+        - "DC_ETH0"
+        - "DC_ETH1"
+        - "DC_ETH2"
+        - "DC_WLAN0"
+      gsmBand:
+        type: "string"
+      gsmChannel:
+        type: "integer"
+        format: "int32"
+      gmmState:
+        type: "string"
+      plmnState1:
+        type: "string"
+      mmState:
+        type: "string"
+      plmnState2:
+        type: "string"
+      servingCell:
+        type: "integer"
+        format: "int32"
+      servingCellBand:
+        type: "string"
+      rxLevel:
+        type: "number"
+        format: "double"
+      gprsState:
+        type: "string"
+      projectId:
+        type: "integer"
+        format: "int32"
+        description: "ID of the project"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Capture time as unix timestamp (milliseconds)"
+  Mar3LinkStatistic:
+    type: "object"
+    properties:
+      messageInfo:
+        type: "string"
+        description: "Internal string identifier for the type of message"
+        enum:
+        - "TRAINUSER_V1"
+        - "VIRTUALUSER_NEXTGEN_V1"
+        - "DIO_RTL_V1"
+        - "TRIP_SQI"
+        - "MAR3_LINK_STATISTICS_V1"
+        - "MAR3_GPS"
+        - "MAR3_GSM_STATISTICS_V1"
+        - "MAR3_LTE_STATISTICS_V1"
+        - "MAR3_WCDMA_STATISTICS_V1"
+        - "MAR3_LINK_SESSION_V1"
+        - "MAR3_SIM_STATISTIC"
+        - "SIM_V1"
+        - "BATCH_STATISTIC_MESSAGE"
+        - "ALARM_EVENT"
+        - "ALARM_INCIDENT"
+        - "CAPTIVE_PORTAL_V1"
+        - "ZABBIX_TRIGGER_EVENT_V1"
+        - "NOT_IMPORTANT"
+        - "HYBRID_CONSIST_V1"
+        - "DEVICE_CONSIST_V1"
+        - "TRAIN_MASTER_MAPPING_V1"
+        - "SYNC_CLIENT_V1"
+        - "RADIO_USER_COUNT_V1"
+        - "VLAN_MONITOR"
+        - "MAR3_CONGESTION_V1"
+        - "PORTAL_SATISFACTION_V1"
+        - "CAPACITY_TEST_V1"
+        - "EVENT_V1"
+      trainId:
+        type: "integer"
+        format: "int32"
+        description: "The relative ID of the train"
+      boxId:
+        type: "integer"
+        format: "int32"
+        description: "CCU Identifier"
+      id:
+        type: "integer"
+        format: "int64"
+        description: "Internal identifier for the message"
+      link:
+        type: "string"
+        description: "The link reporting the statistics"
+        enum:
+        - "CELL_0"
+        - "CELL_1"
+        - "CELL_2"
+        - "CELL_3"
+        - "CELL_4"
+        - "CELL_5"
+        - "CELL_6"
+        - "CELL_7"
+        - "CELL_8"
+        - "CELL_9"
+        - "CELL_10"
+        - "CELL_11"
+        - "CELL_12"
+        - "CELL_13"
+        - "CELL_14"
+        - "CELL_15"
+        - "CELL_16"
+        - "CE0P0"
+        - "CE1P0"
+        - "CE2P0"
+        - "CE3P0"
+        - "CE4P0"
+        - "CE5P0"
+        - "CE6P0"
+        - "CE7P0"
+        - "CE8P0"
+        - "CE9P0"
+        - "VLINK_0"
+        - "VLINK_1"
+        - "VLINK_2"
+        - "VLINK_3"
+        - "VLINK_4"
+        - "VLINK_5"
+        - "VLINK_6"
+        - "VLINK_7"
+        - "VLINK_8"
+        - "VLINK_9"
+        - "VLINK_10"
+        - "VLINK_11"
+        - "VLINK_12"
+        - "VLINK_13"
+        - "VLINK_14"
+        - "VLINK_15"
+        - "VLINK_16"
+        - "VLAN20"
+        - "VLAN21"
+        - "VLAN22"
+        - "VLAN23"
+        - "VLAN24"
+        - "VLAN25"
+        - "VLAN26"
+        - "VLAN27"
+        - "VLAN28"
+        - "VLAN29"
+        - "WIFI"
+        - "WLAN0"
+        - "SATELLITE"
+        - "ETH0"
+        - "ETH1"
+        - "ETH2"
+        - "DC_CE0P0"
+        - "DC_CE1P0"
+        - "DC_CE2P0"
+        - "DC_CE3P0"
+        - "DC_CE4P0"
+        - "DC_CE5P0"
+        - "DC_CE6P0"
+        - "DC_CE7P0"
+        - "DC_CE8P0"
+        - "DC_CE9P0"
+        - "DC_VLAN20"
+        - "DC_VLAN21"
+        - "DC_VLAN22"
+        - "DC_VLAN23"
+        - "DC_VLAN24"
+        - "DC_VLAN25"
+        - "DC_VLAN26"
+        - "DC_VLAN27"
+        - "DC_VLAN28"
+        - "DC_VLAN29"
+        - "DC_ETH0"
+        - "DC_ETH1"
+        - "DC_ETH2"
+        - "DC_WLAN0"
+      bytesSent:
+        type: "integer"
+        format: "int64"
+        description: "The number of bytes sent over the link during the interval period"
+      bytesReceived:
+        type: "integer"
+        format: "int64"
+        description: "The number of bytes received by the link during the interval\
+          \ period"
+      interval:
+        type: "integer"
+        format: "int64"
+        description: "Time in milliseconds that the statistics were collected over"
+      vpnUp:
+        type: "boolean"
+        description: "If the VPN is up"
+      iccid:
+        type: "integer"
+        description: "ICCID of the sim in use by the link"
+      imsi:
+        type: "integer"
+        description: "IMSI of the sim in use by the link"
+      modemState:
+        type: "string"
+        example: "FAILED, UNKNOWN, INITIALIZING, LOCKED, DISABLED, DISABLING, ENABLING,\
+          \ ENABLED, SEARCHING, REGISTERED, DISCONNECTING, CONNECTING, CONNECTED,\
+          \ DISABLED_BY_CONFIG, DISABLED_BY_GEO"
+        description: "The state the modem is in"
+        enum:
+        - "FAILED"
+        - "UNKNOWN"
+        - "INITIALIZING"
+        - "LOCKED"
+        - "DISABLED"
+        - "DISABLING"
+        - "ENABLING"
+        - "ENABLED"
+        - "SEARCHING"
+        - "REGISTERED"
+        - "DISCONNECTING"
+        - "CONNECTING"
+        - "CONNECTED"
+        - "DISABLED_BY_CONFIG"
+        - "DISABLED_BY_GEO"
+      accessTechnology:
+        type: "string"
+        example: "UNKNOWN, LTE, WCDMA, GSM, CDMA, ALL"
+        description: "The access technology used by the link"
+        enum:
+        - "UNKNOWN"
+        - "LTE"
+        - "WCDMA"
+        - "GSM"
+        - "CDMA"
+        - "ALL"
+        - "POTS"
+        - "GSM_COMPACT"
+        - "GPRS"
+        - "EDGE"
+        - "UMTS"
+        - "HSDPA"
+        - "HSUPA"
+        - "HSPA"
+        - "HSPA_PLUS"
+        - "ONEXRTT"
+        - "EVDO0"
+        - "EVDOA"
+        - "EVDOB"
+        - "ANY"
+      networkType:
+        type: "string"
+        example: "Unknown, GSM, GPRS, EDGE, UMTS, HSDPA, HSUPA, HSDPA/HSUPA, HSPA+,\
+          \ DC-HSPA+, LTE"
+        description: "The type of network used by the link"
+        enum:
+        - "UNKNOWN"
+        - "GSM"
+        - "GPRS"
+        - "EDGE"
+        - "UMTS"
+        - "HSDPA"
+        - "HSUPA"
+        - "HSDPAHSUPA"
+        - "HSPA_PLUS"
+        - "DCHSPA_PLUS"
+        - "LTE"
+      signalQuality:
+        type: "integer"
+        format: "int32"
+        description: "Calculated quality percentage based on SINR during the interval\
+          \ period"
+      operatorCode:
+        type: "integer"
+        format: "int32"
+        description: "Operator code of the sim in use by the link"
+      lac:
+        type: "integer"
+        format: "int32"
+        description: "Location area code of the link"
+      cellId:
+        type: "integer"
+        format: "int64"
+        description: "Cell ID of the link"
+      packetLoss:
+        type: "integer"
+        format: "int64"
+        description: "Number of packets lost during the interval"
+      averageLatency:
+        type: "integer"
+        format: "int64"
+        description: "The average latency during the interval in milliseconds"
+      latestLatency:
+        type: "integer"
+        format: "int64"
+      backupModem:
+        type: "boolean"
+        description: "If the link is a backup modem"
+      simSlot:
+        type: "integer"
+        format: "int32"
+        description: "The sim slot of the sim card in use"
+      kbpsPerSession:
+        type: "integer"
+        format: "int32"
+      backupSim:
+        type: "boolean"
+      projectId:
+        type: "integer"
+        format: "int32"
+        description: "ID of the project"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Capture time as unix timestamp (milliseconds)"
+  Mar3LteStatistic:
+    type: "object"
+    properties:
+      messageInfo:
+        type: "string"
+        description: "Internal string identifier for the type of message"
+        enum:
+        - "TRAINUSER_V1"
+        - "VIRTUALUSER_NEXTGEN_V1"
+        - "DIO_RTL_V1"
+        - "TRIP_SQI"
+        - "MAR3_LINK_STATISTICS_V1"
+        - "MAR3_GPS"
+        - "MAR3_GSM_STATISTICS_V1"
+        - "MAR3_LTE_STATISTICS_V1"
+        - "MAR3_WCDMA_STATISTICS_V1"
+        - "MAR3_LINK_SESSION_V1"
+        - "MAR3_SIM_STATISTIC"
+        - "SIM_V1"
+        - "BATCH_STATISTIC_MESSAGE"
+        - "ALARM_EVENT"
+        - "ALARM_INCIDENT"
+        - "CAPTIVE_PORTAL_V1"
+        - "ZABBIX_TRIGGER_EVENT_V1"
+        - "NOT_IMPORTANT"
+        - "HYBRID_CONSIST_V1"
+        - "DEVICE_CONSIST_V1"
+        - "TRAIN_MASTER_MAPPING_V1"
+        - "SYNC_CLIENT_V1"
+        - "RADIO_USER_COUNT_V1"
+        - "VLAN_MONITOR"
+        - "MAR3_CONGESTION_V1"
+        - "PORTAL_SATISFACTION_V1"
+        - "CAPACITY_TEST_V1"
+        - "EVENT_V1"
+      trainId:
+        type: "integer"
+        format: "int32"
+        description: "The relative ID of the train"
+      boxId:
+        type: "integer"
+        format: "int32"
+        description: "CCU Identifier"
+      id:
+        type: "integer"
+        format: "int64"
+      link:
+        type: "string"
+        enum:
+        - "CELL_0"
+        - "CELL_1"
+        - "CELL_2"
+        - "CELL_3"
+        - "CELL_4"
+        - "CELL_5"
+        - "CELL_6"
+        - "CELL_7"
+        - "CELL_8"
+        - "CELL_9"
+        - "CELL_10"
+        - "CELL_11"
+        - "CELL_12"
+        - "CELL_13"
+        - "CELL_14"
+        - "CELL_15"
+        - "CELL_16"
+        - "CE0P0"
+        - "CE1P0"
+        - "CE2P0"
+        - "CE3P0"
+        - "CE4P0"
+        - "CE5P0"
+        - "CE6P0"
+        - "CE7P0"
+        - "CE8P0"
+        - "CE9P0"
+        - "VLINK_0"
+        - "VLINK_1"
+        - "VLINK_2"
+        - "VLINK_3"
+        - "VLINK_4"
+        - "VLINK_5"
+        - "VLINK_6"
+        - "VLINK_7"
+        - "VLINK_8"
+        - "VLINK_9"
+        - "VLINK_10"
+        - "VLINK_11"
+        - "VLINK_12"
+        - "VLINK_13"
+        - "VLINK_14"
+        - "VLINK_15"
+        - "VLINK_16"
+        - "VLAN20"
+        - "VLAN21"
+        - "VLAN22"
+        - "VLAN23"
+        - "VLAN24"
+        - "VLAN25"
+        - "VLAN26"
+        - "VLAN27"
+        - "VLAN28"
+        - "VLAN29"
+        - "WIFI"
+        - "WLAN0"
+        - "SATELLITE"
+        - "ETH0"
+        - "ETH1"
+        - "ETH2"
+        - "DC_CE0P0"
+        - "DC_CE1P0"
+        - "DC_CE2P0"
+        - "DC_CE3P0"
+        - "DC_CE4P0"
+        - "DC_CE5P0"
+        - "DC_CE6P0"
+        - "DC_CE7P0"
+        - "DC_CE8P0"
+        - "DC_CE9P0"
+        - "DC_VLAN20"
+        - "DC_VLAN21"
+        - "DC_VLAN22"
+        - "DC_VLAN23"
+        - "DC_VLAN24"
+        - "DC_VLAN25"
+        - "DC_VLAN26"
+        - "DC_VLAN27"
+        - "DC_VLAN28"
+        - "DC_VLAN29"
+        - "DC_ETH0"
+        - "DC_ETH1"
+        - "DC_ETH2"
+        - "DC_WLAN0"
+      lteBand:
+        type: "string"
+      lteBw:
+        type: "number"
+        format: "double"
+      lteRxChannel:
+        type: "integer"
+        format: "int32"
+      lteTxChannel:
+        type: "integer"
+        format: "int32"
+      emmState:
+        type: "string"
+      serviceState:
+        type: "string"
+      rrcState:
+        type: "string"
+      imsRegState:
+        type: "string"
+      rssi:
+        type: "integer"
+        format: "int32"
+      txPower:
+        type: "integer"
+        format: "int32"
+      rsrp:
+        type: "integer"
+        format: "int32"
+      rsrq:
+        type: "integer"
+        format: "int32"
+      sinr:
+        type: "number"
+        format: "double"
+      caState:
+        type: "string"
+      secLteBand:
+        type: "string"
+      secLteBw:
+        type: "number"
+        format: "double"
+      secLteChannel:
+        type: "integer"
+        format: "int32"
+      pccRxmRssi:
+        type: "integer"
+        format: "int32"
+      pccRxmRsrp:
+        type: "integer"
+        format: "int32"
+      pccRxdRssi:
+        type: "integer"
+        format: "int32"
+      pccRxdRsrp:
+        type: "integer"
+        format: "int32"
+      sccRxmRssi:
+        type: "integer"
+        format: "int32"
+      sccRxmRsrp:
+        type: "integer"
+        format: "int32"
+      sccRxdRssi:
+        type: "integer"
+        format: "int32"
+      sccRxdRsrp:
+        type: "integer"
+        format: "int32"
+      projectId:
+        type: "integer"
+        format: "int32"
+        description: "ID of the project"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Capture time as unix timestamp (milliseconds)"
+  Mar3TotalComposite:
+    type: "object"
+    properties:
+      timestamp:
+        type: "string"
+        format: "date-time"
+      totalReceived:
+        type: "number"
+        description: "Download rate over time period in Mbps"
+      totalSent:
+        type: "number"
+        description: "Upload rate over time period in Mbps"
+      avgPacketLoss:
+        type: "number"
+        description: "Average packet loss over time period"
+      avgLatency:
+        type: "number"
+        description: "Average latency over time period"
+      avgSignalQuality:
+        type: "number"
+        description: "Average signal quality over time period"
+  Mar3WcdmaStatistic:
+    type: "object"
+    properties:
+      messageInfo:
+        type: "string"
+        description: "Internal string identifier for the type of message"
+        enum:
+        - "TRAINUSER_V1"
+        - "VIRTUALUSER_NEXTGEN_V1"
+        - "DIO_RTL_V1"
+        - "TRIP_SQI"
+        - "MAR3_LINK_STATISTICS_V1"
+        - "MAR3_GPS"
+        - "MAR3_GSM_STATISTICS_V1"
+        - "MAR3_LTE_STATISTICS_V1"
+        - "MAR3_WCDMA_STATISTICS_V1"
+        - "MAR3_LINK_SESSION_V1"
+        - "MAR3_SIM_STATISTIC"
+        - "SIM_V1"
+        - "BATCH_STATISTIC_MESSAGE"
+        - "ALARM_EVENT"
+        - "ALARM_INCIDENT"
+        - "CAPTIVE_PORTAL_V1"
+        - "ZABBIX_TRIGGER_EVENT_V1"
+        - "NOT_IMPORTANT"
+        - "HYBRID_CONSIST_V1"
+        - "DEVICE_CONSIST_V1"
+        - "TRAIN_MASTER_MAPPING_V1"
+        - "SYNC_CLIENT_V1"
+        - "RADIO_USER_COUNT_V1"
+        - "VLAN_MONITOR"
+        - "MAR3_CONGESTION_V1"
+        - "PORTAL_SATISFACTION_V1"
+        - "CAPACITY_TEST_V1"
+        - "EVENT_V1"
+      trainId:
+        type: "integer"
+        format: "int32"
+        description: "The relative ID of the train"
+      boxId:
+        type: "integer"
+        format: "int32"
+        description: "CCU Identifier"
+      id:
+        type: "integer"
+        format: "int64"
+      link:
+        type: "string"
+        enum:
+        - "CELL_0"
+        - "CELL_1"
+        - "CELL_2"
+        - "CELL_3"
+        - "CELL_4"
+        - "CELL_5"
+        - "CELL_6"
+        - "CELL_7"
+        - "CELL_8"
+        - "CELL_9"
+        - "CELL_10"
+        - "CELL_11"
+        - "CELL_12"
+        - "CELL_13"
+        - "CELL_14"
+        - "CELL_15"
+        - "CELL_16"
+        - "CE0P0"
+        - "CE1P0"
+        - "CE2P0"
+        - "CE3P0"
+        - "CE4P0"
+        - "CE5P0"
+        - "CE6P0"
+        - "CE7P0"
+        - "CE8P0"
+        - "CE9P0"
+        - "VLINK_0"
+        - "VLINK_1"
+        - "VLINK_2"
+        - "VLINK_3"
+        - "VLINK_4"
+        - "VLINK_5"
+        - "VLINK_6"
+        - "VLINK_7"
+        - "VLINK_8"
+        - "VLINK_9"
+        - "VLINK_10"
+        - "VLINK_11"
+        - "VLINK_12"
+        - "VLINK_13"
+        - "VLINK_14"
+        - "VLINK_15"
+        - "VLINK_16"
+        - "VLAN20"
+        - "VLAN21"
+        - "VLAN22"
+        - "VLAN23"
+        - "VLAN24"
+        - "VLAN25"
+        - "VLAN26"
+        - "VLAN27"
+        - "VLAN28"
+        - "VLAN29"
+        - "WIFI"
+        - "WLAN0"
+        - "SATELLITE"
+        - "ETH0"
+        - "ETH1"
+        - "ETH2"
+        - "DC_CE0P0"
+        - "DC_CE1P0"
+        - "DC_CE2P0"
+        - "DC_CE3P0"
+        - "DC_CE4P0"
+        - "DC_CE5P0"
+        - "DC_CE6P0"
+        - "DC_CE7P0"
+        - "DC_CE8P0"
+        - "DC_CE9P0"
+        - "DC_VLAN20"
+        - "DC_VLAN21"
+        - "DC_VLAN22"
+        - "DC_VLAN23"
+        - "DC_VLAN24"
+        - "DC_VLAN25"
+        - "DC_VLAN26"
+        - "DC_VLAN27"
+        - "DC_VLAN28"
+        - "DC_VLAN29"
+        - "DC_ETH0"
+        - "DC_ETH1"
+        - "DC_ETH2"
+        - "DC_WLAN0"
+      wcdmaBand:
+        type: "string"
+      wcdmaChannel:
+        type: "integer"
+        format: "int32"
+      gmmState:
+        type: "string"
+      plmnState1:
+        type: "string"
+      mmState:
+        type: "string"
+      plmnState2:
+        type: "string"
+      wcdmaL1State:
+        type: "string"
+      rrcState:
+        type: "string"
+      rxmRssic0:
+        type: "integer"
+        format: "int32"
+      rxdRssic0:
+        type: "integer"
+        format: "int32"
+      rxmRssic1:
+        type: "integer"
+        format: "int32"
+      rxdRssic1:
+        type: "integer"
+        format: "int32"
+      projectId:
+        type: "integer"
+        format: "int32"
+        description: "ID of the project"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Capture time as unix timestamp (milliseconds)"
+  Mean:
+    type: "object"
+    properties:
+      result:
+        type: "number"
+        format: "double"
+      n:
+        type: "integer"
+        format: "int64"
+      data:
+        type: "array"
+        items:
+          type: "number"
+          format: "double"
+  MonitoringTableOverview:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        description: "Internal identifier for the message"
+      name:
+        type: "string"
+        description: "The relative ID of the train"
+      level:
+        type: "integer"
+        format: "int32"
+      inService:
+        type: "boolean"
+        description: "True while a train is in on a trip"
+      maintainer:
+        type: "string"
+        description: "The maintainer for the train"
+      connectivityServer:
+        type: "string"
+        description: "Hostname of the server providing connectivity for the train"
+      telemetryServer:
+        type: "string"
+        description: "Hostname of the server receiving telemetry from the train"
+      currentTrip:
+        description: "Details of the trip the train is on"
+        $ref: "#/definitions/ScheduledTripComposite"
+      currentReferenceArea:
+        description: "Details of the Reference Area the train is at"
+        $ref: "#/definitions/ReferenceAreaComposite"
+      inDepot:
+        type: "boolean"
+        description: "Details if the train is at depot"
+      location:
+        description: "Details of the Location the train is at"
+        $ref: "#/definitions/LocationComposite"
+      nextTrip:
+        description: "Details of the next trip the train is on"
+        $ref: "#/definitions/ScheduledTripComposite"
+      speed:
+        type: "number"
+        format: "double"
+        description: "The speed the train is traveling at in kph"
+      users:
+        type: "array"
+        description: "Basic information on the number of users connected to the WiFi"
+        items:
+          $ref: "#/definitions/TrainUserData"
+      upToDate:
+        type: "boolean"
+        description: "True when the last seen date is less than 5 minutes ago"
+      links:
+        type: "array"
+        description: "Detailed information on the links used by the CCU"
+        items:
+          $ref: "#/definitions/LinkStatus"
+      zabbixStructure:
+        description: "Detailed information on the train structure. Contains coaches\
+          \ and the devices installed on them"
+        $ref: "#/definitions/TrainStructure"
+      alarmEvents:
+        type: "array"
+        description: "Information onf any alarms currently active for the train"
+        items:
+          $ref: "#/definitions/AlarmEvent"
+      dioMessage:
+        $ref: "#/definitions/DioMessage"
+      lastSeen:
+        type: "string"
+        format: "date-time"
+      trainId:
+        type: "integer"
+        format: "int32"
+        description: "The relative ID of the train"
+      projectId:
+        type: "integer"
+        format: "int32"
+        description: "ID of the project"
+      timestamp:
+        type: "string"
+        format: "date-time"
+  MtsDownloadStatus:
+    type: "object"
+    properties:
+      deviceId:
+        type: "string"
+        description: "Unique device identifier"
+      coachId:
+        type: "integer"
+        format: "int32"
+        description: "Unique coach identifier"
+      trainId:
+        type: "integer"
+        format: "int32"
+        description: "The relative ID of the train"
+      projectId:
+        type: "integer"
+        format: "int32"
+        description: "ID of the project"
+      id:
+        type: "integer"
+        format: "int64"
+        description: "Internal identifier for the message"
+      downloadStatus:
+        type: "integer"
+        format: "int32"
+        description: "Download status in \"percentage complete\" for a single MMC\
+          \ managed by MTS"
+      lastSeen:
+        type: "string"
+        description: "Information when MTS had checked the download status of the\
+          \ MMC the last time as unix timestamp (milliseconds)"
+      deviceIdInt:
+        type: "integer"
+        format: "int32"
+        description: "Numerical identifier for this device type, taken from the deviceId\
+          \ field"
+      payloadVersion:
+        type: "integer"
+        format: "int32"
+        readOnly: true
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Capture time as unix timestamp (milliseconds)"
+        readOnly: true
+      messageInfo:
+        type: "string"
+        description: "Simple name of message type"
+        readOnly: true
+      deviceType:
+        type: "string"
+        description: "The type of device taken from the deviceId field"
+        readOnly: true
+  OperationHours:
+    type: "object"
+    properties:
+      deviceId:
+        type: "string"
+        description: "Unique device identifier"
+      coachId:
+        type: "integer"
+        format: "int32"
+        description: "Unique coach identifier"
+      trainId:
+        type: "integer"
+        format: "int32"
+        description: "The relative ID of the train"
+      projectId:
+        type: "integer"
+        format: "int32"
+        description: "ID of the project"
+      id:
+        type: "integer"
+        format: "int64"
+        description: "Internal identifier for the message"
+      deviceIdInt:
+        type: "integer"
+        format: "int32"
+        description: "Numerical identifier for this device type, taken from the deviceId\
+          \ field"
+      payloadVersion:
+        type: "integer"
+        format: "int32"
+        readOnly: true
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Capture time as unix timestamp (milliseconds)"
+        readOnly: true
+      pcb:
+        type: "integer"
+        format: "int32"
+        description: "Total Hours of operation board level"
+        readOnly: true
+      display:
+        type: "integer"
+        format: "int32"
+        description: "Total Hours of operation TFT backlight 1"
+      display2:
+        type: "integer"
+        format: "int32"
+        description: "Total Hours of operation TFT backlight 2"
+        readOnly: true
+      messageInfo:
+        type: "string"
+        description: "Simple name of message type"
+        readOnly: true
+      deviceType:
+        type: "string"
+        description: "The type of device taken from the deviceId field"
+        readOnly: true
+  PSUDetails:
+    type: "object"
+    properties:
+      deviceId:
+        type: "string"
+        description: "Unique device identifier"
+      coachId:
+        type: "integer"
+        format: "int32"
+        description: "Unique coach identifier"
+      trainId:
+        type: "integer"
+        format: "int32"
+        description: "The relative ID of the train"
+      projectId:
+        type: "integer"
+        format: "int32"
+        description: "ID of the project"
+      id:
+        type: "integer"
+        format: "int64"
+        description: "Internal identifier for the message"
+      deviceIdInt:
+        type: "integer"
+        format: "int32"
+        description: "Numerical identifier for this device type, taken from the deviceId\
+          \ field"
+      payloadVersion:
+        type: "integer"
+        format: "int32"
+        readOnly: true
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Capture time as unix timestamp (milliseconds)"
+        readOnly: true
+      primaryPSU:
+        type: "boolean"
+        description: "Indicates which out of two of the PSU is the leader triggering\
+          \ the status changes"
+        readOnly: true
+      inputVoltage:
+        type: "boolean"
+        description: "Status 230V (on/off), Sent on change"
+        readOnly: true
+      shutDownInitiated:
+        type: "boolean"
+        description: "Shut down initiated. This status is set, in case 230V failure\
+          \ was determined and OBIS controller has initiated shutdown sequence after\
+          \ respective timeout/on change"
+        readOnly: true
+      messageInfo:
+        type: "string"
+        description: "Simple name of message type"
+        readOnly: true
+      deviceType:
+        type: "string"
+        description: "The type of device taken from the deviceId field"
+        readOnly: true
+  PSUDetailsSummary:
+    type: "object"
+    properties:
+      deviceId:
+        type: "string"
+        description: "Unique device identifier"
+      coachId:
+        type: "integer"
+        format: "int32"
+        description: "Unique coach identifier"
+      trainId:
+        type: "integer"
+        format: "int32"
+        description: "The relative ID of the train"
+      projectId:
+        type: "integer"
+        format: "int32"
+        description: "ID of the project"
+      id:
+        type: "integer"
+        format: "int64"
+        description: "Internal identifier for the message"
+      deviceIdInt:
+        type: "integer"
+        format: "int32"
+        description: "Numerical identifier for this device type, taken from the deviceId\
+          \ field"
+      payloadVersion:
+        type: "integer"
+        format: "int32"
+        readOnly: true
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Capture time as unix timestamp (milliseconds)"
+        readOnly: true
+      accuChargePercent:
+        type: "number"
+        format: "float"
+        description: "Loading status of batteries in percent / on change"
+        readOnly: true
+      accuChargingCurrent:
+        type: "integer"
+        format: "int32"
+        description: "Loading current"
+        readOnly: true
+      statusFlags:
+        type: "integer"
+        format: "int32"
+        example: "StatusPSURebooted:1,\nStatusPSUDuplicatesReceived:2,\nStatusPSUBadSeqnrReceived:4,\n\
+          StatusPSUIpAddressChanged:16,\nStatusPSUVimin:64,\nStatusPSUVimax:128,\n\
+          StatusPSUTcvmax:256,\nStatusPSUVomax:512,\nStatusPSUTbtmax:1024,\n:2048,\n\
+          StatusPSUEri2c:4096,\nStatusPSUErdef:8192"
+        description: "Binary coded flags showing more details"
+        readOnly: true
+      messageInfo:
+        type: "string"
+        description: "Simple name of message type"
+        readOnly: true
+      deviceType:
+        type: "string"
+        description: "The type of device taken from the deviceId field"
+        readOnly: true
+  PortalConsumptionPrivate:
+    type: "object"
+    properties:
+      messageInfo:
+        type: "string"
+        description: "Internal string identifier for the type of message"
+        enum:
+        - "TRAINUSER_V1"
+        - "VIRTUALUSER_NEXTGEN_V1"
+        - "DIO_RTL_V1"
+        - "TRIP_SQI"
+        - "MAR3_LINK_STATISTICS_V1"
+        - "MAR3_GPS"
+        - "MAR3_GSM_STATISTICS_V1"
+        - "MAR3_LTE_STATISTICS_V1"
+        - "MAR3_WCDMA_STATISTICS_V1"
+        - "MAR3_LINK_SESSION_V1"
+        - "MAR3_SIM_STATISTIC"
+        - "SIM_V1"
+        - "BATCH_STATISTIC_MESSAGE"
+        - "ALARM_EVENT"
+        - "ALARM_INCIDENT"
+        - "CAPTIVE_PORTAL_V1"
+        - "ZABBIX_TRIGGER_EVENT_V1"
+        - "NOT_IMPORTANT"
+        - "HYBRID_CONSIST_V1"
+        - "DEVICE_CONSIST_V1"
+        - "TRAIN_MASTER_MAPPING_V1"
+        - "SYNC_CLIENT_V1"
+        - "RADIO_USER_COUNT_V1"
+        - "VLAN_MONITOR"
+        - "MAR3_CONGESTION_V1"
+        - "PORTAL_SATISFACTION_V1"
+        - "CAPACITY_TEST_V1"
+        - "EVENT_V1"
+      trainId:
+        type: "integer"
+        format: "int32"
+        description: "The relative ID of the train"
+      boxId:
+        type: "integer"
+        format: "int32"
+        description: "CCU Identifier"
+      sessionStart:
+        type: "integer"
+        format: "int64"
+        description: "The time the users session started as unix timestamp (milliseconds)"
+      sessionStop:
+        type: "integer"
+        format: "int64"
+        description: "The time the users session ended as unix timestamp (milliseconds).\
+          \ If session is ongoing value will be -1"
+      ipAddress:
+        type: "string"
+        description: "The IP address given to the users device"
+      macHash:
+        type: "string"
+        description: "The hashed MAC address of the users device"
+      bytesConsumed:
+        type: "integer"
+        format: "int64"
+        description: "The total number of bytes received and sent by the user during\
+          \ the session"
+      serviceClass:
+        type: "integer"
+        format: "int32"
+        description: "The class of the user"
+      reference:
+        type: "string"
+      projectId:
+        type: "integer"
+        format: "int32"
+        description: "ID of the project"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Capture time as unix timestamp (milliseconds)"
+  Position:
+    type: "object"
+    properties:
+      latitude:
+        type: "number"
+        format: "float"
+      longitude:
+        type: "number"
+        format: "float"
+      altitude:
+        type: "number"
+        format: "float"
+      valid:
+        type: "boolean"
+        description: "Boolean value to determine if geographic coordinates are valid\
+          \ (Latitude between -90 & 90 degrees, Longitude between -180 and 180 degrees"
+  Project:
+    type: "object"
+    required:
+    - "abbreviation"
+    - "id"
+    - "name"
+    properties:
+      id:
+        type: "integer"
+        format: "int32"
+        description: "Numerical Identifier for the project"
+      abbreviation:
+        type: "string"
+        description: "An abbreviation of the Project"
+      name:
+        type: "string"
+        description: "The name of the Project"
+      region:
+        type: "string"
+        description: "The region the project is based in"
+  ProjectComposite:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int32"
+        description: "Numerical Identifier for the project"
+      name:
+        type: "string"
+        description: "The name of the Project"
+      region:
+        type: "string"
+        description: "The region the project is based in"
+  RadioUserCountCombined:
+    type: "object"
+    properties:
+      projectId:
+        type: "integer"
+        format: "int32"
+        description: "ID of the project"
+      trainId:
+        type: "integer"
+        format: "int32"
+        description: "The relative ID of the train"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Capture time as unix timestamp (milliseconds)"
+      coach:
+        type: "integer"
+        format: "int32"
+        description: "Numerical value for the coach"
+      connectedDevices:
+        type: "integer"
+        format: "int32"
+        description: "Number of devices connect on that coach"
+  ReferenceAreaComposite:
+    type: "object"
+    properties:
+      type:
+        type: "string"
+        example: "Depot - An area where a train may not be in service, Drawing - A\
+          \ drawn area on the map, Waypoint - A station used by scheduling and trips"
+        description: "The type of Reference Area"
+      name:
+        type: "string"
+        description: "The name of the area"
+      abbreviation:
+        type: "string"
+        description: "An abbreviated name for the area"
+      description:
+        type: "string"
+        description: "A description of the area"
+      area:
+        type: "string"
+        example: "48.858093,2.294694 48.857000,2.297000 48.857000,2.291000"
+        description: "A minimum of 3 positions. A position is a latitude followed\
+          \ by a longitude, seperated by \",\". Positions are seperated by a \" \""
+  SWPlatformStatus:
+    type: "object"
+    properties:
+      deviceId:
+        type: "string"
+        description: "Unique device identifier"
+      coachId:
+        type: "integer"
+        format: "int32"
+        description: "Unique coach identifier"
+      trainId:
+        type: "integer"
+        format: "int32"
+        description: "The relative ID of the train"
+      projectId:
+        type: "integer"
+        format: "int32"
+        description: "ID of the project"
+      id:
+        type: "integer"
+        format: "int64"
+        description: "Internal string identifier for the message"
+      deviceIdInt:
+        type: "integer"
+        format: "int32"
+        description: "Numerical identifier for this device type, taken from the deviceId\
+          \ field"
+      payloadVersion:
+        type: "integer"
+        format: "int32"
+        readOnly: true
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Capture time as unix timestamp (milliseconds)"
+        readOnly: true
+      status:
+        type: "integer"
+        format: "int32"
+        example: "0 – ok, 1 - Warning, 2 - Error, 3- Alarm"
+        description: "Global status"
+        readOnly: true
+      code:
+        type: "string"
+        description: "Provides latest status code entry. E.g. error code or event\
+          \ to reset previous error code. Interpretation can vary depending on Device\
+          \ configuration"
+        readOnly: true
+      description:
+        type: "string"
+        description: "Free text description of entry code"
+        readOnly: true
+      time:
+        type: "string"
+        description: "Time when latest entry was generated. It is formatted as follows:\
+          \ 'YYYY-MM-DD HH:MM:SS'. ; all logging entries will be set to  UTC +X  within\
+          \ the system. No time zone or daylight savings considered"
+        readOnly: true
+      messageInfo:
+        type: "string"
+        description: "Simple name of message type"
+        readOnly: true
+      deviceType:
+        type: "string"
+        description: "The type of device taken from the deviceId field"
+        readOnly: true
+  ScheduledTripComposite:
+    type: "object"
+    properties:
+      startStation:
+        type: "string"
+        description: "An abbreviated name of start station of the trip"
+      endStation:
+        type: "string"
+        description: "An abbreviated name of end station of the trip"
+      startStationName:
+        type: "string"
+        description: "The name of start station of the trip"
+      endStationName:
+        type: "string"
+        description: "The name of end station of the trip"
+      startDate:
+        type: "string"
+        format: "date-time"
+        description: "The departure time of the train from the starting station"
+      endDate:
+        type: "string"
+        format: "date-time"
+        description: "The arrival time of the train at the end station"
+      tripId:
+        type: "string"
+        description: "Internal identifier for the instance of the trip"
+  Temperature:
+    type: "object"
+    properties:
+      deviceId:
+        type: "string"
+        description: "Unique device identifier"
+      coachId:
+        type: "integer"
+        format: "int32"
+        description: "Unique coach identifier"
+      trainId:
+        type: "integer"
+        format: "int32"
+        description: "The relative ID of the train"
+      projectId:
+        type: "integer"
+        format: "int32"
+        description: "ID of the project"
+      id:
+        type: "integer"
+        format: "int64"
+        description: "Internal string identifier for the message"
+      deviceIdInt:
+        type: "integer"
+        format: "int32"
+        description: "Numerical identifier for this device type, taken from the deviceId\
+          \ field"
+      payloadVersion:
+        type: "integer"
+        format: "int32"
+        readOnly: true
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Capture time as unix timestamp (milliseconds)"
+        readOnly: true
+      current:
+        type: "integer"
+        format: "int32"
+        description: "Current Temperature"
+        readOnly: true
+      min:
+        type: "integer"
+        format: "int32"
+        description: "minimal allowed operation temperature according to specification"
+        readOnly: true
+      max:
+        type: "integer"
+        format: "int32"
+        description: "maximum allowed temperature according to specification"
+        readOnly: true
+      messageInfo:
+        type: "string"
+        description: "Simple name of message type"
+        readOnly: true
+      deviceType:
+        type: "string"
+        description: "The type of device taken from the deviceId field"
+        readOnly: true
+  TrainComposite:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+        description: "Internal string identifier for the message"
+      officialId:
+        type: "string"
+        description: "An official ID for the train as known by the customer"
+      relativeId:
+        type: "integer"
+        format: "int32"
+        description: "An internal ID for the train"
+      name:
+        type: "string"
+        description: "The name of the train as known by the customer"
+      connectivityServer:
+        type: "string"
+        example: "vmmar3be"
+        description: "The serving Connectivity server for this train"
+      telemetryServer:
+        type: "string"
+        description: "The serving Telemetry server (RTL or equivalent for MQTT architecture"
+      projectId:
+        type: "integer"
+        format: "int32"
+        description: "ID of the project"
+      type:
+        type: "string"
+        description: "The type (Fleet) of train"
+      displayTypeName:
+        type: "string"
+        description: "The name of the train as it should be displayed within in NMS.\
+          \ Configurable per project"
+      layout:
+        type: "string"
+        description: "Deprecated"
+      maintainer:
+        type: "string"
+        description: "The Maintainer of the train"
+      releasedDate:
+        type: "string"
+        format: "date-time"
+        description: "The date the train is in service from"
+  TrainData:
+    type: "object"
+    properties:
+      messageInfo:
+        type: "string"
+        description: "Internal string identifier for the type of message"
+        enum:
+        - "TRAINUSER_V1"
+        - "VIRTUALUSER_NEXTGEN_V1"
+        - "DIO_RTL_V1"
+        - "TRIP_SQI"
+        - "MAR3_LINK_STATISTICS_V1"
+        - "MAR3_GPS"
+        - "MAR3_GSM_STATISTICS_V1"
+        - "MAR3_LTE_STATISTICS_V1"
+        - "MAR3_WCDMA_STATISTICS_V1"
+        - "MAR3_LINK_SESSION_V1"
+        - "MAR3_SIM_STATISTIC"
+        - "SIM_V1"
+        - "BATCH_STATISTIC_MESSAGE"
+        - "ALARM_EVENT"
+        - "ALARM_INCIDENT"
+        - "CAPTIVE_PORTAL_V1"
+        - "ZABBIX_TRIGGER_EVENT_V1"
+        - "NOT_IMPORTANT"
+        - "HYBRID_CONSIST_V1"
+        - "DEVICE_CONSIST_V1"
+        - "TRAIN_MASTER_MAPPING_V1"
+        - "SYNC_CLIENT_V1"
+        - "RADIO_USER_COUNT_V1"
+        - "VLAN_MONITOR"
+        - "MAR3_CONGESTION_V1"
+        - "PORTAL_SATISFACTION_V1"
+        - "CAPACITY_TEST_V1"
+        - "EVENT_V1"
+      trainId:
+        type: "integer"
+        format: "int32"
+        description: "The relative ID of the train"
+      id:
+        type: "string"
+        description: "Internal string identifier for the message"
+      name:
+        type: "string"
+        description: "The name of the train"
+      currentLongitude:
+        type: "number"
+        format: "double"
+        description: "The most recent longitude reported by the train"
+      currentLatitude:
+        type: "number"
+        format: "double"
+        description: "The most recent latitude reported by the train"
+      currentAltitude:
+        type: "number"
+        format: "double"
+        description: "The most recent altitude reported by the train"
+      heading:
+        type: "number"
+        format: "double"
+        description: "Heading of the train in degrees"
+      speed:
+        type: "number"
+        format: "double"
+        description: "Speed of the train in kph"
+      lastTimestamp:
+        type: "string"
+        format: "date-time"
+        description: "The last time the train reported"
+      location:
+        description: "Details of the station the train is currently at"
+        $ref: "#/definitions/Waypoint"
+      upToDate:
+        type: "boolean"
+        description: "If last seen date (lastTimestamp) is more than 5 minutes ago\
+          \ false"
+      position:
+        $ref: "#/definitions/Position"
+      projectId:
+        type: "integer"
+        format: "int32"
+        description: "ID of the project"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Capture time as unix timestamp (milliseconds)"
+  TrainDevice:
+    type: "object"
+    properties:
+      hostId:
+        type: "integer"
+        format: "int64"
+        description: "The ID of the Zabbix host monitoring the device"
+      hostname:
+        type: "string"
+        description: "The name of the Zabbix host monitoring the device"
+      issues:
+        type: "array"
+        description: "A list of active Zabbix issues (alarms) for this device"
+        items:
+          $ref: "#/definitions/Issue"
+      deviceId:
+        type: "integer"
+        format: "int32"
+        description: "An internal ID of the device"
+      position:
+        type: "string"
+      ipAddr:
+        type: "string"
+        description: "IP address of the device"
+      type:
+        type: "string"
+        example: "CCU, Switch, AP etc"
+        description: "The type of device"
+      serial:
+        type: "string"
+        description: "The serial number of the device. May not be present depending\
+          \ on type of device"
+      config:
+        type: "string"
+        description: "An identifier of the configuration in use by the device. May\
+          \ not be present depending on type of device"
+      firmware:
+        type: "string"
+        description: "The firmware in use by the device. May not be present depending\
+          \ on type of device"
+      status:
+        type: "string"
+      carId:
+        type: "integer"
+        format: "int32"
+      add:
+        type: "integer"
+        format: "int32"
+      coachId:
+        type: "integer"
+        format: "int64"
+        description: "An internal numerical identifier of for the carriage the device\
+          \ is on"
+      paintedCoachId:
+        type: "string"
+        description: "The name of the carriage the device is on, as known by the customer"
+  TrainGeoData:
+    type: "object"
+    properties:
+      trainData:
+        description: "Brief information on the overview of the train. Current position\
+          \ last reported times etc."
+        $ref: "#/definitions/TrainData"
+      userLoginCount:
+        type: "integer"
+        format: "int32"
+        description: "Number of users currently connected to the WiFi"
+      currentDownload:
+        type: "integer"
+        format: "int64"
+        description: "The current download speed of the CCU"
+      currentUpload:
+        type: "integer"
+        format: "int64"
+        description: "The current upload speed of the CCU"
+      attachedBoxes:
+        type: "array"
+        description: "Deprecated"
+        items:
+          type: "object"
+  TrainPosition:
+    type: "object"
+    properties:
+      deviceId:
+        type: "string"
+        description: "Unique device identifier"
+      coachId:
+        type: "integer"
+        format: "int32"
+        description: "Unique coach identifier"
+      trainId:
+        type: "integer"
+        format: "int32"
+        description: "The relative ID of the train"
+      projectId:
+        type: "integer"
+        format: "int32"
+        description: "ID of the project"
+      id:
+        type: "integer"
+        format: "int64"
+        description: "Internal identifier for the message"
+      tp:
+        type: "string"
+      nextStopCode:
+        type: "string"
+        description: "The stop code of the next scheduled stop of the train"
+      nextStopName:
+        type: "string"
+        description: "The name of the next scheduled stop of the train"
+      deviceIdInt:
+        type: "integer"
+        format: "int32"
+        description: "Numerical identifier for this device type, taken from the deviceId\
+          \ field"
+      payloadVersion:
+        type: "integer"
+        format: "int32"
+        readOnly: true
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Capture time as unix timestamp (milliseconds)"
+        readOnly: true
+      messageInfo:
+        type: "string"
+        description: "Simple name of message type"
+        readOnly: true
+      deviceType:
+        type: "string"
+        description: "The type of device taken from the deviceId field"
+        readOnly: true
+  TrainStructure:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        description: "Internal identifier for the message"
+      trainId:
+        type: "integer"
+        format: "int32"
+        description: "The relative ID of the train"
+      devices:
+        type: "array"
+        description: "A list of devices being reported as part of the train"
+        items:
+          $ref: "#/definitions/TrainDevice"
+      onlineStatus:
+        type: "boolean"
+        description: "If the train is online or not"
+      hasDeviceInfo:
+        type: "boolean"
+        description: "If device information is available or not"
+      displayTypeName:
+        type: "string"
+        description: "The type (Fleet) of the train as it should be displayed in NMS"
+      lastOnline:
+        type: "string"
+        format: "date-time"
+        description: "Last time the Zabbix proxy monitoring the train was seen online\
+          \ as unix timestamp (milliseconds)"
+      projectId:
+        type: "integer"
+        format: "int32"
+        description: "ID of the project"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Capture time as unix timestamp (milliseconds)"
+  TrainTripComposite:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+        description: "Internal identifier for the message"
+      trainId:
+        type: "integer"
+        format: "int64"
+        description: "The relative ID of the train"
+      projectId:
+        type: "integer"
+        format: "int32"
+        description: "ID of the project"
+      officialId:
+        type: "string"
+        description: "An official ID for the train as known by the customer"
+      trainName:
+        type: "string"
+        description: "The name of the train as known by the customer"
+      serviceId:
+        type: "string"
+        description: "An identifier for the schedule ran by train"
+      mainTrainTrip:
+        type: "boolean"
+        description: "If the trip is of the type main"
+      trajectory:
+        type: "string"
+        description: "The trajectory of the train. The departure station abbreviation\
+          \ followed by the arrival station abbreviation"
+      departureStation:
+        type: "string"
+        description: "The name of the station the train departed from"
+      arrivalStation:
+        type: "string"
+        description: "The name of the station the train arrived at"
+      arrival:
+        type: "string"
+        format: "date-time"
+        description: "The time the train arrived at the end station"
+      departure:
+        type: "string"
+        format: "date-time"
+        description: "The time the train departed from the start station"
+      projectName:
+        type: "string"
+        description: "The name of the Project"
+      statistics:
+        type: "array"
+        description: "A list of KPI statistics calculated for this trip. Statistics\
+          \ are configurable per project and can differ"
+        items:
+          $ref: "#/definitions/TripSqiComposite"
+      subTrips:
+        type: "array"
+        description: "A list of sub trips that occurred during this trip"
+        items:
+          $ref: "#/definitions/TrainTripComposite"
+      mainTripId:
+        type: "integer"
+        format: "int64"
+        description: "The ID of the main trip this trip was a part of. Only for sub\
+          \ trips"
+  TrainUser:
+    type: "object"
+    properties:
+      messageInfo:
+        type: "string"
+        description: "Internal string identifier for the type of message"
+        enum:
+        - "TRAINUSER_V1"
+        - "VIRTUALUSER_NEXTGEN_V1"
+        - "DIO_RTL_V1"
+        - "TRIP_SQI"
+        - "MAR3_LINK_STATISTICS_V1"
+        - "MAR3_GPS"
+        - "MAR3_GSM_STATISTICS_V1"
+        - "MAR3_LTE_STATISTICS_V1"
+        - "MAR3_WCDMA_STATISTICS_V1"
+        - "MAR3_LINK_SESSION_V1"
+        - "MAR3_SIM_STATISTIC"
+        - "SIM_V1"
+        - "BATCH_STATISTIC_MESSAGE"
+        - "ALARM_EVENT"
+        - "ALARM_INCIDENT"
+        - "CAPTIVE_PORTAL_V1"
+        - "ZABBIX_TRIGGER_EVENT_V1"
+        - "NOT_IMPORTANT"
+        - "HYBRID_CONSIST_V1"
+        - "DEVICE_CONSIST_V1"
+        - "TRAIN_MASTER_MAPPING_V1"
+        - "SYNC_CLIENT_V1"
+        - "RADIO_USER_COUNT_V1"
+        - "VLAN_MONITOR"
+        - "MAR3_CONGESTION_V1"
+        - "PORTAL_SATISFACTION_V1"
+        - "CAPACITY_TEST_V1"
+        - "EVENT_V1"
+      trainId:
+        type: "integer"
+        format: "int32"
+        description: "The relative ID of the train"
+      boxId:
+        type: "integer"
+        format: "int32"
+        description: "CCU Identifier"
+      id:
+        type: "integer"
+        format: "int64"
+        description: "Internal identifier for the message"
+      sessions:
+        type: "integer"
+        format: "int32"
+        description: "The number of Wifi sessions this user has had"
+      logins:
+        type: "integer"
+        format: "int32"
+        description: "The number of times this user has logged in"
+      staffCount:
+        type: "integer"
+        format: "int32"
+      projectId:
+        type: "integer"
+        format: "int32"
+        description: "ID of the project"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Capture time as unix timestamp (milliseconds)"
+  TrainUserData:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+        description: "Internal identifier for the message"
+      sessions:
+        type: "integer"
+        format: "int32"
+        description: "The number of Wifi sessions this user has had"
+      logins:
+        type: "integer"
+        format: "int32"
+        description: "The number of times this user has logged in"
+      staffCount:
+        type: "integer"
+        format: "int32"
+      relativeTrainId:
+        type: "integer"
+        format: "int32"
+        description: "The relative ID of the train"
+      projectId:
+        type: "integer"
+        format: "int32"
+        description: "ID of the project"
+      boxId:
+        type: "integer"
+        format: "int32"
+        description: "CCU Identifier"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Capture time as unix timestamp (milliseconds)"
+  TripSqiComposite:
+    type: "object"
+    properties:
+      title:
+        type: "string"
+        description: "The name of the KPI"
+      value:
+        type: "number"
+        format: "double"
+        description: "A numerical value calculated for the KPI"
+      sqiId:
+        type: "integer"
+        format: "int32"
+        description: "An internal identifier for the KPI"
+      bad:
+        type: "number"
+        format: "double"
+        description: "The value for which the KPI is considered bad"
+      good:
+        type: "number"
+        format: "double"
+        description: "The value for which the KPI is considered good"
+      perfect:
+        type: "number"
+        format: "double"
+        description: "The value for which the KPI is considered perfect"
+      reverse:
+        type: "boolean"
+  VirtualUserMessage:
+    type: "object"
+    properties:
+      messageInfo:
+        type: "string"
+        description: "Internal string identifier for the type of message"
+        enum:
+        - "TRAINUSER_V1"
+        - "VIRTUALUSER_NEXTGEN_V1"
+        - "DIO_RTL_V1"
+        - "TRIP_SQI"
+        - "MAR3_LINK_STATISTICS_V1"
+        - "MAR3_GPS"
+        - "MAR3_GSM_STATISTICS_V1"
+        - "MAR3_LTE_STATISTICS_V1"
+        - "MAR3_WCDMA_STATISTICS_V1"
+        - "MAR3_LINK_SESSION_V1"
+        - "MAR3_SIM_STATISTIC"
+        - "SIM_V1"
+        - "BATCH_STATISTIC_MESSAGE"
+        - "ALARM_EVENT"
+        - "ALARM_INCIDENT"
+        - "CAPTIVE_PORTAL_V1"
+        - "ZABBIX_TRIGGER_EVENT_V1"
+        - "NOT_IMPORTANT"
+        - "HYBRID_CONSIST_V1"
+        - "DEVICE_CONSIST_V1"
+        - "TRAIN_MASTER_MAPPING_V1"
+        - "SYNC_CLIENT_V1"
+        - "RADIO_USER_COUNT_V1"
+        - "VLAN_MONITOR"
+        - "MAR3_CONGESTION_V1"
+        - "PORTAL_SATISFACTION_V1"
+        - "CAPACITY_TEST_V1"
+        - "EVENT_V1"
+      trainId:
+        type: "integer"
+        format: "int32"
+        description: "The relative ID of the train"
+      boxId:
+        type: "integer"
+        format: "int32"
+        description: "CCU Identifier"
+      id:
+        type: "integer"
+        format: "int64"
+        description: "Internal identifier for the message"
+      testSite:
+        type: "string"
+        description: "The URL of the site used to perform the virtual user test"
+      linkName:
+        type: "string"
+        description: "The name of the link the test was performed on"
+      linkQuality:
+        type: "number"
+        format: "double"
+        description: "Deprecated"
+      trainSpeed:
+        type: "number"
+        format: "double"
+        description: "The speed of the train in kmh"
+      dnsTime:
+        type: "number"
+        format: "double"
+        description: "Time taken for DNS lookup in seconds"
+      connectTime:
+        type: "number"
+        format: "double"
+        description: "Time taken to connect in seconds"
+      applicationConnectTime:
+        type: "number"
+        format: "double"
+        description: "Time taken for the application to connect in seconds"
+      preTransferTime:
+        type: "number"
+        format: "double"
+        description: "Time taken for pre transfer in seconds"
+      redirectTime:
+        type: "number"
+        format: "double"
+        description: "Time taken for redirect in seconds"
+      startTransferTime:
+        type: "number"
+        format: "double"
+        description: "Time taken to start the transfer in seconds"
+      totalTime:
+        type: "number"
+        format: "double"
+        description: "Total time taken to transfer the file in seconds"
+      httpCode:
+        type: "integer"
+        format: "int32"
+        description: "The HTTP response code returned from performing the test"
+      size:
+        type: "integer"
+        format: "int32"
+        description: "The size of the file transfer in bytes"
+      connections:
+        type: "integer"
+        format: "int32"
+        description: "The number of connections made for a successful test"
+      finalSite:
+        type: "string"
+        description: "The URL of the site used to perform the virtual user test"
+      curlResponseCode:
+        type: "integer"
+        format: "int32"
+        description: "Curl response code"
+      data:
+        type: "string"
+        description: "Internal identifier for the message"
+      portalResponseCode:
+        type: "integer"
+        format: "int32"
+      wifiAllowed:
+        type: "boolean"
+      projectId:
+        type: "integer"
+        format: "int32"
+        description: "ID of the project"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Capture time as unix timestamp (milliseconds)"
+  VlanMonitor:
+    type: "object"
+    properties:
+      messageInfo:
+        type: "string"
+        description: "Internal string identifier for the type of message"
+        enum:
+        - "TRAINUSER_V1"
+        - "VIRTUALUSER_NEXTGEN_V1"
+        - "DIO_RTL_V1"
+        - "TRIP_SQI"
+        - "MAR3_LINK_STATISTICS_V1"
+        - "MAR3_GPS"
+        - "MAR3_GSM_STATISTICS_V1"
+        - "MAR3_LTE_STATISTICS_V1"
+        - "MAR3_WCDMA_STATISTICS_V1"
+        - "MAR3_LINK_SESSION_V1"
+        - "MAR3_SIM_STATISTIC"
+        - "SIM_V1"
+        - "BATCH_STATISTIC_MESSAGE"
+        - "ALARM_EVENT"
+        - "ALARM_INCIDENT"
+        - "CAPTIVE_PORTAL_V1"
+        - "ZABBIX_TRIGGER_EVENT_V1"
+        - "NOT_IMPORTANT"
+        - "HYBRID_CONSIST_V1"
+        - "DEVICE_CONSIST_V1"
+        - "TRAIN_MASTER_MAPPING_V1"
+        - "SYNC_CLIENT_V1"
+        - "RADIO_USER_COUNT_V1"
+        - "VLAN_MONITOR"
+        - "MAR3_CONGESTION_V1"
+        - "PORTAL_SATISFACTION_V1"
+        - "CAPACITY_TEST_V1"
+        - "EVENT_V1"
+      trainId:
+        type: "integer"
+        format: "int32"
+        description: "The relative ID of the train"
+      boxId:
+        type: "integer"
+        format: "int32"
+        description: "CCU Identifier"
+      id:
+        type: "integer"
+        format: "int64"
+      sessionStart:
+        type: "integer"
+        format: "int64"
+      sessionStop:
+        type: "integer"
+        format: "int64"
+      vlan:
+        type: "string"
+      ipAddress:
+        type: "string"
+      mac:
+        type: "string"
+      bytesConsumed:
+        type: "integer"
+        format: "int64"
+      projectId:
+        type: "integer"
+        format: "int32"
+        description: "ID of the project"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Capture time as unix timestamp (milliseconds)"
+  Waypoint:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+        description: "Internal identifier for the area"
+      name:
+        type: "string"
+        description: "Short name of the area"
+      description:
+        type: "string"
+        description: "Longer textual description of the area"
+      abbreviation:
+        type: "string"
+        description: "Five-letter abbreviation to use for the way point"
+      area:
+        example: "48.858093,2.294694 48.857000,2.297000 48.857000,2.291000"
+        description: "A minimum of 3 positions. A position is a latitude and longitude"
+        $ref: "#/definitions/Area"
+      project:
+        description: "The project the area is part of"
+        $ref: "#/definitions/Project"
+      type:
+        type: "string"
+        enum:
+        - "WAYPOINT"
+        - "DEPOT"
+        - "SHADOWZONE"

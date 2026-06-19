@@ -1,0 +1,86 @@
+##### LOGTAIL SNAPSHOT 2026-06-18T05-38-48Z (boot=ef3dc94c-6332-4bd2-9ceb-840b15bbbafc) #####
+----- uptime / loadavg -----
+184.67 1960.62
+2.18 1.31 0.54 3/935 12073
+----- dmesg tail (last 40) -----
+[  170.481242] bond0: (slave lan1): link status down for interface, disabling it in 200 ms
+[  170.489237] bond0: (slave lan1): link status down for interface, disabling it in 200 ms
+[  170.497236] bond0: (slave lan1): link status down for interface, disabling it in 200 ms
+[  170.505231] bond0: (slave lan1): link status down for interface, disabling it in 200 ms
+[  170.513234] bond0: (slave lan1): link status down for interface, disabling it in 200 ms
+[  170.521233] bond0: (slave lan1): link status down for interface, disabling it in 200 ms
+[  170.521238] bond0: (slave lan1): invalid new link 1 on slave
+[  170.737328] bond0: (slave lan1): link status definitely down, disabling slave
+[  172.706326] docker0: port 2(vetha14a5d1) entered blocking state
+[  172.706331] docker0: port 2(vetha14a5d1) entered disabled state
+[  172.706378] device vetha14a5d1 entered promiscuous mode
+[  172.917708] eth0: renamed from veth6fe4ea2
+[  172.965727] IPv6: ADDRCONF(NETDEV_CHANGE): vetha14a5d1: link becomes ready
+[  172.965830] docker0: port 2(vetha14a5d1) entered blocking state
+[  172.965836] docker0: port 2(vetha14a5d1) entered forwarding state
+[  174.328658] i40e 0000:09:00.1 lan1: NIC Link is Up, 10 Gbps Full Duplex, Flow Control: None
+[  174.421241] bond0: (slave lan1): link status up, enabling it in 200 ms
+[  174.421252] bond0: (slave lan1): invalid new link 3 on slave
+[  174.637310] bond0: (slave lan1): link status definitely up, 10000 Mbps full duplex
+[  176.291755] i40e 0000:09:00.0 lan0: NIC Link is Down
+[  176.317243] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[  176.329242] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[  176.337232] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[  176.345236] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[  176.353233] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[  176.361239] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[  176.373236] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[  176.385251] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[  176.393251] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[  176.401239] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[  176.409243] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[  176.417232] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[  176.429235] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[  176.437236] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[  176.437244] bond0: (slave lan0): invalid new link 1 on slave
+[  176.649309] bond0: (slave lan0): link status definitely down, disabling slave
+[  180.870246] i40e 0000:09:00.0 lan0: NIC Link is Up, 10 Gbps Full Duplex, Flow Control: None
+[  180.961240] bond0: (slave lan0): link status up, enabling it in 200 ms
+[  180.961249] bond0: (slave lan0): invalid new link 3 on slave
+[  181.173322] bond0: (slave lan0): link status definitely up, 10000 Mbps full duplex
+----- journal priority<=4 (warn+), last 40 this boot -----
+Jun 18 05:36:50 box1-t23 ntpd[1239]: CONFIG: restrict nopeer ignored
+Jun 18 05:36:50 box1-t23 ntpd[1239]: CLOCK: leapsecond file ('/usr/share/zoneinfo/leap-seconds.list'): expired less than 356 days ago
+Jun 18 05:36:50 box1-t23 kernel: ath10k_pci 0000:10:00.0: pdev param 0 not supported by firmware
+Jun 18 05:36:51 box1-t23 kernel: ath10k_pci 0000:10:00.0: pdev param 0 not supported by firmware
+Jun 18 05:36:51 box1-t23 ntpd[1239]: statistics directory /var/log/ntpsec/ does not exist or is unwriteable, error No such file or directory
+Jun 18 05:36:52 box1-t23 NetworkManager[859]: <warn>  [1781761012.1562] device (wlp16s0): wifi-scan: active scanning for networks due to profiles with wifi.hidden=yes. This makes you trackable
+Jun 18 05:36:52 box1-t23 kernel: kauditd_printk_skb: 11 callbacks suppressed
+Jun 18 05:36:53 box1-t23 (udev-worker)[385]: ttyUSB5: Process '/lib/udev/gpsd.hotplug' failed with exit code 1.
+Jun 18 05:37:39 box1-t23 NetworkManager[859]: <warn>  [1781761059.0096] device (enp19s0f3): Activation: failed for connection 'Wired connection 5'
+Jun 18 05:37:39 box1-t23 NetworkManager[859]: <warn>  [1781761059.0104] device (enp19s0f2): Activation: failed for connection 'Wired connection 4'
+Jun 18 05:37:39 box1-t23 NetworkManager[859]: <warn>  [1781761059.0112] device (enp19s0f0): Activation: failed for connection 'Wired connection 2'
+Jun 18 05:37:39 box1-t23 NetworkManager[859]: <warn>  [1781761059.0122] device (enp19s0f1): Activation: failed for connection 'Wired connection 3'
+Jun 18 05:37:48 box1-t23 systemd[1]: NetworkManager-wait-online.service: Failed with result 'exit-code'.
+Jun 18 05:37:48 box1-t23 systemd[1]: Failed to start NetworkManager-wait-online.service - Network Manager Wait Online.
+Jun 18 05:37:48 box1-t23 kernel: kauditd_printk_skb: 62 callbacks suppressed
+Jun 18 05:37:49 box1-t23 systemd[1]: isc-dhcp-server.service: Found left-over process 4584 (dhcpd) in control group while starting unit. Ignoring.
+Jun 18 05:37:49 box1-t23 systemd[1]: This usually indicates unclean termination of a previous run, or service implementation deficiencies.
+Jun 18 05:37:49 box1-t23 systemd[1]: isc-dhcp-server.service: Found left-over process 4679 (sleep) in control group while starting unit. Ignoring.
+Jun 18 05:37:49 box1-t23 systemd[1]: This usually indicates unclean termination of a previous run, or service implementation deficiencies.
+Jun 18 05:37:51 box1-t23 ntpd[1239]: IO: bind(45) AF_INET6 fe80::42:21ff:fed4:24a4%23#123 flags 0x1 failed: Cannot assign requested address
+Jun 18 05:37:51 box1-t23 ntpd[1239]: IO: unable to create socket on docker0 (28) for fe80::42:21ff:fed4:24a4%23#123
+Jun 18 05:37:51 box1-t23 ntpd[1239]: IO: bind(45) AF_INET6 fe80::18f1:44ff:fe6f:694d%25#123 flags 0x1 failed: Cannot assign requested address
+Jun 18 05:37:51 box1-t23 ntpd[1239]: IO: unable to create socket on veth5ac68c8 (29) for fe80::18f1:44ff:fe6f:694d%25#123
+Jun 18 05:37:57 box1-t23 NetworkManager[859]: <warn>  [1781761077.9285] device (cdc-wdm0): retrieving IP configuration failed: modem IP method unsupported
+Jun 18 05:37:58 box1-t23 systemd[1]: isc-dhcp-server.service: Found left-over process 4584 (dhcpd) in control group while starting unit. Ignoring.
+Jun 18 05:37:58 box1-t23 systemd[1]: This usually indicates unclean termination of a previous run, or service implementation deficiencies.
+Jun 18 05:37:58 box1-t23 systemd[1]: nd-systemtest.service: Failed with result 'exit-code'.
+Jun 18 05:38:24 box1-t23 NetworkManager[859]: <warn>  [1781761104.0080] device (enp19s0f3): Activation: failed for connection 'Wired connection 5'
+Jun 18 05:38:24 box1-t23 NetworkManager[859]: <warn>  [1781761104.0084] device (enp19s0f2): Activation: failed for connection 'Wired connection 4'
+Jun 18 05:38:24 box1-t23 NetworkManager[859]: <warn>  [1781761104.0087] device (enp19s0f0): Activation: failed for connection 'Wired connection 2'
+Jun 18 05:38:24 box1-t23 NetworkManager[859]: <warn>  [1781761104.0090] device (enp19s0f1): Activation: failed for connection 'Wired connection 3'
+Jun 18 05:38:29 box1-t23 NetworkManager[859]: <warn>  [1781761109.0737] device (cdc-wdm1): retrieving IP configuration failed: modem IP method unsupported
+Jun 18 05:38:29 box1-t23 systemd[1]: isc-dhcp-server.service: Found left-over process 6671 (dhcpd) in control group while starting unit. Ignoring.
+Jun 18 05:38:29 box1-t23 systemd[1]: This usually indicates unclean termination of a previous run, or service implementation deficiencies.
+Jun 18 05:38:34 box1-t23 kernel: bond0: (slave lan1): invalid new link 1 on slave
+Jun 18 05:38:38 box1-t23 kernel: bond0: (slave lan1): invalid new link 3 on slave
+Jun 18 05:38:40 box1-t23 kernel: bond0: (slave lan0): invalid new link 1 on slave
+Jun 18 05:38:44 box1-t23 kernel: bond0: (slave lan0): invalid new link 3 on slave
+Jun 18 05:38:45 box1-t23 NetworkManager[859]: <warn>  [1781761125.3714] modem-broadband[cdc-wdm2]: failed to connect modem: QMI protocol error (70): 'InvalidOperation'
+Jun 18 05:38:45 box1-t23 NetworkManager[859]: <warn>  [1781761125.3719] device (cdc-wdm2): Activation: failed for connection 'ce2p0-1'

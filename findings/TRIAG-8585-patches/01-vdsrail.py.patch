@@ -1,0 +1,62 @@
+From: Abbas Rizvi <abbas.rizvi@nomadrail.com>
+Subject: [TRIAG-8585] vdsrail.py — Bugs 1, 2a, 2b, 7 (firmware regex, SNMP-None
+ guards, reboot hostname guard)
+
+File: lib/device/vendor/vdsrail.py
+
+Bug 1  firmware-version regex must also match "default image is now"
+Bug 2a firmware polling loop must skip None SNMP results
+Bug 2b config   polling loop must skip None SNMP results
+Bug 7  reboot() must not SNMP-set hostname when the SNMP-get returned None
+
+NOTE on Bug 7 context: the field carries two patcher generations. The current
+one (scripts/fix_obn_bugs67.py) assumes the pre-patch line is
+
+    hostname = self._snmp_get(...["snmp_get_hostname_oid"]) or ""
+
+If your tree instead has it without the `or ""` suffix, use hunk @@7-alt@@
+(commented at the bottom of this file) instead of hunk @@7@@.
+---
+--- a/lib/device/vendor/vdsrail.py
++++ b/lib/device/vendor/vdsrail.py
+@@ Bug 1: set_firmware_version() regex @@
+-        matchstr = r"Not running. System Firmware image loaded \[(.*)\]"
++        # Handle both response formats depending on switch firmware state
++        matchstr = r"Not running. System Firmware (?:default image is now|image loaded \[)(.*?)\]?"
+@@ Bug 2a: firmware-task polling loop None guard @@
+         result = ""
+         for _ in range(120):
+             sleep(1)
+             result = self._snmp_get(
+                 self.device_config["snmp_firmware_task_running_oid"]
+             )
++            if not result:
++                continue
+             search = re.search("Not running", result)
+@@ Bug 2b: config-task polling loop None guard @@
+         for _ in range(120):
+             sleep(1)
+             result = self._snmp_get(self.device_config["snmp_config_task_running_oid"])
++            if not result:
++                continue
+             search = re.search("Not running", result)
+@@ Bug 7: reboot() hostname None guard @@
+     def reboot(self) -> bool:
+-        hostname = self._snmp_get(self.device_config["snmp_get_hostname_oid"]) or ""
+-        self._snmp_set({self.device_config["snmp_set_hostname_oid"]: hostname})
++        hostname = self._snmp_get(self.device_config["snmp_get_hostname_oid"])
++        if hostname is not None:
++            self._snmp_set({self.device_config["snmp_set_hostname_oid"]: hostname})
+         self._snmp_set({self.device_config["snmp_reboot_oid"]: 3})
+
+# ---------------------------------------------------------------------------
+# @@7-alt@@  Use this hunk for Bug 7 INSTEAD of the @@ Bug 7 @@ hunk above
+# if your tree does NOT have the `or ""` suffix on the hostname line:
+#
+#      def reboot(self) -> bool:
+#          hostname = self._snmp_get(self.device_config["snmp_get_hostname_oid"])
+# -        self._snmp_set({self.device_config["snmp_set_hostname_oid"]: hostname})
+# +        if hostname is not None:
+# +            self._snmp_set({self.device_config["snmp_set_hostname_oid"]: hostname})
+#          self._snmp_set({self.device_config["snmp_reboot_oid"]: 3})
+# ---------------------------------------------------------------------------

@@ -1,0 +1,2532 @@
+##### HARVEST box1-t23 2026-06-12T10:10:48Z #####
+== LEASES ==
+10.179.23.181 nv6-A1-v8-138
+10.179.23.186 nv6-A2-v8-138
+10.179.23.187 nv6-A3-v8-138
+10.179.23.189 nv6-B1-v8-138
+10.179.23.192 nv6-B2-v8-138
+10.179.23.190 nv6-B3-v8-138
+10.179.23.184 nv6-C1-v8-138
+10.179.23.185 nv6-C2-v8-138
+10.179.23.182 nv6-C3-v8-138
+10.179.23.179 nv6-D1-v8-138
+10.179.23.191 nv6-D2-v8-138
+10.179.23.178 nv6-D3-v8-138
+10.179.23.193 nv6-E1-v8-138
+10.179.23.180 nv6-E2-v8-138
+10.179.23.183 nv6-E3-v8-138
+10.179.23.195 nv6-F1-v8-138
+10.179.23.194 nv6-F2-v8-138
+10.179.23.188 nv6-F3-v8-138
+===== nv6-A1-v8-138 (10.179.23.181) spanning-tree =====
+
+	Selected redundancy protocol RSTP is running.
+
+	Root bridge : 0/a0:59:3a:d0:59:20
+	Root port: e0-1
+	Root path cost: 4000
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+
+	Bridge ID: 32768/a0:59:3a:d0:61:20
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+	TxHoldCount 6
+
+	name	id	role	state	cost		port_mode
+	====================================================================
+	e0-0	128.1	DESG	FWD	2000		rstp,p2p,adminEdgeOff
+	e0-1	128.2	ROOT	FWD	2000		rstp,p2p,adminEdgeOff
+	e0-4	128.5	EDGE	FWD	2000		rstp,p2p,adminEdgeOn
+	e1-0	128.7	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-1	128.8	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-2	128.9	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-3	128.10	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-4	128.11	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-5	128.12	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-6	128.13	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-8	128.15	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-14	128.21	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-15	128.22	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-0	128.23	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-1	128.24	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-2	128.25	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-3	128.26	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-4	128.27	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-5	128.28	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+
+
+===== nv6-A2-v8-138 (10.179.23.186) spanning-tree =====
+
+	Selected redundancy protocol RSTP is running.
+
+	Root bridge : 0/a0:59:3a:d0:59:20
+	Root port: e0-0
+	Root path cost: 8000
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+
+	Bridge ID: 32768/a0:59:3a:d0:46:40
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+	TxHoldCount 6
+
+	name	id	role	state	cost		port_mode
+	====================================================================
+	e0-0	128.1	ROOT	FWD	2000		rstp,p2p,adminEdgeOff
+	e0-1	128.2	DESG	FWD	2000		rstp,p2p,adminEdgeOff
+	e0-4	128.5	EDGE	FWD	2000		rstp,p2p,adminEdgeOn
+	e1-0	128.7	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-1	128.8	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-2	128.9	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-3	128.10	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-4	128.11	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-5	128.12	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-6	128.13	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-7	128.14	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-8	128.15	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-9	128.16	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-14	128.21	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-15	128.22	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-0	128.23	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-1	128.24	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-2	128.25	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-3	128.26	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-5	128.28	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+
+
+===== nv6-A3-v8-138 (10.179.23.187) spanning-tree =====
+
+	Selected redundancy protocol RSTP is running.
+
+	Root bridge : 0/a0:59:3a:d0:59:20
+	Root port: e0-0
+	Root path cost: 6000
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+
+	Bridge ID: 32768/a0:59:3a:d0:59:a0
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+	TxHoldCount 6
+
+	name	id	role	state	cost		port_mode
+	====================================================================
+	e0-0	128.1	ROOT	FWD	2000		rstp,p2p,adminEdgeOff
+	e0-1	128.2	DESG	FWD	2000		rstp,p2p,adminEdgeOff
+	e0-4	128.5	EDGE	FWD	2000		rstp,p2p,adminEdgeOn
+	e1-0	128.7	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-1	128.8	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-2	128.9	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-4	128.11	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-9	128.16	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-14	128.21	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-4	128.27	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+
+
+===== nv6-B1-v8-138 (10.179.23.189) spanning-tree =====
+
+	Selected redundancy protocol RSTP is running.
+
+	Root bridge : 0/a0:59:3a:d0:59:20
+	Root port: e0-1
+	Root path cost: 22000
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+
+	Bridge ID: 32768/a0:59:3a:d0:3b:00
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+	TxHoldCount 6
+
+	name	id	role	state	cost		port_mode
+	====================================================================
+	e0-0	128.1	ALTR	BLK	400100		rstp,p2p,adminEdgeOff
+	e0-1	128.2	ROOT	FWD	2000		rstp,p2p,adminEdgeOff
+	e0-2	128.3	DESG	FWD	2000		rstp,p2p,adminEdgeOff
+	e0-4	128.5	EDGE	FWD	2000		rstp,p2p,adminEdgeOn
+	e1-0	128.7	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-1	128.8	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-2	128.9	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-3	128.10	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-4	128.11	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-5	128.12	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-6	128.13	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-8	128.15	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-11	128.18	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-14	128.21	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-15	128.22	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-0	128.23	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-1	128.24	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-2	128.25	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-3	128.26	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-4	128.27	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-5	128.28	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+
+
+===== nv6-B2-v8-138 (10.179.23.192) spanning-tree =====
+
+	Selected redundancy protocol RSTP is running.
+
+	Root bridge : 0/a0:59:3a:d0:59:20
+	Root port: e0-1
+	Root path cost: 10000
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+
+	Bridge ID: 32768/a0:59:3a:d0:63:40
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+	TxHoldCount 6
+
+	name	id	role	state	cost		port_mode
+	====================================================================
+	e0-0	128.1	DESG	FWD	2000		rstp,p2p,adminEdgeOff
+	e0-1	128.2	ROOT	FWD	2000		rstp,p2p,adminEdgeOff
+	e0-4	128.5	EDGE	FWD	2000		rstp,p2p,adminEdgeOn
+	e1-0	128.7	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-1	128.8	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-2	128.9	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-3	128.10	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-4	128.11	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-5	128.12	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-6	128.13	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-7	128.14	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-8	128.15	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-9	128.16	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-14	128.21	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-15	128.22	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-0	128.23	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-1	128.24	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-2	128.25	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-3	128.26	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-5	128.28	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+
+
+===== nv6-B3-v8-138 (10.179.23.190) spanning-tree =====
+
+	Selected redundancy protocol RSTP is running.
+
+	Root bridge : 0/a0:59:3a:d0:59:20
+	Root port: e0-1
+	Root path cost: 12000
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+
+	Bridge ID: 32768/a0:59:3a:d0:2a:c0
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+	TxHoldCount 6
+
+	name	id	role	state	cost		port_mode
+	====================================================================
+	e0-0	128.1	DESG	FWD	400100		rstp,p2p,adminEdgeOff
+	e0-1	128.2	ROOT	FWD	2000		rstp,p2p,adminEdgeOff
+	e0-2	128.3	DESG	FWD	137999999		rstp,p2p,adminEdgeOff
+	e0-4	128.5	EDGE	FWD	2000		rstp,p2p,adminEdgeOn
+	e1-0	128.7	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-1	128.8	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-2	128.9	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-9	128.16	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-11	128.18	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-14	128.21	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-4	128.27	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+
+
+===== nv6-C1-v8-138 (10.179.23.184) spanning-tree =====
+
+	Selected redundancy protocol RSTP is running.
+
+	Root bridge : 0/a0:59:3a:d0:59:20
+	Root port: e0-1
+	Root path cost: 2000
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+
+	Bridge ID: 32768/a0:59:3a:d0:5a:e0
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+	TxHoldCount 6
+
+	name	id	role	state	cost		port_mode
+	====================================================================
+	e0-0	128.1	DESG	FWD	2000		rstp,p2p,adminEdgeOff
+	e0-1	128.2	ROOT	FWD	2000		rstp,p2p,adminEdgeOff
+	e0-4	128.5	EDGE	FWD	2000		rstp,p2p,adminEdgeOn
+	e1-0	128.7	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-1	128.8	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-2	128.9	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-3	128.10	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-4	128.11	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-5	128.12	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-6	128.13	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-7	128.14	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-8	128.15	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-14	128.21	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-15	128.22	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-0	128.23	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-1	128.24	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-2	128.25	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-3	128.26	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-4	128.27	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-5	128.28	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+
+
+===== nv6-C2-v8-138 (10.179.23.185) spanning-tree =====
+
+	Selected redundancy protocol RSTP is running.
+
+	Root bridge : 0/a0:59:3a:d0:59:20
+	Root port: e0-0
+	Root path cost: 12000
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+
+	Bridge ID: 32768/a0:59:3a:d0:62:20
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+	TxHoldCount 6
+
+	name	id	role	state	cost		port_mode
+	====================================================================
+	e0-0	128.1	ROOT	FWD	2000		rstp,p2p,adminEdgeOff
+	e0-1	128.2	DESG	FWD	2000		rstp,p2p,adminEdgeOff
+	e0-4	128.5	EDGE	FWD	2000		rstp,p2p,adminEdgeOn
+	e1-0	128.7	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-1	128.8	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-2	128.9	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-3	128.10	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-4	128.11	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-5	128.12	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-6	128.13	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-8	128.15	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-9	128.16	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-14	128.21	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-15	128.22	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-0	128.23	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-1	128.24	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-2	128.25	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-3	128.26	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-4	128.27	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-5	128.28	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+
+
+===== nv6-C3-v8-138 (10.179.23.182) spanning-tree =====
+
+	Selected redundancy protocol RSTP is running.
+
+	Root bridge : 0/a0:59:3a:d0:59:20
+	Root port: e0-0
+	Root path cost: 10000
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+
+	Bridge ID: 32768/a0:59:3a:d0:77:80
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+	TxHoldCount 6
+
+	name	id	role	state	cost		port_mode
+	====================================================================
+	e0-0	128.1	ROOT	FWD	2000		rstp,p2p,adminEdgeOff
+	e0-1	128.2	DESG	FWD	2000		rstp,p2p,adminEdgeOff
+	e0-4	128.5	EDGE	FWD	2000		rstp,p2p,adminEdgeOn
+	e1-0	128.7	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-1	128.8	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-2	128.9	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-9	128.16	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+
+
+===== nv6-D1-v8-138 (10.179.23.179) spanning-tree =====
+
+	Selected redundancy protocol RSTP is running.
+
+	Root bridge : 0/a0:59:3a:d0:59:20
+	Root port: This is the ROOT Bridge.
+	Root path cost: 0
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+
+	Bridge ID: 0/a0:59:3a:d0:59:20
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+	TxHoldCount 6
+
+	name	id	role	state	cost		port_mode
+	====================================================================
+	e0-0	128.1	DESG	FWD	2000		rstp,p2p,adminEdgeOff
+	e0-1	128.2	DESG	FWD	2000		rstp,p2p,adminEdgeOff
+	e0-2	128.3	EDGE	FWD	2000		rstp,p2p,adminEdgeOn
+	e0-3	128.4	EDGE	FWD	2000		rstp,p2p,adminEdgeOn
+	e0-4	128.5	EDGE	FWD	2000		rstp,p2p,adminEdgeOn
+	e1-0	128.7	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-1	128.8	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-2	128.9	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-3	128.10	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-4	128.11	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-5	128.12	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-6	128.13	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-7	128.14	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-8	128.15	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-14	128.21	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-15	128.22	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-0	128.23	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-1	128.24	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-2	128.25	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-3	128.26	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-4	128.27	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-5	128.28	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+
+
+===== nv6-D2-v8-138 (10.179.23.191) spanning-tree =====
+
+	Selected redundancy protocol RSTP is running.
+
+	Root bridge : 0/a0:59:3a:d0:59:20
+	Root port: e0-0
+	Root path cost: 16000
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+
+	Bridge ID: 32768/a0:59:3a:d0:59:60
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+	TxHoldCount 6
+
+	name	id	role	state	cost		port_mode
+	====================================================================
+	e0-0	128.1	ROOT	FWD	2000		rstp,p2p,adminEdgeOff
+	e0-1	128.2	DESG	FWD	2000		rstp,p2p,adminEdgeOff
+	e0-4	128.5	EDGE	FWD	2000		rstp,p2p,adminEdgeOn
+	e1-0	128.7	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-1	128.8	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-2	128.9	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-3	128.10	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-4	128.11	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-5	128.12	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-6	128.13	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-8	128.15	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-9	128.16	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-14	128.21	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-15	128.22	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-0	128.23	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-1	128.24	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-2	128.25	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-3	128.26	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-4	128.27	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-5	128.28	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+
+
+===== nv6-D3-v8-138 (10.179.23.178) spanning-tree =====
+
+	Selected redundancy protocol RSTP is running.
+
+	Root bridge : 0/a0:59:3a:d0:59:20
+	Root port: e0-0
+	Root path cost: 14000
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+
+	Bridge ID: 4096/a0:59:3a:d0:65:00
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+	TxHoldCount 6
+
+	name	id	role	state	cost		port_mode
+	====================================================================
+	e0-0	128.1	ROOT	FWD	2000		rstp,p2p,adminEdgeOff
+	e0-1	128.2	DESG	FWD	2000		rstp,p2p,adminEdgeOff
+	e0-2	128.3	EDGE	FWD	2000		rstp,p2p,adminEdgeOn
+	e0-3	128.4	EDGE	FWD	2000		rstp,p2p,adminEdgeOn
+	e0-4	128.5	EDGE	FWD	2000		rstp,p2p,adminEdgeOn
+	e1-0	128.7	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-1	128.8	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-2	128.9	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-9	128.16	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+
+
+===== nv6-E1-v8-138 (10.179.23.193) spanning-tree =====
+
+	Selected redundancy protocol RSTP is running.
+
+	Root bridge : 0/a0:59:3a:d0:59:20
+	Root port: e0-1
+	Root path cost: 18000
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+
+	Bridge ID: 32768/a0:59:3a:d0:55:40
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+	TxHoldCount 6
+
+	name	id	role	state	cost		port_mode
+	====================================================================
+	e0-0	128.1	DESG	FWD	2000		rstp,p2p,adminEdgeOff
+	e0-1	128.2	ROOT	FWD	2000		rstp,p2p,adminEdgeOff
+	e0-4	128.5	EDGE	FWD	2000		rstp,p2p,adminEdgeOn
+	e1-0	128.7	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-1	128.8	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-2	128.9	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-3	128.10	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-4	128.11	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-5	128.12	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-6	128.13	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-7	128.14	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-8	128.15	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-10	128.17	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-11	128.18	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-14	128.21	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-15	128.22	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-0	128.23	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-1	128.24	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-2	128.25	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-3	128.26	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-4	128.27	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-5	128.28	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+
+
+===== nv6-E2-v8-138 (10.179.23.180) spanning-tree =====
+
+	Selected redundancy protocol RSTP is running.
+
+	Root bridge : 0/a0:59:3a:d0:59:20
+	Root port: e0-1
+	Root path cost: 2000
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+
+	Bridge ID: 32768/a0:59:3a:d0:52:e0
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+	TxHoldCount 6
+
+	name	id	role	state	cost		port_mode
+	====================================================================
+	e0-0	128.1	DESG	FWD	2000		rstp,p2p,adminEdgeOff
+	e0-1	128.2	ROOT	FWD	2000		rstp,p2p,adminEdgeOff
+	e0-4	128.5	EDGE	FWD	2000		rstp,p2p,adminEdgeOn
+	e1-0	128.7	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-1	128.8	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-2	128.9	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-3	128.10	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-5	128.12	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-6	128.13	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-7	128.14	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-8	128.15	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-9	128.16	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-10	128.17	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-11	128.18	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-14	128.21	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-15	128.22	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-0	128.23	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-1	128.24	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-2	128.25	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-3	128.26	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-4	128.27	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-5	128.28	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+
+
+===== nv6-E3-v8-138 (10.179.23.183) spanning-tree =====
+
+	Selected redundancy protocol RSTP is running.
+
+	Root bridge : 0/a0:59:3a:d0:59:20
+	Root port: e0-1
+	Root path cost: 4000
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+
+	Bridge ID: 32768/a0:59:3a:d0:60:80
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+	TxHoldCount 6
+
+	name	id	role	state	cost		port_mode
+	====================================================================
+	e0-0	128.1	DESG	FWD	2000		rstp,p2p,adminEdgeOff
+	e0-1	128.2	ROOT	FWD	2000		rstp,p2p,adminEdgeOff
+	e0-4	128.5	EDGE	FWD	2000		rstp,p2p,adminEdgeOn
+	e1-0	128.7	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-1	128.8	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-2	128.9	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-9	128.16	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-10	128.17	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-11	128.18	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-0	128.23	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+
+
+===== nv6-F1-v8-138 (10.179.23.195) spanning-tree =====
+
+	Selected redundancy protocol RSTP is running.
+
+	Root bridge : 0/a0:59:3a:d0:59:20
+	Root port: e0-1
+	Root path cost: 20000
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+
+	Bridge ID: 32768/a0:59:3a:d0:5f:40
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+	TxHoldCount 6
+
+	name	id	role	state	cost		port_mode
+	====================================================================
+	e0-0	128.1	DESG	FWD	2000		rstp,p2p,adminEdgeOff
+	e0-1	128.2	ROOT	FWD	2000		rstp,p2p,adminEdgeOff
+	e0-4	128.5	EDGE	FWD	2000		rstp,p2p,adminEdgeOn
+	e1-0	128.7	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-1	128.8	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-2	128.9	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-3	128.10	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-4	128.11	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-5	128.12	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-6	128.13	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-7	128.14	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-8	128.15	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-14	128.21	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-15	128.22	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-0	128.23	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-1	128.24	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-2	128.25	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-3	128.26	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-4	128.27	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-5	128.28	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+
+
+===== nv6-F2-v8-138 (10.179.23.194) spanning-tree =====
+
+	Selected redundancy protocol RSTP is running.
+
+	Root bridge : 0/a0:59:3a:d0:59:20
+	Root port: e0-1
+	Root path cost: 6000
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+
+	Bridge ID: 32768/a0:59:3a:d0:5e:a0
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+	TxHoldCount 6
+
+	name	id	role	state	cost		port_mode
+	====================================================================
+	e0-0	128.1	DESG	FWD	2000		rstp,p2p,adminEdgeOff
+	e0-1	128.2	ROOT	FWD	2000		rstp,p2p,adminEdgeOff
+	e0-4	128.5	EDGE	FWD	2000		rstp,p2p,adminEdgeOn
+	e1-0	128.7	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-1	128.8	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-2	128.9	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-3	128.10	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-4	128.11	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-5	128.12	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-6	128.13	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-8	128.15	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-9	128.16	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-14	128.21	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-15	128.22	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-0	128.23	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-1	128.24	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-2	128.25	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-3	128.26	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-4	128.27	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e2-5	128.28	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+
+
+===== nv6-F3-v8-138 (10.179.23.188) spanning-tree =====
+
+	Selected redundancy protocol RSTP is running.
+
+	Root bridge : 0/a0:59:3a:d0:59:20
+	Root port: e0-1
+	Root path cost: 8000
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+
+	Bridge ID: 32768/a0:59:3a:d0:5d:c0
+	Hello Time 2 sec  Max Age 20 sec  Forward Delay 15 sec
+	TxHoldCount 6
+
+	name	id	role	state	cost		port_mode
+	====================================================================
+	e0-0	128.1	DESG	FWD	2000		rstp,p2p,adminEdgeOff
+	e0-1	128.2	ROOT	FWD	2000		rstp,p2p,adminEdgeOff
+	e0-4	128.5	EDGE	FWD	2000		rstp,p2p,adminEdgeOn
+	e1-0	128.7	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-1	128.8	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-2	128.9	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+	e1-9	128.16	EDGE	FWD	20000		rstp,p2p,adminEdgeOn
+
+
+===== nv6-A1-v8-138 (10.179.23.181) e0-2 details =====
+Interface e0-2 is enabled, line protocol is down
+  Interface index is 5
+  Hardware is 10 Gigabit Ethernet (switched)
+  Phy is 10 100 1000 2500 5000 10000 baseT Half/Full Duplex
+  Link AutoNegotiation is Enabled
+  Speed: Auto  Duplex: Auto  MDI: Auto
+  Flow Control is Disabled
+  Fast Link Detection is enabled (delay 40 ms)
+  Hardware address is a0:59:3a:d0:61:20
+  Default CoS: 0  CoS override: Disabled
+  QoS trusting: both
+  Queuing strategy: mq tx queue size:  1000
+  UP BROADCAST MULTICAST  MTU: 1500
+
+  Stats
+  ------
+  RX packets:0
+     unicasts:0 broadcasts:0 multicasts:0
+  TX packets:0
+     unicasts:0 broadcasts:0 multicasts:0
+  RX bytes:0
+  TX bytes:0
+
+  collisions:0
+  pause frames received:0
+  pause frames sent:0
+  carrier false:0
+
+  Errors
+  ------
+  RX errors:0 runts:0 giants:0 frag:0 jabber:0
+  RX crc errors: 0
+  TX crc errors:0
+  Excessive collisions:0 Late collisions:0
+
+  Rate Limiting
+  ------
+  outbound unlimited
+  broadcast kbps:1008 (burst bytes:33824)
+
+===== nv6-A1-v8-138 (10.179.23.181) log (tail 80) =====
+Jan  1 03:31:14 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:31:14 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 03:31:17 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:17 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:31:17 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 03:31:18 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:18 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:31:18 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 03:31:20 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:20 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:31:21 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 03:31:22 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:22 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:31:22 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 03:31:25 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:25 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:31:25 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 03:31:26 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:26 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:31:26 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 03:31:29 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:29 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:31:29 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 03:31:30 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:30 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:31:30 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 03:31:32 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:32 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:31:33 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 03:31:34 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:34 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:31:34 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 03:31:37 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:37 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:31:37 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 03:31:38 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:38 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:31:38 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 03:31:41 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:41 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:31:41 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 03:31:42 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:42 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:31:42 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 03:31:45 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:45 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:31:45 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 03:31:46 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:46 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:31:46 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 03:31:49 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:49 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:31:49 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 03:31:50 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:50 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:31:50 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 03:31:53 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:53 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:31:53 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 03:31:54 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:54 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:31:54 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 03:31:56 SW-Std auth: Login success [user: admin][source: 10.179.23.129][service: ssh]
+Jan  1 03:31:56 SW-Std session: Session closed [user: admin][source: 10.179.23.129][service: ssh]
+Jan  1 03:31:57 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:57 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:31:57 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 03:31:58 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:58 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:31:58 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 03:32:01 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:32:01 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:32:01 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 03:32:02 SW-Std auth: Login success [user: admin][source: 10.179.23.129][service: ssh]
+Jan  1 03:32:02 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:32:02 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:32:02 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 03:32:03 SW-Std session: Session closed [user: admin][source: 10.179.23.129][service: ssh]
+Jan  1 03:32:03 SW-Std auth: Login success [user: admin][source: 10.179.23.129][service: ssh]
+
+===== nv6-A3-v8-138 (10.179.23.187) e0-2 details =====
+Interface e0-2 is enabled, line protocol is down
+  Interface index is 5
+  Hardware is 10 Gigabit Ethernet (switched)
+  Phy is 10 100 1000 2500 5000 10000 baseT Half/Full Duplex
+  Link AutoNegotiation is Enabled
+  Speed: Auto  Duplex: Auto  MDI: Auto
+  Flow Control is Disabled
+  Fast Link Detection is enabled (delay 40 ms)
+  Hardware address is a0:59:3a:d0:59:a0
+  Default CoS: 0  CoS override: Disabled
+  QoS trusting: both
+  Queuing strategy: mq tx queue size:  1000
+  UP BROADCAST MULTICAST  MTU: 1500
+
+  Stats
+  ------
+  RX packets:0
+     unicasts:0 broadcasts:0 multicasts:0
+  TX packets:0
+     unicasts:0 broadcasts:0 multicasts:0
+  RX bytes:0
+  TX bytes:0
+
+  collisions:0
+  pause frames received:0
+  pause frames sent:0
+  carrier false:0
+
+  Errors
+  ------
+  RX errors:0 runts:0 giants:0 frag:0 jabber:0
+  RX crc errors: 0
+  TX crc errors:0
+  Excessive collisions:0 Late collisions:0
+
+  Rate Limiting
+  ------
+  outbound unlimited
+  broadcast kbps:1008 (burst bytes:33824)
+
+===== nv6-A3-v8-138 (10.179.23.187) log (tail 80) =====
+Jan  1 03:31:14 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:14 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:31:16 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:16 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:31:16 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 03:31:17 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 03:31:18 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:18 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:31:20 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:20 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:31:20 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 03:31:21 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 03:31:22 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:22 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:31:24 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:24 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:31:24 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 03:31:25 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 03:31:26 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:26 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:31:28 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:28 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:31:28 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 03:31:29 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 03:31:30 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:30 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:31:32 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:32 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:31:32 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 03:31:33 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 03:31:34 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:34 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:31:36 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:36 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:31:36 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 03:31:37 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 03:31:38 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:38 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:31:40 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:40 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:31:40 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 03:31:41 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 03:31:42 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:42 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:31:44 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:44 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:31:44 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 03:31:45 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 03:31:46 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:46 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:31:48 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:48 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:31:48 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 03:31:50 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:50 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:31:50 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 03:31:52 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:52 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:31:52 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 03:31:53 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 03:31:54 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:54 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:31:56 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:56 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:31:56 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 03:31:56 SW-Std auth: Login success [user: admin][source: 10.179.23.129][service: ssh]
+Jan  1 03:31:57 SW-Std session: Session closed [user: admin][source: 10.179.23.129][service: ssh]
+Jan  1 03:31:57 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 03:31:58 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:58 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:32:00 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:32:00 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:32:00 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 03:32:01 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 03:32:02 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:32:02 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:32:03 SW-Std auth: Login success [user: admin][source: 10.179.23.129][service: ssh]
+Jan  1 03:32:04 SW-Std session: Session closed [user: admin][source: 10.179.23.129][service: ssh]
+Jan  1 03:32:04 SW-Std auth: Login success [user: admin][source: 10.179.23.129][service: ssh]
+
+===== nv6-B1-v8-138 (10.179.23.189) e0-2 details =====
+Interface e0-2 is enabled, line protocol is up
+  Interface index is 5
+  Hardware is 10 Gigabit Ethernet (switched)
+  Phy is 10 100 1000 2500 5000 10000 baseT Half/Full Duplex
+  Link AutoNegotiation is Enabled
+  Speed: 10000 Mb/s  Duplex: Full  MDI: MDI
+  Flow Control is Disabled
+  Fast Link Detection is enabled (delay 40 ms)
+  Hardware address is a0:59:3a:d0:3b:00
+  Default CoS: 0  CoS override: Disabled
+  QoS trusting: both
+  Queuing strategy: mq tx queue size:  1000
+  UP BROADCAST RUNNING MULTICAST  MTU: 1500
+
+  Stats
+  ------
+  RX packets:355
+     unicasts:124 broadcasts:16 multicasts:215
+  TX packets:13175832
+     unicasts:297820 broadcasts:1522404 multicasts:11355608
+  RX bytes:165740
+  TX bytes:1439550189
+
+  collisions:0
+  pause frames received:0
+  pause frames sent:0
+  carrier false:0
+
+  Errors
+  ------
+  RX errors:0 runts:0 giants:0 frag:0 jabber:0
+  RX crc errors: 0
+  TX crc errors:0
+  Excessive collisions:0 Late collisions:0
+
+  Rate Limiting
+  ------
+  outbound unlimited
+  broadcast kbps:1008 (burst bytes:33824)
+
+===== nv6-B1-v8-138 (10.179.23.189) log (tail 80) =====
+Jan  1 03:31:29 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 Flushing all entries.
+Jan  1 03:31:29 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:30 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:31 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:31 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 Flushing all entries.
+Jan  1 03:31:31 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 sending Tc
+Jan  1 03:31:33 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 sending Tc
+Jan  1 03:31:33 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:33 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 Flushing all entries.
+Jan  1 03:31:33 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:34 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:35 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:35 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 Flushing all entries.
+Jan  1 03:31:35 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 sending Tc
+Jan  1 03:31:37 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 sending Tc
+Jan  1 03:31:37 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:37 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 Flushing all entries.
+Jan  1 03:31:37 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:38 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:39 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:39 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 Flushing all entries.
+Jan  1 03:31:39 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 sending Tc
+Jan  1 03:31:41 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 sending Tc
+Jan  1 03:31:41 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:41 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 Flushing all entries.
+Jan  1 03:31:41 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:42 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:43 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:43 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 Flushing all entries.
+Jan  1 03:31:43 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 sending Tc
+Jan  1 03:31:45 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 sending Tc
+Jan  1 03:31:45 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:45 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 Flushing all entries.
+Jan  1 03:31:45 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:46 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:47 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:47 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 Flushing all entries.
+Jan  1 03:31:47 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 sending Tc
+Jan  1 03:31:49 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 sending Tc
+Jan  1 03:31:49 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:49 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 Flushing all entries.
+Jan  1 03:31:49 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:50 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:51 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:51 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 Flushing all entries.
+Jan  1 03:31:51 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 sending Tc
+Jan  1 03:31:53 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 sending Tc
+Jan  1 03:31:53 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:53 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 Flushing all entries.
+Jan  1 03:31:53 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:54 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:55 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:55 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 Flushing all entries.
+Jan  1 03:31:55 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 sending Tc
+Jan  1 03:31:57 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 sending Tc
+Jan  1 03:31:57 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:57 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 Flushing all entries.
+Jan  1 03:31:57 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:58 SW-Std auth: Login success [user: admin][source: 10.179.23.129][service: ssh]
+Jan  1 03:31:58 SW-Std session: Session closed [user: admin][source: 10.179.23.129][service: ssh]
+Jan  1 03:31:58 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:31:59 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:31:59 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 Flushing all entries.
+Jan  1 03:31:59 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 sending Tc
+Jan  1 03:32:01 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 sending Tc
+Jan  1 03:32:01 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:32:01 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 Flushing all entries.
+Jan  1 03:32:01 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:32:02 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:32:03 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:32:03 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 Flushing all entries.
+Jan  1 03:32:03 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 sending Tc
+Jan  1 03:32:05 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 sending Tc
+Jan  1 03:32:05 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 received Tc 
+Jan  1 03:32:05 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 Flushing all entries.
+Jan  1 03:32:05 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 received Tc 
+Jan  1 03:32:05 SW-Std auth: Login success [user: admin][source: 10.179.23.129][service: ssh]
+Jan  1 03:32:06 SW-Std session: Session closed [user: admin][source: 10.179.23.129][service: ssh]
+Jan  1 03:32:06 SW-Std auth: Login success [user: admin][source: 10.179.23.129][service: ssh]
+
+===== nv6-B3-v8-138 (10.179.23.190) e0-2 details =====
+Interface e0-2 is enabled, line protocol is up
+  Interface index is 5
+  Hardware is 10 Gigabit Ethernet (switched)
+  Phy is 10 100 1000 2500 5000 10000 baseT Half/Full Duplex
+  Link AutoNegotiation is Enabled
+  Speed: 10000 Mb/s  Duplex: Full  MDI: MDI
+  Flow Control is Disabled
+  Fast Link Detection is enabled (delay 40 ms)
+  Hardware address is a0:59:3a:d0:2a:c0
+  Default CoS: 0  CoS override: Disabled
+  QoS trusting: both
+  Queuing strategy: mq tx queue size:  1000
+  UP BROADCAST RUNNING MULTICAST  MTU: 1500
+
+  Stats
+  ------
+  RX packets:19130119
+     unicasts:3509887 broadcasts:4113695 multicasts:11506537
+  TX packets:92932
+     unicasts:91826 broadcasts:353 multicasts:753
+  RX bytes:2493749383
+  TX bytes:40327422
+
+  collisions:0
+  pause frames received:0
+  pause frames sent:0
+  carrier false:0
+
+  Errors
+  ------
+  RX errors:0 runts:0 giants:0 frag:0 jabber:0
+  RX crc errors: 0
+  TX crc errors:0
+  Excessive collisions:0 Late collisions:0
+
+  Rate Limiting
+  ------
+  outbound unlimited
+  broadcast kbps:1008 (burst bytes:33824)
+
+===== nv6-B3-v8-138 (10.179.23.190) log (tail 80) =====
+Jan  1 03:31:46 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 received agreement
+Jan  1 03:31:46 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 received Tc 
+Jan  1 03:31:46 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:31:46 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:31:48 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 received agreement
+Jan  1 03:31:48 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 received Tc 
+Jan  1 03:31:48 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:31:48 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 transmitting an agreement
+Jan  1 03:31:48 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 03:31:48 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:31:48 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 03:31:49 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 transmitting an agreement
+Jan  1 03:31:49 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 03:31:49 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 03:31:50 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 received agreement
+Jan  1 03:31:50 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 received Tc 
+Jan  1 03:31:50 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:31:50 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:31:52 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 received agreement
+Jan  1 03:31:52 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 received Tc 
+Jan  1 03:31:52 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:31:52 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 transmitting an agreement
+Jan  1 03:31:52 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 03:31:52 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:31:52 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 03:31:53 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 transmitting an agreement
+Jan  1 03:31:53 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 03:31:53 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 03:31:54 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 received agreement
+Jan  1 03:31:54 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 received Tc 
+Jan  1 03:31:54 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:31:54 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:31:56 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 received agreement
+Jan  1 03:31:56 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 received Tc 
+Jan  1 03:31:56 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:31:56 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 transmitting an agreement
+Jan  1 03:31:56 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 03:31:56 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:31:56 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 03:31:57 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 transmitting an agreement
+Jan  1 03:31:57 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 03:31:57 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 03:31:58 SW-Std auth: Login success [user: admin][source: 10.179.23.129][service: ssh]
+Jan  1 03:31:58 SW-Std session: Session closed [user: admin][source: 10.179.23.129][service: ssh]
+Jan  1 03:31:58 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 received agreement
+Jan  1 03:31:58 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 received Tc 
+Jan  1 03:31:58 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:31:58 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:32:00 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 received agreement
+Jan  1 03:32:00 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 received Tc 
+Jan  1 03:32:00 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:32:00 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 transmitting an agreement
+Jan  1 03:32:00 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 03:32:00 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:32:00 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 03:32:01 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 transmitting an agreement
+Jan  1 03:32:01 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 03:32:01 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 03:32:02 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 received agreement
+Jan  1 03:32:02 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 received Tc 
+Jan  1 03:32:02 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:32:02 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:32:04 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 received agreement
+Jan  1 03:32:04 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 received Tc 
+Jan  1 03:32:04 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:32:04 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 transmitting an agreement
+Jan  1 03:32:04 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 03:32:04 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:32:04 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 03:32:05 SW-Std auth: Login success [user: admin][source: 10.179.23.129][service: ssh]
+Jan  1 03:32:05 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 transmitting an agreement
+Jan  1 03:32:05 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 sending Tc
+Jan  1 03:32:05 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 sending Tc
+Jan  1 03:32:06 SW-Std session: Session closed [user: admin][source: 10.179.23.129][service: ssh]
+Jan  1 03:32:06 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 received agreement
+Jan  1 03:32:06 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-2 received Tc 
+Jan  1 03:32:06 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-1 Flushing all entries.
+Jan  1 03:32:06 SW-Std KMswitch: [kpsw_rstplug/0]:: e0-0 Flushing all entries.
+Jan  1 03:32:06 SW-Std auth: Login success [user: admin][source: 10.179.23.129][service: ssh]
+
+== WATCHER LOG full ==
+09:00:26 rx_pps=35 mcast_pps=1 rx_total=523978
+09:00:29 rx_pps=20 mcast_pps=1 rx_total=524038
+09:00:32 rx_pps=14 mcast_pps=1 rx_total=524081
+09:00:35 rx_pps=70 mcast_pps=2 rx_total=524293
+09:00:38 rx_pps=22 mcast_pps=1 rx_total=524359
+09:00:41 rx_pps=43 mcast_pps=1 rx_total=524489
+09:00:44 rx_pps=33 mcast_pps=1 rx_total=524590
+09:00:47 rx_pps=113 mcast_pps=2 rx_total=524929
+09:00:50 rx_pps=279 mcast_pps=0 rx_total=525768
+09:00:53 rx_pps=497 mcast_pps=2 rx_total=527259
+09:00:56 rx_pps=42 mcast_pps=1 rx_total=527387
+09:00:59 rx_pps=37 mcast_pps=1 rx_total=527499
+09:01:02 rx_pps=73 mcast_pps=1 rx_total=527719
+09:01:05 rx_pps=36 mcast_pps=2 rx_total=527829
+09:01:08 rx_pps=20 mcast_pps=1 rx_total=527889
+09:01:11 rx_pps=27 mcast_pps=1 rx_total=527970
+09:01:14 rx_pps=32 mcast_pps=1 rx_total=528067
+09:01:17 rx_pps=55 mcast_pps=1 rx_total=528233
+09:01:20 rx_pps=16 mcast_pps=1 rx_total=528283
+09:01:23 rx_pps=38 mcast_pps=2 rx_total=528399
+09:01:26 rx_pps=23 mcast_pps=1 rx_total=528470
+09:01:29 rx_pps=64 mcast_pps=1 rx_total=528663
+09:01:32 rx_pps=33 mcast_pps=1 rx_total=528763
+09:01:35 rx_pps=44 mcast_pps=2 rx_total=528897
+09:01:38 rx_pps=36 mcast_pps=0 rx_total=529006
+09:01:41 rx_pps=109 mcast_pps=2 rx_total=529333
+09:01:44 rx_pps=51 mcast_pps=1 rx_total=529488
+09:01:47 rx_pps=44 mcast_pps=2 rx_total=529620
+09:01:50 rx_pps=36 mcast_pps=0 rx_total=529730
+09:01:53 rx_pps=29 mcast_pps=2 rx_total=529817
+09:01:56 rx_pps=79 mcast_pps=1 rx_total=530055
+09:01:59 rx_pps=25 mcast_pps=1 rx_total=530132
+09:02:02 rx_pps=34 mcast_pps=1 rx_total=530235
+09:02:05 rx_pps=36 mcast_pps=2 rx_total=530345
+09:02:08 rx_pps=26 mcast_pps=0 rx_total=530424
+09:02:11 rx_pps=151 mcast_pps=2 rx_total=530877
+09:02:14 rx_pps=245 mcast_pps=1 rx_total=531613
+09:02:17 rx_pps=202 mcast_pps=1 rx_total=532220
+09:02:20 rx_pps=66 mcast_pps=1 rx_total=532420
+09:02:23 rx_pps=36 mcast_pps=2 rx_total=532528
+09:02:26 rx_pps=35 mcast_pps=1 rx_total=532633
+09:02:29 rx_pps=18 mcast_pps=1 rx_total=532687
+09:02:32 rx_pps=18 mcast_pps=1 rx_total=532741
+09:02:35 rx_pps=13 mcast_pps=2 rx_total=532782
+09:02:38 rx_pps=28 mcast_pps=0 rx_total=532867
+09:02:41 rx_pps=58 mcast_pps=2 rx_total=533041
+09:02:44 rx_pps=91 mcast_pps=1 rx_total=533314
+09:02:47 rx_pps=245 mcast_pps=1 rx_total=534050
+09:02:50 rx_pps=214 mcast_pps=1 rx_total=534693
+09:02:53 rx_pps=260 mcast_pps=2 rx_total=535474
+09:02:56 rx_pps=224 mcast_pps=1 rx_total=536148
+09:02:59 rx_pps=165 mcast_pps=1 rx_total=536644
+09:03:02 rx_pps=39 mcast_pps=1 rx_total=536763
+09:03:05 rx_pps=23 mcast_pps=2 rx_total=536833
+09:03:08 rx_pps=33 mcast_pps=0 rx_total=536934
+09:03:11 rx_pps=30 mcast_pps=2 rx_total=537025
+09:03:14 rx_pps=33 mcast_pps=1 rx_total=537125
+09:03:17 rx_pps=37 mcast_pps=1 rx_total=537236
+09:03:20 rx_pps=15 mcast_pps=1 rx_total=537281
+09:03:23 rx_pps=37 mcast_pps=2 rx_total=537394
+09:03:26 rx_pps=33 mcast_pps=1 rx_total=537494
+09:03:29 rx_pps=14 mcast_pps=1 rx_total=537537
+09:03:32 rx_pps=40 mcast_pps=1 rx_total=537657
+09:03:35 rx_pps=29 mcast_pps=2 rx_total=537744
+09:03:38 rx_pps=26 mcast_pps=0 rx_total=537824
+09:03:41 rx_pps=97 mcast_pps=2 rx_total=538116
+09:03:44 rx_pps=150 mcast_pps=1 rx_total=538566
+09:03:47 rx_pps=453 mcast_pps=1 rx_total=539927
+09:03:50 rx_pps=118 mcast_pps=1 rx_total=540283
+09:03:53 rx_pps=50 mcast_pps=2 rx_total=540434
+09:03:56 rx_pps=222 mcast_pps=1 rx_total=541101
+09:03:59 rx_pps=219 mcast_pps=1 rx_total=541759
+09:04:02 rx_pps=210 mcast_pps=1 rx_total=542389
+09:04:05 rx_pps=113 mcast_pps=2 rx_total=542730
+09:04:08 rx_pps=33 mcast_pps=0 rx_total=542830
+09:04:11 rx_pps=25 mcast_pps=2 rx_total=542907
+09:04:14 rx_pps=40 mcast_pps=1 rx_total=543027
+09:04:17 rx_pps=22 mcast_pps=1 rx_total=543095
+09:04:20 rx_pps=36 mcast_pps=1 rx_total=543204
+09:04:23 rx_pps=29 mcast_pps=2 rx_total=543293
+09:04:26 rx_pps=22 mcast_pps=1 rx_total=543359
+09:04:29 rx_pps=32 mcast_pps=1 rx_total=543456
+09:04:32 rx_pps=18 mcast_pps=1 rx_total=543512
+09:04:35 rx_pps=26 mcast_pps=2 rx_total=543590
+09:04:38 rx_pps=32 mcast_pps=0 rx_total=543687
+09:04:41 rx_pps=31 mcast_pps=2 rx_total=543781
+09:04:44 rx_pps=86 mcast_pps=1 rx_total=544040
+09:04:47 rx_pps=31 mcast_pps=1 rx_total=544134
+09:04:50 rx_pps=34 mcast_pps=1 rx_total=544236
+09:04:53 rx_pps=19 mcast_pps=2 rx_total=544294
+09:04:56 rx_pps=48 mcast_pps=1 rx_total=544438
+09:04:59 rx_pps=37 mcast_pps=1 rx_total=544549
+09:05:02 rx_pps=30 mcast_pps=1 rx_total=544639
+09:05:05 rx_pps=24 mcast_pps=2 rx_total=544711
+09:05:08 rx_pps=82 mcast_pps=0 rx_total=544958
+09:05:11 rx_pps=12 mcast_pps=2 rx_total=544995
+09:05:14 rx_pps=34 mcast_pps=1 rx_total=545097
+09:05:17 rx_pps=30 mcast_pps=1 rx_total=545188
+09:05:20 rx_pps=28 mcast_pps=1 rx_total=545273
+09:05:23 rx_pps=59 mcast_pps=2 rx_total=545452
+09:05:26 rx_pps=16 mcast_pps=1 rx_total=545500
+09:05:29 rx_pps=49 mcast_pps=1 rx_total=545647
+09:05:32 rx_pps=35 mcast_pps=1 rx_total=545753
+09:05:35 rx_pps=22 mcast_pps=2 rx_total=545819
+09:05:38 rx_pps=67 mcast_pps=0 rx_total=546022
+09:05:41 rx_pps=25 mcast_pps=2 rx_total=546097
+09:05:44 rx_pps=52 mcast_pps=1 rx_total=546254
+09:05:47 rx_pps=42 mcast_pps=1 rx_total=546382
+09:05:50 rx_pps=107 mcast_pps=1 rx_total=546705
+09:05:53 rx_pps=36 mcast_pps=2 rx_total=546814
+09:05:56 rx_pps=22 mcast_pps=1 rx_total=546882
+09:05:59 rx_pps=39 mcast_pps=1 rx_total=547001
+09:06:02 rx_pps=30 mcast_pps=1 rx_total=547092
+09:06:05 rx_pps=64 mcast_pps=2 rx_total=547284
+09:06:08 rx_pps=17 mcast_pps=0 rx_total=547337
+09:06:11 rx_pps=29 mcast_pps=2 rx_total=547424
+09:06:14 rx_pps=37 mcast_pps=1 rx_total=547537
+09:06:17 rx_pps=22 mcast_pps=1 rx_total=547604
+09:06:20 rx_pps=52 mcast_pps=1 rx_total=547760
+09:06:23 rx_pps=54 mcast_pps=2 rx_total=547923
+09:06:26 rx_pps=28 mcast_pps=1 rx_total=548007
+09:06:29 rx_pps=39 mcast_pps=1 rx_total=548124
+09:06:32 rx_pps=59 mcast_pps=1 rx_total=548303
+09:06:35 rx_pps=56 mcast_pps=2 rx_total=548473
+09:06:38 rx_pps=14 mcast_pps=0 rx_total=548517
+09:06:41 rx_pps=47 mcast_pps=2 rx_total=548660
+09:06:44 rx_pps=103 mcast_pps=1 rx_total=548971
+09:06:47 rx_pps=42 mcast_pps=1 rx_total=549097
+09:06:50 rx_pps=48 mcast_pps=1 rx_total=549242
+09:06:53 rx_pps=34 mcast_pps=2 rx_total=549346
+09:06:56 rx_pps=10 mcast_pps=1 rx_total=549376
+09:06:59 rx_pps=40 mcast_pps=1 rx_total=549496
+09:07:02 rx_pps=69 mcast_pps=1 rx_total=549704
+09:07:05 rx_pps=38 mcast_pps=2 rx_total=549820
+09:07:08 rx_pps=14 mcast_pps=0 rx_total=549862
+09:07:11 rx_pps=24 mcast_pps=2 rx_total=549934
+09:07:14 rx_pps=117 mcast_pps=1 rx_total=550287
+09:07:17 rx_pps=262 mcast_pps=1 rx_total=551074
+09:07:20 rx_pps=185 mcast_pps=1 rx_total=551630
+09:07:23 rx_pps=134 mcast_pps=2 rx_total=552033
+09:07:26 rx_pps=22 mcast_pps=1 rx_total=552100
+09:07:29 rx_pps=26 mcast_pps=1 rx_total=552178
+09:07:32 rx_pps=53 mcast_pps=1 rx_total=552337
+09:07:35 rx_pps=19 mcast_pps=2 rx_total=552395
+09:07:38 rx_pps=23 mcast_pps=0 rx_total=552465
+09:07:41 rx_pps=91 mcast_pps=2 rx_total=552738
+09:07:44 rx_pps=235 mcast_pps=1 rx_total=553445
+09:07:47 rx_pps=166 mcast_pps=1 rx_total=553943
+09:07:50 rx_pps=237 mcast_pps=1 rx_total=554656
+09:07:53 rx_pps=256 mcast_pps=2 rx_total=555425
+09:07:56 rx_pps=206 mcast_pps=1 rx_total=556044
+09:07:59 rx_pps=68 mcast_pps=1 rx_total=556248
+09:08:02 rx_pps=50 mcast_pps=1 rx_total=556398
+09:08:05 rx_pps=22 mcast_pps=2 rx_total=556465
+09:08:08 rx_pps=22 mcast_pps=0 rx_total=556531
+09:08:11 rx_pps=42 mcast_pps=2 rx_total=556657
+09:08:14 rx_pps=20 mcast_pps=1 rx_total=556717
+09:08:17 rx_pps=36 mcast_pps=1 rx_total=556827
+09:08:20 rx_pps=24 mcast_pps=1 rx_total=556899
+09:08:23 rx_pps=45 mcast_pps=2 rx_total=557036
+09:08:26 rx_pps=26 mcast_pps=1 rx_total=557114
+09:08:29 rx_pps=20 mcast_pps=1 rx_total=557174
+09:08:32 rx_pps=28 mcast_pps=1 rx_total=557259
+09:08:35 rx_pps=14 mcast_pps=2 rx_total=557301
+09:08:38 rx_pps=11 mcast_pps=0 rx_total=557336
+09:08:41 rx_pps=168 mcast_pps=2 rx_total=557840
+09:08:44 rx_pps=375 mcast_pps=1 rx_total=558966
+09:08:47 rx_pps=218 mcast_pps=1 rx_total=559622
+09:08:50 rx_pps=287 mcast_pps=1 rx_total=560485
+09:08:53 rx_pps=308 mcast_pps=2 rx_total=561411
+09:08:56 rx_pps=174 mcast_pps=1 rx_total=561934
+09:08:59 rx_pps=25 mcast_pps=1 rx_total=562009
+09:09:02 rx_pps=53 mcast_pps=1 rx_total=562168
+09:09:05 rx_pps=21 mcast_pps=2 rx_total=562232
+09:09:08 rx_pps=24 mcast_pps=1 rx_total=562306
+09:09:11 rx_pps=47 mcast_pps=1 rx_total=562447
+09:09:14 rx_pps=21 mcast_pps=2 rx_total=562511
+09:09:17 rx_pps=31 mcast_pps=0 rx_total=562606
+09:09:20 rx_pps=50 mcast_pps=2 rx_total=562756
+09:09:23 rx_pps=50 mcast_pps=1 rx_total=562906
+09:09:26 rx_pps=29 mcast_pps=1 rx_total=562995
+09:09:29 rx_pps=21 mcast_pps=1 rx_total=563058
+09:09:32 rx_pps=58 mcast_pps=2 rx_total=563232
+09:09:35 rx_pps=22 mcast_pps=1 rx_total=563299
+09:09:39 rx_pps=16 mcast_pps=1 rx_total=563348
+09:09:42 rx_pps=91 mcast_pps=1 rx_total=563621
+09:09:45 rx_pps=26 mcast_pps=2 rx_total=563701
+09:09:48 rx_pps=57 mcast_pps=0 rx_total=563873
+09:09:51 rx_pps=44 mcast_pps=2 rx_total=564007
+09:09:54 rx_pps=37 mcast_pps=1 rx_total=564118
+09:09:57 rx_pps=42 mcast_pps=1 rx_total=564246
+09:10:00 rx_pps=26 mcast_pps=1 rx_total=564324
+09:10:03 rx_pps=98 mcast_pps=2 rx_total=564620
+09:10:06 rx_pps=22 mcast_pps=1 rx_total=564688
+09:10:09 rx_pps=25 mcast_pps=1 rx_total=564765
+09:10:12 rx_pps=27 mcast_pps=1 rx_total=564847
+09:10:15 rx_pps=59 mcast_pps=2 rx_total=565025
+09:10:18 rx_pps=35 mcast_pps=0 rx_total=565131
+09:10:21 rx_pps=30 mcast_pps=2 rx_total=565222
+09:10:24 rx_pps=44 mcast_pps=1 rx_total=565355
+09:10:27 rx_pps=25 mcast_pps=1 rx_total=565431
+09:10:30 rx_pps=59 mcast_pps=1 rx_total=565610
+09:10:33 rx_pps=29 mcast_pps=2 rx_total=565698
+09:10:36 rx_pps=24 mcast_pps=1 rx_total=565771
+09:10:39 rx_pps=14 mcast_pps=1 rx_total=565813
+09:10:42 rx_pps=111 mcast_pps=1 rx_total=566146
+09:10:45 rx_pps=33 mcast_pps=2 rx_total=566245
+09:10:48 rx_pps=42 mcast_pps=0 rx_total=566371
+09:10:51 rx_pps=24 mcast_pps=2 rx_total=566445
+09:10:54 rx_pps=40 mcast_pps=1 rx_total=566566
+09:10:57 rx_pps=42 mcast_pps=1 rx_total=566693
+09:11:00 rx_pps=39 mcast_pps=1 rx_total=566812
+09:11:03 rx_pps=54 mcast_pps=2 rx_total=566976
+09:11:06 rx_pps=38 mcast_pps=1 rx_total=567092
+09:11:09 rx_pps=22 mcast_pps=1 rx_total=567160
+09:11:12 rx_pps=50 mcast_pps=1 rx_total=567311
+09:11:15 rx_pps=30 mcast_pps=2 rx_total=567402
+09:11:18 rx_pps=27 mcast_pps=0 rx_total=567485
+09:11:21 rx_pps=23 mcast_pps=2 rx_total=567555
+09:11:24 rx_pps=71 mcast_pps=1 rx_total=567770
+09:11:27 rx_pps=13 mcast_pps=1 rx_total=567811
+09:11:30 rx_pps=34 mcast_pps=1 rx_total=567913
+09:11:33 rx_pps=61 mcast_pps=2 rx_total=568096
+09:11:36 rx_pps=96 mcast_pps=1 rx_total=568386
+09:11:39 rx_pps=14 mcast_pps=1 rx_total=568430
+09:11:42 rx_pps=39 mcast_pps=1 rx_total=568549
+09:11:45 rx_pps=46 mcast_pps=2 rx_total=568689
+09:11:48 rx_pps=32 mcast_pps=0 rx_total=568786
+09:11:51 rx_pps=81 mcast_pps=2 rx_total=569029
+09:11:54 rx_pps=25 mcast_pps=1 rx_total=569106
+09:11:57 rx_pps=44 mcast_pps=1 rx_total=569239
+09:12:00 rx_pps=32 mcast_pps=1 rx_total=569336
+09:12:03 rx_pps=84 mcast_pps=2 rx_total=569589
+09:12:06 rx_pps=288 mcast_pps=1 rx_total=570453
+09:12:09 rx_pps=225 mcast_pps=1 rx_total=571130
+09:12:12 rx_pps=76 mcast_pps=1 rx_total=571360
+09:12:15 rx_pps=30 mcast_pps=2 rx_total=571450
+09:12:18 rx_pps=31 mcast_pps=0 rx_total=571544
+09:12:21 rx_pps=39 mcast_pps=2 rx_total=571662
+09:12:24 rx_pps=30 mcast_pps=1 rx_total=571752
+09:12:27 rx_pps=38 mcast_pps=1 rx_total=571866
+09:12:30 rx_pps=26 mcast_pps=1 rx_total=571945
+09:12:33 rx_pps=31 mcast_pps=2 rx_total=572039
+09:12:36 rx_pps=30 mcast_pps=1 rx_total=572129
+09:12:39 rx_pps=9 mcast_pps=1 rx_total=572158
+09:12:42 rx_pps=129 mcast_pps=1 rx_total=572546
+09:12:45 rx_pps=227 mcast_pps=2 rx_total=573227
+09:12:48 rx_pps=218 mcast_pps=0 rx_total=573882
+09:12:51 rx_pps=266 mcast_pps=2 rx_total=574681
+09:12:54 rx_pps=201 mcast_pps=1 rx_total=575285
+09:12:57 rx_pps=175 mcast_pps=1 rx_total=575812
+09:13:00 rx_pps=25 mcast_pps=1 rx_total=575889
+09:13:03 rx_pps=43 mcast_pps=2 rx_total=576020
+09:13:06 rx_pps=31 mcast_pps=1 rx_total=576113
+09:13:09 rx_pps=17 mcast_pps=1 rx_total=576164
+09:13:12 rx_pps=42 mcast_pps=1 rx_total=576290
+09:13:15 rx_pps=36 mcast_pps=2 rx_total=576398
+09:13:18 rx_pps=22 mcast_pps=0 rx_total=576465
+09:13:21 rx_pps=26 mcast_pps=2 rx_total=576545
+09:13:24 rx_pps=33 mcast_pps=1 rx_total=576645
+09:13:27 rx_pps=31 mcast_pps=1 rx_total=576740
+09:13:30 rx_pps=29 mcast_pps=1 rx_total=576827
+09:13:33 rx_pps=55 mcast_pps=2 rx_total=576994
+09:13:36 rx_pps=37 mcast_pps=1 rx_total=577105
+09:13:39 rx_pps=21 mcast_pps=1 rx_total=577169
+09:13:42 rx_pps=172 mcast_pps=1 rx_total=577685
+09:13:45 rx_pps=373 mcast_pps=1 rx_total=578806
+09:13:48 rx_pps=318 mcast_pps=1 rx_total=579762
+09:13:51 rx_pps=386 mcast_pps=2 rx_total=580921
+09:13:54 rx_pps=54 mcast_pps=1 rx_total=581083
+09:13:57 rx_pps=169 mcast_pps=1 rx_total=581592
+09:14:00 rx_pps=189 mcast_pps=1 rx_total=582160
+09:14:03 rx_pps=43 mcast_pps=2 rx_total=582289
+09:14:06 rx_pps=31 mcast_pps=0 rx_total=582384
+09:14:09 rx_pps=15 mcast_pps=2 rx_total=582429
+09:14:12 rx_pps=33 mcast_pps=1 rx_total=582530
+09:14:15 rx_pps=18 mcast_pps=1 rx_total=582585
+09:14:18 rx_pps=45 mcast_pps=1 rx_total=582722
+09:14:21 rx_pps=39 mcast_pps=2 rx_total=582840
+09:14:24 rx_pps=20 mcast_pps=1 rx_total=582901
+09:14:27 rx_pps=36 mcast_pps=1 rx_total=583011
+09:14:30 rx_pps=16 mcast_pps=1 rx_total=583061
+09:14:33 rx_pps=24 mcast_pps=2 rx_total=583133
+09:14:36 rx_pps=41 mcast_pps=0 rx_total=583256
+09:14:39 rx_pps=12 mcast_pps=2 rx_total=583293
+09:14:42 rx_pps=87 mcast_pps=1 rx_total=583556
+09:14:45 rx_pps=16 mcast_pps=1 rx_total=583604
+09:14:48 rx_pps=43 mcast_pps=1 rx_total=583735
+09:14:51 rx_pps=76 mcast_pps=2 rx_total=583964
+09:14:54 rx_pps=22 mcast_pps=1 rx_total=584031
+09:14:57 rx_pps=37 mcast_pps=1 rx_total=584143
+09:15:00 rx_pps=21 mcast_pps=1 rx_total=584207
+09:15:03 rx_pps=75 mcast_pps=2 rx_total=584434
+09:15:06 rx_pps=31 mcast_pps=0 rx_total=584529
+09:15:09 rx_pps=31 mcast_pps=2 rx_total=584622
+09:15:12 rx_pps=33 mcast_pps=1 rx_total=584722
+09:15:15 rx_pps=45 mcast_pps=1 rx_total=584859
+09:15:18 rx_pps=35 mcast_pps=1 rx_total=584965
+09:15:21 rx_pps=26 mcast_pps=2 rx_total=585045
+09:15:24 rx_pps=24 mcast_pps=1 rx_total=585118
+09:15:27 rx_pps=40 mcast_pps=1 rx_total=585240
+09:15:30 rx_pps=80 mcast_pps=1 rx_total=585480
+09:15:33 rx_pps=60 mcast_pps=2 rx_total=585661
+09:15:36 rx_pps=33 mcast_pps=0 rx_total=585760
+09:15:39 rx_pps=25 mcast_pps=2 rx_total=585836
+09:15:42 rx_pps=101 mcast_pps=1 rx_total=586141
+09:15:45 rx_pps=18 mcast_pps=1 rx_total=586197
+09:15:48 rx_pps=54 mcast_pps=1 rx_total=586361
+09:15:51 rx_pps=20 mcast_pps=2 rx_total=586422
+09:15:54 rx_pps=24 mcast_pps=1 rx_total=586495
+09:15:57 rx_pps=84 mcast_pps=1 rx_total=586747
+09:16:00 rx_pps=30 mcast_pps=1 rx_total=586837
+09:16:03 rx_pps=38 mcast_pps=2 rx_total=586951
+09:16:06 rx_pps=24 mcast_pps=0 rx_total=587023
+09:16:09 rx_pps=35 mcast_pps=2 rx_total=587130
+09:16:12 rx_pps=52 mcast_pps=1 rx_total=587287
+09:16:15 rx_pps=16 mcast_pps=1 rx_total=587337
+09:16:18 rx_pps=36 mcast_pps=1 rx_total=587447
+09:16:21 rx_pps=33 mcast_pps=2 rx_total=587546
+09:16:24 rx_pps=25 mcast_pps=1 rx_total=587622
+09:16:27 rx_pps=65 mcast_pps=1 rx_total=587818
+09:16:30 rx_pps=21 mcast_pps=1 rx_total=587881
+09:16:33 rx_pps=34 mcast_pps=2 rx_total=587983
+09:16:36 rx_pps=49 mcast_pps=0 rx_total=588132
+09:16:39 rx_pps=105 mcast_pps=2 rx_total=588447
+09:16:42 rx_pps=46 mcast_pps=1 rx_total=588585
+09:16:45 rx_pps=13 mcast_pps=1 rx_total=588624
+09:16:48 rx_pps=59 mcast_pps=1 rx_total=588802
+09:16:51 rx_pps=11 mcast_pps=2 rx_total=588837
+09:16:54 rx_pps=85 mcast_pps=1 rx_total=589094
+09:16:57 rx_pps=43 mcast_pps=1 rx_total=589225
+09:17:00 rx_pps=35 mcast_pps=1 rx_total=589330
+09:17:03 rx_pps=29 mcast_pps=2 rx_total=589417
+09:17:06 rx_pps=75 mcast_pps=0 rx_total=589644
+09:17:09 rx_pps=249 mcast_pps=2 rx_total=590393
+09:17:12 rx_pps=223 mcast_pps=1 rx_total=591062
+09:17:15 rx_pps=72 mcast_pps=1 rx_total=591280
+09:17:18 rx_pps=91 mcast_pps=1 rx_total=591555
+09:17:21 rx_pps=33 mcast_pps=2 rx_total=591656
+09:17:24 rx_pps=29 mcast_pps=1 rx_total=591744
+09:17:27 rx_pps=20 mcast_pps=1 rx_total=591804
+09:17:30 rx_pps=34 mcast_pps=1 rx_total=591906
+09:17:33 rx_pps=25 mcast_pps=2 rx_total=591982
+09:17:36 rx_pps=12 mcast_pps=1 rx_total=592018
+09:17:39 rx_pps=28 mcast_pps=1 rx_total=592103
+09:17:42 rx_pps=163 mcast_pps=2 rx_total=592594
+09:17:45 rx_pps=139 mcast_pps=0 rx_total=593012
+09:17:48 rx_pps=235 mcast_pps=2 rx_total=593717
+09:17:51 rx_pps=225 mcast_pps=1 rx_total=594392
+09:17:54 rx_pps=193 mcast_pps=1 rx_total=594973
+09:17:57 rx_pps=151 mcast_pps=1 rx_total=595428
+09:18:00 rx_pps=147 mcast_pps=2 rx_total=595869
+09:18:03 rx_pps=26 mcast_pps=1 rx_total=595948
+09:18:06 rx_pps=18 mcast_pps=1 rx_total=596002
+09:18:10 rx_pps=35 mcast_pps=1 rx_total=596107
+09:18:13 rx_pps=36 mcast_pps=2 rx_total=596216
+09:18:16 rx_pps=18 mcast_pps=0 rx_total=596270
+09:18:19 rx_pps=47 mcast_pps=2 rx_total=596413
+09:18:22 rx_pps=37 mcast_pps=1 rx_total=596526
+09:18:25 rx_pps=25 mcast_pps=1 rx_total=596601
+09:18:28 rx_pps=14 mcast_pps=1 rx_total=596645
+09:18:31 rx_pps=36 mcast_pps=2 rx_total=596755
+09:18:34 rx_pps=19 mcast_pps=1 rx_total=596813
+09:18:37 rx_pps=14 mcast_pps=1 rx_total=596855
+09:18:40 rx_pps=26 mcast_pps=1 rx_total=596935
+09:18:43 rx_pps=170 mcast_pps=2 rx_total=597447
+09:18:46 rx_pps=157 mcast_pps=0 rx_total=597919
+09:18:49 rx_pps=252 mcast_pps=2 rx_total=598677
+09:18:52 rx_pps=200 mcast_pps=1 rx_total=599278
+09:18:55 rx_pps=322 mcast_pps=1 rx_total=600246
+09:18:58 rx_pps=337 mcast_pps=1 rx_total=601259
+09:19:01 rx_pps=148 mcast_pps=2 rx_total=601704
+09:19:04 rx_pps=24 mcast_pps=1 rx_total=601776
+09:19:07 rx_pps=19 mcast_pps=1 rx_total=601834
+09:19:10 rx_pps=35 mcast_pps=1 rx_total=601941
+09:19:13 rx_pps=44 mcast_pps=2 rx_total=602075
+09:19:16 rx_pps=29 mcast_pps=0 rx_total=602164
+09:19:19 rx_pps=25 mcast_pps=2 rx_total=602240
+09:19:22 rx_pps=43 mcast_pps=1 rx_total=602371
+09:19:25 rx_pps=36 mcast_pps=1 rx_total=602480
+09:19:28 rx_pps=12 mcast_pps=1 rx_total=602518
+09:19:31 rx_pps=41 mcast_pps=2 rx_total=602641
+09:19:34 rx_pps=43 mcast_pps=1 rx_total=602772
+09:19:37 rx_pps=28 mcast_pps=1 rx_total=602856
+09:19:40 rx_pps=28 mcast_pps=1 rx_total=602940
+09:19:43 rx_pps=45 mcast_pps=2 rx_total=603076
+09:19:46 rx_pps=73 mcast_pps=0 rx_total=603297
+09:19:49 rx_pps=43 mcast_pps=2 rx_total=603426
+09:19:52 rx_pps=26 mcast_pps=1 rx_total=603506
+09:19:55 rx_pps=21 mcast_pps=1 rx_total=603570
+09:19:58 rx_pps=79 mcast_pps=1 rx_total=603809
+09:20:01 rx_pps=52 mcast_pps=2 rx_total=603966
+09:20:04 rx_pps=22 mcast_pps=1 rx_total=604033
+09:20:07 rx_pps=17 mcast_pps=1 rx_total=604084
+09:20:10 rx_pps=45 mcast_pps=1 rx_total=604219
+09:20:13 rx_pps=41 mcast_pps=2 rx_total=604343
+09:20:16 rx_pps=25 mcast_pps=0 rx_total=604418
+09:20:19 rx_pps=30 mcast_pps=2 rx_total=604510
+09:20:22 rx_pps=61 mcast_pps=1 rx_total=604693
+09:20:25 rx_pps=59 mcast_pps=1 rx_total=604870
+09:20:28 rx_pps=39 mcast_pps=1 rx_total=604987
+09:20:31 rx_pps=30 mcast_pps=2 rx_total=605078
+09:20:34 rx_pps=17 mcast_pps=1 rx_total=605129
+09:20:37 rx_pps=11 mcast_pps=1 rx_total=605164
+09:20:40 rx_pps=59 mcast_pps=1 rx_total=605341
+09:20:43 rx_pps=44 mcast_pps=2 rx_total=605473
+09:20:46 rx_pps=22 mcast_pps=0 rx_total=605539
+09:20:49 rx_pps=43 mcast_pps=2 rx_total=605668
+09:20:52 rx_pps=91 mcast_pps=1 rx_total=605941
+09:20:55 rx_pps=30 mcast_pps=1 rx_total=606033
+09:20:58 rx_pps=35 mcast_pps=1 rx_total=606140
+09:21:01 rx_pps=56 mcast_pps=2 rx_total=606310
+09:21:04 rx_pps=18 mcast_pps=1 rx_total=606366
+09:21:07 rx_pps=59 mcast_pps=1 rx_total=606544
+09:21:10 rx_pps=19 mcast_pps=1 rx_total=606603
+09:21:13 rx_pps=41 mcast_pps=2 rx_total=606728
+09:21:16 rx_pps=20 mcast_pps=0 rx_total=606789
+09:21:19 rx_pps=23 mcast_pps=2 rx_total=606858
+09:21:22 rx_pps=63 mcast_pps=1 rx_total=607049
+09:21:25 rx_pps=17 mcast_pps=1 rx_total=607102
+09:21:28 rx_pps=28 mcast_pps=1 rx_total=607186
+09:21:31 rx_pps=61 mcast_pps=2 rx_total=607371
+09:21:34 rx_pps=98 mcast_pps=1 rx_total=607666
+09:21:37 rx_pps=12 mcast_pps=1 rx_total=607704
+09:21:40 rx_pps=21 mcast_pps=1 rx_total=607769
+09:21:43 rx_pps=66 mcast_pps=2 rx_total=607969
+09:21:46 rx_pps=67 mcast_pps=0 rx_total=608171
+09:21:49 rx_pps=38 mcast_pps=2 rx_total=608285
+09:21:52 rx_pps=25 mcast_pps=1 rx_total=608360
+09:21:55 rx_pps=21 mcast_pps=1 rx_total=608423
+09:21:58 rx_pps=18 mcast_pps=1 rx_total=608478
+09:22:01 rx_pps=38 mcast_pps=2 rx_total=608592
+09:22:04 rx_pps=83 mcast_pps=1 rx_total=608841
+09:22:07 rx_pps=76 mcast_pps=1 rx_total=609071
+09:22:10 rx_pps=34 mcast_pps=1 rx_total=609174
+09:22:13 rx_pps=325 mcast_pps=2 rx_total=610151
+09:22:16 rx_pps=340 mcast_pps=0 rx_total=611173
+09:22:19 rx_pps=54 mcast_pps=2 rx_total=611336
+09:22:22 rx_pps=63 mcast_pps=1 rx_total=611525
+09:22:25 rx_pps=26 mcast_pps=1 rx_total=611604
+09:22:28 rx_pps=20 mcast_pps=1 rx_total=611666
+09:22:31 rx_pps=15 mcast_pps=2 rx_total=611712
+09:22:34 rx_pps=28 mcast_pps=1 rx_total=611798
+09:22:37 rx_pps=35 mcast_pps=1 rx_total=611903
+09:22:40 rx_pps=14 mcast_pps=1 rx_total=611947
+09:22:43 rx_pps=204 mcast_pps=2 rx_total=612561
+09:22:46 rx_pps=232 mcast_pps=0 rx_total=613257
+09:22:49 rx_pps=227 mcast_pps=2 rx_total=613938
+09:22:52 rx_pps=247 mcast_pps=1 rx_total=614681
+09:22:55 rx_pps=92 mcast_pps=1 rx_total=614959
+09:22:58 rx_pps=223 mcast_pps=1 rx_total=615628
+09:23:01 rx_pps=32 mcast_pps=2 rx_total=615726
+09:23:04 rx_pps=36 mcast_pps=1 rx_total=615836
+09:23:07 rx_pps=24 mcast_pps=1 rx_total=615910
+09:23:10 rx_pps=16 mcast_pps=1 rx_total=615960
+09:23:13 rx_pps=50 mcast_pps=2 rx_total=616110
+09:23:16 rx_pps=10 mcast_pps=0 rx_total=616141
+09:23:19 rx_pps=27 mcast_pps=2 rx_total=616223
+09:23:22 rx_pps=33 mcast_pps=1 rx_total=616324
+09:23:25 rx_pps=36 mcast_pps=1 rx_total=616433
+09:23:28 rx_pps=17 mcast_pps=1 rx_total=616486
+09:23:31 rx_pps=19 mcast_pps=2 rx_total=616543
+09:23:34 rx_pps=61 mcast_pps=1 rx_total=616727
+09:23:37 rx_pps=6 mcast_pps=1 rx_total=616746
+09:23:40 rx_pps=18 mcast_pps=1 rx_total=616801
+09:23:43 rx_pps=144 mcast_pps=2 rx_total=617235
+09:23:46 rx_pps=213 mcast_pps=0 rx_total=617875
+09:23:49 rx_pps=120 mcast_pps=2 rx_total=618235
+09:23:52 rx_pps=163 mcast_pps=1 rx_total=618724
+09:23:55 rx_pps=319 mcast_pps=1 rx_total=619682
+09:23:58 rx_pps=232 mcast_pps=1 rx_total=620380
+09:24:01 rx_pps=305 mcast_pps=2 rx_total=621295
+09:24:04 rx_pps=104 mcast_pps=1 rx_total=621609
+09:24:07 rx_pps=20 mcast_pps=1 rx_total=621671
+09:24:10 rx_pps=29 mcast_pps=1 rx_total=621760
+09:24:13 rx_pps=46 mcast_pps=2 rx_total=621898
+09:24:16 rx_pps=11 mcast_pps=0 rx_total=621933
+09:24:19 rx_pps=29 mcast_pps=2 rx_total=622021
+09:24:22 rx_pps=32 mcast_pps=1 rx_total=622119
+09:24:25 rx_pps=40 mcast_pps=1 rx_total=622240
+09:24:28 rx_pps=20 mcast_pps=1 rx_total=622300
+09:24:31 rx_pps=15 mcast_pps=2 rx_total=622346
+09:24:34 rx_pps=31 mcast_pps=1 rx_total=622440
+09:24:37 rx_pps=13 mcast_pps=1 rx_total=622479
+09:24:40 rx_pps=18 mcast_pps=1 rx_total=622534
+09:24:43 rx_pps=57 mcast_pps=2 rx_total=622706
+09:24:46 rx_pps=47 mcast_pps=0 rx_total=622847
+09:24:49 rx_pps=56 mcast_pps=2 rx_total=623015
+09:24:52 rx_pps=16 mcast_pps=1 rx_total=623064
+09:24:55 rx_pps=42 mcast_pps=1 rx_total=623190
+09:24:58 rx_pps=50 mcast_pps=1 rx_total=623341
+09:25:01 rx_pps=65 mcast_pps=2 rx_total=623537
+09:25:04 rx_pps=34 mcast_pps=1 rx_total=623641
+09:25:07 rx_pps=17 mcast_pps=1 rx_total=623693
+09:25:10 rx_pps=16 mcast_pps=1 rx_total=623742
+09:25:13 rx_pps=60 mcast_pps=2 rx_total=623923
+09:25:16 rx_pps=41 mcast_pps=0 rx_total=624048
+09:25:19 rx_pps=36 mcast_pps=2 rx_total=624158
+09:25:22 rx_pps=37 mcast_pps=1 rx_total=624271
+09:25:25 rx_pps=31 mcast_pps=1 rx_total=624364
+09:25:28 rx_pps=29 mcast_pps=1 rx_total=624452
+09:25:31 rx_pps=26 mcast_pps=2 rx_total=624532
+09:25:34 rx_pps=64 mcast_pps=1 rx_total=624726
+09:25:37 rx_pps=22 mcast_pps=1 rx_total=624794
+09:25:40 rx_pps=9 mcast_pps=1 rx_total=624822
+09:25:43 rx_pps=91 mcast_pps=2 rx_total=625097
+09:25:46 rx_pps=41 mcast_pps=0 rx_total=625220
+09:25:49 rx_pps=28 mcast_pps=2 rx_total=625304
+09:25:52 rx_pps=28 mcast_pps=1 rx_total=625390
+09:25:55 rx_pps=125 mcast_pps=1 rx_total=625765
+09:25:58 rx_pps=31 mcast_pps=1 rx_total=625858
+09:26:01 rx_pps=39 mcast_pps=2 rx_total=625977
+09:26:04 rx_pps=37 mcast_pps=1 rx_total=626089
+09:26:07 rx_pps=48 mcast_pps=1 rx_total=626234
+09:26:10 rx_pps=42 mcast_pps=1 rx_total=626360
+09:26:13 rx_pps=39 mcast_pps=2 rx_total=626477
+09:26:16 rx_pps=37 mcast_pps=0 rx_total=626590
+09:26:19 rx_pps=17 mcast_pps=2 rx_total=626643
+09:26:22 rx_pps=52 mcast_pps=1 rx_total=626800
+09:26:25 rx_pps=31 mcast_pps=1 rx_total=626893
+09:26:28 rx_pps=17 mcast_pps=1 rx_total=626945
+09:26:31 rx_pps=17 mcast_pps=2 rx_total=626997
+09:26:34 rx_pps=79 mcast_pps=1 rx_total=627234
+09:26:37 rx_pps=19 mcast_pps=1 rx_total=627293
+09:26:40 rx_pps=22 mcast_pps=1 rx_total=627359
+09:26:43 rx_pps=61 mcast_pps=2 rx_total=627544
+09:26:46 rx_pps=47 mcast_pps=0 rx_total=627686
+09:26:49 rx_pps=80 mcast_pps=2 rx_total=627927
+09:26:52 rx_pps=28 mcast_pps=1 rx_total=628012
+09:26:55 rx_pps=60 mcast_pps=1 rx_total=628192
+09:26:58 rx_pps=34 mcast_pps=1 rx_total=628294
+09:27:01 rx_pps=37 mcast_pps=2 rx_total=628407
+09:27:04 rx_pps=26 mcast_pps=1 rx_total=628485
+09:27:07 rx_pps=62 mcast_pps=1 rx_total=628672
+09:27:10 rx_pps=22 mcast_pps=2 rx_total=628740
+09:27:13 rx_pps=35 mcast_pps=1 rx_total=628846
+09:27:16 rx_pps=35 mcast_pps=1 rx_total=628951
+09:27:19 rx_pps=209 mcast_pps=1 rx_total=629580
+09:27:22 rx_pps=335 mcast_pps=2 rx_total=630585
+09:27:25 rx_pps=138 mcast_pps=0 rx_total=631001
+09:27:28 rx_pps=18 mcast_pps=2 rx_total=631055
+09:27:31 rx_pps=42 mcast_pps=1 rx_total=631182
+09:27:35 rx_pps=23 mcast_pps=1 rx_total=631252
+09:27:38 rx_pps=38 mcast_pps=1 rx_total=631366
+09:27:41 rx_pps=28 mcast_pps=2 rx_total=631451
+09:27:44 rx_pps=227 mcast_pps=1 rx_total=632133
+09:27:47 rx_pps=232 mcast_pps=1 rx_total=632830
+09:27:50 rx_pps=176 mcast_pps=1 rx_total=633359
+09:27:53 rx_pps=190 mcast_pps=2 rx_total=633930
+09:27:56 rx_pps=143 mcast_pps=0 rx_total=634359
+09:27:59 rx_pps=128 mcast_pps=2 rx_total=634744
+09:28:02 rx_pps=179 mcast_pps=1 rx_total=635282
+09:28:05 rx_pps=23 mcast_pps=1 rx_total=635353
+09:28:08 rx_pps=43 mcast_pps=1 rx_total=635483
+09:28:11 rx_pps=27 mcast_pps=2 rx_total=635564
+09:28:14 rx_pps=32 mcast_pps=1 rx_total=635662
+09:28:17 rx_pps=41 mcast_pps=1 rx_total=635786
+09:28:20 rx_pps=31 mcast_pps=1 rx_total=635880
+09:28:23 rx_pps=45 mcast_pps=2 rx_total=636017
+09:28:26 rx_pps=39 mcast_pps=0 rx_total=636135
+09:28:29 rx_pps=21 mcast_pps=2 rx_total=636198
+09:28:32 rx_pps=19 mcast_pps=1 rx_total=636256
+09:28:35 rx_pps=21 mcast_pps=1 rx_total=636321
+09:28:38 rx_pps=44 mcast_pps=1 rx_total=636455
+09:28:41 rx_pps=39 mcast_pps=2 rx_total=636573
+09:28:44 rx_pps=95 mcast_pps=1 rx_total=636858
+09:28:47 rx_pps=241 mcast_pps=1 rx_total=637582
+09:28:50 rx_pps=282 mcast_pps=1 rx_total=638430
+09:28:53 rx_pps=245 mcast_pps=2 rx_total=639167
+09:28:56 rx_pps=223 mcast_pps=0 rx_total=639838
+09:28:59 rx_pps=304 mcast_pps=2 rx_total=640752
+09:29:02 rx_pps=161 mcast_pps=1 rx_total=641236
+09:29:05 rx_pps=26 mcast_pps=1 rx_total=641316
+09:29:08 rx_pps=29 mcast_pps=1 rx_total=641405
+09:29:11 rx_pps=21 mcast_pps=2 rx_total=641468
+09:29:14 rx_pps=40 mcast_pps=1 rx_total=641588
+09:29:17 rx_pps=41 mcast_pps=1 rx_total=641711
+09:29:20 rx_pps=36 mcast_pps=1 rx_total=641821
+09:29:23 rx_pps=48 mcast_pps=2 rx_total=641965
+09:29:26 rx_pps=24 mcast_pps=0 rx_total=642038
+09:29:29 rx_pps=40 mcast_pps=2 rx_total=642159
+09:29:32 rx_pps=37 mcast_pps=1 rx_total=642272
+09:29:35 rx_pps=26 mcast_pps=1 rx_total=642351
+09:29:38 rx_pps=36 mcast_pps=1 rx_total=642459
+09:29:41 rx_pps=26 mcast_pps=2 rx_total=642538
+09:29:44 rx_pps=28 mcast_pps=1 rx_total=642623
+09:29:47 rx_pps=92 mcast_pps=1 rx_total=642901
+09:29:50 rx_pps=20 mcast_pps=1 rx_total=642963
+09:29:53 rx_pps=20 mcast_pps=2 rx_total=643023
+09:29:56 rx_pps=23 mcast_pps=0 rx_total=643092
+09:29:59 rx_pps=89 mcast_pps=2 rx_total=643360
+09:30:02 rx_pps=33 mcast_pps=1 rx_total=643461
+09:30:05 rx_pps=23 mcast_pps=1 rx_total=643530
+09:30:08 rx_pps=28 mcast_pps=1 rx_total=643616
+09:30:11 rx_pps=16 mcast_pps=2 rx_total=643664
+09:30:14 rx_pps=54 mcast_pps=1 rx_total=643828
+09:30:17 rx_pps=37 mcast_pps=1 rx_total=643941
+09:30:20 rx_pps=9 mcast_pps=1 rx_total=643968
+09:30:23 rx_pps=28 mcast_pps=2 rx_total=644052
+09:30:26 rx_pps=46 mcast_pps=0 rx_total=644190
+09:30:29 rx_pps=48 mcast_pps=2 rx_total=644334
+09:30:32 rx_pps=22 mcast_pps=1 rx_total=644401
+09:30:35 rx_pps=22 mcast_pps=1 rx_total=644469
+09:30:38 rx_pps=28 mcast_pps=1 rx_total=644553
+09:30:41 rx_pps=87 mcast_pps=2 rx_total=644815
+09:30:44 rx_pps=35 mcast_pps=1 rx_total=644920
+09:30:47 rx_pps=25 mcast_pps=1 rx_total=644995
+09:30:50 rx_pps=46 mcast_pps=1 rx_total=645135
+09:30:53 rx_pps=25 mcast_pps=2 rx_total=645210
+09:30:56 rx_pps=68 mcast_pps=0 rx_total=645415
+09:30:59 rx_pps=42 mcast_pps=2 rx_total=645543
+09:31:02 rx_pps=41 mcast_pps=1 rx_total=645666
+09:31:05 rx_pps=26 mcast_pps=1 rx_total=645745
+09:31:08 rx_pps=67 mcast_pps=1 rx_total=645946
+09:31:11 rx_pps=34 mcast_pps=2 rx_total=646048
+09:31:14 rx_pps=43 mcast_pps=1 rx_total=646179
+09:31:17 rx_pps=39 mcast_pps=1 rx_total=646296
+09:31:20 rx_pps=38 mcast_pps=1 rx_total=646411
+09:31:23 rx_pps=36 mcast_pps=2 rx_total=646520
+09:31:26 rx_pps=43 mcast_pps=0 rx_total=646651
+09:31:29 rx_pps=34 mcast_pps=2 rx_total=646754
+09:31:32 rx_pps=25 mcast_pps=1 rx_total=646829
+09:31:35 rx_pps=67 mcast_pps=1 rx_total=647032
+09:31:38 rx_pps=61 mcast_pps=1 rx_total=647216
+09:31:41 rx_pps=25 mcast_pps=2 rx_total=647293
+09:31:44 rx_pps=27 mcast_pps=1 rx_total=647374
+09:31:47 rx_pps=38 mcast_pps=1 rx_total=647488
+09:31:50 rx_pps=100 mcast_pps=1 rx_total=647789
+09:31:53 rx_pps=35 mcast_pps=2 rx_total=647895
+09:31:56 rx_pps=44 mcast_pps=0 rx_total=648028
+09:31:59 rx_pps=61 mcast_pps=2 rx_total=648211
+09:32:02 rx_pps=34 mcast_pps=1 rx_total=648314
+09:32:05 rx_pps=54 mcast_pps=1 rx_total=648477
+09:32:08 rx_pps=57 mcast_pps=1 rx_total=648648
+09:32:11 rx_pps=21 mcast_pps=2 rx_total=648712
+09:32:14 rx_pps=35 mcast_pps=1 rx_total=648818
+09:32:17 rx_pps=26 mcast_pps=1 rx_total=648897
+09:32:20 rx_pps=146 mcast_pps=1 rx_total=649335
+09:32:23 rx_pps=125 mcast_pps=2 rx_total=649711
+09:32:26 rx_pps=242 mcast_pps=0 rx_total=650439
+09:32:29 rx_pps=155 mcast_pps=2 rx_total=650905
+09:32:32 rx_pps=11 mcast_pps=1 rx_total=650939
+09:32:35 rx_pps=21 mcast_pps=1 rx_total=651002
+09:32:38 rx_pps=16 mcast_pps=1 rx_total=651050
+09:32:41 rx_pps=74 mcast_pps=2 rx_total=651274
+09:32:44 rx_pps=115 mcast_pps=1 rx_total=651620
+09:32:47 rx_pps=203 mcast_pps=1 rx_total=652231
+09:32:50 rx_pps=201 mcast_pps=1 rx_total=652836
+09:32:53 rx_pps=228 mcast_pps=2 rx_total=653520
+09:32:56 rx_pps=242 mcast_pps=0 rx_total=654247
+09:32:59 rx_pps=193 mcast_pps=2 rx_total=654827
+09:33:02 rx_pps=36 mcast_pps=1 rx_total=654937
+09:33:05 rx_pps=23 mcast_pps=1 rx_total=655007
+09:33:08 rx_pps=22 mcast_pps=1 rx_total=655073
+09:33:11 rx_pps=43 mcast_pps=2 rx_total=655203
+09:33:14 rx_pps=33 mcast_pps=1 rx_total=655303
+09:33:17 rx_pps=27 mcast_pps=1 rx_total=655384
+09:33:20 rx_pps=44 mcast_pps=1 rx_total=655518
+09:33:23 rx_pps=43 mcast_pps=2 rx_total=655647
+09:33:26 rx_pps=28 mcast_pps=0 rx_total=655732
+09:33:29 rx_pps=27 mcast_pps=2 rx_total=655814
+09:33:32 rx_pps=38 mcast_pps=1 rx_total=655930
+09:33:35 rx_pps=21 mcast_pps=1 rx_total=655995
+09:33:38 rx_pps=13 mcast_pps=1 rx_total=656035
+09:33:41 rx_pps=79 mcast_pps=2 rx_total=656272
+09:33:44 rx_pps=225 mcast_pps=1 rx_total=656949
+09:33:47 rx_pps=169 mcast_pps=1 rx_total=657457
+09:33:50 rx_pps=265 mcast_pps=1 rx_total=658252
+09:33:53 rx_pps=103 mcast_pps=2 rx_total=658561
+09:33:56 rx_pps=449 mcast_pps=0 rx_total=659908
+09:33:59 rx_pps=283 mcast_pps=2 rx_total=660758
+09:34:02 rx_pps=42 mcast_pps=1 rx_total=660884
+09:34:05 rx_pps=25 mcast_pps=1 rx_total=660960
+09:34:08 rx_pps=23 mcast_pps=1 rx_total=661031
+09:34:11 rx_pps=45 mcast_pps=2 rx_total=661168
+09:34:14 rx_pps=40 mcast_pps=1 rx_total=661289
+09:34:17 rx_pps=24 mcast_pps=1 rx_total=661363
+09:34:20 rx_pps=39 mcast_pps=1 rx_total=661480
+09:34:23 rx_pps=47 mcast_pps=2 rx_total=661621
+09:34:26 rx_pps=23 mcast_pps=0 rx_total=661691
+09:34:29 rx_pps=27 mcast_pps=2 rx_total=661774
+09:34:32 rx_pps=30 mcast_pps=1 rx_total=661864
+09:34:35 rx_pps=30 mcast_pps=1 rx_total=661956
+09:34:38 rx_pps=14 mcast_pps=1 rx_total=661998
+09:34:41 rx_pps=42 mcast_pps=2 rx_total=662124
+09:34:44 rx_pps=34 mcast_pps=1 rx_total=662226
+09:34:47 rx_pps=73 mcast_pps=1 rx_total=662446
+09:34:50 rx_pps=42 mcast_pps=1 rx_total=662573
+09:34:53 rx_pps=19 mcast_pps=2 rx_total=662630
+09:34:56 rx_pps=19 mcast_pps=0 rx_total=662687
+09:34:59 rx_pps=69 mcast_pps=2 rx_total=662896
+09:35:02 rx_pps=48 mcast_pps=1 rx_total=663042
+09:35:05 rx_pps=19 mcast_pps=1 rx_total=663100
+09:35:08 rx_pps=26 mcast_pps=1 rx_total=663179
+09:35:11 rx_pps=79 mcast_pps=2 rx_total=663416
+09:35:14 rx_pps=27 mcast_pps=1 rx_total=663498
+09:35:17 rx_pps=23 mcast_pps=1 rx_total=663568
+09:35:20 rx_pps=45 mcast_pps=1 rx_total=663704
+09:35:23 rx_pps=45 mcast_pps=2 rx_total=663839
+09:35:26 rx_pps=57 mcast_pps=0 rx_total=664011
+09:35:29 rx_pps=48 mcast_pps=2 rx_total=664156
+09:35:32 rx_pps=65 mcast_pps=1 rx_total=664352
+09:35:35 rx_pps=15 mcast_pps=1 rx_total=664398
+09:35:38 rx_pps=51 mcast_pps=1 rx_total=664552
+09:35:41 rx_pps=58 mcast_pps=2 rx_total=664728
+09:35:44 rx_pps=20 mcast_pps=1 rx_total=664790
+09:35:47 rx_pps=34 mcast_pps=1 rx_total=664894
+09:35:50 rx_pps=40 mcast_pps=1 rx_total=665015
+09:35:53 rx_pps=97 mcast_pps=2 rx_total=665308
+09:35:56 rx_pps=64 mcast_pps=0 rx_total=665501
+09:35:59 rx_pps=55 mcast_pps=2 rx_total=665668
+09:36:02 rx_pps=47 mcast_pps=1 rx_total=665809
+09:36:05 rx_pps=14 mcast_pps=1 rx_total=665852
+09:36:08 rx_pps=56 mcast_pps=1 rx_total=666022
+09:36:11 rx_pps=43 mcast_pps=2 rx_total=666153
+09:36:14 rx_pps=22 mcast_pps=1 rx_total=666220
+09:36:17 rx_pps=31 mcast_pps=1 rx_total=666313
+09:36:20 rx_pps=25 mcast_pps=2 rx_total=666389
+09:36:23 rx_pps=69 mcast_pps=1 rx_total=666598
+09:36:26 rx_pps=26 mcast_pps=1 rx_total=666678
+09:36:29 rx_pps=28 mcast_pps=1 rx_total=666763
+09:36:32 rx_pps=49 mcast_pps=2 rx_total=666911
+09:36:35 rx_pps=52 mcast_pps=0 rx_total=667069
+09:36:38 rx_pps=9 mcast_pps=2 rx_total=667098
+09:36:41 rx_pps=53 mcast_pps=1 rx_total=667257
+09:36:45 rx_pps=17 mcast_pps=1 rx_total=667310
+09:36:48 rx_pps=63 mcast_pps=1 rx_total=667500
+09:36:51 rx_pps=51 mcast_pps=2 rx_total=667654
+09:36:54 rx_pps=49 mcast_pps=1 rx_total=667802
+09:36:57 rx_pps=19 mcast_pps=1 rx_total=667859
+09:37:00 rx_pps=17 mcast_pps=1 rx_total=667910
+09:37:03 rx_pps=43 mcast_pps=2 rx_total=668041
+09:37:06 rx_pps=78 mcast_pps=0 rx_total=668276
+09:37:09 rx_pps=32 mcast_pps=2 rx_total=668372
+09:37:12 rx_pps=48 mcast_pps=1 rx_total=668518
+09:37:15 rx_pps=48 mcast_pps=1 rx_total=668662
+09:37:18 rx_pps=115 mcast_pps=1 rx_total=669009
+09:37:21 rx_pps=263 mcast_pps=2 rx_total=669800
+09:37:24 rx_pps=235 mcast_pps=1 rx_total=670506
+09:37:27 rx_pps=98 mcast_pps=1 rx_total=670801
+09:37:30 rx_pps=19 mcast_pps=1 rx_total=670858
+09:37:33 rx_pps=54 mcast_pps=2 rx_total=671020
+09:37:36 rx_pps=19 mcast_pps=0 rx_total=671077
+09:37:39 rx_pps=23 mcast_pps=2 rx_total=671148
+09:37:42 rx_pps=116 mcast_pps=1 rx_total=671496
+09:37:45 rx_pps=227 mcast_pps=1 rx_total=672178
+09:37:48 rx_pps=143 mcast_pps=1 rx_total=672608
+09:37:51 rx_pps=122 mcast_pps=2 rx_total=672976
+09:37:54 rx_pps=273 mcast_pps=1 rx_total=673795
+09:37:57 rx_pps=212 mcast_pps=1 rx_total=674432
+09:38:00 rx_pps=174 mcast_pps=1 rx_total=674955
+09:38:03 rx_pps=48 mcast_pps=2 rx_total=675099
+09:38:06 rx_pps=20 mcast_pps=0 rx_total=675160
+09:38:09 rx_pps=20 mcast_pps=2 rx_total=675222
+09:38:12 rx_pps=31 mcast_pps=1 rx_total=675315
+09:38:15 rx_pps=34 mcast_pps=1 rx_total=675418
+09:38:18 rx_pps=35 mcast_pps=1 rx_total=675523
+09:38:21 rx_pps=38 mcast_pps=2 rx_total=675638
+09:38:24 rx_pps=37 mcast_pps=1 rx_total=675751
+09:38:27 rx_pps=29 mcast_pps=1 rx_total=675839
+09:38:30 rx_pps=21 mcast_pps=1 rx_total=675904
+09:38:33 rx_pps=27 mcast_pps=2 rx_total=675986
+09:38:36 rx_pps=15 mcast_pps=0 rx_total=676031
+09:38:39 rx_pps=12 mcast_pps=2 rx_total=676069
+09:38:42 rx_pps=120 mcast_pps=0 rx_total=676429
+09:38:45 rx_pps=222 mcast_pps=1 rx_total=677095
+09:38:48 rx_pps=220 mcast_pps=1 rx_total=677755
+09:38:51 rx_pps=271 mcast_pps=2 rx_total=678570
+09:38:54 rx_pps=303 mcast_pps=0 rx_total=679481
+09:38:57 rx_pps=231 mcast_pps=1 rx_total=680174
+09:39:00 rx_pps=121 mcast_pps=1 rx_total=680537
+09:39:03 rx_pps=123 mcast_pps=2 rx_total=680906
+09:39:06 rx_pps=33 mcast_pps=0 rx_total=681006
+09:39:09 rx_pps=17 mcast_pps=2 rx_total=681058
+09:39:12 rx_pps=33 mcast_pps=1 rx_total=681157
+09:39:15 rx_pps=30 mcast_pps=2 rx_total=681247
+09:39:18 rx_pps=35 mcast_pps=0 rx_total=681353
+09:39:21 rx_pps=37 mcast_pps=2 rx_total=681465
+09:39:24 rx_pps=68 mcast_pps=1 rx_total=681669
+09:39:27 rx_pps=32 mcast_pps=1 rx_total=681765
+09:39:30 rx_pps=30 mcast_pps=1 rx_total=681855
+09:39:33 rx_pps=44 mcast_pps=2 rx_total=681989
+09:39:36 rx_pps=42 mcast_pps=0 rx_total=682115
+09:39:39 rx_pps=12 mcast_pps=2 rx_total=682151
+09:39:42 rx_pps=45 mcast_pps=1 rx_total=682288
+09:39:45 rx_pps=25 mcast_pps=1 rx_total=682365
+09:39:48 rx_pps=74 mcast_pps=1 rx_total=682589
+09:39:51 rx_pps=24 mcast_pps=2 rx_total=682661
+09:39:54 rx_pps=27 mcast_pps=1 rx_total=682744
+09:39:57 rx_pps=59 mcast_pps=1 rx_total=682923
+09:40:00 rx_pps=69 mcast_pps=1 rx_total=683132
+09:40:03 rx_pps=33 mcast_pps=2 rx_total=683232
+09:40:06 rx_pps=37 mcast_pps=0 rx_total=683344
+09:40:09 rx_pps=18 mcast_pps=2 rx_total=683400
+09:40:12 rx_pps=30 mcast_pps=1 rx_total=683490
+09:40:15 rx_pps=81 mcast_pps=1 rx_total=683734
+09:40:18 rx_pps=34 mcast_pps=1 rx_total=683838
+09:40:21 rx_pps=52 mcast_pps=2 rx_total=683996
+09:40:24 rx_pps=19 mcast_pps=1 rx_total=684054
+09:40:27 rx_pps=60 mcast_pps=1 rx_total=684234
+09:40:30 rx_pps=27 mcast_pps=1 rx_total=684316
+09:40:33 rx_pps=37 mcast_pps=2 rx_total=684427
+09:40:36 rx_pps=39 mcast_pps=0 rx_total=684546
+09:40:39 rx_pps=10 mcast_pps=2 rx_total=684576
+09:40:42 rx_pps=188 mcast_pps=1 rx_total=685140
+09:40:45 rx_pps=35 mcast_pps=1 rx_total=685247
+09:40:48 rx_pps=39 mcast_pps=1 rx_total=685366
+09:40:51 rx_pps=33 mcast_pps=2 rx_total=685467
+09:40:54 rx_pps=76 mcast_pps=1 rx_total=685697
+09:40:57 rx_pps=44 mcast_pps=1 rx_total=685830
+09:41:00 rx_pps=28 mcast_pps=1 rx_total=685914
+09:41:03 rx_pps=42 mcast_pps=2 rx_total=686042
+09:41:06 rx_pps=33 mcast_pps=0 rx_total=686141
+09:41:09 rx_pps=47 mcast_pps=2 rx_total=686284
+09:41:12 rx_pps=26 mcast_pps=1 rx_total=686363
+09:41:15 rx_pps=25 mcast_pps=1 rx_total=686439
+09:41:18 rx_pps=30 mcast_pps=1 rx_total=686530
+09:41:21 rx_pps=25 mcast_pps=2 rx_total=686605
+09:41:24 rx_pps=44 mcast_pps=1 rx_total=686737
+09:41:27 rx_pps=44 mcast_pps=1 rx_total=686869
+09:41:30 rx_pps=24 mcast_pps=1 rx_total=686941
+09:41:33 rx_pps=53 mcast_pps=2 rx_total=687102
+09:41:36 rx_pps=101 mcast_pps=0 rx_total=687405
+09:41:39 rx_pps=14 mcast_pps=2 rx_total=687447
+09:41:42 rx_pps=60 mcast_pps=1 rx_total=687629
+09:41:45 rx_pps=37 mcast_pps=1 rx_total=687740
+09:41:48 rx_pps=99 mcast_pps=1 rx_total=688037
+09:41:51 rx_pps=34 mcast_pps=2 rx_total=688139
+09:41:54 rx_pps=29 mcast_pps=1 rx_total=688227
+09:41:57 rx_pps=37 mcast_pps=1 rx_total=688338
+09:42:00 rx_pps=22 mcast_pps=1 rx_total=688406
+09:42:03 rx_pps=75 mcast_pps=2 rx_total=688632
+09:42:06 rx_pps=33 mcast_pps=0 rx_total=688731
+09:42:09 rx_pps=21 mcast_pps=2 rx_total=688794
+09:42:12 rx_pps=42 mcast_pps=1 rx_total=688922
+09:42:15 rx_pps=16 mcast_pps=1 rx_total=688971
+09:42:18 rx_pps=267 mcast_pps=1 rx_total=689774
+09:42:21 rx_pps=261 mcast_pps=2 rx_total=690557
+09:42:24 rx_pps=119 mcast_pps=1 rx_total=690914
+09:42:27 rx_pps=41 mcast_pps=1 rx_total=691037
+09:42:30 rx_pps=22 mcast_pps=1 rx_total=691105
+09:42:33 rx_pps=33 mcast_pps=2 rx_total=691204
+09:42:36 rx_pps=31 mcast_pps=0 rx_total=691298
+09:42:39 rx_pps=9 mcast_pps=2 rx_total=691326
+09:42:42 rx_pps=141 mcast_pps=1 rx_total=691751
+09:42:45 rx_pps=211 mcast_pps=1 rx_total=692385
+09:42:48 rx_pps=242 mcast_pps=1 rx_total=693113
+09:42:51 rx_pps=163 mcast_pps=2 rx_total=693603
+09:42:54 rx_pps=218 mcast_pps=1 rx_total=694258
+09:42:57 rx_pps=239 mcast_pps=1 rx_total=694977
+09:43:00 rx_pps=28 mcast_pps=1 rx_total=695061
+09:43:03 rx_pps=44 mcast_pps=2 rx_total=695193
+09:43:06 rx_pps=30 mcast_pps=0 rx_total=695284
+09:43:09 rx_pps=16 mcast_pps=2 rx_total=695333
+09:43:12 rx_pps=39 mcast_pps=1 rx_total=695450
+09:43:15 rx_pps=16 mcast_pps=1 rx_total=695500
+09:43:18 rx_pps=35 mcast_pps=1 rx_total=695607
+09:43:21 rx_pps=34 mcast_pps=2 rx_total=695710
+09:43:24 rx_pps=30 mcast_pps=1 rx_total=695800
+09:43:27 rx_pps=48 mcast_pps=1 rx_total=695945
+09:43:30 rx_pps=22 mcast_pps=1 rx_total=696012
+09:43:33 rx_pps=53 mcast_pps=2 rx_total=696172
+09:43:36 rx_pps=33 mcast_pps=0 rx_total=696273
+09:43:39 rx_pps=28 mcast_pps=2 rx_total=696357
+09:43:42 rx_pps=156 mcast_pps=1 rx_total=696825
+09:43:45 rx_pps=192 mcast_pps=1 rx_total=697402
+09:43:48 rx_pps=186 mcast_pps=1 rx_total=697960
+09:43:51 rx_pps=286 mcast_pps=2 rx_total=698819
+09:43:54 rx_pps=405 mcast_pps=1 rx_total=700036
+09:43:57 rx_pps=298 mcast_pps=1 rx_total=700931
+09:44:00 rx_pps=57 mcast_pps=1 rx_total=701104
+09:44:03 rx_pps=40 mcast_pps=2 rx_total=701226
+09:44:06 rx_pps=17 mcast_pps=0 rx_total=701277
+09:44:09 rx_pps=32 mcast_pps=2 rx_total=701373
+09:44:12 rx_pps=32 mcast_pps=1 rx_total=701469
+09:44:15 rx_pps=17 mcast_pps=1 rx_total=701521
+09:44:18 rx_pps=74 mcast_pps=1 rx_total=701745
+09:44:21 rx_pps=31 mcast_pps=2 rx_total=701840
+09:44:24 rx_pps=24 mcast_pps=1 rx_total=701912
+09:44:27 rx_pps=42 mcast_pps=1 rx_total=702039
+09:44:30 rx_pps=23 mcast_pps=1 rx_total=702109
+09:44:33 rx_pps=22 mcast_pps=2 rx_total=702176
+09:44:36 rx_pps=26 mcast_pps=0 rx_total=702255
+09:44:39 rx_pps=25 mcast_pps=2 rx_total=702330
+09:44:42 rx_pps=46 mcast_pps=1 rx_total=702469
+09:44:45 rx_pps=61 mcast_pps=1 rx_total=702653
+09:44:48 rx_pps=46 mcast_pps=1 rx_total=702792
+09:44:51 rx_pps=11 mcast_pps=2 rx_total=702827
+09:44:54 rx_pps=24 mcast_pps=1 rx_total=702901
+09:44:57 rx_pps=101 mcast_pps=1 rx_total=703205
+09:45:00 rx_pps=30 mcast_pps=1 rx_total=703297
+09:45:03 rx_pps=25 mcast_pps=2 rx_total=703372
+09:45:06 rx_pps=16 mcast_pps=0 rx_total=703420
+09:45:09 rx_pps=50 mcast_pps=2 rx_total=703571
+09:45:12 rx_pps=49 mcast_pps=1 rx_total=703718
+09:45:15 rx_pps=17 mcast_pps=1 rx_total=703771
+09:45:18 rx_pps=47 mcast_pps=1 rx_total=703914
+09:45:21 rx_pps=51 mcast_pps=2 rx_total=704068
+09:45:24 rx_pps=60 mcast_pps=1 rx_total=704250
+09:45:27 rx_pps=26 mcast_pps=1 rx_total=704329
+09:45:30 rx_pps=40 mcast_pps=1 rx_total=704451
+09:45:33 rx_pps=48 mcast_pps=2 rx_total=704597
+09:45:36 rx_pps=27 mcast_pps=1 rx_total=704678
+09:45:39 rx_pps=66 mcast_pps=1 rx_total=704877
+09:45:42 rx_pps=51 mcast_pps=2 rx_total=705030
+09:45:45 rx_pps=29 mcast_pps=0 rx_total=705117
+09:45:48 rx_pps=50 mcast_pps=2 rx_total=705268
+09:45:51 rx_pps=62 mcast_pps=1 rx_total=705454
+09:45:54 rx_pps=55 mcast_pps=1 rx_total=705620
+09:45:57 rx_pps=46 mcast_pps=1 rx_total=705758
+09:46:00 rx_pps=44 mcast_pps=2 rx_total=705890
+09:46:04 rx_pps=23 mcast_pps=1 rx_total=705959
+09:46:07 rx_pps=63 mcast_pps=1 rx_total=706150
+09:46:10 rx_pps=45 mcast_pps=1 rx_total=706285
+09:46:13 rx_pps=28 mcast_pps=2 rx_total=706371
+09:46:16 rx_pps=18 mcast_pps=0 rx_total=706425
+09:46:19 rx_pps=40 mcast_pps=2 rx_total=706547
+09:46:22 rx_pps=42 mcast_pps=1 rx_total=706673
+09:46:25 rx_pps=25 mcast_pps=1 rx_total=706749
+09:46:28 rx_pps=25 mcast_pps=1 rx_total=706825
+09:46:31 rx_pps=30 mcast_pps=2 rx_total=706915
+09:46:34 rx_pps=23 mcast_pps=1 rx_total=706984
+09:46:37 rx_pps=100 mcast_pps=1 rx_total=707284
+09:46:40 rx_pps=32 mcast_pps=1 rx_total=707381
+09:46:43 rx_pps=27 mcast_pps=2 rx_total=707464
+09:46:46 rx_pps=20 mcast_pps=0 rx_total=707524
+09:46:49 rx_pps=123 mcast_pps=2 rx_total=707894
+09:46:52 rx_pps=61 mcast_pps=1 rx_total=708077
+09:46:55 rx_pps=25 mcast_pps=1 rx_total=708153
+09:46:58 rx_pps=28 mcast_pps=1 rx_total=708238
+09:47:01 rx_pps=40 mcast_pps=2 rx_total=708359
+09:47:04 rx_pps=85 mcast_pps=1 rx_total=708616
+09:47:07 rx_pps=21 mcast_pps=1 rx_total=708680
+09:47:10 rx_pps=51 mcast_pps=1 rx_total=708834
+09:47:13 rx_pps=38 mcast_pps=2 rx_total=708949
+09:47:16 rx_pps=14 mcast_pps=0 rx_total=708992
+09:47:19 rx_pps=201 mcast_pps=2 rx_total=709595
+09:47:22 rx_pps=303 mcast_pps=1 rx_total=710505
+09:47:25 rx_pps=129 mcast_pps=1 rx_total=710893
+09:47:28 rx_pps=26 mcast_pps=1 rx_total=710972
+09:47:31 rx_pps=35 mcast_pps=2 rx_total=711079
+09:47:34 rx_pps=46 mcast_pps=1 rx_total=711217
+09:47:37 rx_pps=18 mcast_pps=1 rx_total=711271
+09:47:40 rx_pps=28 mcast_pps=1 rx_total=711355
+09:47:43 rx_pps=159 mcast_pps=2 rx_total=711833
+09:47:46 rx_pps=139 mcast_pps=0 rx_total=712251
+09:47:49 rx_pps=212 mcast_pps=2 rx_total=712889
+09:47:52 rx_pps=223 mcast_pps=1 rx_total=713559
+09:47:55 rx_pps=173 mcast_pps=1 rx_total=714079
+09:47:58 rx_pps=147 mcast_pps=1 rx_total=714520
+09:48:01 rx_pps=169 mcast_pps=2 rx_total=715028
+09:48:04 rx_pps=19 mcast_pps=1 rx_total=715087
+09:48:07 rx_pps=23 mcast_pps=1 rx_total=715156
+09:48:10 rx_pps=58 mcast_pps=1 rx_total=715330
+09:48:13 rx_pps=30 mcast_pps=2 rx_total=715421
+09:48:16 rx_pps=19 mcast_pps=0 rx_total=715478
+09:48:19 rx_pps=29 mcast_pps=2 rx_total=715566
+09:48:22 rx_pps=37 mcast_pps=1 rx_total=715678
+09:48:25 rx_pps=27 mcast_pps=1 rx_total=715760
+09:48:28 rx_pps=29 mcast_pps=1 rx_total=715847
+09:48:31 rx_pps=26 mcast_pps=2 rx_total=715925
+09:48:34 rx_pps=17 mcast_pps=1 rx_total=715976
+09:48:37 rx_pps=18 mcast_pps=1 rx_total=716032
+09:48:40 rx_pps=27 mcast_pps=1 rx_total=716115
+09:48:43 rx_pps=165 mcast_pps=2 rx_total=716610
+09:48:46 rx_pps=250 mcast_pps=0 rx_total=717360
+09:48:49 rx_pps=158 mcast_pps=2 rx_total=717836
+09:48:52 rx_pps=276 mcast_pps=1 rx_total=718665
+09:48:55 rx_pps=306 mcast_pps=1 rx_total=719585
+09:48:58 rx_pps=359 mcast_pps=1 rx_total=720664
+09:49:01 rx_pps=41 mcast_pps=2 rx_total=720789
+09:49:04 rx_pps=22 mcast_pps=1 rx_total=720857
+09:49:07 rx_pps=25 mcast_pps=1 rx_total=720932
+09:49:10 rx_pps=33 mcast_pps=1 rx_total=721031
+09:49:13 rx_pps=55 mcast_pps=2 rx_total=721197
+09:49:16 rx_pps=22 mcast_pps=0 rx_total=721263
+09:49:19 rx_pps=34 mcast_pps=2 rx_total=721366
+09:49:22 rx_pps=39 mcast_pps=1 rx_total=721485
+09:49:25 rx_pps=29 mcast_pps=1 rx_total=721574
+09:49:28 rx_pps=31 mcast_pps=1 rx_total=721667
+09:49:31 rx_pps=26 mcast_pps=2 rx_total=721747
+09:49:34 rx_pps=32 mcast_pps=1 rx_total=721843
+09:49:37 rx_pps=31 mcast_pps=1 rx_total=721938
+09:49:40 rx_pps=47 mcast_pps=1 rx_total=722079
+09:49:43 rx_pps=105 mcast_pps=2 rx_total=722394
+09:49:46 rx_pps=90 mcast_pps=0 rx_total=722664
+09:49:49 rx_pps=45 mcast_pps=2 rx_total=722799
+09:49:52 rx_pps=25 mcast_pps=1 rx_total=722876
+09:49:55 rx_pps=27 mcast_pps=1 rx_total=722957
+09:49:58 rx_pps=64 mcast_pps=1 rx_total=723151
+09:50:01 rx_pps=32 mcast_pps=2 rx_total=723247
+09:50:04 rx_pps=20 mcast_pps=1 rx_total=723309
+09:50:07 rx_pps=25 mcast_pps=1 rx_total=723386
+09:50:10 rx_pps=72 mcast_pps=1 rx_total=723603
+09:50:13 rx_pps=45 mcast_pps=2 rx_total=723739
+09:50:16 rx_pps=13 mcast_pps=0 rx_total=723778
+09:50:19 rx_pps=22 mcast_pps=2 rx_total=723844
+09:50:22 rx_pps=34 mcast_pps=1 rx_total=723947
+09:50:25 rx_pps=60 mcast_pps=1 rx_total=724127
+09:50:28 rx_pps=65 mcast_pps=1 rx_total=724324
+09:50:31 rx_pps=51 mcast_pps=2 rx_total=724479
+09:50:34 rx_pps=33 mcast_pps=1 rx_total=724579
+09:50:37 rx_pps=17 mcast_pps=1 rx_total=724630
+09:50:40 rx_pps=69 mcast_pps=1 rx_total=724839
+09:50:43 rx_pps=50 mcast_pps=2 rx_total=724990
+09:50:46 rx_pps=22 mcast_pps=0 rx_total=725056
+09:50:49 rx_pps=52 mcast_pps=2 rx_total=725214
+09:50:52 rx_pps=85 mcast_pps=1 rx_total=725470
+09:50:55 rx_pps=32 mcast_pps=1 rx_total=725567
+09:50:58 rx_pps=41 mcast_pps=1 rx_total=725690
+09:51:01 rx_pps=33 mcast_pps=2 rx_total=725791
+09:51:04 rx_pps=34 mcast_pps=1 rx_total=725894
+09:51:07 rx_pps=37 mcast_pps=1 rx_total=726005
+09:51:10 rx_pps=27 mcast_pps=1 rx_total=726087
+09:51:13 rx_pps=51 mcast_pps=2 rx_total=726241
+09:51:16 rx_pps=19 mcast_pps=0 rx_total=726299
+09:51:19 rx_pps=41 mcast_pps=2 rx_total=726423
+09:51:22 rx_pps=37 mcast_pps=1 rx_total=726536
+09:51:25 rx_pps=19 mcast_pps=1 rx_total=726593
+09:51:28 rx_pps=40 mcast_pps=1 rx_total=726713
+09:51:31 rx_pps=29 mcast_pps=2 rx_total=726800
+09:51:34 rx_pps=114 mcast_pps=1 rx_total=727142
+09:51:37 rx_pps=21 mcast_pps=1 rx_total=727207
+09:51:40 rx_pps=17 mcast_pps=1 rx_total=727259
+09:51:43 rx_pps=56 mcast_pps=2 rx_total=727427
+09:51:46 rx_pps=104 mcast_pps=0 rx_total=727740
+09:51:49 rx_pps=101 mcast_pps=2 rx_total=728045
+09:51:52 rx_pps=55 mcast_pps=1 rx_total=728210
+09:51:55 rx_pps=28 mcast_pps=1 rx_total=728296
+09:51:58 rx_pps=35 mcast_pps=1 rx_total=728403
+09:52:01 rx_pps=71 mcast_pps=2 rx_total=728617
+09:52:04 rx_pps=56 mcast_pps=1 rx_total=728785
+09:52:07 rx_pps=18 mcast_pps=1 rx_total=728840
+09:52:10 rx_pps=35 mcast_pps=1 rx_total=728947
+09:52:13 rx_pps=47 mcast_pps=2 rx_total=729090
+09:52:16 rx_pps=173 mcast_pps=0 rx_total=729609
+09:52:19 rx_pps=251 mcast_pps=2 rx_total=730363
+09:52:22 rx_pps=210 mcast_pps=1 rx_total=730995
+09:52:25 rx_pps=15 mcast_pps=1 rx_total=731042
+09:52:28 rx_pps=32 mcast_pps=1 rx_total=731139
+09:52:31 rx_pps=15 mcast_pps=2 rx_total=731185
+09:52:34 rx_pps=30 mcast_pps=1 rx_total=731275
+09:52:37 rx_pps=23 mcast_pps=1 rx_total=731345
+09:52:40 rx_pps=12 mcast_pps=1 rx_total=731381
+09:52:43 rx_pps=238 mcast_pps=2 rx_total=732096
+09:52:46 rx_pps=209 mcast_pps=0 rx_total=732724
+09:52:49 rx_pps=178 mcast_pps=2 rx_total=733260
+09:52:52 rx_pps=247 mcast_pps=1 rx_total=734003
+09:52:55 rx_pps=214 mcast_pps=1 rx_total=734646
+09:52:58 rx_pps=156 mcast_pps=1 rx_total=735116
+09:53:01 rx_pps=19 mcast_pps=2 rx_total=735174
+09:53:04 rx_pps=43 mcast_pps=1 rx_total=735303
+09:53:07 rx_pps=20 mcast_pps=1 rx_total=735364
+09:53:10 rx_pps=61 mcast_pps=1 rx_total=735547
+09:53:13 rx_pps=56 mcast_pps=2 rx_total=735717
+09:53:16 rx_pps=13 mcast_pps=0 rx_total=735757
+09:53:19 rx_pps=650 mcast_pps=2 rx_total=737708
+09:53:22 rx_pps=286 mcast_pps=1 rx_total=738567
+09:53:25 rx_pps=26 mcast_pps=1 rx_total=738645
+09:53:28 rx_pps=32 mcast_pps=1 rx_total=738743
+09:53:31 rx_pps=29 mcast_pps=2 rx_total=738831
+09:53:34 rx_pps=51 mcast_pps=1 rx_total=738986
+09:53:37 rx_pps=9 mcast_pps=1 rx_total=739014
+09:53:40 rx_pps=11 mcast_pps=1 rx_total=739048
+09:53:43 rx_pps=244 mcast_pps=2 rx_total=739780
+09:53:46 rx_pps=195 mcast_pps=0 rx_total=740366
+09:53:49 rx_pps=221 mcast_pps=2 rx_total=741031
+09:53:52 rx_pps=259 mcast_pps=1 rx_total=741808
+09:53:55 rx_pps=240 mcast_pps=1 rx_total=742528
+09:53:58 rx_pps=329 mcast_pps=1 rx_total=743517
+09:54:01 rx_pps=103 mcast_pps=2 rx_total=743826
+09:54:04 rx_pps=38 mcast_pps=1 rx_total=743941
+09:54:07 rx_pps=19 mcast_pps=1 rx_total=744000
+09:54:10 rx_pps=43 mcast_pps=1 rx_total=744129
+09:54:13 rx_pps=42 mcast_pps=2 rx_total=744257
+09:54:16 rx_pps=20 mcast_pps=0 rx_total=744318
+09:54:19 rx_pps=62 mcast_pps=2 rx_total=744505
+09:54:22 rx_pps=23 mcast_pps=1 rx_total=744575
+09:54:25 rx_pps=31 mcast_pps=1 rx_total=744668
+09:54:28 rx_pps=41 mcast_pps=1 rx_total=744792
+09:54:31 rx_pps=17 mcast_pps=2 rx_total=744844
+09:54:34 rx_pps=32 mcast_pps=1 rx_total=744942
+09:54:37 rx_pps=14 mcast_pps=1 rx_total=744984
+09:54:40 rx_pps=17 mcast_pps=1 rx_total=745037
+09:54:43 rx_pps=51 mcast_pps=2 rx_total=745192
+09:54:46 rx_pps=32 mcast_pps=0 rx_total=745288
+09:54:49 rx_pps=45 mcast_pps=2 rx_total=745423
+09:54:52 rx_pps=29 mcast_pps=1 rx_total=745510
+09:54:55 rx_pps=38 mcast_pps=1 rx_total=745625
+09:54:58 rx_pps=56 mcast_pps=1 rx_total=745795
+09:55:01 rx_pps=20 mcast_pps=2 rx_total=745855
+09:55:04 rx_pps=44 mcast_pps=1 rx_total=745987
+09:55:07 rx_pps=31 mcast_pps=1 rx_total=746081
+09:55:10 rx_pps=34 mcast_pps=1 rx_total=746185
+09:55:13 rx_pps=42 mcast_pps=2 rx_total=746313
+09:55:16 rx_pps=56 mcast_pps=1 rx_total=746481
+09:55:19 rx_pps=26 mcast_pps=1 rx_total=746560
+09:55:22 rx_pps=32 mcast_pps=2 rx_total=746656
+09:55:25 rx_pps=43 mcast_pps=0 rx_total=746786
+09:55:28 rx_pps=31 mcast_pps=2 rx_total=746879
+09:55:31 rx_pps=51 mcast_pps=1 rx_total=747032
+09:55:34 rx_pps=51 mcast_pps=1 rx_total=747187
+09:55:37 rx_pps=30 mcast_pps=1 rx_total=747279
+09:55:40 rx_pps=18 mcast_pps=2 rx_total=747333
+09:55:43 rx_pps=32 mcast_pps=1 rx_total=747430
+09:55:46 rx_pps=39 mcast_pps=1 rx_total=747547
+09:55:50 rx_pps=49 mcast_pps=1 rx_total=747696
+09:55:53 rx_pps=43 mcast_pps=2 rx_total=747825
+09:55:56 rx_pps=52 mcast_pps=0 rx_total=747981
+09:55:59 rx_pps=27 mcast_pps=2 rx_total=748062
+09:56:02 rx_pps=23 mcast_pps=0 rx_total=748133
+09:56:05 rx_pps=42 mcast_pps=2 rx_total=748259
+09:56:08 rx_pps=88 mcast_pps=1 rx_total=748524
+09:56:11 rx_pps=11 mcast_pps=2 rx_total=748558
+09:56:14 rx_pps=31 mcast_pps=1 rx_total=748651
+09:56:17 rx_pps=46 mcast_pps=1 rx_total=748791
+09:56:20 rx_pps=31 mcast_pps=1 rx_total=748886
+09:56:23 rx_pps=47 mcast_pps=2 rx_total=749027
+09:56:26 rx_pps=45 mcast_pps=0 rx_total=749162
+09:56:29 rx_pps=30 mcast_pps=2 rx_total=749254
+09:56:32 rx_pps=19 mcast_pps=1 rx_total=749311
+09:56:35 rx_pps=44 mcast_pps=1 rx_total=749444
+09:56:38 rx_pps=21 mcast_pps=1 rx_total=749508
+09:56:41 rx_pps=32 mcast_pps=1 rx_total=749606
+09:56:44 rx_pps=30 mcast_pps=1 rx_total=749696
+09:56:47 rx_pps=48 mcast_pps=1 rx_total=749842
+09:56:50 rx_pps=49 mcast_pps=1 rx_total=749991
+09:56:53 rx_pps=25 mcast_pps=2 rx_total=750068
+09:56:56 rx_pps=44 mcast_pps=0 rx_total=750202
+09:56:59 rx_pps=27 mcast_pps=2 rx_total=750284
+09:57:02 rx_pps=31 mcast_pps=0 rx_total=750377
+09:57:05 rx_pps=37 mcast_pps=2 rx_total=750488
+09:57:08 rx_pps=33 mcast_pps=1 rx_total=750588
+09:57:11 rx_pps=41 mcast_pps=2 rx_total=750711
+09:57:14 rx_pps=43 mcast_pps=1 rx_total=750840
+09:57:17 rx_pps=135 mcast_pps=1 rx_total=751246
+09:57:20 rx_pps=73 mcast_pps=1 rx_total=751467
+09:57:23 rx_pps=56 mcast_pps=2 rx_total=751636
+09:57:26 rx_pps=43 mcast_pps=0 rx_total=751766
+09:57:29 rx_pps=122 mcast_pps=2 rx_total=752133
+09:57:32 rx_pps=107 mcast_pps=0 rx_total=752456
+09:57:35 rx_pps=42 mcast_pps=2 rx_total=752584
+09:57:38 rx_pps=110 mcast_pps=1 rx_total=752915
+09:57:41 rx_pps=13 mcast_pps=1 rx_total=752955
+09:57:44 rx_pps=57 mcast_pps=1 rx_total=753128
+09:57:47 rx_pps=52 mcast_pps=1 rx_total=753285
+09:57:50 rx_pps=36 mcast_pps=1 rx_total=753393
+09:57:53 rx_pps=27 mcast_pps=2 rx_total=753476
+09:57:56 rx_pps=38 mcast_pps=0 rx_total=753592
+09:57:59 rx_pps=255 mcast_pps=2 rx_total=754357
+09:58:02 rx_pps=165 mcast_pps=0 rx_total=754854
+09:58:05 rx_pps=157 mcast_pps=2 rx_total=755325
+09:58:08 rx_pps=95 mcast_pps=1 rx_total=755611
+09:58:11 rx_pps=23 mcast_pps=1 rx_total=755681
+09:58:14 rx_pps=37 mcast_pps=1 rx_total=755793
+09:58:17 rx_pps=37 mcast_pps=1 rx_total=755904
+09:58:20 rx_pps=19 mcast_pps=1 rx_total=755962
+09:58:23 rx_pps=32 mcast_pps=2 rx_total=756060
+09:58:26 rx_pps=50 mcast_pps=0 rx_total=756211
+09:58:29 rx_pps=35 mcast_pps=2 rx_total=756316
+09:58:32 rx_pps=14 mcast_pps=0 rx_total=756359
+09:58:35 rx_pps=25 mcast_pps=2 rx_total=756436
+09:58:38 rx_pps=27 mcast_pps=1 rx_total=756519
+09:58:41 rx_pps=40 mcast_pps=1 rx_total=756639
+09:58:44 rx_pps=86 mcast_pps=1 rx_total=756897
+09:58:47 rx_pps=247 mcast_pps=1 rx_total=757640
+09:58:50 rx_pps=221 mcast_pps=1 rx_total=758304
+09:58:53 rx_pps=170 mcast_pps=2 rx_total=758814
+09:58:56 rx_pps=250 mcast_pps=0 rx_total=759564
+09:58:59 rx_pps=230 mcast_pps=2 rx_total=760254
+09:59:02 rx_pps=182 mcast_pps=0 rx_total=760801
+09:59:05 rx_pps=142 mcast_pps=2 rx_total=761227
+09:59:08 rx_pps=46 mcast_pps=1 rx_total=761365
+09:59:11 rx_pps=26 mcast_pps=1 rx_total=761444
+09:59:14 rx_pps=31 mcast_pps=1 rx_total=761539
+09:59:17 rx_pps=34 mcast_pps=1 rx_total=761642
+09:59:20 rx_pps=20 mcast_pps=1 rx_total=761702
+09:59:23 rx_pps=28 mcast_pps=2 rx_total=761788
+09:59:26 rx_pps=62 mcast_pps=0 rx_total=761975
+09:59:29 rx_pps=42 mcast_pps=2 rx_total=762101
+09:59:32 rx_pps=29 mcast_pps=0 rx_total=762189
+09:59:35 rx_pps=35 mcast_pps=2 rx_total=762295
+09:59:38 rx_pps=34 mcast_pps=1 rx_total=762399
+09:59:41 rx_pps=40 mcast_pps=1 rx_total=762520
+09:59:44 rx_pps=136 mcast_pps=1 rx_total=762930
+09:59:47 rx_pps=273 mcast_pps=1 rx_total=763750
+09:59:50 rx_pps=222 mcast_pps=1 rx_total=764417
+09:59:53 rx_pps=234 mcast_pps=2 rx_total=765121
+09:59:56 rx_pps=239 mcast_pps=0 rx_total=765839
+09:59:59 rx_pps=110 mcast_pps=2 rx_total=766169
+10:00:02 rx_pps=24 mcast_pps=0 rx_total=766241
+10:00:05 rx_pps=22 mcast_pps=2 rx_total=766308
+10:00:08 rx_pps=37 mcast_pps=1 rx_total=766421
+10:00:11 rx_pps=30 mcast_pps=1 rx_total=766512
+10:00:14 rx_pps=37 mcast_pps=1 rx_total=766624
+10:00:17 rx_pps=40 mcast_pps=1 rx_total=766745
+10:00:20 rx_pps=76 mcast_pps=1 rx_total=766973
+10:00:23 rx_pps=37 mcast_pps=2 rx_total=767086
+10:00:26 rx_pps=17 mcast_pps=0 rx_total=767139
+10:00:29 rx_pps=46 mcast_pps=2 rx_total=767278
+10:00:32 rx_pps=21 mcast_pps=0 rx_total=767341
+10:00:35 rx_pps=32 mcast_pps=2 rx_total=767438
+10:00:38 rx_pps=28 mcast_pps=1 rx_total=767523
+10:00:41 rx_pps=45 mcast_pps=1 rx_total=767659
+10:00:44 rx_pps=51 mcast_pps=1 rx_total=767813
+10:00:47 rx_pps=83 mcast_pps=1 rx_total=768064
+10:00:50 rx_pps=287 mcast_pps=1 rx_total=768927
+10:00:53 rx_pps=726 mcast_pps=2 rx_total=771106
+10:00:56 rx_pps=824 mcast_pps=0 rx_total=773579
+10:00:59 rx_pps=49 mcast_pps=2 rx_total=773726
+10:01:02 rx_pps=73 mcast_pps=0 rx_total=773945
+10:01:05 rx_pps=516 mcast_pps=2 rx_total=775493
+10:01:08 rx_pps=1249 mcast_pps=1 rx_total=779241
+10:01:11 rx_pps=2000 mcast_pps=1 rx_total=785243
+10:01:14 rx_pps=2403 mcast_pps=1 rx_total=792452
+10:01:17 rx_pps=1546 mcast_pps=2 rx_total=797090
+10:01:20 rx_pps=1617 mcast_pps=1 rx_total=801941
+10:01:23 rx_pps=1462 mcast_pps=2 rx_total=806327
+10:01:26 rx_pps=1330 mcast_pps=0 rx_total=810317
+10:01:29 rx_pps=2669 mcast_pps=2 rx_total=818325
+10:01:32 rx_pps=2668 mcast_pps=0 rx_total=826330
+10:01:35 rx_pps=2329 mcast_pps=2 rx_total=833317
+10:01:38 rx_pps=1346 mcast_pps=1 rx_total=837357
+10:01:41 rx_pps=1731 mcast_pps=1 rx_total=842551
+10:01:44 rx_pps=2237 mcast_pps=1 rx_total=849262
+10:01:47 rx_pps=1419 mcast_pps=1 rx_total=853520
+10:01:50 rx_pps=2608 mcast_pps=1 rx_total=861344
+10:01:53 rx_pps=1200 mcast_pps=1 rx_total=864944
+10:01:56 rx_pps=1241 mcast_pps=1 rx_total=868667
+10:01:59 rx_pps=2178 mcast_pps=2 rx_total=875201
+10:02:02 rx_pps=27 mcast_pps=0 rx_total=875283
+10:02:05 rx_pps=116 mcast_pps=2 rx_total=875633
+10:02:08 rx_pps=486 mcast_pps=1 rx_total=877091
+10:02:11 rx_pps=860 mcast_pps=1 rx_total=879673
+10:02:14 rx_pps=1955 mcast_pps=1 rx_total=885538
+10:02:17 rx_pps=1311 mcast_pps=2 rx_total=889472
+10:02:20 rx_pps=1591 mcast_pps=1 rx_total=894246
+10:02:23 rx_pps=1995 mcast_pps=1 rx_total=900231
+10:02:26 rx_pps=2222 mcast_pps=1 rx_total=906897
+10:02:29 rx_pps=2012 mcast_pps=2 rx_total=912934
+10:02:32 rx_pps=802 mcast_pps=0 rx_total=915341
+10:02:35 rx_pps=1683 mcast_pps=2 rx_total=920392
+10:02:38 rx_pps=2693 mcast_pps=1 rx_total=928472
+10:02:41 rx_pps=1145 mcast_pps=1 rx_total=931908
+10:02:44 rx_pps=3682 mcast_pps=1 rx_total=942956
+10:02:47 rx_pps=1232 mcast_pps=2 rx_total=946652
+10:02:50 rx_pps=1486 mcast_pps=1 rx_total=951112
+10:02:53 rx_pps=3137 mcast_pps=1 rx_total=960525
+10:02:56 rx_pps=1071 mcast_pps=1 rx_total=963740
+10:02:59 rx_pps=111 mcast_pps=2 rx_total=964075
+10:03:02 rx_pps=108 mcast_pps=0 rx_total=964400
+10:03:05 rx_pps=698 mcast_pps=2 rx_total=966494
+10:03:08 rx_pps=2215 mcast_pps=1 rx_total=973140
+10:03:11 rx_pps=1966 mcast_pps=1 rx_total=979038
+10:03:14 rx_pps=2212 mcast_pps=1 rx_total=985676
+10:03:17 rx_pps=1911 mcast_pps=2 rx_total=991410
+10:03:20 rx_pps=1468 mcast_pps=1 rx_total=995816
+10:03:23 rx_pps=2586 mcast_pps=1 rx_total=1003576
+10:03:26 rx_pps=252 mcast_pps=1 rx_total=1004332
+10:03:29 rx_pps=22 mcast_pps=2 rx_total=1004399
+10:03:32 rx_pps=48 mcast_pps=0 rx_total=1004545
+10:03:35 rx_pps=40 mcast_pps=2 rx_total=1004665
+10:03:38 rx_pps=17 mcast_pps=1 rx_total=1004718
+10:03:41 rx_pps=86 mcast_pps=1 rx_total=1004976
+10:03:44 rx_pps=166 mcast_pps=1 rx_total=1005475
+10:03:47 rx_pps=217 mcast_pps=2 rx_total=1006127
+10:03:50 rx_pps=269 mcast_pps=1 rx_total=1006936
+10:03:53 rx_pps=391 mcast_pps=1 rx_total=1008109
+10:03:56 rx_pps=231 mcast_pps=1 rx_total=1008802
+10:03:59 rx_pps=72 mcast_pps=2 rx_total=1009018
+10:04:02 rx_pps=38 mcast_pps=0 rx_total=1009132
+10:04:05 rx_pps=116 mcast_pps=2 rx_total=1009482
+10:04:08 rx_pps=1202 mcast_pps=1 rx_total=1013090
+10:04:11 rx_pps=2932 mcast_pps=1 rx_total=1021887
+10:04:14 rx_pps=1454 mcast_pps=1 rx_total=1026250
+10:04:17 rx_pps=589 mcast_pps=2 rx_total=1028018
+10:04:20 rx_pps=14 mcast_pps=1 rx_total=1028060
+10:04:23 rx_pps=44 mcast_pps=1 rx_total=1028193
+10:04:26 rx_pps=16 mcast_pps=1 rx_total=1028243
+10:04:29 rx_pps=38 mcast_pps=2 rx_total=1028357
+10:04:32 rx_pps=67 mcast_pps=0 rx_total=1028559
+10:04:35 rx_pps=30 mcast_pps=2 rx_total=1028650
+10:04:38 rx_pps=17 mcast_pps=1 rx_total=1028702
+10:04:41 rx_pps=204 mcast_pps=1 rx_total=1029314
+10:04:44 rx_pps=203 mcast_pps=2 rx_total=1029924
+10:04:47 rx_pps=146 mcast_pps=1 rx_total=1030364
+10:04:50 rx_pps=239 mcast_pps=1 rx_total=1031082
+10:04:53 rx_pps=248 mcast_pps=1 rx_total=1031826
+10:04:56 rx_pps=71 mcast_pps=2 rx_total=1032039
+10:04:59 rx_pps=201 mcast_pps=1 rx_total=1032643
+10:05:02 rx_pps=77 mcast_pps=1 rx_total=1032874
+10:05:05 rx_pps=23 mcast_pps=1 rx_total=1032945
+10:05:08 rx_pps=35 mcast_pps=2 rx_total=1033051
+10:05:11 rx_pps=34 mcast_pps=0 rx_total=1033155
+10:05:14 rx_pps=32 mcast_pps=2 rx_total=1033251
+10:05:17 rx_pps=30 mcast_pps=1 rx_total=1033342
+10:05:20 rx_pps=37 mcast_pps=1 rx_total=1033453
+10:05:24 rx_pps=45 mcast_pps=1 rx_total=1033589
+10:05:27 rx_pps=20 mcast_pps=2 rx_total=1033651
+10:05:30 rx_pps=119 mcast_pps=1 rx_total=1034009
+10:05:33 rx_pps=27 mcast_pps=1 rx_total=1034091
+10:05:36 rx_pps=15 mcast_pps=1 rx_total=1034136
+10:05:39 rx_pps=16 mcast_pps=2 rx_total=1034184
+10:05:42 rx_pps=103 mcast_pps=0 rx_total=1034493
+10:05:45 rx_pps=42 mcast_pps=2 rx_total=1034619
+10:05:48 rx_pps=44 mcast_pps=1 rx_total=1034753
+10:05:51 rx_pps=21 mcast_pps=1 rx_total=1034818
+10:05:54 rx_pps=115 mcast_pps=1 rx_total=1035163
+10:05:57 rx_pps=28 mcast_pps=2 rx_total=1035249
+10:06:00 rx_pps=36 mcast_pps=1 rx_total=1035357
+10:06:03 rx_pps=31 mcast_pps=1 rx_total=1035451
+10:06:06 rx_pps=14 mcast_pps=1 rx_total=1035495
+10:06:09 rx_pps=76 mcast_pps=2 rx_total=1035724
+10:06:12 rx_pps=51 mcast_pps=0 rx_total=1035878
+10:06:15 rx_pps=36 mcast_pps=2 rx_total=1035987
+10:06:18 rx_pps=26 mcast_pps=1 rx_total=1036067
+10:06:21 rx_pps=52 mcast_pps=1 rx_total=1036225
+10:06:24 rx_pps=41 mcast_pps=1 rx_total=1036349
+10:06:27 rx_pps=19 mcast_pps=2 rx_total=1036408
+10:06:30 rx_pps=44 mcast_pps=1 rx_total=1036542
+10:06:33 rx_pps=58 mcast_pps=1 rx_total=1036716
+10:06:36 rx_pps=32 mcast_pps=1 rx_total=1036813
+10:06:39 rx_pps=13 mcast_pps=2 rx_total=1036852
+10:06:42 rx_pps=28 mcast_pps=0 rx_total=1036936
+10:06:45 rx_pps=89 mcast_pps=2 rx_total=1037203
+10:06:48 rx_pps=109 mcast_pps=1 rx_total=1037532
+10:06:51 rx_pps=46 mcast_pps=1 rx_total=1037671
+10:06:54 rx_pps=37 mcast_pps=1 rx_total=1037782
+10:06:57 rx_pps=22 mcast_pps=2 rx_total=1037849
+10:07:00 rx_pps=26 mcast_pps=1 rx_total=1037927
+10:07:03 rx_pps=63 mcast_pps=1 rx_total=1038117
+10:07:06 rx_pps=34 mcast_pps=1 rx_total=1038219
+10:07:09 rx_pps=32 mcast_pps=2 rx_total=1038315
+10:07:12 rx_pps=25 mcast_pps=0 rx_total=1038391
+10:07:15 rx_pps=55 mcast_pps=2 rx_total=1038556
+10:07:18 rx_pps=26 mcast_pps=1 rx_total=1038636
+10:07:21 rx_pps=21 mcast_pps=1 rx_total=1038699
+10:07:24 rx_pps=41 mcast_pps=1 rx_total=1038823
+10:07:27 rx_pps=18 mcast_pps=2 rx_total=1038878
+10:07:30 rx_pps=31 mcast_pps=1 rx_total=1038972
+10:07:33 rx_pps=62 mcast_pps=1 rx_total=1039158
+10:07:36 rx_pps=37 mcast_pps=1 rx_total=1039270
+10:07:39 rx_pps=25 mcast_pps=2 rx_total=1039346
+10:07:42 rx_pps=48 mcast_pps=0 rx_total=1039492
+10:07:45 rx_pps=115 mcast_pps=2 rx_total=1039838
+10:07:48 rx_pps=52 mcast_pps=1 rx_total=1039994
+10:07:51 rx_pps=33 mcast_pps=1 rx_total=1040093
+10:07:54 rx_pps=49 mcast_pps=1 rx_total=1040240
+10:07:57 rx_pps=31 mcast_pps=2 rx_total=1040335
+10:08:00 rx_pps=81 mcast_pps=1 rx_total=1040579
+10:08:03 rx_pps=18 mcast_pps=1 rx_total=1040635
+10:08:06 rx_pps=39 mcast_pps=1 rx_total=1040752
+10:08:09 rx_pps=34 mcast_pps=2 rx_total=1040854
+10:08:12 rx_pps=70 mcast_pps=0 rx_total=1041066
+10:08:15 rx_pps=204 mcast_pps=2 rx_total=1041679
+10:08:18 rx_pps=222 mcast_pps=1 rx_total=1042345
+10:08:21 rx_pps=75 mcast_pps=1 rx_total=1042570
+10:08:24 rx_pps=126 mcast_pps=1 rx_total=1042948
+10:08:27 rx_pps=27 mcast_pps=2 rx_total=1043029
+10:08:30 rx_pps=40 mcast_pps=1 rx_total=1043149
+10:08:33 rx_pps=20 mcast_pps=1 rx_total=1043209
+10:08:36 rx_pps=29 mcast_pps=1 rx_total=1043298
+10:08:39 rx_pps=16 mcast_pps=2 rx_total=1043347
+10:08:42 rx_pps=109 mcast_pps=0 rx_total=1043676
+10:08:45 rx_pps=244 mcast_pps=2 rx_total=1044408
+10:08:48 rx_pps=125 mcast_pps=1 rx_total=1044785
+10:08:51 rx_pps=143 mcast_pps=1 rx_total=1045216
+10:08:54 rx_pps=259 mcast_pps=1 rx_total=1045995
+10:08:57 rx_pps=148 mcast_pps=2 rx_total=1046440
+10:09:00 rx_pps=175 mcast_pps=1 rx_total=1046965
+10:09:03 rx_pps=68 mcast_pps=1 rx_total=1047169
+10:09:06 rx_pps=39 mcast_pps=1 rx_total=1047287
+10:09:09 rx_pps=69 mcast_pps=2 rx_total=1047495
+10:09:12 rx_pps=187 mcast_pps=0 rx_total=1048058
+10:09:15 rx_pps=103 mcast_pps=2 rx_total=1048368
+10:09:18 rx_pps=29 mcast_pps=1 rx_total=1048457
+10:09:21 rx_pps=25 mcast_pps=1 rx_total=1048532
+10:09:24 rx_pps=24 mcast_pps=1 rx_total=1048606
+10:09:27 rx_pps=46 mcast_pps=2 rx_total=1048744
+10:09:30 rx_pps=29 mcast_pps=1 rx_total=1048833
+10:09:33 rx_pps=50 mcast_pps=1 rx_total=1048984
+10:09:36 rx_pps=58 mcast_pps=1 rx_total=1049158
+10:09:39 rx_pps=14 mcast_pps=2 rx_total=1049200
+10:09:42 rx_pps=121 mcast_pps=0 rx_total=1049565
+10:09:45 rx_pps=221 mcast_pps=2 rx_total=1050228
+10:09:48 rx_pps=127 mcast_pps=1 rx_total=1050610
+10:09:51 rx_pps=62 mcast_pps=1 rx_total=1050798
+10:09:54 rx_pps=54 mcast_pps=1 rx_total=1050962
+10:09:57 rx_pps=246 mcast_pps=2 rx_total=1051700
+10:10:00 rx_pps=210 mcast_pps=1 rx_total=1052332
+10:10:03 rx_pps=155 mcast_pps=1 rx_total=1052799
+10:10:06 rx_pps=116 mcast_pps=1 rx_total=1053147
+10:10:09 rx_pps=37 mcast_pps=2 rx_total=1053258
+10:10:12 rx_pps=37 mcast_pps=0 rx_total=1053369
+10:10:15 rx_pps=39 mcast_pps=2 rx_total=1053486
+10:10:18 rx_pps=33 mcast_pps=1 rx_total=1053586
+10:10:21 rx_pps=16 mcast_pps=1 rx_total=1053635
+10:10:24 rx_pps=28 mcast_pps=1 rx_total=1053719
+10:10:27 rx_pps=34 mcast_pps=2 rx_total=1053823
+10:10:30 rx_pps=35 mcast_pps=1 rx_total=1053929
+10:10:33 rx_pps=19 mcast_pps=1 rx_total=1053986
+10:10:36 rx_pps=36 mcast_pps=1 rx_total=1054095
+10:10:39 rx_pps=19 mcast_pps=2 rx_total=1054153
+10:10:42 rx_pps=76 mcast_pps=0 rx_total=1054383
+10:10:45 rx_pps=17 mcast_pps=1 rx_total=1054434
+10:10:48 rx_pps=59 mcast_pps=1 rx_total=1054612
+10:10:51 rx_pps=113 mcast_pps=1 rx_total=1054952
+10:10:54 rx_pps=141 mcast_pps=1 rx_total=1055377
+10:10:57 rx_pps=161 mcast_pps=1 rx_total=1055860
+== vlan7 / neigh snapshot ==
+16: vlan7@bond0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default qlen 1000
+    link/ether 00:21:21:21:00:71 brd ff:ff:ff:ff:ff:ff
+    RX:  bytes packets errors dropped  missed   mcast           
+     284808521  418697      0       0       0       0 
+    TX:  bytes packets errors dropped carrier collsns           
+      35039705  217046      0       0       0       0 
+18

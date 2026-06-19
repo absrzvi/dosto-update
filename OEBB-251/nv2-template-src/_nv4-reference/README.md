@@ -1,0 +1,18 @@
+DOSTO NEU NV4 SWITCH/AP CONFIG
+- 0.0.2 update templates to v5
+- 0.0.3 update dhcp groups to add dns 8.8.8.8
+- 0.0.4 hostname to v6 and remove from file name
+- 0.0.5 fix rules.yaml
+- 0.0.7 add rstp priorities and bump to v8
+- 0.0.8 split AP configs between coach 1,2 and 3,4 -> Mirrored x1-x3 and x2-x4
+- 0.0.9 RSTP multitraction ports cost adjustment
+- 0.0.10 cant believe forgot to update some ports
+- 0.0.11 fixed rules
+- 0.0.12 fixed ap channels
+- 0.0.13 RSTP Edge mode set manually
+- 0.0.14 Adjust Vlan 2,3,9 Netmask
+- 0.0.15 Extract VLANs in a j2 file and add vlan 15
+- 0.0.16 Fix typo in FIS group and remove spanning tree edge from virtual interfaces
+- 0.0.17 Update STP costs dynamically with train_id
+- 0.0.18 To make it even with nv6
+- 0.0.19 Cost exceeded limit reduced multiplicator

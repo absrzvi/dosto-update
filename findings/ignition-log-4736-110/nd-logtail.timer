@@ -1,0 +1,11 @@
+[Unit]
+Description=DOSTO CCU volatile-log tail flush timer (60s)
+
+[Timer]
+OnBootSec=60
+OnUnitActiveSec=60
+AccuracySec=5s
+Persistent=false
+
+[Install]
+WantedBy=timers.target

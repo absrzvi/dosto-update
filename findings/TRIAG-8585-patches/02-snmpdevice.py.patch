@@ -1,0 +1,39 @@
+From: Abbas Rizvi <abbas.rizvi@nomadrail.com>
+Subject: [TRIAG-8585] snmpdevice.py — Bugs 3, 9 (pysnmp KeyError guard +
+ dispatcher thread-safety lock)
+
+File: lib/device/snmpdevice.py
+
+Bug 3  _snmp_parse_results: pysnmp generator can raise KeyError mid-walk;
+       catch it and return {} instead of propagating.
+Bug 9  pysnmp's asyncore transportDispatcher is NOT thread-safe. OBN's
+       process_batch runs SNMP calls from a ThreadPoolExecutor that share one
+       SnmpEngine; the dispatcher out-queue races on pop(0) -> "IndexError:
+       pop from empty list" (box1-t16 / box1-t18, 2026-05-20). Serialise the
+       generator-drain site with a module-level Lock.
+
+Bugs 3 and 9 BOTH wrap the same `list(generator)` site. Apply hunks in order:
+3 first (introduces the try/except), then 9 (adds the lock inside the try).
+---
+--- a/lib/device/snmpdevice.py
++++ b/lib/device/snmpdevice.py
+@@ Bug 9: imports — add threading next to `import logging` @@
+ import logging
++import threading
+@@ Bug 9: module-level dispatch lock — insert after the last top-level import @@
+ from pysnmp.proto.rfc1902 import TimeTicks
++
++# Bug 9 fix: pysnmp's asyncore transportDispatcher is not thread-safe.
++# OBN's process_batch runs SNMP calls from a ThreadPoolExecutor sharing
++# one SnmpEngine, and the dispatcher's out-queue races on pop(0). We
++# serialise the single `list(generator)` site in _snmp_parse_results
++# with this module-level lock. Released between SNMP calls.
++_SNMP_DISPATCH_LOCK = threading.Lock()
+@@ Bug 3 + Bug 9: guard and serialise the generator drain @@
+-        for error_indication, error_status, _, var_binds in generator:
++        try:
++            with _SNMP_DISPATCH_LOCK:
++                gen_items = list(generator)
++        except KeyError:
++            return {}
++        for error_indication, error_status, _, var_binds in gen_items:

@@ -1,0 +1,12 @@
+ip dhcp-server group video
+  netmask 255.255.128.0
+  dns-server 192.168.101.10
+  time-server 192.168.101.10
+  {%- if train_id % 2 == 0 %}
+  default-router 172.18.{{ 128 + (train_id // 2) }}.1
+  server-id 172.18.{{ 128 + (train_id // 2) }}.126
+  {%- else %}
+  default-router 172.18.{{ 128 + ((train_id - 1) // 2) }}.129
+  server-id 172.18.{{ 128 + ((train_id - 1) // 2) }}.254
+  {%- endif %}
+

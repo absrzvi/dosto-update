@@ -1,0 +1,169 @@
+---
+config_rules:
+  - coach_number: [1]
+    device_number: 1
+    type: "SW"
+    target:
+      config: "nv4-A1-v8"
+      template: "nv4-100-A1.cfg"
+  - coach_number: [1]
+    device_number: 2
+    type: "SW"
+    target:
+      config: "nv4-A2-v8"
+      template: "nv4-100-A2.cfg"
+  - coach_number: [1]
+    device_number: 3
+    type: "SW"
+    target:
+      config: "nv4-A3-v8"
+      template: "nv4-100-A3.cfg"
+
+  - coach_number: [2]
+    device_number: 1
+    type: "SW"
+    target:
+      config: "nv4-G1-v8"
+      template: "nv4-300-G1.cfg"
+  - coach_number: [2]
+    device_number: 2
+    type: "SW"
+    target:
+      config: "nv4-G2-v8"
+      template: "nv4-300-G2.cfg"
+  - coach_number: [2]
+    device_number: 3
+    type: "SW"
+    target:
+      config: "nv4-G3-v8"
+      template: "nv4-300-G3.cfg"
+             
+  - coach_number: [3]
+    device_number: 1
+    type: "SW"
+    target:
+      config: "nv4-E1-v8"
+      template: "nv4-400-E1.cfg"
+  - coach_number: [3]
+    device_number: 2
+    type: "SW"
+    target:
+      config: "nv4-E2-v8"
+      template: "nv4-400-E2.cfg"
+  - coach_number: [3]
+    device_number: 3
+    type: "SW"
+    target:
+      config: "nv4-E3-v8"
+      template: "nv4-400-E3.cfg"
+
+  - coach_number: [4]
+    device_number: 1
+    type: "SW"
+    target:
+      config: "nv4-B1-v8"
+      template: "nv4-600-B1.cfg"
+  - coach_number: [4]
+    device_number: 2
+    type: "SW"
+    target:
+      config: "nv4-B2-v8"
+      template: "nv4-600-B2.cfg"
+  - coach_number: [4]
+    device_number: 3
+    type: "SW"
+    target:
+      config: "nv4-B3-v8"
+      template: "nv4-600-B3.cfg"
+
+  - device_number: 1
+    coach_number: [1,2]
+    type: "AP"
+    target:
+      config: "AP1-v1"
+      template: "dostoneu-obn.cfg"
+      wirelessModulation0: 3
+      wirelessModulation1: 10
+      wirelessBandwidth: 0
+      wirelessFreq: 2412
+  - device_number: 2
+    coach_number: [1,2]
+    type: "AP"
+    target:
+      config: "AP2-v1"
+      template: "dostoneu-obn.cfg"
+      wirelessModulation0: 28
+      wirelessModulation1: 28
+      wirelessBandwidth: 5
+      wirelessFreq: 5180
+  - device_number: 3
+    coach_number: [1,2]
+    type: "AP"
+    target:
+      config: "AP3-v1"
+      template: "dostoneu-obn.cfg"
+      wirelessModulation0: 28
+      wirelessModulation1: 28
+      wirelessBandwidth: 5
+      wirelessFreq: 5220
+  - device_number: 4
+    coach_number: [1,2]
+    type: "AP"
+    target:
+      config: "AP4-v1"
+      template: "dostoneu-obn.cfg"
+      wirelessModulation0: 3
+      wirelessModulation1: 10
+      wirelessBandwidth: 0
+      wirelessFreq: 2462
+  - device_number: 1
+    coach_number: [3,4]
+    type: "AP"
+    target:
+      config: "AP1m-v1"
+      template: "dostoneu-obn.cfg"
+      wirelessModulation0: 28
+      wirelessModulation1: 28
+      wirelessBandwidth: 5
+      wirelessFreq: 5180
+  - device_number: 2
+    coach_number: [3,4]
+    type: "AP"
+    target:
+      config: "AP2m-v1"
+      template: "dostoneu-obn.cfg"
+      wirelessModulation0: 3
+      wirelessModulation1: 10
+      wirelessBandwidth: 0
+      wirelessFreq: 2412
+  - device_number: 3
+    coach_number: [3,4]
+    type: "AP"
+    target:
+      config: "AP3m-v1"
+      template: "dostoneu-obn.cfg"
+      wirelessModulation0: 3
+      wirelessModulation1: 10
+      wirelessBandwidth: 0
+      wirelessFreq: 2462
+  - device_number: 4
+    coach_number: [3,4]
+    type: "AP"
+    target:
+      config: "AP4m-v1"
+      template: "dostoneu-obn.cfg"
+      wirelessModulation0: 28
+      wirelessModulation1: 28
+      wirelessBandwidth: 5
+      wirelessFreq: 5220
+
+firmware_rules:
+  - type: "SW"
+    target:
+      firmware: "7.4.2"
+      binary: "ipart-ng.kad-7-4-2"
+  - type: "AP"
+    target:
+      firmware: "6.11.2-0"
+      binary: "IBEX-firmware-6.11.2-0.img"
+

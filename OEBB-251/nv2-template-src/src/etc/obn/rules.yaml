@@ -1,0 +1,92 @@
+---
+config_rules:
+  - coach_number: [1]
+    device_number: 1
+    type: "SW"
+    target:
+      config: "nv2-A1-v8"
+      template: "nv2-100-A1.cfg"
+  - coach_number: [1]
+    device_number: 2
+    type: "SW"
+    target:
+      config: "nv2-A2-v8"
+      template: "nv2-100-A2.cfg"
+  - coach_number: [1]
+    device_number: 3
+    type: "SW"
+    target:
+      config: "nv2-A3-v8"
+      template: "nv2-100-A3.cfg"
+
+  - coach_number: [2]
+    device_number: 1
+    type: "SW"
+    target:
+      config: "nv2-B1-v8"
+      template: "nv2-200-B1.cfg"
+  - coach_number: [2]
+    device_number: 2
+    type: "SW"
+    target:
+      config: "nv2-B2-v8"
+      template: "nv2-200-B2.cfg"
+  - coach_number: [2]
+    device_number: 3
+    type: "SW"
+    target:
+      config: "nv2-B3-v8"
+      template: "nv2-200-B3.cfg"
+
+  # APs: bench physically has 1 AP (coach 1 / device 1 on A1.e0-4); rules kept
+  # for all 4 device slots per coach for spec parity (absent APs never discovered).
+  - device_number: 1
+    coach_number: [1,2]
+    type: "AP"
+    target:
+      config: "AP1-v1"
+      template: "dostoneu-obn.cfg"
+      wirelessModulation0: 3
+      wirelessModulation1: 10
+      wirelessBandwidth: 0
+      wirelessFreq: 2412
+  - device_number: 2
+    coach_number: [1,2]
+    type: "AP"
+    target:
+      config: "AP2-v1"
+      template: "dostoneu-obn.cfg"
+      wirelessModulation0: 28
+      wirelessModulation1: 28
+      wirelessBandwidth: 5
+      wirelessFreq: 5180
+  - device_number: 3
+    coach_number: [1,2]
+    type: "AP"
+    target:
+      config: "AP3-v1"
+      template: "dostoneu-obn.cfg"
+      wirelessModulation0: 28
+      wirelessModulation1: 28
+      wirelessBandwidth: 5
+      wirelessFreq: 5220
+  - device_number: 4
+    coach_number: [1,2]
+    type: "AP"
+    target:
+      config: "AP4-v1"
+      template: "dostoneu-obn.cfg"
+      wirelessModulation0: 3
+      wirelessModulation1: 10
+      wirelessBandwidth: 0
+      wirelessFreq: 2462
+
+firmware_rules:
+  - type: "SW"
+    target:
+      firmware: "7.4.2"
+      binary: "ipart-ng.kad-7-4-2"
+  - type: "AP"
+    target:
+      firmware: "6.11.2-0"
+      binary: "IBEX-firmware-6.11.2-0.img"

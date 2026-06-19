@@ -1,0 +1,40 @@
+  hostname: box1-t37
+  --- snapshot: full FORWARD chain (before) ---
+-P FORWARD DROP
+-A FORWARD -o vlan7 -j ACCEPT
+-A FORWARD -i vlan7 -j ACCEPT
+-A FORWARD -d 192.168.208.0/22 -i mar5-tun -j ACC_IN
+-A FORWARD ! -d 10.179.37.128/25 -i vlan10 -j ACC_OUT
+-A FORWARD -s 192.168.208.0/22 -i vlan10 -j PASSENGER_FORWARD
+-A FORWARD -j DOCKER-USER
+-A FORWARD -j DOCKER-ISOLATION-STAGE-1
+-A FORWARD -o docker0 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+-A FORWARD -o docker0 -j DOCKER
+-A FORWARD -i docker0 ! -o docker0 -j ACCEPT
+-A FORWARD -i docker0 -o docker0 -j ACCEPT
+-A FORWARD -m state --state RELATED,ESTABLISHED -m comment --comment "Established and related connections" -j ACCEPT
+-A FORWARD -i vlan7 -j FISF
+-A FORWARD -i vlan100 -j MGMTF
+-A FORWARD -i mar5-tun -j MAR3TUNF
+-A FORWARD -i vlan30 -j PDA1F
+-A FORWARD -i vlan32 -j DIAGNOSTICF
+-A FORWARD -i vlan46 -j VENF
+-A FORWARD -i vlan47 -j VENF
+-A FORWARD -d 10.0.0.0/8 -o ce0p0 -m comment --comment "No RFC1918 on the Internet" -j DROP
+-A FORWARD -d 172.16.0.0/12 -o ce0p0 -m comment --comment "No RFC1918 on the Internet" -j DROP
+-A FORWARD -d 192.168.0.0/16 -o ce0p0 -m comment --comment "No RFC1918 on the Internet" -j DROP
+-A FORWARD -o ce0p0 -m comment --comment "Accept other Internet-bound traffic" -j ACCEPT
+-A FORWARD -d 10.0.0.0/8 -o ce2p0 -m comment --comment "No RFC1918 on the Internet" -j DROP
+-A FORWARD -d 172.16.0.0/12 -o ce2p0 -m comment --comment "No RFC1918 on the Internet" -j DROP
+-A FORWARD -d 192.168.0.0/16 -o ce2p0 -m comment --comment "No RFC1918 on the Internet" -j DROP
+-A FORWARD -o ce2p0 -m comment --comment "Accept other Internet-bound traffic" -j ACCEPT
+-A FORWARD -d 10.0.0.0/8 -o ce1p0 -m comment --comment "No RFC1918 on the Internet" -j DROP
+-A FORWARD -d 172.16.0.0/12 -o ce1p0 -m comment --comment "No RFC1918 on the Internet" -j DROP
+-A FORWARD -d 192.168.0.0/16 -o ce1p0 -m comment --comment "No RFC1918 on the Internet" -j DROP
+-A FORWARD -o ce1p0 -m comment --comment "Accept other Internet-bound traffic" -j ACCEPT
+-A FORWARD -d 10.0.0.0/8 -o ce3p0 -m comment --comment "No RFC1918 on the Internet" -j DROP
+-A FORWARD -d 172.16.0.0/12 -o ce3p0 -m comment --comment "No RFC1918 on the Internet" -j DROP
+-A FORWARD -d 192.168.0.0/16 -o ce3p0 -m comment --comment "No RFC1918 on the Internet" -j DROP
+-A FORWARD -o ce3p0 -m comment --comment "Accept other Internet-bound traffic" -j ACCEPT
+  count -o vlan7 ACCEPT : 1
+  count -i vlan7 ACCEPT : 

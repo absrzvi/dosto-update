@@ -1,0 +1,27 @@
+From: Abbas Rizvi <abbas.rizvi@nomadrail.com>
+Subject: [TRIAG-8585] update.py — Bug 5 (pre-populate tftp_allowed ipset)
+
+File: cli/update.py
+
+Bug 5  A mid-run restart of the firmware batch leaves not-yet-processed devices
+       missing from the tftp_allowed ipset, so their TFTP firmware fetch is
+       dropped -> silent partial AP firmware batch failure (only ~5/15 succeed).
+       Pre-populate the ipset for ALL firmware targets up front.
+
+NOTE: this hunk shells out to `ipset add ... -exist`. R&D may prefer to route
+this through the existing firewall/ipset helper module rather than subprocess —
+flagged for review; the subprocess form is what the field runs today.
+---
+--- a/cli/update.py
++++ b/cli/update.py
+@@ Bug 5: pre-populate tftp_allowed ipset for all firmware targets @@
+     logger.info("calculated the update order")
+
++    # Bug 5 fix: pre-populate tftp_allowed ipset for all targets so that a
++    # mid-run restart doesn't leave devices unable to fetch firmware.
++    import subprocess as _sp
++    for _dev in update_set.firmware_updates:
++        _sp.run(["ipset", "add", "tftp_allowed", _dev.ip, "-exist"],
++                capture_output=True)
++
+     # Now, for each batch, we check if they contain devices we need to update.

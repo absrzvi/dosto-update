@@ -1,0 +1,86 @@
+##### LOGTAIL SNAPSHOT 2026-06-18T05-32-27Z (boot=15baa48f-103a-4d35-a6fb-6313af4f54fc) #####
+----- uptime / loadavg -----
+2330.84 26345.62
+0.47 0.52 0.55 3/961 205420
+----- dmesg tail (last 40) -----
+[ 1926.214653] bond0: (slave lan1): link status down for interface, disabling it in 200 ms
+[ 1926.222650] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[ 1926.222652] bond0: (slave lan1): link status down for interface, disabling it in 200 ms
+[ 1926.230648] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[ 1926.230650] bond0: (slave lan1): link status down for interface, disabling it in 200 ms
+[ 1926.238649] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[ 1926.238651] bond0: (slave lan1): link status down for interface, disabling it in 200 ms
+[ 1926.250645] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[ 1926.250648] bond0: (slave lan1): link status down for interface, disabling it in 200 ms
+[ 1926.258652] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[ 1926.258655] bond0: (slave lan1): link status down for interface, disabling it in 200 ms
+[ 1926.270653] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[ 1926.270660] bond0: (slave lan1): link status down for interface, disabling it in 200 ms
+[ 1926.282664] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[ 1926.282670] bond0: (slave lan1): link status down for interface, disabling it in 200 ms
+[ 1926.282672] bond0: (slave lan0): invalid new link 1 on slave
+[ 1926.288367] bond0: (slave lan1): invalid new link 1 on slave
+[ 1926.502731] bond0: (slave lan0): link status definitely down, disabling slave
+[ 1926.502783] bond0: (slave lan1): link status definitely down, disabling slave
+[ 1929.578405] i40e 0000:09:00.0 lan0: NIC Link is Up, 10 Gbps Full Duplex, Flow Control: None
+[ 1929.581569] i40e 0000:09:00.1 lan1: NIC Link is Up, 10 Gbps Full Duplex, Flow Control: None
+[ 1929.670623] bond0: (slave lan0): link status up, enabling it in 0 ms
+[ 1929.670630] bond0: (slave lan1): link status up, enabling it in 200 ms
+[ 1929.670709] bond0: (slave lan0): link status definitely up, 10000 Mbps full duplex
+[ 1929.670716] bond0: (slave lan1): invalid new link 3 on slave
+[ 1929.676498] bond0: active interface up!
+[ 1929.882699] bond0: (slave lan1): link status definitely up, 10000 Mbps full duplex
+[ 2153.428292] ath10k_pci 0000:10:00.0: pdev param 0 not supported by firmware
+[ 2208.290736] systemd-sysv-generator[195625]: stat() failed on /etc/init.d/mar3, ignoring: No such file or directory
+[ 2208.290757] systemd-sysv-generator[195625]: stat() failed on /etc/init.d/gpsd-ws, ignoring: No such file or directory
+[ 2208.290990] systemd-sysv-generator[195625]: stat() failed on /etc/init.d/train-identification-api, ignoring: No such file or directory
+[ 2208.292880] systemd-sysv-generator[195625]: stat() failed on /etc/init.d/train-information-api, ignoring: No such file or directory
+[ 2208.661306] systemd-sysv-generator[195656]: stat() failed on /etc/init.d/mar3, ignoring: No such file or directory
+[ 2208.661313] systemd-sysv-generator[195656]: stat() failed on /etc/init.d/gpsd-ws, ignoring: No such file or directory
+[ 2208.661519] systemd-sysv-generator[195656]: stat() failed on /etc/init.d/train-identification-api, ignoring: No such file or directory
+[ 2208.663359] systemd-sysv-generator[195656]: stat() failed on /etc/init.d/train-information-api, ignoring: No such file or directory
+[ 2209.033946] systemd-sysv-generator[195682]: stat() failed on /etc/init.d/mar3, ignoring: No such file or directory
+[ 2209.033953] systemd-sysv-generator[195682]: stat() failed on /etc/init.d/gpsd-ws, ignoring: No such file or directory
+[ 2209.034166] systemd-sysv-generator[195682]: stat() failed on /etc/init.d/train-identification-api, ignoring: No such file or directory
+[ 2209.036030] systemd-sysv-generator[195682]: stat() failed on /etc/init.d/train-information-api, ignoring: No such file or directory
+----- journal priority<=4 (warn+), last 40 this boot -----
+Jun 18 05:30:25 box1-t23 systemd[1]: Configuration file /lib/systemd/system/nd-systemtest.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:30:25 box1-t23 systemd[1]: Configuration file /lib/systemd/system/nd-registry-cleaner.timer is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:30:25 box1-t23 systemd[1]: Configuration file /lib/systemd/system/nd-registry-cleaner.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:30:25 box1-t23 systemd[1]: Configuration file /lib/systemd/system/nd-recovery.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:30:25 box1-t23 systemd[1]: Configuration file /lib/systemd/system/nd-auto-system-update.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:30:25 box1-t23 systemd-sysv-generator[195656]: stat() failed on /etc/init.d/mar3, ignoring: No such file or directory
+Jun 18 05:30:25 box1-t23 systemd-sysv-generator[195656]: stat() failed on /etc/init.d/gpsd-ws, ignoring: No such file or directory
+Jun 18 05:30:25 box1-t23 systemd-sysv-generator[195656]: stat() failed on /etc/init.d/train-identification-api, ignoring: No such file or directory
+Jun 18 05:30:25 box1-t23 systemd-sysv-generator[195656]: stat() failed on /etc/init.d/train-information-api, ignoring: No such file or directory
+Jun 18 05:30:25 box1-t23 systemd[1]: Configuration file /etc/systemd/system/nd-telemetry.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:30:25 box1-t23 systemd[1]: Configuration file /lib/systemd/system/nd-actions.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:30:25 box1-t23 systemd[1]: Configuration file /lib/systemd/system/mqtt-bridge.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:30:25 box1-t23 systemd[1]: Configuration file /lib/systemd/system/gpsd-ws.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:30:25 box1-t23 systemd[1]: Configuration file /lib/systemd/system/gps-reflector.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:30:25 box1-t23 systemd[1]: Configuration file /etc/systemd/system/engineering_pages.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:30:25 box1-t23 systemd[1]: Configuration file /etc/systemd/system/engineering_server.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:30:25 box1-t23 systemd[1]: Configuration file /etc/systemd/system/engineering_collector.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:30:25 box1-t23 systemd[1]: Configuration file /lib/systemd/system/nd-systemtest.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:30:25 box1-t23 systemd[1]: Configuration file /lib/systemd/system/nd-registry-cleaner.timer is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:30:25 box1-t23 systemd[1]: Configuration file /lib/systemd/system/nd-registry-cleaner.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:30:25 box1-t23 systemd[1]: Configuration file /lib/systemd/system/nd-recovery.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:30:25 box1-t23 systemd[1]: Configuration file /lib/systemd/system/nd-auto-system-update.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:30:25 box1-t23 systemd-sysv-generator[195682]: stat() failed on /etc/init.d/mar3, ignoring: No such file or directory
+Jun 18 05:30:25 box1-t23 systemd-sysv-generator[195682]: stat() failed on /etc/init.d/gpsd-ws, ignoring: No such file or directory
+Jun 18 05:30:25 box1-t23 systemd-sysv-generator[195682]: stat() failed on /etc/init.d/train-identification-api, ignoring: No such file or directory
+Jun 18 05:30:25 box1-t23 systemd-sysv-generator[195682]: stat() failed on /etc/init.d/train-information-api, ignoring: No such file or directory
+Jun 18 05:30:25 box1-t23 systemd[1]: Configuration file /etc/systemd/system/nd-telemetry.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:30:25 box1-t23 systemd[1]: Configuration file /lib/systemd/system/nd-actions.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:30:25 box1-t23 systemd[1]: Configuration file /lib/systemd/system/mqtt-bridge.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:30:25 box1-t23 systemd[1]: Configuration file /lib/systemd/system/gpsd-ws.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:30:25 box1-t23 systemd[1]: Configuration file /lib/systemd/system/gps-reflector.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:30:25 box1-t23 systemd[1]: Configuration file /etc/systemd/system/engineering_pages.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:30:25 box1-t23 systemd[1]: Configuration file /etc/systemd/system/engineering_server.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:30:25 box1-t23 systemd[1]: Configuration file /etc/systemd/system/engineering_collector.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:30:25 box1-t23 systemd[1]: Configuration file /lib/systemd/system/nd-systemtest.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:30:25 box1-t23 systemd[1]: Configuration file /lib/systemd/system/nd-registry-cleaner.timer is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:30:25 box1-t23 systemd[1]: Configuration file /lib/systemd/system/nd-registry-cleaner.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:30:25 box1-t23 systemd[1]: Configuration file /lib/systemd/system/nd-recovery.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:30:25 box1-t23 systemd[1]: Configuration file /lib/systemd/system/nd-auto-system-update.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:31:10 box1-t23 systemd[1]: Configuration file /lib/systemd/system/gpsd-ws.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.

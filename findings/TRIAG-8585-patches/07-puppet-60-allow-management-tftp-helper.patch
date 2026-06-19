@@ -1,0 +1,58 @@
+From: Abbas Rizvi <abbas.rizvi@nomadrail.com>
+Subject: [TRIAG-8585 #11] Puppet — TFTP conntrack helper on the CCU firewall
+
+Repo:  Puppet / deployment
+Env:   dostoneu_migration_mar5
+Where: the `60-allow-management` firewall fragment (exact module path varies by
+       your Puppet layout — this is the iptables/raw rule + module load it needs)
+
+Problem
+-------
+`obn update f ap` batch firmware pushes silently fail for most APs. The CCU
+firewall has no TFTP conntrack helper, so the data-channel (random high UDP
+port) of the RFC1350 TFTP transfer is not associated with the udp/69 control
+flow and gets dropped by default-DROP. Only ~5 of 15 APs succeed, by
+conntrack-race luck. Field workaround today (runtime-only, lost on reboot):
+
+    modprobe nf_conntrack_tftp
+    iptables -t raw -I PREROUTING -p udp --dport 69 -j CT --helper tftp
+
+This must become permanent in the CCU image via Puppet.
+
+----------------------------------------------------------------------
+Reference implementation (adapt to your Puppet firewall module idiom)
+----------------------------------------------------------------------
+
+1) Ensure the kernel module is loaded at boot:
+
+   # /etc/modules-load.d/nf_conntrack_tftp.conf  (manage via Puppet file{} )
+   nf_conntrack_tftp
+
+   -- or, if you use the `kmod` module --
+   kmod::load { 'nf_conntrack_tftp': }
+
+2) Add the CT helper rule to the raw/PREROUTING chain in 60-allow-management.
+
+   If the fragment is templated iptables-restore, add to the *raw table*:
+
+       *raw
+       -A PREROUTING -p udp --dport 69 -j CT --helper tftp
+       COMMIT
+
+   If you use the puppetlabs-firewall module:
+
+       firewall { '060 tftp conntrack helper':
+         chain  => 'PREROUTING',
+         table  => 'raw',
+         proto  => 'udp',
+         dport  => 69,
+         jump   => 'CT',
+         helper => 'tftp',
+       }
+
+Acceptance for #11
+------------------
+On a fresh CCU pulled from Puppet, with no hand-patching:
+  lsmod | grep nf_conntrack_tftp        # module present
+  iptables -t raw -S PREROUTING | grep 'dport 69 .* CT --helper tftp'   # rule present
+Then `obn update f ap` (batch) completes for all APs, not ~5/15.

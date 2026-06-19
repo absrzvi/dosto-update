@@ -1,0 +1,18 @@
+From: Abbas Rizvi <abbas.rizvi@nomadrail.com>
+Subject: [TRIAG-8585] device.py — Bugs 4, 8 (firmware/config None guards)
+
+File: lib/report/device.py
+
+Bug 4  needs_firmware_update(): self.firmware may be None -> .endswith() crash.
+Bug 8  needs_configuration_update(): self.config may be None -> .endswith() crash.
+
+Both: short-circuit on a falsy value before calling .endswith().
+---
+--- a/lib/report/device.py
++++ b/lib/report/device.py
+@@ Bug 4: needs_firmware_update None guard @@
+-        return not self.firmware.endswith(self.target["firmware"])
++        return bool(self.firmware) and not self.firmware.endswith(self.target["firmware"])
+@@ Bug 8: needs_configuration_update None guard @@
+-        return not self.config.endswith(self.target["config"])
++        return bool(self.config) and not self.config.endswith(self.target["config"])

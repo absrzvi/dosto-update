@@ -1,0 +1,17 @@
+From: Abbas Rizvi <abbas.rizvi@nomadrail.com>
+Subject: [TRIAG-8585] tree.py — Bug 6 (cross-consist neighbour None guard)
+
+File: lib/tree.py
+
+Bug 6  When a train is coupled, an LLDP neighbour can resolve to a device on
+       another subnet that isn't in this consist's device map -> neighbour_device
+       is None -> AttributeError on `.type`. Skip None neighbours.
+---
+--- a/lib/tree.py
++++ b/lib/tree.py
+@@ Bug 6: cross-consist neighbour None guard @@
++                if neighbour_device is None:
++                    continue  # neighbour not in this consist (e.g. coupled train)
+                 if neighbour_device.type == "BOX":
+                     continue
+                 if neighbour_device.mac not in tree:

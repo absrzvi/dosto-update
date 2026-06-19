@@ -1,0 +1,112 @@
+From: Abbas Rizvi <abbas.rizvi@nomadrail.com>
+Subject: [TRIAG-8585] westermo.py — Bug 11 (AP firmware activation verify)
+
+File: lib/device/vendor/westermo.py
+
+Bug 11  set_firmware_version() writes the three firmware OIDs (setFwFileUrl,
+        setFwKeepConfig, rpcFwFlash=flash(2)) in one SNMP SET, then "verifies"
+        by reading rpcFwFlash off the SET ECHO. pysnmp's SET returns the value
+        just written, so result.get(rpcFwFlash) is always 2 — the check
+        `2 != 2` can never fail and OBN declares success the instant the SET is
+        ACKed, BEFORE any download / validation / flash.
+
+        Per WESTERMO-SW6-MIB, rpcFwFlash is a STATUS field on read-back:
+        flash(2)=writing, downloadError(-1), flashError(-2), nop(0)=done.
+        Because OBN never reads it back, a downloadError(-1)/flashError(-2) is
+        reported as success — the firmware never lands and the AP keeps booting
+        the old image ("staged-not-activated": `obn validate` shows
+        6.10.0-0 (6.11.2-0) ✗). Fleet-wide; leans m-variant but also hits plain
+        APs (4736-116 .228 AP4-v1). Confirmed across the 2026-06-08 9-train run
+        (4734-112/114/115/122, 4736-108/109/116).
+
+        Fix: after the SET, POLL the REAL rpcFwFlash status (a GET, not the echo)
+        plus sysUpTime until terminal. A reboot (uptime reset) or nop(0) == real
+        success; -1/-2 == failure; "still 2 with no reboot" after a generous
+        ~10 min window == genuine RT-610 flash-trigger hang (case b, .226
+        uptime 21668s) — report honestly so the caller retries/escalates instead
+        of recording false success. Generous window because the slow-but-fine
+        flash->reboot->re-report cycle can legitimately exceed 5 min (.236 came
+        back at uptime 312s on the new fw); false-failing a correct AP is worse.
+
+        No LuCI bypass, no skill-side workaround — uses the standard SNMP
+        firmware path CORRECTLY. `time` is already imported at module top;
+        _snmp_get(oid, cast) exists in snmpdevice.py and returns the read-back.
+---
+--- a/lib/device/vendor/westermo.py
++++ b/lib/device/vendor/westermo.py
+@@ Bug 11: set_firmware_version poll real rpcFwFlash status instead of SET echo @@
+         # Send instructions to the device.
+         self.logger.debug("sending firmware update instructions")
+         result = self._snmp_set(firmware_instructions)
+         if result.get("1.3.6.1.4.1.16177.1.400.1.3.2.1.0") != 2:
+             self.logger.debug("something happened on the way to heaven")
+             return False
+
+-        return True
++        # NDP-PATCH-BUG11-FW-VERIFY
++        # Bug 11 fix: the SET above only echoes the value we wrote (always 2),
++        # so trusting it is NOT verification. Per WESTERMO-SW6-MIB, rpcFwFlash is
++        # a STATUS field on read-back: flash(2)=writing, downloadError(-1),
++        # flashError(-2), nop(0)=done. POLL the real status until terminal.
++        #
++        # Proven two failure modes on RT-610 (4736-109, 2026-06-08):
++        #  (a) SLOW-BUT-FINE: flash succeeds, AP reboots and activates the new
++        #      firmware, but the whole flash->reboot->SNMP-re-report cycle can take
++        #      well over 5 min. OBN's old echo-check (and a short poll) reads the
++        #      old version mid-cycle and false-flags it as failed. Confirmed by an
++        #      uptime RESET (.236: came back at uptime 312s on the new fw).
++        #  (b) GENUINE HANG: AP ACKs rpcFwFlash=2 then sits at "writing" forever and
++        #      never reboots (e.g. .226 uptime 21668s, still old fw). This is a real
++        #      RT-610 defect; the flash trigger is flaky (sometimes hangs).
++        #
++        # So success == an actual REBOOT (uptime reset) or a clean nop(0). Failure
++        # == -1/-2, OR "still status 2 with NO reboot" at the end of a GENEROUS
++        # window. We poll up to ~10 min because (a) is real and common; treating a
++        # slow-but-fine AP as failed is the worse error (it's already correct).
++        rpcfwflash_oid = "1.3.6.1.4.1.16177.1.400.1.3.2.1.0"
++        uptime_oid = self.device_config.get("snmp_uptime_oid", ".1.3.6.1.2.1.1.3.0")
++        try:
++            uptime_before = self._snmp_get(uptime_oid, cast=int)
++        except Exception:
++            uptime_before = None
++        rebooted = False
++        for _ in range(60):  # 60 x 10s = 600s (~10 min): RT-610 flash+reboot+report
++            time.sleep(10)                                       # can exceed 5 min
++            # Always check uptime first: a reset is the definitive success signal,
++            # whether or not rpcFwFlash is still readable.
++            try:
++                uptime_now = self._snmp_get(uptime_oid, cast=int)
++            except Exception:
++                uptime_now = None
++            if uptime_before is not None and uptime_now is not None \
++                    and uptime_now < uptime_before:
++                self.logger.debug(
++                    "%s rebooted (uptime %s->%s) — firmware activated",
++                    self.ip, uptime_before, uptime_now)
++                rebooted = True
++                break
++            try:
++                status = self._snmp_get(rpcfwflash_oid, cast=int)
++            except Exception:
++                continue  # transient SNMP gap; keep polling, do NOT assume success
++            if status in (-1, -2):
++                self.logger.error(
++                    "firmware flash failed on %s: rpcFwFlash=%s "
++                    "(-1=downloadError, -2=flashError)", self.ip, status)
++                return False
++            if status in (0, None):  # nop(0): flash complete
++                self.logger.debug("firmware flash complete (rpcFwFlash=nop) on %s", self.ip)
++                return True
++            # status == 2: still writing, keep polling.
++
++        if rebooted:
++            return True
++
++        # ~10 min elapsed, status still 2, no reboot — case (b) genuine hang. Report
++        # honestly so the caller retries / escalates instead of recording false
++        # success. (A retry sometimes succeeds; the trigger is flaky.)
++        self.logger.error(
++            "firmware flash on %s did NOT complete within 600s — rpcFwFlash stuck "
++            "at writing(2), no reboot. RT-610 flash-trigger hang (OBN bug #11); "
++            "retry or escalate.", self.ip)
++        return False

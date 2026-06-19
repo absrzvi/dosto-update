@@ -17,3 +17,8 @@ __pycache__/
 # Windows / Office junk
 desktop.ini
 ~$*
+
+# Large binary design docs — kept on disk, too heavy for git history
+design freeze/
+# untracked SDD working copy at root (v2.1 set is already tracked; leave those)
+/ND-DEL-OBB-035-SDD-002-01_v2.2.docx

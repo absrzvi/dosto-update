@@ -1,0 +1,2 @@
+Scratch copy of nv4 template repo (pulled from git for reference while building nv2).
+NOT part of the nv2 package. Exclude from the nd-obn-template-dostoneu-nv2 repo.

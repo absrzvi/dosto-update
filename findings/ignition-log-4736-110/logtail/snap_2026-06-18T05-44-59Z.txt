@@ -1,0 +1,86 @@
+##### LOGTAIL SNAPSHOT 2026-06-18T05-44-59Z (boot=ef3dc94c-6332-4bd2-9ceb-840b15bbbafc) #####
+----- uptime / loadavg -----
+555.51 6190.89
+1.44 1.05 0.64 5/985 46167
+----- dmesg tail (last 40) -----
+[  520.475667] option 10-1:1.3: device disconnected
+[  520.475802] show_signal_msg: 4 callbacks suppressed
+[  520.475804] ModemManager[965]: segfault at 18 ip 00007f2c9b8a5530 sp 00007fff01730738 error 4 in libqmi-glib.so.5.9.0[7f2c9b899000+1b0000] likely on CPU 7 (core 1, socket 0)
+[  520.475818] Code: 38 e9 d4 4c ff ff 0f 1f 40 00 48 8b 47 18 48 8b 00 c3 0f 1f 84 00 00 00 00 00 48 8b 47 18 48 8b 40 10 c3 0f 1f 80 00 00 00 00 <48> 8b 47 18 48 8b 40 18 c3 0f 1f 80 00 00 00 00 55 48 89 f5 53 48
+[  520.479120] option1 ttyUSB13: GSM modem (1-port) converter now disconnected from ttyUSB13
+[  520.479131] option 10-1:1.4: device disconnected
+[  520.481978] option1 ttyUSB14: GSM modem (1-port) converter now disconnected from ttyUSB14
+[  520.481989] option 10-1:1.5: device disconnected
+[  520.484839] option1 ttyUSB15: GSM modem (1-port) converter now disconnected from ttyUSB15
+[  520.484850] option 10-1:1.6: device disconnected
+[  520.659361] ndktun: t23 u1 l1: No route to 77.237.62.210, error -101
+[  520.677576] ndktun: t23 u1 l1: No route to 77.237.62.210, error -101
+[  520.759357] ndktun: t23 u1 l4: No route to 77.237.62.210, error -101
+[  520.800908] ndktun: t23 u1 l1: No route to 77.237.62.210, error -101
+[  520.800914] ndktun: t23 u1 l1: No route to 77.237.62.210, error -101
+[  520.851352] ndktun: t23 u1 l2: No route to 77.237.62.210, error -101
+[  520.888169] ndktun: t23 u1 l1: No route to 77.237.62.210, error -101
+[  520.888174] ndktun: t23 u1 l1: No route to 77.237.62.210, error -101
+[  520.888378] ndktun: t23 u1 l1: No route to 77.237.62.210, error -101
+[  520.888382] ndktun: t23 u1 l1: No route to 77.237.62.210, error -101
+[  533.739839] usb 10-1: new SuperSpeed USB device number 3 using xhci_hcd
+[  533.761366] usb 10-1: LPM exit latency is zeroed, disabling LPM.
+[  533.764367] usb 10-1: New USB device found, idVendor=1bc7, idProduct=1070, bcdDevice= 5.04
+[  533.764372] usb 10-1: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+[  533.764375] usb 10-1: Product: FN990
+[  533.764377] usb 10-1: Manufacturer: Telit Wireless Solutions
+[  533.764379] usb 10-1: SerialNumber: d802e8e6
+[  533.822083] option 10-1:1.0: GSM modem (1-port) converter detected
+[  533.822204] usb 10-1: GSM modem (1-port) converter now attached to ttyUSB11
+[  533.826443] qmi_wwan 10-1:1.2: cdc-wdm2: USB WDM device
+[  533.827023] qmi_wwan 10-1:1.2 wwan0: register 'qmi_wwan' at usb-0000:0c:00.0-1, WWAN/QMI device, 2e:c9:22:21:0a:8a
+[  533.827096] option 10-1:1.3: GSM modem (1-port) converter detected
+[  533.827173] usb 10-1: GSM modem (1-port) converter now attached to ttyUSB12
+[  533.827293] option 10-1:1.4: GSM modem (1-port) converter detected
+[  533.827359] usb 10-1: GSM modem (1-port) converter now attached to ttyUSB13
+[  533.827443] option 10-1:1.5: GSM modem (1-port) converter detected
+[  533.827502] usb 10-1: GSM modem (1-port) converter now attached to ttyUSB14
+[  533.827584] option 10-1:1.6: GSM modem (1-port) converter detected
+[  533.827641] usb 10-1: GSM modem (1-port) converter now attached to ttyUSB15
+[  533.835834] qmi_wwan 10-1:1.2 ce2p0: renamed from wwan0
+----- journal priority<=4 (warn+), last 40 this boot -----
+Jun 18 05:41:06 box1-t23 systemd[1]: nd-systemtest.service: Failed with result 'exit-code'.
+Jun 18 05:41:08 box1-t23 NetworkManager[859]: <warn>  [1781761268.8282] modem-broadband[cdc-wdm2]: failed to connect modem: QMI protocol error (70): 'InvalidOperation'
+Jun 18 05:41:08 box1-t23 NetworkManager[859]: <warn>  [1781761268.8292] device (cdc-wdm2): Activation: failed for connection 'ce2p0-1'
+Jun 18 05:41:24 box1-t23 NetworkManager[859]: <warn>  [1781761284.6350] modem-broadband[cdc-wdm2]: failed to connect modem: QMI protocol error (70): 'InvalidOperation'
+Jun 18 05:41:24 box1-t23 NetworkManager[859]: <warn>  [1781761284.6356] device (cdc-wdm2): Activation: failed for connection 'ce2p0-1'
+Jun 18 05:41:40 box1-t23 NetworkManager[859]: <warn>  [1781761300.3792] modem-broadband[cdc-wdm2]: failed to connect modem: QMI protocol error (70): 'InvalidOperation'
+Jun 18 05:41:40 box1-t23 NetworkManager[859]: <warn>  [1781761300.3797] device (cdc-wdm2): Activation: failed for connection 'ce2p0-1'
+Jun 18 05:41:56 box1-t23 NetworkManager[859]: <warn>  [1781761316.5067] modem-broadband[cdc-wdm2]: failed to connect modem: QMI protocol error (70): 'InvalidOperation'
+Jun 18 05:41:56 box1-t23 NetworkManager[859]: <warn>  [1781761316.5074] device (cdc-wdm2): Activation: failed for connection 'ce2p0-1'
+Jun 18 05:42:08 box1-t23 systemd[1]: nd-systemtest.service: Failed with result 'exit-code'.
+Jun 18 05:42:12 box1-t23 NetworkManager[859]: <warn>  [1781761332.2507] modem-broadband[cdc-wdm2]: failed to connect modem: QMI protocol error (70): 'InvalidOperation'
+Jun 18 05:42:12 box1-t23 NetworkManager[859]: <warn>  [1781761332.2517] device (cdc-wdm2): Activation: failed for connection 'ce2p0-1'
+Jun 18 05:42:27 box1-t23 NetworkManager[859]: <warn>  [1781761347.9939] modem-broadband[cdc-wdm2]: failed to connect modem: QMI protocol error (70): 'InvalidOperation'
+Jun 18 05:42:27 box1-t23 NetworkManager[859]: <warn>  [1781761347.9948] device (cdc-wdm2): Activation: failed for connection 'ce2p0-1'
+Jun 18 05:42:43 box1-t23 NetworkManager[859]: <warn>  [1781761363.7392] modem-broadband[cdc-wdm2]: failed to connect modem: QMI protocol error (70): 'InvalidOperation'
+Jun 18 05:42:43 box1-t23 NetworkManager[859]: <warn>  [1781761363.7398] device (cdc-wdm2): Activation: failed for connection 'ce2p0-1'
+Jun 18 05:42:59 box1-t23 NetworkManager[859]: <warn>  [1781761379.4821] modem-broadband[cdc-wdm2]: failed to connect modem: QMI protocol error (70): 'InvalidOperation'
+Jun 18 05:42:59 box1-t23 NetworkManager[859]: <warn>  [1781761379.4829] device (cdc-wdm2): Activation: failed for connection 'ce2p0-1'
+Jun 18 05:43:08 box1-t23 systemd[1]: nd-systemtest.service: Failed with result 'exit-code'.
+Jun 18 05:43:15 box1-t23 NetworkManager[859]: <warn>  [1781761395.6103] modem-broadband[cdc-wdm2]: failed to connect modem: QMI protocol error (70): 'InvalidOperation'
+Jun 18 05:43:15 box1-t23 NetworkManager[859]: <warn>  [1781761395.6113] device (cdc-wdm2): Activation: failed for connection 'ce2p0-1'
+Jun 18 05:43:31 box1-t23 NetworkManager[859]: <warn>  [1781761411.4187] modem-broadband[cdc-wdm2]: failed to connect modem: QMI protocol error (70): 'InvalidOperation'
+Jun 18 05:43:31 box1-t23 NetworkManager[859]: <warn>  [1781761411.4195] device (cdc-wdm2): Activation: failed for connection 'ce2p0-1'
+Jun 18 05:43:44 box1-t23 kernel: ath10k_pci 0000:10:00.0: pdev param 0 not supported by firmware
+Jun 18 05:43:47 box1-t23 NetworkManager[859]: <warn>  [1781761427.1621] modem-broadband[cdc-wdm2]: failed to connect modem: QMI protocol error (70): 'InvalidOperation'
+Jun 18 05:43:47 box1-t23 NetworkManager[859]: <warn>  [1781761427.1629] device (cdc-wdm2): Activation: failed for connection 'ce2p0-1'
+Jun 18 05:44:02 box1-t23 NetworkManager[859]: <warn>  [1781761442.9075] modem-broadband[cdc-wdm2]: failed to connect modem: QMI protocol error (70): 'InvalidOperation'
+Jun 18 05:44:02 box1-t23 NetworkManager[859]: <warn>  [1781761442.9081] device (cdc-wdm2): Activation: failed for connection 'ce2p0-1'
+Jun 18 05:44:09 box1-t23 systemd[1]: nd-systemtest.service: Failed with result 'exit-code'.
+Jun 18 05:44:18 box1-t23 NetworkManager[859]: <warn>  [1781761458.6516] modem-broadband[cdc-wdm2]: failed to connect modem: QMI protocol error (70): 'InvalidOperation'
+Jun 18 05:44:18 box1-t23 NetworkManager[859]: <warn>  [1781761458.6523] device (cdc-wdm2): Activation: failed for connection 'ce2p0-1'
+Jun 18 05:44:24 box1-t23 (udev-worker)[43028]: ttyUSB11: Process '/lib/udev/gpsd.hotplug' failed with exit code 1.
+Jun 18 05:44:24 box1-t23 kernel: show_signal_msg: 4 callbacks suppressed
+Jun 18 05:44:24 box1-t23 (udev-worker)[43032]: ttyUSB12: Process '/lib/udev/gpsd.hotplug' failed with exit code 1.
+Jun 18 05:44:24 box1-t23 (udev-worker)[43029]: ttyUSB13: Process '/lib/udev/gpsd.hotplug' failed with exit code 1.
+Jun 18 05:44:24 box1-t23 (udev-worker)[43039]: ttyUSB14: Process '/lib/udev/gpsd.hotplug' failed with exit code 1.
+Jun 18 05:44:24 box1-t23 (udev-worker)[43041]: ttyUSB15: Process '/lib/udev/gpsd.hotplug' failed with exit code 1.
+Jun 18 05:44:24 box1-t23 systemd[1]: ModemManager.service: Main process exited, code=killed, status=11/SEGV
+Jun 18 05:44:24 box1-t23 systemd[1]: ModemManager.service: Failed with result 'signal'.
+Jun 18 05:44:36 box1-t23 systemd[1]: Configuration file /lib/systemd/system/gpsd-ws.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.

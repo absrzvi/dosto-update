@@ -1,0 +1,86 @@
+##### LOGTAIL SNAPSHOT 2026-06-18T05-29-58Z (boot=15baa48f-103a-4d35-a6fb-6313af4f54fc) #####
+----- uptime / loadavg -----
+2181.26 24627.32
+0.49 0.48 0.55 2/970 193675
+----- dmesg tail (last 40) -----
+[ 1926.166652] bond0: (slave lan1): link status down for interface, disabling it in 200 ms
+[ 1926.174651] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[ 1926.174654] bond0: (slave lan1): link status down for interface, disabling it in 200 ms
+[ 1926.182650] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[ 1926.182652] bond0: (slave lan1): link status down for interface, disabling it in 200 ms
+[ 1926.190655] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[ 1926.190660] bond0: (slave lan1): link status down for interface, disabling it in 200 ms
+[ 1926.198652] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[ 1926.198656] bond0: (slave lan1): link status down for interface, disabling it in 200 ms
+[ 1926.206651] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[ 1926.206654] bond0: (slave lan1): link status down for interface, disabling it in 200 ms
+[ 1926.214650] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[ 1926.214653] bond0: (slave lan1): link status down for interface, disabling it in 200 ms
+[ 1926.222650] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[ 1926.222652] bond0: (slave lan1): link status down for interface, disabling it in 200 ms
+[ 1926.230648] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[ 1926.230650] bond0: (slave lan1): link status down for interface, disabling it in 200 ms
+[ 1926.238649] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[ 1926.238651] bond0: (slave lan1): link status down for interface, disabling it in 200 ms
+[ 1926.250645] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[ 1926.250648] bond0: (slave lan1): link status down for interface, disabling it in 200 ms
+[ 1926.258652] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[ 1926.258655] bond0: (slave lan1): link status down for interface, disabling it in 200 ms
+[ 1926.270653] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[ 1926.270660] bond0: (slave lan1): link status down for interface, disabling it in 200 ms
+[ 1926.282664] bond0: (slave lan0): link status down for interface, disabling it in 200 ms
+[ 1926.282670] bond0: (slave lan1): link status down for interface, disabling it in 200 ms
+[ 1926.282672] bond0: (slave lan0): invalid new link 1 on slave
+[ 1926.288367] bond0: (slave lan1): invalid new link 1 on slave
+[ 1926.502731] bond0: (slave lan0): link status definitely down, disabling slave
+[ 1926.502783] bond0: (slave lan1): link status definitely down, disabling slave
+[ 1929.578405] i40e 0000:09:00.0 lan0: NIC Link is Up, 10 Gbps Full Duplex, Flow Control: None
+[ 1929.581569] i40e 0000:09:00.1 lan1: NIC Link is Up, 10 Gbps Full Duplex, Flow Control: None
+[ 1929.670623] bond0: (slave lan0): link status up, enabling it in 0 ms
+[ 1929.670630] bond0: (slave lan1): link status up, enabling it in 200 ms
+[ 1929.670709] bond0: (slave lan0): link status definitely up, 10000 Mbps full duplex
+[ 1929.670716] bond0: (slave lan1): invalid new link 3 on slave
+[ 1929.676498] bond0: active interface up!
+[ 1929.882699] bond0: (slave lan1): link status definitely up, 10000 Mbps full duplex
+[ 2153.428292] ath10k_pci 0000:10:00.0: pdev param 0 not supported by firmware
+----- journal priority<=4 (warn+), last 40 this boot -----
+Jun 18 05:20:50 box1-t23 systemd[1]: Configuration file /etc/systemd/system/engineering_collector.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:20:51 box1-t23 systemd[1]: Configuration file /etc/systemd/system/engineering_pages.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:20:52 box1-t23 systemd[1]: Configuration file /etc/systemd/system/engineering_server.service is marked world-writable. Please remove world writability permission bits. Proceeding anyway.
+Jun 18 05:21:02 box1-t23 NetworkManager[857]: <warn>  [1781760062.8792] device (enp19s0f0): Activation: failed for connection 'Wired connection 2'
+Jun 18 05:21:02 box1-t23 NetworkManager[857]: <warn>  [1781760062.8798] device (enp19s0f1): Activation: failed for connection 'Wired connection 3'
+Jun 18 05:21:02 box1-t23 NetworkManager[857]: <warn>  [1781760062.8805] device (enp19s0f2): Activation: failed for connection 'Wired connection 4'
+Jun 18 05:21:02 box1-t23 NetworkManager[857]: <warn>  [1781760062.8811] device (enp19s0f3): Activation: failed for connection 'Wired connection 5'
+Jun 18 05:21:47 box1-t23 NetworkManager[857]: <warn>  [1781760107.8799] device (enp19s0f0): Activation: failed for connection 'Wired connection 2'
+Jun 18 05:21:47 box1-t23 NetworkManager[857]: <warn>  [1781760107.8803] device (enp19s0f1): Activation: failed for connection 'Wired connection 3'
+Jun 18 05:21:47 box1-t23 NetworkManager[857]: <warn>  [1781760107.8807] device (enp19s0f2): Activation: failed for connection 'Wired connection 4'
+Jun 18 05:21:47 box1-t23 NetworkManager[857]: <warn>  [1781760107.8811] device (enp19s0f3): Activation: failed for connection 'Wired connection 5'
+Jun 18 05:22:32 box1-t23 kernel: ath10k_pci 0000:10:00.0: pdev param 0 not supported by firmware
+Jun 18 05:25:43 box1-t23 kernel: bond0: (slave lan0): invalid new link 1 on slave
+Jun 18 05:25:43 box1-t23 kernel: bond0: (slave lan1): invalid new link 1 on slave
+Jun 18 05:25:46 box1-t23 kernel: bond0: (slave lan1): invalid new link 3 on slave
+Jun 18 05:26:49 box1-t23 ntpd[1283]: IO: bind(39) AF_INET6 fe80::3341:b0b3:dc38:c95c%3#123 flags 0x1 failed: Cannot assign requested address
+Jun 18 05:26:49 box1-t23 ntpd[1283]: IO: unable to create socket on enp19s0f0 (91) for fe80::3341:b0b3:dc38:c95c%3#123
+Jun 18 05:26:49 box1-t23 ntpd[1283]: IO: bind(39) AF_INET6 fe80::b35f:96a:685c:6f70%5#123 flags 0x1 failed: Cannot assign requested address
+Jun 18 05:26:49 box1-t23 ntpd[1283]: IO: unable to create socket on enp19s0f1 (92) for fe80::b35f:96a:685c:6f70%5#123
+Jun 18 05:26:49 box1-t23 ntpd[1283]: IO: bind(39) AF_INET6 fe80::9e93:9728:dc85:1540%6#123 flags 0x1 failed: Cannot assign requested address
+Jun 18 05:26:49 box1-t23 ntpd[1283]: IO: unable to create socket on enp19s0f2 (93) for fe80::9e93:9728:dc85:1540%6#123
+Jun 18 05:26:49 box1-t23 ntpd[1283]: IO: bind(39) AF_INET6 fe80::786a:caa0:9572:af0a%7#123 flags 0x1 failed: Cannot assign requested address
+Jun 18 05:26:49 box1-t23 ntpd[1283]: IO: unable to create socket on enp19s0f3 (94) for fe80::786a:caa0:9572:af0a%7#123
+Jun 18 05:27:32 box1-t23 NetworkManager[857]: <warn>  [1781760452.8798] device (enp19s0f0): Activation: failed for connection 'Wired connection 2'
+Jun 18 05:27:32 box1-t23 NetworkManager[857]: <warn>  [1781760452.8800] device (enp19s0f1): Activation: failed for connection 'Wired connection 3'
+Jun 18 05:27:32 box1-t23 NetworkManager[857]: <warn>  [1781760452.8803] device (enp19s0f2): Activation: failed for connection 'Wired connection 4'
+Jun 18 05:27:32 box1-t23 NetworkManager[857]: <warn>  [1781760452.8806] device (enp19s0f3): Activation: failed for connection 'Wired connection 5'
+Jun 18 05:28:17 box1-t23 NetworkManager[857]: <warn>  [1781760497.8805] device (enp19s0f0): Activation: failed for connection 'Wired connection 2'
+Jun 18 05:28:17 box1-t23 NetworkManager[857]: <warn>  [1781760497.8810] device (enp19s0f1): Activation: failed for connection 'Wired connection 3'
+Jun 18 05:28:17 box1-t23 NetworkManager[857]: <warn>  [1781760497.8816] device (enp19s0f2): Activation: failed for connection 'Wired connection 4'
+Jun 18 05:28:17 box1-t23 NetworkManager[857]: <warn>  [1781760497.8821] device (enp19s0f3): Activation: failed for connection 'Wired connection 5'
+Jun 18 05:29:02 box1-t23 NetworkManager[857]: <warn>  [1781760542.8847] device (enp19s0f0): Activation: failed for connection 'Wired connection 2'
+Jun 18 05:29:02 box1-t23 NetworkManager[857]: <warn>  [1781760542.8849] device (enp19s0f1): Activation: failed for connection 'Wired connection 3'
+Jun 18 05:29:02 box1-t23 NetworkManager[857]: <warn>  [1781760542.8852] device (enp19s0f2): Activation: failed for connection 'Wired connection 4'
+Jun 18 05:29:02 box1-t23 NetworkManager[857]: <warn>  [1781760542.8855] device (enp19s0f3): Activation: failed for connection 'Wired connection 5'
+Jun 18 05:29:30 box1-t23 kernel: ath10k_pci 0000:10:00.0: pdev param 0 not supported by firmware
+Jun 18 05:29:47 box1-t23 NetworkManager[857]: <warn>  [1781760587.8794] device (enp19s0f0): Activation: failed for connection 'Wired connection 2'
+Jun 18 05:29:47 box1-t23 NetworkManager[857]: <warn>  [1781760587.8799] device (enp19s0f1): Activation: failed for connection 'Wired connection 3'
+Jun 18 05:29:47 box1-t23 NetworkManager[857]: <warn>  [1781760587.8803] device (enp19s0f2): Activation: failed for connection 'Wired connection 4'
+Jun 18 05:29:47 box1-t23 NetworkManager[857]: <warn>  [1781760587.8808] device (enp19s0f3): Activation: failed for connection 'Wired connection 5'

@@ -1,0 +1,27 @@
+From: Abbas Rizvi <abbas.rizvi@nomadrail.com>
+Subject: [TRIAG-8585] report_dosto_neu.py — Bug 10 (number_coaches BFS infinite
+ loop guard)
+
+File: lib/report/report_dosto_neu.py
+
+Bug 10  number_coaches() BFS unconditionally re-enqueues to_device even when no
+        branch assigned it a coach_number. APs / edge-of-consist switches with a
+        missing or duplicate position get popped, re-walked, re-enqueued forever
+        -> `obn report` pegs 100% CPU and leaks 27 GB+ RSS (Fzg 130 2026-05-12,
+        Fzg 8 2026-05-22). Only re-enqueue when a coach_number was assigned.
+---
+--- a/lib/report/report_dosto_neu.py
++++ b/lib/report/report_dosto_neu.py
+@@ Bug 10: number_coaches BFS re-enqueue guard @@
+                     # nv6 - END
+
+-                # Add to_device to queue
+-                queue.appendleft(to_device)
++                # Add to_device to queue # NDP-PATCH-BUG10-BFS-GUARD
++                # Bug 10 fix: only enqueue if coach_number was assigned in
++                # one of the branches above. Without this, APs and edge
++                # switches whose conditions didn't match get re-enqueued
++                # forever, hanging obn report at 100% CPU.
++                if to_device.coach_number is not None:
++                    queue.appendleft(to_device)
+                 continue
