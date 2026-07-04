@@ -20,6 +20,7 @@ without opening a binary.
 | Fleet Control Sheet | `/ND-DEL-OBB-035-CFG-001-01 OBB Fleet Control Sheet 20260211.xlsx` | [fleet-control-sheet](fleet-control-sheet.md) |
 | Phase Plan Q2 2026 | `/DostoNeu_Phase_plan_Q2_2026.xlsx` | [phase-plan-q2-2026](phase-plan-q2-2026.md) |
 | Project Status (master) | `/PROJECT-STATUS.md` | [project-status](project-status.md) |
+| MAR5 Tunnel Architecture (template) | `/ND-SDD-MAR5-Tunnel-Architecture-template.docx` | [mar5-tunnel-architecture](mar5-tunnel-architecture.md) |
 
 # Note on project codes
 

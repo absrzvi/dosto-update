@@ -27,9 +27,11 @@ SERIES = {
                  topo="/train-ip-allocation-commission/extracted/_shared/nv4-topology.md",
                  sw=12, ap=16, hostpfx="nv4"),
     "4705": dict(schema="fv5", consist="5-car CAT (A-C-E-F-B, D/300 removed)", cars=5,
-                 topo="/.kb/topics/fv5-topology.md", sw=15, ap=20, hostpfx="fv5"),
-    "4706": dict(schema="fv6", consist="6-car FV", cars=6,
-                 topo=None, sw=18, ap=24, hostpfx="fv6"),
+                 topo="/train-ip-allocation-commission/extracted/_shared/fv5-topology.md",
+                 sw=15, ap=20, hostpfx="fv5"),
+    "4706": dict(schema="fv6", consist="6-car FV (A-C-D-E-F-B)", cars=6,
+                 topo="/train-ip-allocation-commission/extracted/_shared/fv6-topology.md",
+                 sw=18, ap=24, hostpfx="fv6"),
 }
 
 def vlan7(fzg):

@@ -36,12 +36,16 @@ X3 is the intra-coach hub (connects X1↔X2). Switch hostnames render `fv5-<pos>
    `<port>: {type, coach_inc, device_val}`. Note it has duplicate `"SW":` keys per wagon —
    invalid-looking YAML that OBN parses positionally.
 
+Port-level backbone (per-switch `e0-0`/`e0-1` neighbours, coupler/OBS/RDC/FW ports) is extracted
+into [**`_shared/fv5-topology.md`**](/train-ip-allocation-commission/extracted/_shared/fv5-topology.md)
+(from the 4705-103 IPA PDF, Fzg 231, via `scripts/extract_fv_topology.py`).
+
 ## fv6 (4706 / 6-car FV)
 
-6-car FV family; **18 switches + 24 APs** like nv6, hostnames `fv6-<pos>-v<n>-<fzg>`. No shared
-port-level topology reference has been extracted yet — use the [nv6 6-car
-topology](/train-ip-allocation-commission/extracted/_shared/nv6-topology.md) as the nearest
-structural analog and the per-train IP-Port-Allocation PDF as the source of truth.
+6-car FV family (coach order **A-C-D-E-F-B**, D is the OBS coach); **18 switches + 24 APs** like
+nv6, hostnames `fv6-<pos>-v<n>-<fzg>`. Port-level backbone is extracted into
+[**`_shared/fv6-topology.md`**](/train-ip-allocation-commission/extracted/_shared/fv6-topology.md)
+(from the 4706-101 IPA PDF, Fzg 189). Structurally near-identical to nv6.
 
 # Proven dead ends — do NOT repeat these
 
