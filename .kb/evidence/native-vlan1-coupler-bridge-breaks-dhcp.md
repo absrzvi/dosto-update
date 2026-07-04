@@ -1,0 +1,72 @@
+---
+type: evidence
+title: Native-VLAN-1 coupler bridge breaks switch DHCP (DISCOVER→OFFER→loop) — fixed by native-999
+description: On a coupled pair with the coupler trunk still at native VLAN 1, the two trains' shared 192.168.1.0/24 switch-management segments bridge across the coupler; switch DORA dies at OFFER (never REQUEST) and half the fabric can't hold a lease — closed by applying v9 M2 native-999.
+project: dosto-neu
+tags: [coupled, rstp, coupler, native-vlan, dhcp, vlan1, management-plane, field-validated]
+maturity: field-validated
+timestamp: 2026-06-30T00:00:00Z
+resource: /findings/coupling_test_4736-117_105_2026-06-30/costs_before_after.md
+---
+
+# Native-VLAN-1 coupler bridge breaks switch DHCP
+
+## What it proves
+
+When a coupled pair's coupler trunk still carries **native VLAN 1** (the v9 M2 "native 999" fix NOT
+applied), the two trains' end-wagon switch-management segments — both on the **shared
+`192.168.1.0/24`** — are **bridged across the coupler** through the untagged native. This poisons the
+switch DHCP handshake: every switch loops **DISCOVER → OFFER → (never REQUEST) → DISCOVER**, dies at
+step 3 of DORA, and only ~9 of 18 switches hold a lease at once (management-plane only — the switches
+stay alive and forwarding on the data plane throughout).
+
+The fix is **v9 M2**: set the coupler `e0-2` to native VLAN 999 (a named blackhole VLAN) in the
+combined trunk command, both trains. This is distinct from the TC-storm (M1 cost) fix — cost 20000
+stops the churn but does **not** stop the DHCP break; both M1 **and** M2 are needed for a healthy
+coupled fabric.
+
+## How it was captured
+
+- DHCP log on the affected train showed the exact failure: DISCOVER → OFFER → DISCOVER, no REQUEST,
+  no ACK — the initial DORA breaking at step 3, not a renewal problem.
+- **Smoking gun in the FDB:** the active coupler port (`B1 e0-2`, `native 0001, allow 5,15`) had a
+  **VLAN-1 FDB of 57 MACs learned via the coupler**, including the *other* train's switch MAC range —
+  i.e. the two 192.168.1.0/24 segments were provably bridged.
+- Fix verification, live: applying native-999 to the active coupler dropped the VLAN-1 leak FDB
+  **57 → 39 → 10** (the foreign MACs aged out); a dhcpd restart then let switches complete
+  **REQUEST → ACK**; **decoupling recovered 9 → 18/18 within ~1 min**.
+- After a full cold-boot coupled with M1+M2 persisted: the leak FDB was ~19 (not 57), native-VLAN-1
+  bridge gone, the switches that booted leased cleanly.
+- Ruled out along the way (do not re-test): rogue/2nd DHCP server (only the CCU `00:21:21:21` answers,
+  single server-id across all OFFERs), pool exhaustion, OBN, nd-backbone-discovery, cross-CCU leasing,
+  and a transient `ccu20230725` DHCP-Discover flooder (disconnected with the loop still present → not
+  the cause).
+
+## Evidence
+
+- [`costs_before_after.md`](/findings/coupling_test_4736-117_105_2026-06-30/costs_before_after.md) —
+  the ⭐ "ROOT CAUSE of switch DHCP failure = native-VLAN-1 coupler bridge" section (10:00Z), the M2
+  APPLIED + PERSISTED section (57→39→10 FDB drop, 9→18/18 recovery), and the cold-boot-with-full-v9
+  result.
+- [`REPORT_coupling_test_2026-06-12.md`](/findings/coupling_test_4736-110_119_2026-06-12/REPORT_coupling_test_2026-06-12.md)
+  — Addendum A3 (a June coupler port already found missing `native vlan 999`, flagged for templates).
+
+## So what
+
+- **Set native + prune in ONE command** — `configure interface e0-2 switchport mode trunk native vlan
+  999 prune allow 5,15`. Setting native alone resets the prune set (see the switch CLI doc's
+  trunk-rewrite quirk) and momentarily re-exposes management VLANs.
+- **Prereq M3:** `vlan 999 name blackhole-native` must exist or the native assignment may reject.
+- **Persist it** (`save running-config force`) — like the cost fix, native-999 is runtime-only until
+  it ships in the templates and is reverted by any `obn update c` from v8 / power-cycle.
+- The two coupled failure modes are independent: **M1 (cost 20000) kills the TC storm; M2 (native 999)
+  kills the DHCP break.** A cost-only test (as run 2026-06-30 morning) leaves the DHCP break live.
+- Keep the **`5,15` prune set and VLAN 5** on the coupler — the CCTV VLAN stays bridged (engineer
+  directive; pruning it is refuted as a fix).
+
+# Related
+
+- [Coupled-train RSTP TC-storm (topic)](/.kb/topics/coupled-rstp-tc-storm.md)
+- [Coupled 2×6 TC-storm captured + fixed (evidence)](/.kb/evidence/coupled-2x6-tc-storm-captured-and-fixed.md)
+- [VDS Consist Switch — CLI & management](/.kb/components/vds-consist-switch/cli-and-management.md) — the trunk-rewrite quirk, `save running-config force`
+- [vlan7 bit-packed addressing](/.kb/topics/vlan7-addressing.md)

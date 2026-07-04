@@ -96,6 +96,42 @@ must not foreclose that migration.
    separated.
 5. **Setting the timers in the wrong order.** `max-age` before `forward-delay` is rejected — the
    firmware enforces `2×(fwd_delay − 1) ≥ max_age`. Raise forward-delay first.
+6. **Fixing it at runtime and leaving it there.** Every coupled fix (symmetric cost, native-999,
+   debug logging, prunes) is **runtime-only** and is **WIPED by a power-cycle or by `obn update c`
+   from a v8 package** — which reverts the coupler cost to the asymmetric `train_id`-derived value and
+   re-arms the storm. Proven the hard way 2026-06-30: an un-saved coupled cold-boot reverted to
+   asymmetric costs and the fabric would not converge. The durable fix is the **template change** (v9
+   MR across all four repos); until then, `save running-config force` per switch is mandatory and only
+   survives until the next `obn update c`.
+7. **Applying the cost fix ONLY and calling the coupled fabric healthy.** The TC-storm fix (symmetric
+   cost) and the switch-DHCP fix (native-999) are **independent**. With cost fixed but the coupler
+   still at **native VLAN 1**, the two trains' shared `192.168.1.0/24` switch-management segments
+   bridge across the coupler, switch DORA dies at OFFER (never REQUEST), and half the fabric can't
+   hold a lease. A cost-only test leaves this DHCP break live. Apply **both** M1 (cost) and M2
+   (native-999).
+8. **Reading "half the switches vanished from the lease list" as a fabric/power outage.** On a coupled
+   pair under active testing, switches sit on a **dynamic DHCP pool**; every fabric disruption (a
+   Stadler port bounce, a TC re-convergence burst, or the native-VLAN-1 bridge above) interrupts a
+   switch's renewal and it loops on the next DISCOVER — so IPs rotate and only ~9/18 hold a completed
+   lease at once. The switches are alive and forwarding (ARP + a stable RSTP root prove it); it is a
+   **management-plane** DHCP problem, not a data-plane outage. (Note: a *persistent* same-9-missing set
+   that stays absent from **ARP** — not just the lease list — after a clean cold boot is a separate
+   hardware/power issue, e.g. 117 on 2026-06-30, not a coupling problem.)
+
+# Evidence
+
+Field-captured proofs behind this topic (raw harvests + traces link from each):
+
+- [Coupled 2×6 RSTP TC-storm — captured, root-caused, and fixed](/.kb/evidence/coupled-2x6-tc-storm-captured-and-fixed.md)
+  — the storm present under asymmetric cost (2026-06-12, stopped at the exact second by reverting to
+  20000) and the mirror proof (2026-06-30, symmetric cost pre-staged → storm never arose); plus the
+  cost-fix-alone CCTV-latency recovery that revised the June A8 FW-routing hypothesis.
+- [3×6 triple-traction exceeds the RSTP node/diameter ceiling](/.kb/evidence/3x6-exceeds-rstp-node-ceiling.md)
+  — diameter + node-count modelling (31-hop 2×18, B-B worst at 16 hops, ≈0 margin at the far end) and
+  the VDS node-ceiling answer; why 42/48/54-switch triple-traction needs a routed boundary.
+- [Native-VLAN-1 coupler bridge breaks switch DHCP](/.kb/evidence/native-vlan1-coupler-bridge-breaks-dhcp.md)
+  — the DISCOVER→OFFER→loop break, the 57-MAC cross-train VLAN-1 leak FDB smoking gun, and the
+  native-999 fix (leak 57→39→10, 9→18/18 recovery).
 
 # EXAMPLE (DOSTO NEU) — deployment specifics (NON-portable)
 
@@ -127,3 +163,4 @@ must not foreclose that migration.
 [1] Session memory `project_coupled_rstp_tc_storm` — coupling test 4736-110+119 (2026-06-12); asymmetric-cost driver proven by intervention; VLAN-5 prune refuted; odd-Fzg FW IP; v9 change-list.
 [2] Session memory `project_3x6_triple_traction_required` — 3×6 = 54 switches > RSTP 40-node ceiling; routed-boundary requirement (2026-06-20).
 [3] Coupling test report `findings/coupling_test_4736-110_119_2026-06-12/` and v9 change-list `PLAN_v9_switch_config_changelist_2026-06-20.md`.
+[4] Coupling test 4736-117+105 (2026-06-30): `costs_before_after.md` (symmetric-cost PASS, CCTV-resolved-by-cost-alone, native-VLAN-1 DHCP root cause + native-999 fix) and `ANALYSIS_rstp_chord_cost_and_traction_limit_2026-06-30.md` (chord cost, diameter/node matrix). Distilled into `/.kb/evidence/`.

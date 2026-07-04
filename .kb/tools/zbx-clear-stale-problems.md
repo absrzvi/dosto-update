@@ -1,0 +1,57 @@
+---
+type: tool
+title: Zabbix stale-problem clearer — ack + close verified-false outage alarms
+description: Zabbix API tool that finds a train's active "unreachable" problems, filters to the verified-stale ones, and ack+messages them (read-only unless --close).
+project: dosto-neu
+tags: [zabbix, nms, problem, acknowledge, monitoring, diagnostic, api]
+maturity: field-validated
+timestamp: 2026-07-04T00:00:00Z
+resource: /scripts/zbx_clear_4736_119.py
+---
+
+# Zabbix stale-problem clearer — ack + close verified-false outage alarms
+
+## What it does
+Finds the active (unresolved) problems on one train's Zabbix hosts, filters to the **stale-outage**
+bucket only — trigger names containing `is unavailable by ICMP` or `cannot be pinged` — and
+acknowledges them with an explanatory message. It deliberately leaves fresh port-DOWN alarms and
+unrelated events untouched.
+
+Because the target triggers have `manual_close=0`, the tool acks + messages rather than force-closing;
+the problem then auto-resolves on the next successful poll (the devices being confirmed up).
+
+## When to reach for it
+You have **already verified** (via SSH/ICMP) that a train's devices are up, but old "unreachable"
+alarms from an earlier outage never cleared — a stale alarm wall on the NMS that is misleading, not
+real. Use this to ack them with an audit trail. It is the action step after
+[`zbx_check`](/.kb/tools/zbx-polling-check.md) has explained *why* they are stuck.
+
+Do not reach for it to silence alarms you have not independently confirmed false — the whole safety
+of the tool is the narrow verified-stale filter.
+
+## Usage
+```bash
+python scripts/zbx_clear_4736_119.py            # read-only: lists what WOULD be ack+closed
+python scripts/zbx_clear_4736_119.py --close    # actually ack + message the stale-outage events
+```
+
+Runs against the cloud Zabbix API (no train VPN). Matches hosts by `4736-119` then falls back to the
+`6012` fleet number; if neither matches it prints candidate `4736*` hosts so you can retarget.
+
+## Output
+A per-problem line tagged `[CLOSE]`/`[keep ]` and `[ACK]` so you can eyeball the filter before
+committing, then a count of selected events. With `--close`, the list of acknowledged event IDs.
+
+## Notes / caveats
+- **Template, not a one-train tool.** `4736-119` / `6012` and the ack message (which cites the
+  specific rear-coach switches and the 2026-06-24 verification date) are hardcoded. To reuse: change
+  the host search, and rewrite the message to cite *your* evidence. The reusable pattern is
+  *problem.get(recent=False) → name-filter → event.acknowledge(action=2|4)*.
+- The `event.acknowledge` action bitmask is `1=close, 2=ack, 4=message`. This tool uses `2|4`
+  (ack+message) precisely because the triggers are not manual-close; do not add `1` unless the
+  trigger actually allows manual close.
+- Read-only by default. It never closes anything without `--close`.
+
+# Related
+- [Zabbix polling-health checker](/.kb/tools/zbx-polling-check.md) — run first to confirm the alarms are stale, not live
+- [Zabbix / NMS monitoring model](/.kb/topics/zabbix-nms-model.md)

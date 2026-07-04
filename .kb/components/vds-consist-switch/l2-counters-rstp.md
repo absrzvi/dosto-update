@@ -123,6 +123,13 @@ Wi-Fi-AP trunk on an empty train) is expected, not a fault.
    persistent logs are near-empty and rotate fast), so seriously consider the symptom is
    **Stadler-side** (display app / ZFR reachability / FW state at power-up), which no switch log
    would show. Do NOT present KMdev as "the cause"; confirm with a controlled cold-boot repro.
+   Two things that specifically do NOT work for catching it: a **warm** SNMP/CLI reboot (re-inits the
+   module cleanly and does not reproduce it — only a **cold** power removal does), and off-box syslog
+   (dead end — see the CLI-management doc). The armed repro kit (pre-arm persistent-log debug → cold
+   power-cycle → read `show log persistent` before any second reboot → SNMP-poll `ifInOctets` for
+   `oper=1 & in=0`) is the only reliable capture; ⚠️ do NOT reboot the down-display switch as a "fix"
+   before collecting — that reboot both self-recovers the symptom and wipes the evidence. Full kit +
+   verdict table: [dataless-display cold-boot repro](/.kb/evidence/kmdev-coldboot-dataless-display-repro.md).
 
 4. **Do not trust a Zabbix `ifOperStatus` down→up bounce at face value.** The SNMP subagent
    reinitialises (`AgentX` restart) and briefly returns `ifOperStatus = 2` for *all* ports, producing

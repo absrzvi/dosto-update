@@ -123,6 +123,24 @@ This is a *view*, not a substitute for `report` — you cannot drive `obn update
 6. **Do NOT trust OBN's "configuration update applied, device rebooting" / "Successful" strings.** OBN
    prints these when the SNMP set is *sent* or the TFTP RRQ *initiated*, not when the change landed.
    Always follow up with `obn validate` or a direct SNMP/discover check.
+7. **Do NOT read a short/collapsed backbone table as "all present, small consist."** When
+   `number_coaches()` cannot number a switch, `normalise_devices()` **silently deletes it** — a
+   discovered, powered, SNMP-reachable switch vanishes from `obn report` / `obn validate` / the NMS
+   payload with no truncation signal. Two proven triggers: **(a) a cold-bypassed switch** (one switch
+   powered off → the backbone relays through it → the switch that moves into its slot is mis-numbered
+   and the walk collapses "downstream," dropping ~8 healthy switches — bench box1-t122: 10 present
+   switches shown as 2); **(b) a single lost inter-switch LLDP edge** (e.g. the rear-chain `B3↔B2`
+   cable down removes the only entry into the rear numbering walk → 5 healthy rear switches + their APs
+   dropped — 4736-119 showed 13/18, healthy 4736-110 showed 18/18). Always **cross-check the report
+   count against the expected consist size** (18 for nv6 6-car, 12 for nv4 4-car). This is a monitoring
+   false-negative: the dropped switches can never be alarmed on. Do NOT try to "fix" it by inserting a
+   DOWN placeholder for the walk to flow through or by bumping the coach counter past the gap — both
+   were prototyped and fail (the port rule keys on the arriving switch's own number, so a phantom node
+   can't repair the identity error). The correct fix is topology-anchored / validated-hostname numbering
+   that **retains every discovered device** (as `UNPLACED`/`DOWN`). Ops-side, `dosto-device-discovery`
+   Step 4b already classifies the bypass from the CCU. Detail:
+   [drops-on-bypass](/.kb/evidence/obn-numbering-drops-healthy-switches-on-bypass.md),
+   [single-edge fragility](/.kb/evidence/obn-numbering-fragile-to-single-edge-loss.md).
 
 # EXAMPLE (DOSTO NEU) — deployment specifics (NON-portable)
 

@@ -31,15 +31,27 @@ New here? Read [HOW-TO-USE.md](HOW-TO-USE.md) first. Maintaining the KB? See [MA
 * [Fzg-ID two-namespace problem](topics/fzg-id-two-namespaces.md) - internal box-id vs ÖBB Fzg; box=Fzg resolution.
 * [Zabbix / NMS monitoring model](topics/zabbix-nms-model.md) - inverted cred model, host naming, failure catalogue.
 
+## Evidence — what's proven, with the raw artifact
+
+* [Evidence index](evidence/index.md) - captured proof behind the findings (crash repros, coupled-RSTP storm, OBN bugs).
+
+## Tools — instruments built for this project
+
+* [Tools index](tools/index.md) - diagnostic + reporting instruments (SNMP boot-window poller, Zabbix checkers, port xref).
+
 ## Fleet — per-train records
 
-* [Fleet index](fleet/index.md) - per-train records for trains with documented history (8 so far).
+* [Fleet index](fleet/index.md) - 51 per-train identity records (name, Fzg, box-id, CCU IP, Zabbix host, vlan7, topology).
 
 ## Deliverables, tickets, assets
 
-* [Deliverables index](deliverables/index.md) - SDD/BID, fleet control sheet, phase plan, project status.
+* [Deliverables index](deliverables/index.md) - SDD/BID, fleet control sheet, phase plan, project status, MAR5 tunnel.
 * [Tickets index](tickets/index.md) - TRIAG-8585, OEBB-251, SA-2444, RD-12434.
 * [Asset index](assets/index.md) - per-train allocation PDFs + switch cfgs (46 trains).
+
+## Method (portable — reusable on any project)
+
+* [The Evidence-First Method](method/index.md) - the methodology + an empty `_TEMPLATE/` to copy into a new repo.
 
 ## Provenance
 

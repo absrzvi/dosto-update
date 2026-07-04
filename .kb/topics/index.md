@@ -39,5 +39,6 @@ troubleshoot a whole consist (or a whole fleet) rather than a single box. Each c
 # Related
 
 * [Knowledge base index](/.kb/index.md)
+* [Evidence — field-captured proofs](/.kb/evidence/index.md)
 * [Components — how each device behaves](/.kb/index.md#components--how-each-device-type-behaves)
 * [Fleet — per-train records](/.kb/fleet/index.md)
