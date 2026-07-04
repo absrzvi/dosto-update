@@ -36,3 +36,6 @@ design freeze/
 # (the graph exclusion filters, so the KB graph scope reproduces on any clone)
 .obsidian/*
 !.obsidian/app.json
+
+# VDS switch firmware bundles (large vendor binaries, staged manually to CCU)
+switch/

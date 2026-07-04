@@ -98,7 +98,29 @@ CCU `10.179.11.1` unreachable (ping + ssh timeout) at attempt time. Fzg 130 on t
 
 ### Fzg 137 — 4736-109
 
-*(Journal entries to be migrated. Current state: BLOCKED on cable register #4. Stadler L2 fault report v1.0 already filed.)*
+*(Earlier journal entries to be migrated. Prior state: BLOCKED on cable register #4 — B3 e0-4 AP not connected. Stadler L2 fault report v1.0 already filed.)*
+
+#### 2026-07-04 — AR — NMS alarm review → uncovered two switches (E2, C3) absent from monitoring; field confirmation of the OBN coach-numbering blind spot
+
+**Session goal.** Engineer asked why 4736-109 (ÖBB painted **6028**) shows a wall of NMS alarms. Triaged the panel, then chased the one real network-side finding.
+
+**Alarm triage (all 12 rows were stale/unacknowledged, ✗ in Acknowledged):**
+- **AP `7.7.7.7 cannot be pinged` ×5 (High)** — stale template placeholder IP, not a real AP. Confirmed from CCU: `ping 7.7.7.7` = 100% loss while all 19 real APs (`.218–.238`) answer 0%. NMS-side fix = correct AP monitoring IPs in the train-type template.
+- **SW R2/R4 `unavailable by ICMP` ×3 (High)** — stale DHCP-drift/power-cycle transients; all live switches fping 0% loss now. Ack + `zbx_reconcile.py` if recurring.
+- **Port e0-4 DOWN (admin-enabled) on R6 SW1/SW2 ×2 (Medium)** — the known B-coach AP-trunk gap = cable register #4 (Stadler-side, APs not installed).
+- **SIM usage 96.42% High / 81.6% Medium** — cellular data-cap, not L2; flag to SIM plan owner.
+
+**The real finding — 16/18 switches, and NMS wasn't alarming on the 2 missing (the blind spot):**
+- **E2 = cold bypass.** No lease, no vlan100 IP. D1 e0-1 LLDP→ E3 (across E2's slot), both links UP 10G, 0 CRC, carrier-false 0 — reciprocal clean-link signature. E2 is powered off/failed in place; backbone relays through it. NOT a cabling fault → check power/health of E2. Logged as **cable register #13**.
+- **C3 = healthy but stranded by DHCP abandonment.** Also no lease, but C2 e0-0→C3 is UP 10G with **RX 9.9GB / TX 280GB, 0 CRC** — C3 present and forwarding heavily. Root cause traced (NOT a bypass, NOT cabling): the CCU rebooted ~18:22, dhcpd came up cold with `ping-check true`, ICMP-pinged each pool address, got replies from switches still holding their RAM IPs, and **abandoned 14 addresses** (`pinged before offer` in the log at 18:23). C3's RAM-held `.189` was abandoned server-side (LLDP still advertises `.189`; `.189` is ICMP/ARP-dead) and C3 never completed a fresh DISCOVER → stranded with a dead mgmt IP. **This recurs on every CCU-only reboot.** Full RCA: [findings/dhcp_pingcheck_abandon_cascade_2026-07-04.md](findings/dhcp_pingcheck_abandon_cascade_2026-07-04.md). Band-aid = `systemctl restart isc-dhcp-server`; permanent guard = `ping-check false;` in the Puppet-rendered dhcpd.conf (fleet-wide). Tracked here + memory `project_dhcp_pingcheck_abandon_cascade`, not the cable register (not a cabling item).
+
+**Why NMS couldn't alarm on either (the blind spot itself):** Zabbix hosts for this train are provisioned from the OBN report (`create_nms_device_nodes`). E2 gets dropped by OBN's coach-numbering walk (`normalise_devices()` deletes unnumberable positions); C3 isn't even in DHCP. No host provisioned → nothing to alarm on → dashboard reads 16/18 as green. This is the live field confirmation of the bench RCA in [findings/RD_obn_coach_numbering_bypass_downstate_2026-07-04.md](findings/RD_obn_coach_numbering_bypass_downstate_2026-07-04.md). CCU is on **nd-obn 2.2.23** (pre-fix).
+
+**What's next.**
+- **E2 → Stadler:** check power/health of switch E2 (register #13).
+- **C3 → Nomad:** investigate why C3 doesn't lease vlan100 (mgmt-VLAN access / DHCP path on C3). Healthy switch, no mgmt IP.
+- **NMS blind spot → R&D:** productionise the `report_dosto_neu.py` fix (§5c floor: never silently drop discovered switches; §5a/5b: emit bypassed positions as first-class DOWN rows with a valid slot so NMS provisions a host and can alarm). C3 shows the §5c floor alone isn't the whole story — a healthy-but-unmanaged switch also needs its mgmt IP back to be a normal monitored host.
+- Ack the 12 stale alarms once the above are captured; NMS AP-IP template fix (`7.7.7.7`) is a separate NMS task.
 
 ### Fzg 148 — 4736-120
 
@@ -250,3 +272,38 @@ Same investigation as Fzg 19 (see entry above). AP→switch-port mapping on Fzg 
 - **Contradiction to resolve:** every sample reads `MANUAL_on` (chassis bits[7:6]=10), where the ADLINK manual (§3) says the ignition input is **bypassed** — a Vign=0 should NOT shut the CCU down in Manual. Yet it consistently does shortly after Vign collapses. Either (a) the front-panel 3-position switch is **not really on Manual** despite the CMM readout (wiring/readout mismatch → train is actually ignition-controlled → these are genuine ignition faults), or (b) Vign and the power-down share an upstream vehicle-circuit cause. **Either way the ignition line dropping to 0V while battery holds is a real, repeatable electrical event — a concrete finding for whoever owns vehicle power/ignition wiring (Stadler).** Next physical visit: verify the front-panel switch position by eye.
 
 **Data:** `/data/ignition-log/vign.csv` (live) + local copy `findings/ignition-log-4736-110/` (all scripts, unit files, `vign_4736-110_20260618.csv`). NDSU promote will roll the 3 unit files out of `/etc` (scripts on `/data` survive) — re-run RO-toggle install if that happens.
+
+---
+
+## Bench — box1-t122 @ 10.179.122.1 (4122, nv4 A-G-E-B)
+
+### 2026-07-04 — AR — Attempted manual 7.4.8 switch-firmware push; BLOCKED by consist TTCMP-critical interlock (fabric-level, not per-switch)
+
+**Goal:** push switch firmware 7.4.2→7.4.8 (workspace `switch/(NMID1143) VDS 28 port consist_FW_v7.4.8/`) on the bench to test whether it fixes the KON storm. **Outcome: could not flash any switch; the storm root cause (A1 bypass) blocks it, and 7.4.8 wouldn't fix it anyway.**
+
+**Firmware won't fix the storm (release-notes review):** 7.4.2→7.4.8 changelog has nothing addressing a bypass-induced consist-protocol loop. 7.4.7's `loop-guard` is RSTP-only (the cold-bypass relay is STP-invisible — the whole reason it storms). Root cause is physical (A1 cold-bypass), not firmware.
+
+**Chose "contain then push":** disabled G1 e0-0 (`no configure interface e0-0 enable`) → storm stopped (TTCMP Rx froze, Malformed KON +0, G1/E2 load 4-5→0.6). BUT containment fragmented the fabric to only **G1+E2+E3** reachable (A2/A3/G2/G3/E1/B1/B2 sit behind e0-0; A1/B3 are the original bypass). G1 can't be flashed (reboot re-enables e0-0 → re-arms storm). So only E2/E3 were candidates.
+
+**The blocker — manual `sysadmin load` refused fabric-wide:**
+- OBN skill path (`dosto-sw-firmware-update`) not viable: image not staged as OBN `.kad`, `rules.yaml` firmware target pinned to `7.4.2` (no-op), discovery unreliable. → went manual TFTP (`sysadmin load`).
+- Staged `ipart-ng.kad` (the `.kad` OS image; NOT the `.ksi`) → CCU `/data/auto-topology/ipart-ng-748.kad`, md5 `f9debf9d…` verified, TFTP self-serve OK.
+- **Trap 1:** first load URL used `tftp://10.179.122.1/…` — `.1` is bond0; switches reach the CCU only at vlan100 **`.129`**. Silent no-op (no RRQ). Fixed to `.129`.
+- **Trap 2 (the real finding):** with correct IP, `sysadmin load` (surfaced via `ssh -tt`) returns **`Warning: the system is busy processing a critical operation. Try again later.`** — no RRQ, nothing staged. **Proven fabric-level, not CPU:** E3 (load 2.9, storm-pinned) AND E2 (load 0.08, idle) BOTH refused identically. The "critical operation" is the **consist's unsettled TTCMP state** — a bypass-loop storm keeps it permanently mid-negotiation, and switches lock out firmware loads as a safety interlock. Containing the storm stops the flood but does NOT settle TTCMP → loads still refused.
+- Verified E3/E2 never pulled anything (zero `RRQ from .202/.201` in tftpd log across the whole session, image bank unchanged) → **switches untouched/safe, not mid-flash.**
+
+**Unifying conclusion:** partial `obn discover`, KON flood, snmpd restarts, AND refused firmware loads are all the **same A1-bypass root cause** keeping the consist "critical." No switch on this fabric will flash until A1 is physically restored / the loop removed so TTCMP settles. **The fix is A1, not firmware and not containment.**
+
+**End state:** containment reversed — G1 e0-0 re-enabled (`configure interface e0-0 enable`), back up 10G full, fabric restored as-found (storm will resume; that's the original condition). **7.4.8 image left staged** on CCU `/data/auto-topology/ipart-ng-748.kad` for a future clean session. Resume when A1 is restored: verify consist TTCMP settled (`show counters protocol ttcmp` quiet, switch load ~0), then `sysadmin load tftp://10.179.122.129/ipart-ng-748.kad` → `set default image <name-from-show-images>` → `sysadmin reboot`, leaf-first (E3→E2→…). New finding saved: memory `project_vds_sysadmin_load_blocked_by_ttcmp_critical` + runbook "VDS Switch Firmware Push — Manual `sysadmin load` Method".
+
+### 2026-07-04 — AR — "OBN isn't showing devices" traced to TTCMP/KON consist-protocol flood (same A1-bypass storm), NOT the coach-numbering bug
+
+**Presenting symptom:** `obn validate` showed only G1 numbered + 11 collapsed `7.7.7.7 / UNKNOWN (discovery incomplete)` rows, while `dhcp-lease-list` showed **10 switches leased and valid**. First read (mine) was the cold-bypass coach-numbering deletion bug (`findings/RD_obn_coach_numbering_bypass_downstate_2026-07-04.md`). **Wrong for this output** — corrected on inspecting `/tmp/discovery.json`.
+
+**What it actually was:**
+- The **patched engine is live and behaving correctly** (`report_dosto_neu.py` 19524 bytes, topology-anchored; `.orig-20260704` backup present). Its §7c discovery-completeness gate fired and marked unreached switches `UNKNOWN "discovery incomplete"` — deliberately **never false-DOWN**. Exactly as designed.
+- `/tmp/discovery.json` only held **4 switches** (a different partial set each `obn discover` — 4, then 3). Independent SNMPv3 (`snmpadmin`) probe of all 10 → **6/10 reachable this instant**, and the reachable set *shifts* between sweeps. So OBN can only report what a given sweep reached; the collapse is an **incomplete scan**, not lost switches.
+- Root cause of the shifting reachability: **a TTCMP/KON consist-management flood** — every switch log has 3000+ `KMkon: Malformed KON packet` + repeated `KMdev coldStart` → `snmpd`/`subXlldp.AgentX` **subagent restarts**. While a switch's snmpd is mid-restart it stops answering SNMP → the sweep misses it. `show counters protocol ttcmp` = 100k+ ANNOUNCEMENT Rx on backbone ports of *both* chain neighbours (G1 e0-0 520k+, A3 e0-1 580k+, climbing), Tx ~1.3k → flood arriving amplified from both directions = loop signature. This is the **consist-protocol face of the A1-cold-bypass multicast storm** already root-caused today ([[project_bench_4122_multicast_storm_e0_0]]).
+- RSTP is fine: single stable root = G1 (`a0:59:3a:d0:60:e0`), all reachable switches agree, no split-brain; e0-0/e0-1 live rate 0 Mbps between bursts (cumulative counters only). The fabric forwards; it's the mgmt plane that's saturated.
+
+**Verdict / next:** nothing wrong with OBN or the patch — the report is honestly reporting an incomplete scan over a flapping mgmt plane. The real fix is **physical**: restore A1 / fix A-car cabling so the bypass loop is gone (or the reversible `no configure interface e0-0 enable` containment on G1). Fast bench triage next time OBN under-scans: `show counters protocol ttcmp` + `show log | grep -c 'Malformed KON'` on any two switches *before* suspecting coach-numbering. Memories updated: [[project_bench_4122_multicast_storm_e0_0]] (consist-protocol fingerprint added), [[project_zabbix_phantom_port_down_snmp_subagent]] (storm named as upstream trigger + OBN impact).

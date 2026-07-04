@@ -1,6 +1,6 @@
 # DOSTO Bootstrap — Single-paste scaffold for the dosto-troubleshooting workspace
 
-**Generated:** 2026-07-04 07:22 UTC (by `scripts/regenerate_bootstrap.py`)
+**Generated:** 2026-07-04 21:38 UTC (by `scripts/regenerate_bootstrap.py`)
 **Scope:** Self-contained bootstrap for the DOSTO commissioning workspace. Paste this entire file into a fresh Claude Code session in an empty directory; Claude reads each STEP and creates every file with the exact content given. No git, no MCP-clone, no remote dependency.
 
 This file is **regenerated** from the live project tree — don't hand-edit. To update it:
@@ -983,7 +983,104 @@ Create `.claude/settings.local.json`:
       "Bash(awk '{print $5,$9}')",
       "Bash(python3 scripts/regenerate_bootstrap.py --check)",
       "Bash(python3 scripts/regenerate_bootstrap.py)",
-      "Bash(xargs -I{} sed -n '{}p' BOOTSTRAP_DOSTO_v1.md)"
+      "Bash(xargs -I{} sed -n '{}p' BOOTSTRAP_DOSTO_v1.md)",
+      "Bash(git -c user.name=\"Abbas Rizvi\" -c user.email=\"abbas.rizvi@nomadrail.com\" commit -q -F -)",
+      "Bash(git commit -q -m 'Add project status, phase plan, tasklists, and sysops ticket *)",
+      "Bash(ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.122.1 \"sudo obn validate 2>&1\")",
+      "Bash(ls .kb/evidence)",
+      "Bash(cat .kb/evidence/index.md)",
+      "Bash(tail -20 .kb/log.md)",
+      "Bash(ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 developer@10.179.122.1 \"echo UP\")",
+      "Bash(ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 developer@10.179.122.1 \"sudo md5sum /usr/share/obn/lib/report/report_dosto_neu.py; echo expected a01413d5d250816d2f6433bcc9cc1c8f\")",
+      "Bash(sed 's#.*/##')",
+      "Bash(git rev-list *)",
+      "Bash(awk '{print $9}')",
+      "Bash(python3 scripts/add_obsidian_shadows.py)",
+      "Bash(read p *)",
+      "Bash([ -f \"$p.md\" ])",
+      "Bash(python3 scripts/link_evidence_to_fleet.py)",
+      "Bash(ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=12 developer@10.179.122.1 'bash -s')",
+      "Bash(python3 scripts/gen_kb_source_stubs.py)",
+      "Bash(xargs cat)",
+      "Bash(python3 -m py_compile scripts/zbx_reconcile_bench_4122.py)",
+      "Bash(exit 1)",
+      "Bash(python3 scripts/zbx_reconcile_bench_4122.py)",
+      "Bash(python3 scripts/zbx_reconcile_bench_4122.py --commit)",
+      "Bash(ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.122.1 \"sudo zabbix_proxy -R config_cache_reload 2>&1 | head -2\")",
+      "Bash(ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.122.1 \"sudo systemctl restart zabbix-proxy && echo 'proxy restarted'\")",
+      "Bash(ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=20 developer@10.179.122.1 'bash -s')",
+      "Bash(ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.122.1 \"sudo zabbix_proxy -R config_cache_reload 2>&1 | head -1\")",
+      "Bash(ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.122.1 \"sudo systemctl restart zabbix-proxy && echo restarted\")",
+      "Bash(ssh -i openssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.122.1 \"sudo sed -n '191,235p' /usr/share/obn/lib/report/report.py\")",
+      "Read(//c/Users/AbbasRizvi/.claude/projects/C--Users-AbbasRizvi-Documents-dosto-troubleshooting/memory//**)",
+      "Read(//c/Users/AbbasRizvi/.claude/projects/C--Users-AbbasRizvi-Documents-dosto-troubleshooting/memory/**)",
+      "Bash(echo \"REBOOT_TRIGGERED exit=$?\")",
+      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=30 developer@10.179.122.1 ' *)",
+      "Bash(scp -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/dbc12 developer@10.179.122.1:/tmp/dbc12)",
+      "Bash(echo \"SCP exit=$?\")",
+      "Bash(ping -n 1 vmpuppet01.ovh2.21net.com)",
+      "Bash(curl -s -m 8 -w '|HTTP=%{http_code} TIME=%{time_total}s' http://__TRACKED_VAR__:9494/env?host=__TRACKED_VAR__)",
+      "Bash(curl -f -s -m 8 -d 'host=box1-t122.dostoneu-bench.21net.com&env=migration_mar5' -w '|HTTP=%{http_code} TIME=%{time_total}s' http://vmpuppet01.ovh2.21net.com:9494/env)",
+      "Bash(curl -s -m 8 -w '|HTTP=%{http_code}' http://vmpuppet01.ovh2.21net.com:9494/env?host=box1-t122.dostoneu-bench.21net.com)",
+      "Bash(ssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 admin21net@vmpuppet01.ovh2.21net.com ' *)",
+      "Bash(ssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 admin21net@vmrepo01.ovh2.21net.com ' *)",
+      "Bash(ssh -o StrictHostKeyChecking=no -o ConnectTimeout=20 admin21net@vmrepo01.ovh2.21net.com ' *)",
+      "Bash(ssh -o StrictHostKeyChecking=no -o ConnectTimeout=30 admin21net@vmpuppet01.ovh2.21net.com ' *)",
+      "Bash(ssh -o StrictHostKeyChecking=no -o ConnectTimeout=20 admin21net@vmpuppet01.ovh2.21net.com ' *)",
+      "Bash(ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -T git@git-nc.nomadrail.com)",
+      "Read(//c/Users/AbbasRizvi/**)",
+      "Bash(ssh -o StrictHostKeyChecking=no -o ConnectTimeout=40 admin21net@vmpuppet01.ovh2.21net.com ' *)",
+      "Bash(timeout 25 ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 developer@10.179.47.1 ' *)",
+      "Bash(scp -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn.py C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bugs67.py C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug8.py C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_obn_bug10_report_dosto_neu_bfs.py C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/scripts/fix_bug1_regex.py developer@10.179.122.1:/tmp/)",
+      "Bash(echo \"scp exit=$?\")",
+      "Bash(scp -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/findings/report_dosto_neu_PATCHED_2026-07-04.py developer@10.179.122.1:/tmp/report_dosto_neu_PATCHED.py)",
+      "Bash(ping -n 3 10.179.122.1)",
+      "Bash(timeout 8 bash -c 'cat < /dev/null > /dev/tcp/10.179.122.1/22')",
+      "Bash(echo \"reboot_triggered exit=$?\")",
+      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=180 developer@10.179.122.1 ' *)",
+      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=200 developer@10.179.122.1 ' *)",
+      "Bash(xargs grep -l \"discover\\\\|partial.*scan\")",
+      "Bash(ping -n 2 10.179.122.1)",
+      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=30 developer@10.179.122.1 'bash /tmp/check_clean.sh 2>/dev/null; pgrep -f \"bash /tmp/aside_push.sh\" && echo SCRIPT_ALIVE || echo SCRIPT_DEAD; echo \"---e0-0---\"; sshpass -p \"Nom@dCome1n\" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 -o UserKnownHostsFile=/dev/null -o KexAlgorithms=+diffie-hellman-group14-sha1,diffie-hellman-group1-sha1 -o HostKeyAlgorithms=+ssh-rsa,ssh-dss -o PubkeyAuthentication=no admin@10.179.122.200 \"show interface summary\" 2>/dev/null | grep \"e0-0\"; echo \"---EB---\"; for ip in 178 184 186 188 192 200; do ping -c1 -W1 10.179.122.$ip >/dev/null 2>&1 && printf \"UP:%s \" $ip || printf \"DN:%s \" $ip; done; echo \"\"')",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=30 developer@10.179.122.1 'ps aux 2>/dev/null | grep \"aside_push.sh\" | grep -v grep | grep bash | head -5; echo \"===count===\"; ps aux 2>/dev/null | grep \"aside_push.sh\" | grep -v grep | grep -c bash')",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.122.1 'sudo dhcp-lease-list 2>/dev/null | grep -iE \"A2-|A3-|G2-|G3-\" | awk \"{print \\\\$3, \\\\$2}\" | sort; echo \"---log tail---\"; tail -6 /tmp/aside2.log 2>/dev/null')",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.122.1 'sudo dhcp-lease-list 2>/dev/null | grep -iE \"A3-\" | awk \"{print \\\\$3, \\\\$2}\"; echo \"---log---\"; tail -5 /tmp/a3only.log 2>/dev/null')",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.122.1 'sudo dhcp-lease-list 2>/dev/null | grep -iE \"d0:52:20\" | awk \"{print \\\\$3, \\\\$2}\"; echo \"--log--\"; tail -4 /tmp/a3v2.log 2>/dev/null')",
+      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=150 developer@10.179.122.1 ' *)",
+      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=120 developer@10.179.122.1 ' *)",
+      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=90 developer@10.179.122.1 ' *)",
+      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=40 developer@10.179.122.1 ' *)",
+      "Bash(rm -f project_6040_nms_linkinfo_reboot_transient.md project_nms_gps_mqtt_bridge_topic_mismatch.md)",
+      "Bash(ls project_6040* project_nms_gps*)",
+      "Bash(ping -n 2 10.179.28.1)",
+      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.28.1 'sudo dhcp-lease-list 2>/dev/null | grep -Ei '\\\\''a0:59:3a|00:14:5a'\\\\'' | sort -t. -k4 -n; echo '\\\\''---LEASECOUNT---'\\\\''; sudo dhcp-lease-list 2>/dev/null | grep -Eci '\\\\''a0:59:3a|00:14:5a'\\\\''')",
+      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.28.1 'for ip in 178 179 180 182 183 185 186 187 188 190 191 192 193 194 204 208; do fping -c1 -t500 10.179.28.$ip 2>/dev/null | grep -o '\\\\''10.179.28.[0-9]* :.*'\\\\''; done; echo '\\\\''===APs==='\\\\''; for ip in 218 219 220 221 222 223 224 225 226 227 228 229 230 232 233 234 235 237 238; do fping -c1 -t500 10.179.28.$ip 2>/dev/null | grep -o '\\\\''10.179.28.[0-9]* :.*'\\\\''; done')",
+      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.28.1 'echo '\\\\''=== ping 7.7.7.7 ==='\\\\''; fping -c1 -t500 7.7.7.7 2>&1; echo '\\\\''=== C3/E2 leases \\(missing switches\\) ==='\\\\''; sudo dhcp-lease-list 2>/dev/null | grep -Ei '\\\\''C3-v8|E2-v8'\\\\''; echo '\\\\''=== full switch lease count ==='\\\\''; sudo dhcp-lease-list 2>/dev/null | grep -c '\\\\''a0:59:3a'\\\\''; echo '\\\\''=== AP count ==='\\\\''; sudo dhcp-lease-list 2>/dev/null | grep -c '\\\\''00:14:5a'\\\\''; echo '\\\\''=== zabbix proxy status ==='\\\\''; systemctl is-active zabbix-proxy 2>/dev/null')",
+      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.28.1 'for sw in 180 193 178 192; do echo \"===== 10.179.28.$sw LLDP neighbours =====\"; sshpass -p '\\\\''Nom@dCome1n'\\\\'' ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 -o KexAlgorithms=+diffie-hellman-group14-sha1,diffie-hellman-group1-sha1 -o HostKeyAlgorithms=+ssh-rsa,ssh-dss -o PubkeyAuthentication=no admin@10.179.28.$sw '\\\\''show lldp neighbours'\\\\'' 2>/dev/null; done')",
+      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.28.1 'echo '\\\\''=== C3 mac in arp/leases? ==='\\\\''; sudo dhcp-lease-list 2>/dev/null | grep -i '\\\\''d0:62:a0'\\\\''; ip neigh | grep -i '\\\\''d0:62:a0'\\\\''; *)",
+      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=20 developer@10.179.28.1 'echo '\\\\''=== nd-obn version ==='\\\\''; dpkg -l nd-obn 2>/dev/null | grep nd-obn | awk '\\\\''{print $3}'\\\\''; *)",
+      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=20 developer@10.179.28.1 ' *)",
+      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=25 developer@10.179.28.1 ' *)",
+      "Bash(ping -n 3 10.179.28.1)",
+      "Bash(timeout 90 ssh -i 'C:\\\\Users\\\\AbbasRizvi/.ssh/id_ed25519' -o StrictHostKeyChecking=no -o ConnectTimeout=15 -o BatchMode=yes admin21net@vmpuppet01.ovh2.21net.com ' *)",
+      "Bash(timeout 120 ssh -i 'C:\\\\Users\\\\AbbasRizvi/.ssh/id_ed25519' -o StrictHostKeyChecking=no -o ConnectTimeout=15 -o BatchMode=yes admin21net@vmpuppet01.ovh2.21net.com ' *)",
+      "Bash(timeout 60 ssh -i 'C:\\\\Users\\\\AbbasRizvi/.ssh/id_ed25519' -o StrictHostKeyChecking=no -o ConnectTimeout=15 -o BatchMode=yes admin21net@vmpuppet01.ovh2.21net.com ' *)",
+      "Bash(ping -n 1 -w 2000 10.179.28.1)",
+      "Bash(timeout 90 ssh -i 'C:\\\\Users\\\\AbbasRizvi/.ssh/id_ed25519' -o StrictHostKeyChecking=no -o ConnectTimeout=15 -o BatchMode=yes admin21net@vmrepo01.ovh2.21net.com ' *)",
+      "Bash(timeout 120 ssh -i 'C:\\\\Users\\\\AbbasRizvi/.ssh/id_ed25519' -o StrictHostKeyChecking=no -o ConnectTimeout=15 -o BatchMode=yes admin21net@vmrepo01.ovh2.21net.com ' *)",
+      "Bash(timeout 30 ssh -i 'C:\\\\Users\\\\AbbasRizvi/.ssh/id_ed25519' -o StrictHostKeyChecking=no -o ConnectTimeout=15 -o BatchMode=yes admin21net@vmrepo01.ovh2.21net.com 'rm -rf /tmp/ndr_x; echo cleaned')",
+      "Bash(timeout 180 ssh -i 'C:\\\\Users\\\\AbbasRizvi/.ssh/id_ed25519' -o StrictHostKeyChecking=no -o ConnectTimeout=15 -o BatchMode=yes admin21net@vmpuppet01.ovh2.21net.com ' *)",
+      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=25 developer@10.179.122.1 ' *)",
+      "Bash(ping -n 1 -w 2000 10.179.122.1)",
+      "Bash(ssh -i C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh -o StrictHostKeyChecking=no -o ConnectTimeout=20 developer@10.179.122.1 ' *)",
+      "Bash(GIT_SSH_COMMAND='ssh -i __TRACKED_VAR__ -o StrictHostKeyChecking=no' git ls-remote --heads git@git-nc.nomadrail.com:onboard/obn.git)",
+      "Bash(grep -c '^$' C:/Users/AbbasRizvi/.claude/projects/C--Users-AbbasRizvi-Documents-dosto-troubleshooting/memory/MEMORY.md)",
+      "Bash(xargs grep -l \"class CCUContext\")",
+      "Bash(python3 harness.py)",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.122.1 \"echo CONNECTED; whoami; hostname\")",
+      "Bash(ssh -i \"C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh\" -o StrictHostKeyChecking=no -o ConnectTimeout=15 developer@10.179.122.1 \"sudo find / -name 'report_dosto_neu.py' 2>/dev/null; echo '---BACKUPS---'; sudo find / -name 'report_dosto_neu.py.orig*' 2>/dev/null\")",
+      "Bash(PYTHONIOENCODING=utf-8 python3 coach_numbering_harness_2026-07-04.py)",
+      "Bash(python3 -c \"import ast; ast.parse\\(open\\('report_dosto_neu_MERGED_2026-07-04.py'\\).read\\(\\)\\); print\\('parses OK'\\)\")"
     ]
   }
 }
@@ -4572,6 +4669,8 @@ A missing switch is more severe than a missing AP because:
 
 ### Step 4b: Classify each missing switch — cold bypass vs cabling error (VDS-specific)
 
+**Precondition — confirm the mismatch is STABLE before classifying (2026-07-04, bench box1-t122).** A count mismatch is only an *absence* if the same switches are missing across repeated scans. There is a second failure mode that mimics it: a **management-plane flood** (TTCMP/KON consist-storm from a bypass loop) restarts switches' `snmpd`/`AgentX` subagents, so a *shifting* subset drops out of SNMP/discovery each sweep while the switches are physically fine and forwarding. If you run Step 4b against an intermittently-missing switch you'll read inconsistent LLDP and mis-classify. **Guard:** run `sudo obn discover` (or the DHCP+ICMP sweep) twice; if the *set* of missing switches changes between runs, do NOT classify — it's a scan-completeness problem. Confirm with `show counters protocol ttcmp` on any two switches (backbone-port ANNOUNCEMENT Rx in the 100k+ = loop re-flooding) and `show log | grep -c 'Malformed KON'` (thousands). That's the storm, not an absent switch — the fix is physical (restore the bypassed switch / fix cabling), not a per-switch classification. Only proceed to the LLDP classification below once the missing set is stable across scans. See CLAUDE.md pitfall "A collapsed OBN table has TWO distinct causes" + memory `project_bench_4122_multicast_storm_e0_0`.
+
 **Do this for every switch flagged missing in Step 4.** A missing switch is NOT necessarily a cabling fault. VDS Rail Consist Switches have **cold bypass**: when a switch is powered off or failed, its backbone trunk ports (`e0-0`/`e0-1`) are relay-passed-through, so its two chain-neighbours end up LLDP-adjacent to *each other* across the dead switch's position. This is indistinguishable from "switch removed and re-cabled" **unless you check the LLDP reciprocal.** (See memory `vds-switch-cold-bypass`; mis-called twice — Fzg 137 2026-06-12, bench A1 2026-07-04 — before the reciprocal check was formalised here.)
 
 OBN's own `number_coaches` walk (`report_dosto_neu.py`) has NO expected-topology model — it follows live LLDP only, so a bypass gap silently dead-ends the walk and `normalise_devices()` **deletes every device the walk couldn't reach past the gap**. They vanish from the report entirely rather than showing as "down." This step is where *our* tooling recovers the "switch DOWN" verdict OBN can't produce (Option 3, 2026-07-04 — the engine-side fix that would make OBN itself show a DOWN switch is a separate R&D ask).
@@ -6016,6 +6115,7 @@ Headline rules in the report:
 
 ## Pitfalls
 
+- **`vds_switches.count` must be the DISCOVERED count (from `dhcp-lease-list` via `dosto-l2-health`), never OBN's `obn report`/`validate` count.** OBN silently drops switches from its report when one is cold-bypassed (a mislabel dead-ends its coach-numbering walk and everything downstream is deleted — observed 2-of-12 on bench box1-t122, 2026-07-04). If a `findings.json` was ever populated from OBN's report instead of the DHCP sweep, the headline count can be a false low and the report will understate the consist. Cross-check against `dosto-device-discovery`'s discovered count; if they disagree, a bypass/mislabel is eating the difference — see CLAUDE.md pitfall and `findings/RD_obn_coach_numbering_bypass_downstate_2026-07-04.md`.
 - **Don't include the switch admin password in the report.** Ever. The methodology section can mention "admin SSH access", but never embed credentials.
 - **Don't include personal email addresses or IPs that aren't part of the agreed deliverable.** The CCU IP and switch IPs are fine; user emails are not.
 - **Verify Fzg. numbers.** A typo here annoys customer engineers immediately. Read it back to the user before generating if you're unsure.
@@ -11556,6 +11656,8 @@ A clean baseline lets you spot drift on the next visit. The Fzg. 146 baseline is
 - **Factory-config APs block OBN SNMP silently** — Westermo RT610LV APs shipped in factory config (`RT610LV-...-v1-FD`) use SNMP community `admin-community`, not `NomadStayOut!`. OBN prints "configuration update applied, device rebooting" regardless — it does not check the return value before printing. ICMP to the AP will work fine; only SNMP is silently dropped. Use the LuCI HTTP import method (see `troubleshooting-runbook.md` → "Westermo AP Config Push") to push the Nomad config when OBN SNMP fails. LuCI admin password on factory APs is `Nom@dCome1n`. After config apply, SSH CLI uses `nomad`/`NomadComeIn`.
 - **OBN canonical workflow is `discover → report → update/validate` — never skip `obn report`.** `obn update c` and `obn validate` both read from `discovery.prev.json` (the report snapshot), not `discovery.json` (raw scan output). This is by design — `obn report` commits the discovery scan into the stable snapshot that all subsequent OBN operations use. If you skip it: (a) `obn update c <ip>` finds an empty or stale device list → Python `all([]) = True` on an empty set → prints "Update not supported for readonly devices"; (b) `obn validate` shows an empty table. Always run `sudo obn discover && sudo obn report` before any `obn update` or `obn validate`. Confirmed 2026-05-12 on box1-t47 (Fzg 130).
 - **`obn validate` returns an empty table when `consist.yaml` is empty or `obn report` hasn't been run** — not a fault, just means the report snapshot is empty. Run `sudo obn discover && sudo obn report` first. If you need a quick ad-hoc view of device state without waiting for report, read `/tmp/discovery.json` directly: `sudo python3 -c "import json; [print(d['ip'], d.get('firmware'), d.get('config')) for d in json.load(open('/tmp/discovery.json'))['devices']]"`.
+- **A near-empty `obn validate`/`obn report` switch table on a consist you KNOW is larger = suspect a bypassed switch, NOT a small consist.** When a VDS switch is cold-bypassed (powered off, backbone relayed through it), OBN's coach-numbering walk mis-numbers the switch that moves into the gap, dead-ends, and `normalise_devices()` **silently deletes every switch it couldn't number** — including healthy, SNMP-reachable ones downstream of the gap. So OBN can report 2 switches when 10 are up and running (observed on bench box1-t122, 2026-07-04). This is a monitoring false-negative: the dropped switches aren't in the NMS report either, so nothing can alarm on them. **Always cross-check OBN's switch count against `dosto-device-discovery`'s discovered count (from `dhcp-lease-list`) — if discovery sees more switches than OBN's report shows, a bypass/mislabel is eating the difference.** `dosto-device-discovery` Step 4b classifies the bypassed switch (cold_bypass / dead_link / miscable) via reciprocal-LLDP. Root cause + validated engine fix (topology-anchored numbering + DOWN/UNPLACED rows, prototyped on the bench): `findings/RD_obn_coach_numbering_bypass_downstate_2026-07-04.md`.
+- **A collapsed OBN table has TWO distinct causes that look identical — disambiguate before acting.** Both present as "OBN shows far fewer switches than DHCP leases." (1) **Coach-numbering deletion** (previous bullet): the topology walk mis-numbers a switch and `normalise_devices()` drops the rest — dropped rows are gone or numbered-wrong. (2) **Incomplete discovery scan over a saturated management plane**: the switches are fine but a *shifting subset* is unreachable at scan time, so `obn discover` catches a different 4–6 of N each sweep and `obn validate` shows the unreached ones as `7.7.7.7 / UNKNOWN (not seen this scan (discovery incomplete))`. The tell for cause (2): re-run `sudo obn discover` twice — if the *reached* set changes between runs, it's a scan-completeness problem, not numbering. On the bench (box1-t122, 2026-07-04) the trigger was a **TTCMP/KON consist-management flood** from the A1-cold-bypass loop: every switch log fills with `KMkon: Malformed KON packet` + `KMdev coldStart` → `snmpd`/`AgentX` **subagent restarts**, and a switch mid-restart stops answering SNMP. **Fast triage before blaming coach-numbering:** on any two switches, `show counters protocol ttcmp` (backbone-port ANNOUNCEMENT Rx in the 100k+, Tx ~1.3k = a loop re-flooding from both directions) and `show log | grep -c 'Malformed KON'` (thousands). If both fire, it's the storm, not OBN — the patched engine is correctly reporting an incomplete scan (UNKNOWN, never false-DOWN). Fix is physical (restore the bypassed switch / fix cabling); reversible containment is `no configure interface e0-0 enable` on the root switch. Full RCA: fleet-journal Bench/box1-t122 entry + memory `project_bench_4122_multicast_storm_e0_0`.
 - **VDS switch CLI reboot command is NOT `reboot`, `reload`, or `system reboot`** — all rejected with "Error in command, param is X [wrong]". The correct reboot command is not yet confirmed from field testing. Check `.claude/switch_manual.txt` (full CLI reference) or ask Stadler. OBN's `vdsrail.py reboot()` uses SNMP reboot OID (value `3`) — the only confirmed reboot path from the CCU side. Confirmed 2026-05-12 on Fzg 130.
 - **`dosto-l2-health` script `08_e2e_probe.sh` has a hardcoded default FW IP `172.19.196.1`.** For any train where the vlan7 FW is not at that address, the script produces a false `path_broken`. Always pass the FW IP explicitly: `bash 08_e2e_probe.sh <ccu-ip> <fw-ip>`. Correct FW IP per train = `172.19.<128+Fzg//2>.1`. Confirmed 2026-05-12 on Fzg 130 (FW = `172.19.193.1`).
 
@@ -11607,6 +11709,8 @@ The project is organised into the following subfolders. Anything not listed here
 - `check_cabling.py`, `build_cable_tracker.py` — cabling validation and tracker generation.
 - `gen_report_108.py`, `generate_health_check_report.js`, `generate_report.js`, `generate_report_109.js` — report generators.
 - `push_ap_config.sh` / `push_all_aps.sh` / `push_remaining_aps.sh` / `apply_ap_configs.sh` — pushing Nomad config to factory-default APs via LuCI HTTP when OBN SNMP fails.
+- `zbx_reconcile.py` — fleet Zabbix interface-IP reconciler (DHCP drift). Joins live DHCP lease → Zabbix host by **MAC**. Explicit per-train enrolment; dry-run default, `--commit` to write. Fine for real trains (rare hardware swaps).
+- `zbx_reconcile_bench_4122.py` — **bench** Zabbix IP reconciler, **POSITION-keyed** (swap-safe: joins lease-hostname `4t-A3` → Zabbix `R1_SW3`, not MAC — bench switches get replaced). Switches only; skips no-lease positions (bypassed/absent). Dry-run default, `--commit` + then restart the CCU's `zabbix-proxy`. See memory `bench-4122-nms-two-layer-fix`.
 - `dbc12` — utility script.
 
 ### `findings/` — raw L2 health-check JSON output
@@ -12273,4 +12377,4 @@ That writes `BOOTSTRAP_DOSTO_v1.md` reflecting the current tree. Pass `--include
 ---
 
 
-*End of bootstrap — generated 2026-07-04 07:22 UTC from 31 files.*
+*End of bootstrap — generated 2026-07-04 21:38 UTC from 31 files.*

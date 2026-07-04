@@ -876,3 +876,45 @@ canvas.width = gridSize.width*scale;  canvas.height = gridSize.height*scale;
 Device coords come from the coach `position.bounds` (absolute) + percentage-relative child positions. House style = **625 grid-units per coach** (4-coach NV4 uses `gridSize.width 2500`, coaches at left 0/625/1250/1875, each `width:600 height:800 top:0`; 25px right + 50px bottom slack vs grid 2500×850). For the 2-coach bench, tighten `gridSize` to exactly bound the content: coaches span x:0–1225, y:0–800 → set `gridSize {width:1225, height:800}` (was 1250×850). Pushed 2026-06-04 as NV2 version `activatedOn 1780564811287`.
 
 Reference file: [`trackers/bench_2123_nv2_template.json`](trackers/bench_2123_nv2_template.json) — the validated 2-coach NV2 bench. NOTE: the live active version drifts past this file as new versions are POSTed; always GET the highest-`activatedOn` version before editing, don't start from the reference file.
+
+## VDS Switch Firmware Push — Manual `sysadmin load` Method (When OBN Can't)
+
+Push firmware to one VDS switch directly via its CLI, bypassing OBN. Use when OBN's push path is unavailable — image not staged in OBN's `.kad` form, `rules.yaml` firmware target pinned to the old version (would no-op as `already_at_target`), or discovery unreliable. Pairs with memory `project_manual_tftp_obn_bypass` and `project_vds_sysadmin_load_blocked_by_ttcmp_critical`.
+
+### The command sequence (from switch_manual.txt Ch.22, ~line 9559)
+
+```
+sysadmin load <URL>                    # pull the .kad image into the switch (non-destructive)
+sysadmin set default image <NAME>      # activate it; <NAME> = full name from `sysadmin show images`
+sysadmin reboot                        # required for it to take effect (prompts Y/N)
+```
+
+- **Valid URL schemes:** ftp, http, tftp, scp. On the bench, TFTP off the CCU: OBN's `tftpd-hpa` already serves `/data/auto-topology` on `:69`. Stage the `.kad` there.
+- **Artifact:** use the **`.kad`** OS-image file (e.g. `ipart-ng.kad`), NOT the `.ksi` — `.ksi` is only the switch's internal stored form (what `sysadmin show images` lists). For 7.4.2→7.4.8 (both >7.0.1) this is a normal partition flash; the `bigbang-a-ng.ksi` full-USB-reinstall path is only needed upgrading from <7.0.1 (release notes p1).
+- **`<NAME>`** for `set default image` is the full string from `sysadmin show images` after a successful load (e.g. `sw-std-ng_7.4.8-<build>.ksi`), not a bare version.
+- `sysadmin` subcommands work fine over one-shot SSH (`sysadmin show images` returns data). Use the CLAUDE.md legacy-SSH-into-switch snippet.
+
+### Trap 1 — use the vlan100 CCU IP, not `.1`
+
+The CCU's `10.179.122.**1**` is **bond0** (cellular side); switches on vlan100 reach the CCU only at its **vlan100 SVI, `10.179.122.129`** (`/25`). A load URL pointing at `.1` fails **silently** — the switch issues no RRQ and stages nothing. Always: `sysadmin load tftp://10.179.122.129/<file>.kad`. (Confirm the CCU vlan100 IP with `ip -br addr show vlan100`.)
+
+### Trap 2 — "system is busy processing a critical operation" = the CONSIST is unsettled, not the switch
+
+If `sysadmin load` returns exit 0 with **no output** over plain SSH, re-run with `ssh -tt` (PTY) to surface the real message. If it says:
+
+> `Warning: the system is busy processing a critical operation. Try again later.`
+
+…the switch is refusing the load because the **consist's TTCMP subsystem is in a critical/unsettled state** — a fabric-level safety interlock, **not** local CPU. Proven 2026-07-04 on bench box1-t122: a CPU-pinned switch (E3, load 2.9) AND a fully idle one (E2, load 0.08) both refused identically. An unsettled TTCMP state is exactly what a **bypass-loop storm** ([`project_bench_4122_multicast_storm_e0_0`]) creates and sustains. **Containing the storm (disable root e0-0) stops the flood but does NOT settle TTCMP → the interlock stays engaged → loads still refused.** The only thing that unblocks the flash is making the consist healthy: restore the bypassed switch (A1) / remove the loop so TTCMP reaches a confirmed state. Then any switch accepts the load.
+
+### Verify what actually happened (never trust exit 0)
+
+```bash
+# 1. Did the switch pull the file? (proof of a real transfer attempt)
+sudo journalctl --since '-5min' --no-pager | grep "RRQ from <switch-ip>"
+#    empty  = switch never started the transfer (wrong IP, or TTCMP-critical refusal) — switch UNTOUCHED, safe
+# 2. Is the new image staged in the bank?
+sshpass -p "$PW" ssh $SW_OPTS admin@<switch-ip> 'sysadmin show images'
+#    still only old .ksi = nothing loaded
+```
+
+No RRQ + unchanged image bank = the switch is safe/untouched (not mid-flash). Only after a confirmed RRQ + the new image appearing in `sysadmin show images` do you proceed to `set default image` + `reboot`.
