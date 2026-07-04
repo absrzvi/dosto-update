@@ -151,6 +151,16 @@ Prototype shortcuts to clean up when productionising (all cosmetic, all in-scope
 - `normalise_devices` is overridden in `DostoNeuReport` (base `report.py` untouched, so ace/ccjpa are unaffected) — fine to keep, or lift into the base with a per-report opt-in flag.
 - Prototype file (validated): committed alongside this doc as `findings/report_dosto_neu_PATCHED_2026-07-04.py`. Bench backup of the original kept in-snapshot at `report_dosto_neu.py.orig-20260704`.
 
+## 7c. Robustness rules (learned from a flaky-link false-alarm, 2026-07-04)
+
+First bench persist over-asserted: on an **incomplete discovery scan** (SNMP timeouts on the cellular link captured only 6 of 10 switches), the report labelled healthy-but-not-scanned switches `ABSENT`/`DOWN` — the *inverse* false-negative (false DOWN alarms), arguably worse than the original silent drop. Two rules were added and validated live on the bench:
+
+1. **DOWN requires positive bypass evidence.** A position is only asserted `DOWN` when its two expected neighbours are BOTH anchored AND LLDP-reciprocate across it (each sees the other on the port facing the missing position). Every other not-discovered position is **`UNKNOWN`** ("not discovered; no bypass evidence — verify power/SNMP"), never DOWN. Consequence: a **terminus** switch (single neighbour, e.g. B3) can't be proven bypassed from LLDP alone → it is UNKNOWN, not DOWN, on a full scan. (A real dead terminus needs port link-state — `dead_link` signature — which `discovery.json` doesn't carry; a proper fix would extend discovery to capture the neighbour's toward-terminus port link/err state.)
+
+2. **Discovery-completeness gate.** Before trusting any absence, compare discovered switch count to the **DHCP-lease count** (independent ground truth: distinct `a0:59:3a` MACs in `/var/lib/dhcp/dhcpd.leases`, deduped — matches `dhcp-lease-list`). If `discovered < leased`, emit a loud banner row (`⚠ DISCOVERY INCOMPLETE N/M switches scanned — re-run obn discover`) and mark ALL unseen positions `UNKNOWN`, never DOWN. Verified live: a forced 9/10 partial scan produced the banner + UNKNOWN rows, zero false DOWN.
+
+Productionization notes for these: the DHCP-lease count is a bench-simple ground truth; a fleet version might prefer the expected consist size (12/nv4, 18/nv6) or a Puppet-provided count. The lease-file parse counts all distinct historical MACs — fine for 2-min-lease benches, but a long-uptime CCU could retain a swapped-out switch's MAC; validate against `dhcp-lease-list` (current-only) if that becomes an issue.
+
 ## 8. Scope / risk
 
 - `report_dosto_neu.py` is shared-engine, CI-gated (653-test suite). This is a real algorithm change, not a hand-patch — must go through the normal MR + `make tag` release path, not a bench chroot.

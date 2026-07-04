@@ -95,6 +95,27 @@ class DostoNeuReport(Report):
                 if device.coach_number is not None and device.coach_number < 90:
                     device.coach_number += inc
 
+    # OUI of VDS Rail Consist Switches — used to count leased switches for the
+    # discovery-completeness gate.
+    _SWITCH_OUI = "a0:59:3a"
+    _LEASES_FILE = "/var/lib/dhcp/dhcpd.leases"
+
+    def _leased_switch_count(self):
+        """Count distinct VDS-switch MACs holding a current DHCP lease, as an
+        independent ground-truth for how many switches SHOULD be discoverable.
+        Returns None if the leases file can't be read (then the gate is skipped)."""
+        try:
+            import re
+            macs = set()
+            with open(self._LEASES_FILE) as fp:
+                for line in fp:
+                    m = re.search(r"hardware ethernet\s+([0-9a-fA-F:]+)", line)
+                    if m and m.group(1).lower().startswith(self._SWITCH_OUI):
+                        macs.add(m.group(1).lower())
+            return len(macs) or None
+        except (OSError, ValueError):
+            return None
+
     def _make_placeholder(self, pos, status, note, coach_of):
         """Synthetic Device row for an absent/unplaced position so it appears in the
         report instead of vanishing. Fields are stubbed so backbone_validate's
@@ -183,15 +204,67 @@ class DostoNeuReport(Report):
                 for sw in claimants:
                     sw.config = f"{(sw.config or sw.ip)} UNPLACED (duplicate claim on {pos})"
 
-        # Emit DOWN/ABSENT for expected positions with no validated claimant.
+        # Discovery-completeness gate: compare discovered switches to the DHCP-lease
+        # count. If discovery under-scanned (flaky link / SNMP timeouts), we CANNOT
+        # trust absence — every unseen position becomes UNKNOWN, never DOWN. A loud
+        # banner row tells the operator to re-run discover.
+        leased = self._leased_switch_count()
+        discovered = len(switches)
+        scan_incomplete = leased is not None and discovered < leased
+
+        # position -> anchored Device, for the reciprocal bypass test
+        anchored_dev = {}
+        for pos in anchored:
+            for sw in claims[pos]:
+                anchored_dev[pos] = sw
+
+        def bypass_reciprocal(pos):
+            """Positive cold-bypass evidence: pos's two expected neighbours are BOTH
+            anchored AND each LLDP-sees the other across pos's position, on the port
+            that faces pos. This is the only signature that justifies asserting DOWN."""
+            nb_ports = adj[pos]                     # {port: neighbour_pos}
+            npos = list(nb_ports.values())
+            if len(npos) != 2:
+                # terminus (single neighbour): bypass has nothing to reciprocate to.
+                # Require the single neighbour anchored AND its toward-pos port to have
+                # NO other switch LLDP-peer (dead end) — weaker, but positive-ish.
+                return False
+            L, R = npos
+            if L not in anchored_dev or R not in anchored_dev:
+                return False
+            dL, dR = anchored_dev[L], anchored_dev[R]
+            l_sees_r = any(_claimed_pos(by_mac.get(nb.get("mac")), coach_of) == R
+                           for nb in dL.neighbours if by_mac.get(nb.get("mac")))
+            r_sees_l = any(_claimed_pos(by_mac.get(nb.get("mac")), coach_of) == L
+                           for nb in dR.neighbours if by_mac.get(nb.get("mac")))
+            return l_sees_r and r_sees_l
+
         for pos in chain:
             if pos in anchored:
                 continue
-            neigh_anchored = [n for n in adj[pos].values() if n in anchored]
-            status = "DOWN" if neigh_anchored else "ABSENT"
-            note = ("localised via " + ",".join(neigh_anchored)) if neigh_anchored else "no anchored neighbour"
+            if scan_incomplete:
+                status, note = "UNKNOWN", "not seen this scan (discovery incomplete)"
+            elif bypass_reciprocal(pos):
+                Ls = ",".join(adj[pos].values())
+                status, note = "DOWN", f"cold-bypass confirmed (reciprocal via {Ls})"
+            else:
+                # absent but no positive bypass evidence — do NOT assert DOWN.
+                status, note = "UNKNOWN", "not discovered; no bypass evidence (verify power/SNMP)"
             ph = self._make_placeholder(pos, status, note, coach_of)
             self.device_instances[ph.mac] = ph
+
+        if scan_incomplete:
+            banner = self._make_placeholder(
+                "A1", "INCOMPLETE",
+                f"DISCOVERY INCOMPLETE: scanned {discovered}/{leased} switches "
+                f"(DHCP leases) — re-run 'obn discover'; absences below are UNKNOWN not DOWN",
+                coach_of,
+            )
+            banner.mac = "SCAN:INCOMPLETE"
+            banner.coach_number, banner.device_number = 0, 0
+            banner.config = (f"⚠ DISCOVERY INCOMPLETE {discovered}/{leased} switches scanned "
+                             f"— re-run obn discover")
+            self.device_instances[banner.mac] = banner
 
         # APs: same coach as the switch that hosts them (unchanged intent).
         for sw in switches:
