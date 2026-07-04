@@ -159,7 +159,9 @@ First bench persist over-asserted: on an **incomplete discovery scan** (SNMP tim
 
 2. **Discovery-completeness gate.** Before trusting any absence, compare discovered switch count to the **DHCP-lease count** (independent ground truth: distinct `a0:59:3a` MACs in `/var/lib/dhcp/dhcpd.leases`, deduped — matches `dhcp-lease-list`). If `discovered < leased`, emit a loud banner row (`⚠ DISCOVERY INCOMPLETE N/M switches scanned — re-run obn discover`) and mark ALL unseen positions `UNKNOWN`, never DOWN. Verified live: a forced 9/10 partial scan produced the banner + UNKNOWN rows, zero false DOWN.
 
-Productionization notes for these: the DHCP-lease count is a bench-simple ground truth; a fleet version might prefer the expected consist size (12/nv4, 18/nv6) or a Puppet-provided count. The lease-file parse counts all distinct historical MACs — fine for 2-min-lease benches, but a long-uptime CCU could retain a swapped-out switch's MAC; validate against `dhcp-lease-list` (current-only) if that becomes an issue.
+The completeness gate counts distinct **switch positions** (from `client-hostname` in `dhcpd.leases`, e.g. `4t-A3-...` → `A3`), **not MACs**. This is deliberate and load-bearing: `dhcpd.leases` accumulates expired lease records and never drops an old MAC, so a **hardware swap** (replacement unit, new MAC, same position/hostname) would make a MAC-count double-count that position permanently (10→11→…) and false-fire the INCOMPLETE banner forever. Position-counting is swap-stable and consistent with the rest of the algorithm's position-based identity. Verified against the real 1261-line bench leases file + a simulated A3 swap: MAC-count went 10→11 (wrong), position-count stayed 10 (correct).
+
+Productionization note: a fleet version might prefer the expected consist size (12/nv4, 18/nv6, minus known-absent positions) or a Puppet-provided count as the ground truth instead of the lease file. Also note a swap breaks **NMS/Zabbix** (hosts are MAC-joined) — the new MAC needs a Zabbix reconcile; that's pre-existing NMS behavior, outside this fix.
 
 ## 8. Scope / risk
 

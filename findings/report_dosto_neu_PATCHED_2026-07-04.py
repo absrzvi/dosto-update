@@ -95,24 +95,31 @@ class DostoNeuReport(Report):
                 if device.coach_number is not None and device.coach_number < 90:
                     device.coach_number += inc
 
-    # OUI of VDS Rail Consist Switches — used to count leased switches for the
-    # discovery-completeness gate.
-    _SWITCH_OUI = "a0:59:3a"
     _LEASES_FILE = "/var/lib/dhcp/dhcpd.leases"
 
     def _leased_switch_count(self):
-        """Count distinct VDS-switch MACs holding a current DHCP lease, as an
-        independent ground-truth for how many switches SHOULD be discoverable.
-        Returns None if the leases file can't be read (then the gate is skipped)."""
+        """Count distinct switch POSITIONS holding a DHCP lease, as an independent
+        ground-truth for how many switches SHOULD be discoverable.
+
+        Counts distinct position-bearing client-hostnames (e.g. '4t-A3-...', 'nv4-A3-...'
+        -> position 'A3'), NOT MACs. Positions are stable across a hardware SWAP (the
+        replacement unit leases under the same hostname); MACs are not — counting MACs
+        would double-count a swapped position forever, because dhcpd.leases accumulates
+        expired lease records and the old MAC never leaves the file. Position-counting
+        is also consistent with how the rest of this algorithm identifies switches.
+
+        Returns None if the leases file can't be read (gate is then skipped)."""
         try:
             import re
-            macs = set()
-            with open(self._LEASES_FILE) as fp:
-                for line in fp:
-                    m = re.search(r"hardware ethernet\s+([0-9a-fA-F:]+)", line)
-                    if m and m.group(1).lower().startswith(self._SWITCH_OUI):
-                        macs.add(m.group(1).lower())
-            return len(macs) or None
+            positions = set()
+            for line in open(self._LEASES_FILE):
+                m = re.search(r'client-hostname\s+"([^"]+)"', line)
+                if not m:
+                    continue
+                parts = m.group(1).split("-")
+                if len(parts) > 1 and len(parts[1]) == 2 and parts[1][0].upper() in "ABEGCDF":
+                    positions.add(parts[1].upper())
+            return len(positions) or None
         except (OSError, ValueError):
             return None
 
