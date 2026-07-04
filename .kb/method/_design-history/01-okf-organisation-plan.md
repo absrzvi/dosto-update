@@ -196,4 +196,3 @@ Before writing any frontmatter, we confirm no consumer breaks:
 - Non-md assets (PDFs, docx, scripts) remain in place but become **discoverable through the knowledge layer** via `resource:` links.
 - Fully **reversible**: every change is either a prepended YAML block or a brand-new `index.md`/`log.md`. `git revert` restores the pre-OKF state exactly.
 ```
-

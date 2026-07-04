@@ -31,3 +31,6 @@ design freeze/
 *.tar.gz
 # Slides working dir (heavy PDF/docx build artifacts)
 .frontend-slides/
+
+# Obsidian per-vault UI state (machine-local)
+.obsidian/
