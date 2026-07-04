@@ -113,6 +113,7 @@ Headline rules in the report:
 
 ## Pitfalls
 
+- **`vds_switches.count` must be the DISCOVERED count (from `dhcp-lease-list` via `dosto-l2-health`), never OBN's `obn report`/`validate` count.** OBN silently drops switches from its report when one is cold-bypassed (a mislabel dead-ends its coach-numbering walk and everything downstream is deleted — observed 2-of-12 on bench box1-t122, 2026-07-04). If a `findings.json` was ever populated from OBN's report instead of the DHCP sweep, the headline count can be a false low and the report will understate the consist. Cross-check against `dosto-device-discovery`'s discovered count; if they disagree, a bypass/mislabel is eating the difference — see CLAUDE.md pitfall and `findings/RD_obn_coach_numbering_bypass_downstate_2026-07-04.md`.
 - **Don't include the switch admin password in the report.** Ever. The methodology section can mention "admin SSH access", but never embed credentials.
 - **Don't include personal email addresses or IPs that aren't part of the agreed deliverable.** The CCU IP and switch IPs are fine; user emails are not.
 - **Verify Fzg. numbers.** A typo here annoys customer engineers immediately. Read it back to the user before generating if you're unsure.
