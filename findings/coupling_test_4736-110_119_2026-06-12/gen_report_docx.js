@@ -36,13 +36,13 @@ function table(widths, rows){
 const children = [
   new Paragraph({ alignment: AlignmentType.CENTER, spacing:{ after: 60 }, children:[ new TextRun({ text: "Coupled-Train Network Test Report", bold: true, size: 40 }) ] }),
   new Paragraph({ alignment: AlignmentType.CENTER, spacing:{ after: 60 }, children:[ new TextRun({ text: "OBB DOSTO 4736-110 (Fzg 138) + 4736-119 (Fzg 147)", size: 26 }) ] }),
-  new Paragraph({ alignment: AlignmentType.CENTER, spacing:{ after: 240 }, children:[ new TextRun({ text: "Test date: 2026-06-12  |  Nomad Digital  |  Prepared for: VDS Rail Support and OBB / Stadler  |  v1.0", size: 20, color: "555555" }) ] }),
+  new Paragraph({ alignment: AlignmentType.CENTER, spacing:{ after: 240 }, children:[ new TextRun({ text: "Test date: 2026-06-12  |  Nomad Digital  |  Prepared for: VDS Rail Support and OBB / Stadler  |  v1.1 (port-cost finding corrected per VDS; diameter computed)", size: 20, color: "555555" }) ] }),
 
   h1("1. Executive Summary"),
   p("On 2026-06-12 Nomad Digital performed a controlled coupling test of two 6-car DOSTO units (36 consist switches combined) to reproduce the multicast storm observed on a coupled pair in early June, and to evaluate the RSTP max-age concern raised by VDS support. Key outcomes:"),
   num("No broadcast storm occurred. RSTP converged to a single root with the redundant coupler link correctly blocked."),
-  num("A continuous RSTP topology-change (TC) condition was found: every switch in both trains flushed its MAC tables approximately every 2 seconds. It was traced to the coupler ports' configured port-cost values (137,999,999 / 146,999,999 - both above 2^27) and stopped immediately when the cost was set to 20,000. We ask VDS to confirm whether port-cost values above 2^27 = 134,217,728 overflow an internal representation (Finding F3)."),
-  num("The max-age concern is confirmed as a real risk: the merged network operated 14-16 hops from the root against the default 20-hop BPDU horizon. Root placement between the two priority-0 bridges is decided by MAC tie-break, i.e. not guaranteed (Finding F2)."),
+  num("A continuous RSTP topology-change (TC) condition was found: every switch in both trains flushed its MAC tables approximately every 2 seconds. It was traced to the active coupler link, whose two ends carried mismatched administratively-configured port-costs (137,999,999 on the 138 end / 146,999,999 on the 147 end), and stopped immediately when both ends were set to 20,000. VDS has since confirmed these values are within the supported range (up to 200,000,000, stored in uint32) and do not overflow; the asymmetry between the two ends of the point-to-point link is the suspected driver of the unresolving designated-role negotiation (Finding F3)."),
+  num("The max-age concern is confirmed as a real and immediate risk: the merged network operated at a measured diameter of 31 hops, with the far extremity (F2-147) sitting at exactly 20 hops from the root - on the default 20-hop BPDU horizon, with effectively no margin. Root placement between the two priority-0 bridges is decided by MAC tie-break, i.e. not guaranteed (Finding F2)."),
   num("User-visible failures occurred while coupled: blank CCTV panels on the cab HMI, passenger displays reverting to the OBB logo (ZFR unreachable), and high perceived latency - while the switch fabric itself was healthy and lightly loaded. Evidence points at the interaction of the two consists' firewall-routed VLANs when VLAN 5 is bridged directly across the coupler (Finding F6). We ask Stadler to review the intended inter-consist CCTV design."),
   num("One consist switch (nv6-C2-v8-147, coach C of 4736-119) lost power mid-day and was bypassed by its hardware relays; coach C cameras and access points were down from that moment (Finding F4)."),
   num("After physical decoupling, at least two coupler links remained electrically alive and flapping, repeatedly re-merging the two networks. Link state must be verified after any decoupling (Finding F5)."),
@@ -63,11 +63,14 @@ const children = [
   h2("F1 - Convergence was correct"),
   p("All 36 switches agreed on a single root (priority 0, a0:59:3a:d0:59:20 = nv6-D1-v8-138). The redundant coupler link was blocked exactly as designed (B3-147 e0-2 ALTERNATE/BLOCKING). All four coupler ports showed zero CRC and zero carrier-false errors. Byte counters reconciled across both link pairs, confirming the cross-wired cabling map."),
 
-  h2("F2 - Max-age operating margin (VDS advisory confirmed as a risk)"),
-  p("Worst observed root path cost was 28,000 = 14 hops (A3-147), with the far extremity of 4736-119 at approximately 15-16 hops against the 20-hop default max-age horizon. The margin existed only because the elected root happened to sit near the centre of the merged chain - each train carries a priority-0 bridge and the MAC tie-break decides which wins. An unfavourable election places the far end beyond the BPDU horizon, partitioning the tree and unblocking the redundant coupler link: a genuine L2 loop. A 3 x 6-car composition (54 switches) exceeds the protocol's 40-node design limit entirely."),
-  p(b("Recommendation: "), "raise forward-delay to 20 first, then max-age to 38, on all switches (the firmware correctly enforces 2 x (ForwardDelay - 1) >= MaxAge, so the order matters). This covers all 2-train compositions regardless of root placement."),
+  h2("F2 - Max-age operating margin (VDS advisory confirmed as a real risk)"),
+  p("Root path costs harvested from all switches (root = nv6-D1-v8-138, cost 0; 2,000 cost units per 10G hop) give the true operating geometry of the merged fabric. The root sat near the centre of train 138, so that consist's far extremity (B1-138) was only 11 hops out. The far consist, reached across the coupler, was much deeper: its extremity nv6-F2-v8-147 measured a root path cost of 40,000 = exactly 20 hops - sitting precisely on the default 20-hop max-age BPDU horizon. The end-to-end network diameter (extremity of 138 to extremity of 147) was therefore 11 + 20 = 31 hops."),
+  p("This is a worse position than a margin estimate would suggest: the composition was not comfortably inside the horizon, it was at it. The fabric stayed converged only because the message-age increment had not quite tipped a far-end port to discard. The margin exists at all only because the elected root happened to fall near the centre of the merged chain - each train carries a priority-0 bridge and the MAC tie-break decides which wins. An unfavourable election, or any added depth, pushes the far end past the horizon, partitions the tree, unblocks the redundant coupler link and closes a genuine L2 loop."),
+  p(b("Worst-case evaluation (requested by VDS): "), "the supported max-age ceiling is 38 (the firmware enforces 2 x (ForwardDelay - 1) >= MaxAge). max-age 38 gives an effective BPDU reach of roughly 36 hops, which covers the measured 31-hop diameter of a 2 x 18 composition with usable margin. A 3 x 18 composition would add a further ~18-20 hops of diameter (roughly 50 hops total), exceeding even max-age 38 and the ~40-node ring guidance from VDS; we read this as no supported RSTP topology for 3-unit multi-traction."),
+  p(b("Recommendation: "), "raise forward-delay to 20 first, then max-age to 38, on all switches (order matters - the firmware rejects max-age 38 at the default forward-delay 15). This covers all 2-train compositions regardless of root placement. It does not make 3-train compositions viable."),
+  p(b("Separate physical anomaly found in the same data: "), "two switches on 4736-119 (nv6-B3-v8-147 and nv6-F3-v8-147) reported root path costs of 414,100 and 418,100 - each consistent with one sub-10G (approximately 100 Mbps Fast-Ethernet) link in its path to the root, rather than the expected 10G backbone. This is an inter-coach or intra-coach link running degraded and is unrelated to the coupler; it is logged for cabling/SFP inspection."),
 
-  h2("F3 - Continuous topology-change condition, root-caused to coupler port-cost values"),
+  h2("F3 - Continuous topology-change condition, root-caused to asymmetric coupler port-cost"),
   p("With debug logging enabled, every switch in both trains logged a TC arrival plus \"Flushing all entries\" approximately every 2 seconds, continuously. A solo control train of the same fleet and firmware showed zero such events over the same observation method. The origin was the active coupler link: both ends repeatedly exchanged designated proposals within the same second - a role negotiation that never settled:"),
   ...code([
     "nv6-B1-v8-147 (active coupler port e0-2):",
@@ -82,7 +85,7 @@ const children = [
     "  03:40:22  e0-0 sending Tc",
   ]),
   p(""),
-  p("The coupler ports carried administratively configured port-cost values of 137,999,999 (B3-138) and 146,999,999 (B1-147). Setting the active link's cost to 20,000 at both ends stopped the condition at the exact second of the change - the TC/flush event count froze and never advanced again:"),
+  p("The two ends of the active coupler link carried different administratively configured port-cost values: 137,999,999 on the 138 end (B3-138) and 146,999,999 on the 147 end (B1-147). Setting both ends to 20,000 stopped the condition at the exact second of the change - the TC/flush event count froze and never advanced again:"),
   ...code([
     "nv6-B3-v8-138 log:",
     "  03:52:44  e0-2 Changing PortCost to: 20000     <- last TC-related event in the log",
@@ -90,7 +93,7 @@ const children = [
     "   redundant link still ALTERNATE/BLOCKING)",
   ]),
   p(""),
-  p(b("Question for VDS: "), "both original values exceed 2^27 = 134,217,728. Does the firmware store RSTP port cost in fewer than 32 bits, so that values above 2^27 overflow or truncate and cause the two ends to disagree on path cost? Until clarified, we will keep coupler port costs below 2^27 in our templates. We also ask VDS to confirm that BPDUs are exempt from the port broadcast rate-limit feature."),
+  p(b("VDS response (confirmed): "), "port-cost values up to 200,000,000 are supported and stored in a uint32, so the configured values do not overflow. The rate-limit feature does not apply to management packets, so BPDUs are exempt. This refutes the overflow hypothesis. The remaining open question is therefore narrower: on a point-to-point coupler link, can large but unequal port-costs on the two ends sustain the continuous designated-role re-negotiation observed here? We will standardise symmetric, sane coupler port-costs (20,000) in our templates regardless, which is already shown to stop the condition."),
   p("Operational impact of the condition while it was active: a fleet-wide MAC-table flush every 2 seconds converts forwarded unicast into flooded unicast across 36 switches. Combined with IGMP snooping being disabled (so the ~3,000 pps of VLAN-5 camera multicast floods all ports by design), the fabric ran in a permanently degraded flood state - a credible precursor to the storm observed in June."),
 
   h2("F4 - Consist switch failure during the test (4736-119, coach C)"),
@@ -139,7 +142,7 @@ const children = [
     ["Time", "Event"],
     ["~09:55", "RSTP/coupled debug logging enabled on cab switches and root bridges (later extended to all 36)."],
     ["~10:00", "Trains coupled, B-end to B-end. Convergence correct (F1)."],
-    ["10:02-10:20", "Full STP sweep: single root, 14-16 hop radius (F2). Continuous TC churn discovered on all switches (F3)."],
+    ["10:02-10:20", "Full STP sweep: single root, 31-hop diameter, far end at 20 hops / on the max-age horizon (F2). Continuous TC churn discovered on all switches (F3)."],
     ["~10:30", "nv6-C2-v8-147 found dead / hardware-bypassed (F4); was alive at 10:02."],
     ["10:32", "Port-cost experiment: active coupler link set to 20,000 - TC churn stops at the same second (F3)."],
     ["10:37-10:40", "First short VLAN-5 prune test (2.5 min) - no visible change on HMI."],
@@ -151,10 +154,9 @@ const children = [
 
   h1("5. Recommendations"),
   h2("For VDS Rail"),
-  num("Confirm or refute the port-cost width question (values above 2^27) - Finding F3, log evidence attached."),
-  num("Confirm BPDUs bypass the broadcast rate-limit feature on trunk ports."),
-  num("Review the max-age guidance for 2 x 18-switch compositions; we plan forward-delay 20 / max-age 38. Please confirm there is no supported topology for 3 x 18 switches under RSTP."),
-  num("Review the attached RSTP debug traces for any further anomalies."),
+  num("Port-cost width and BPDU rate-limit exemption: answered by VDS (no overflow; BPDUs exempt) - now closed. Remaining question: whether unequal port-costs across a point-to-point link can sustain the role re-negotiation seen in F3."),
+  num("Max-age: measured diameter is 31 hops for 2 x 18; we will apply forward-delay 20 / max-age 38 (effective reach ~36 hops). Please sanity-check this against the worst-case evaluation in F2, and confirm 3 x 18 (~50 hops) has no supported RSTP topology."),
+  num("Review the attached RSTP debug traces for any further anomalies, once the known configuration mismatches (coupler native-VLAN, addressing) are corrected and the test re-run."),
   h2("For OBB / Stadler"),
   num("Physical inspection of consist switch nv6-C2 (coach C) of 4736-119 - lost power during the test; coach C cameras and APs down."),
   num("Coupler cable/contact inspection on this pair - links remained electrically alive and flapping after decoupling."),
@@ -199,6 +201,6 @@ const doc = new Document({
 });
 
 Packer.toBuffer(doc).then(buf => {
-  fs.writeFileSync("DOSTO_Coupled_Train_Test_Report_2026-06-12_v1.0.docx", buf);
+  fs.writeFileSync("DOSTO_Coupled_Train_Test_Report_2026-06-12_v1.1.docx", buf);
   console.log("written");
 });

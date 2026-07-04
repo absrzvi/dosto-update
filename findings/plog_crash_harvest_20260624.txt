@@ -1,0 +1,412 @@
+######## TRAIN 6001  CCU 10.179.1.1 ########
+=== 10.179.1.178 : 1 crash-signature lines ===
+Jan  1 08:05:34 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.8.5]
+Jan  1 08:35:26 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.8.35]
+Jan  1 00:44:19 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.0.44]
+=== 10.179.1.179 : 1 crash-signature lines ===
+Jan  1 01:09:43 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.1.9]
+Jan  1 01:40:47 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.1.40]
+Jan  1 00:01:01 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.0.1]
+=== 10.179.1.180 : 1 crash-signature lines ===
+Jan  1 00:44:19 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.0.44]
+=== 10.179.1.181 : 1 crash-signature lines ===
+Jan  1 00:01:48 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.0.1]
+Jan  1 00:01:40 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.0.1]
+Jan  1 00:44:19 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.0.44]
+=== 10.179.1.182 : 1 crash-signature lines ===
+Jan  1 01:29:46 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.1.29]
+Jan  1 00:44:15 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.0.44]
+=== 10.179.1.183 : 1 crash-signature lines ===
+Jan  1 00:02:01 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.0.2]
+Jan  1 00:02:04 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.0.2]
+Jan  1 00:00:59 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.0.1]
+=== 10.179.1.184 : 1 crash-signature lines ===
+Jan  1 00:44:20 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.0.44]
+=== 10.179.1.185 : 4 crash-signature lines ===
+Jan  1 00:01:35 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (1) [0.0.1]
+Jan  1 00:01:38 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.0.1]
+Jan  1 00:00:58 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.0.0]
+Jan  1 00:46:00 SW-Std KMdiag: The "snmpd" agent has been restarted (3) [0.0.45]
+Jan  1 00:11:08 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (2) [0.0.11]
+Jan  1 00:12:13 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (3) [0.0.12]
+Jan  1 00:44:19 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.0.44]
+--- 10.179.1.186 : clean (1 plog lines) ---
+=== 10.179.1.187 : 1 crash-signature lines ===
+Jan  1 01:12:41 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.1.12]
+Jan  1 00:44:20 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.0.44]
+=== 10.179.1.188 : 3 crash-signature lines ===
+Jan  1 00:47:04 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.0.47]
+Jan  1 00:48:54 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.0.48]
+Jan  1 00:52:44 SW-Std KMdiag: The "snmpd" agent has been restarted (3) [0.0.52]
+Jan  1 00:44:20 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.0.44]
+Jan  1 00:25:38 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (1) [0.0.25]
+Jan  1 00:51:34 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (2) [0.0.51]
+--- 10.179.1.189 : clean (3 plog lines) ---
+=== 10.179.1.190 : 1 crash-signature lines ===
+Jan  1 00:44:19 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.0.44]
+=== 10.179.1.191 : 2 crash-signature lines ===
+Jan  1 00:01:26 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.0.1]
+Jan  1 00:35:47 SW-Std KMdiag: The "subXlldp.AgentX" agent has been restarted (1) [0.0.35]
+Jan  1 00:35:48 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.0.35]
+Jan  1 00:44:19 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.0.44]
+=== 10.179.1.192 : 1 crash-signature lines ===
+Jan  1 00:44:19 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.0.44]
+=== 10.179.1.193 : 1 crash-signature lines ===
+Jan  1 01:07:07 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.1.7]
+Jan  1 01:13:47 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.1.13]
+Jan  1 01:22:12 SW-Std KMdiag: The "snmpd" agent has been restarted (3) [0.1.22]
+Jan  1 00:44:20 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.0.44]
+--- 10.179.1.194 : clean (1 plog lines) ---
+=== 10.179.1.195 : 1 crash-signature lines ===
+Jan  1 00:44:19 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.0.44]
+######## TRAIN 6010  CCU 10.179.10.1 ########
+=== 10.179.10.178 : 1 crash-signature lines ===
+Jan  1 00:27:48 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.0.27]
+Jan  1 04:20:58 SW-Std KMdiag: The "subXlldp.AgentX" agent has been restarted (1) [0.4.20]
+Jan  1 04:21:00 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.4.20]
+Jan  1 01:42:37 SW-Std KMdiag: The "snmpd" agent has been restarted (3) [0.1.42]
+=== 10.179.10.179 : 5 crash-signature lines ===
+Jan  1 09:27:53 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.9.27]
+Jan  1 09:27:53 SW-Std KMdiag: The "subXlldp.AgentX" agent has been restarted (1) [0.9.27]
+Jan  1 01:08:16 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.1.8]
+Jan  1 01:14:31 SW-Std KMdiag: The "snmpd" agent has been restarted (3) [0.1.14]
+Jan  1 01:14:31 SW-Std KMdiag: The "subXlldp.AgentX" agent has been restarted (2) [0.1.14]
+Jan  1 02:33:22 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (1) [0.2.33]
+Jan  1 04:15:51 SW-Std KMdiag: The "subXlldp.AgentX" agent has been restarted (3) [0.4.15]
+Jan  1 04:45:54 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (2) [0.4.45]
+--- 10.179.10.180 : clean (1 plog lines) ---
+=== 10.179.10.181 : 1 crash-signature lines ===
+Jan  1 01:37:45 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.1.37]
+Jan  1 01:37:45 SW-Std KMdiag: The "subXlldp.AgentX" agent has been restarted (1) [0.1.37]
+Jan  1 01:53:16 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.1.53]
+=== 10.179.10.182 : 1 crash-signature lines ===
+Jan  1 02:36:47 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.2.36]
+Jan  1 02:36:47 SW-Std KMdiag: The "subXlldp.AgentX" agent has been restarted (1) [0.2.36]
+=== 10.179.10.183 : 2 crash-signature lines ===
+Jan  1 04:08:58 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.4.8]
+Jan  1 04:14:08 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.4.14]
+Jan  1 06:29:00 SW-Std KMdiag: The "snmpd" agent has been restarted (3) [0.6.28]
+Jan  1 01:19:56 SW-Std KMdiag: The "subXlldp.AgentX" agent has been restarted (1) [0.1.19]
+Jan  1 02:04:41 SW-Std KMdiag: The "subXlldp.AgentX" agent has been restarted (2) [0.2.4]
+=== 10.179.10.184 : 7 crash-signature lines ===
+Jan  1 00:01:31 SW-Std SWcore: The "KMttcmp" module has been restarted (1) [0.0.1]
+Jan  1 03:17:40 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.3.17]
+Jan  1 03:22:41 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.3.22]
+Jan  1 03:27:42 SW-Std KMdiag: The "snmpd" agent has been restarted (3) [0.3.27]
+Jan  1 00:58:21 SW-Std KMdiag: The "subXlldp.AgentX" agent has been restarted (1) [0.0.58]
+Jan  1 01:13:30 SW-Std KMdiag: The "subXlldp.AgentX" agent has been restarted (2) [0.1.13]
+Jan  1 01:28:17 SW-Std KMdiag: The "subXlldp.AgentX" agent has been restarted (3) [0.1.28]
+Jan  1 01:53:13 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (1) [0.1.53]
+Jan  1 02:17:55 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (2) [0.2.17]
+Jan  1 02:22:54 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (3) [0.2.22]
+=== 10.179.10.185 : 1 crash-signature lines ===
+Jan  1 09:35:51 SW-Std KMdiag: The "subXlldp.AgentX" agent has been restarted (1) [0.9.35]
+Jan  1 09:36:00 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.9.36]
+Jan  1 00:55:31 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.0.55]
+--- 10.179.10.186 : clean (1 plog lines) ---
+--- 10.179.10.187 : clean (1 plog lines) ---
+=== 10.179.10.188 : 3 crash-signature lines ===
+Jan  1 03:08:37 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.3.8]
+Jan  1 03:13:37 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.3.13]
+Jan  1 03:58:02 SW-Std KMdiag: The "snmpd" agent has been restarted (3) [0.3.58]
+Jan  1 01:03:43 SW-Std KMdiag: The "subXlldp.AgentX" agent has been restarted (1) [0.1.3]
+Jan  1 01:33:46 SW-Std KMdiag: The "subXlldp.AgentX" agent has been restarted (2) [0.1.33]
+Jan  1 02:03:29 SW-Std KMdiag: The "subXlldp.AgentX" agent has been restarted (3) [0.2.3]
+--- 10.179.10.189 : clean (1 plog lines) ---
+--- 10.179.10.190 : clean (1 plog lines) ---
+--- 10.179.10.191 : clean (1 plog lines) ---
+--- 10.179.10.192 : clean (1 plog lines) ---
+=== 10.179.10.193 : 1 crash-signature lines ===
+Jan  1 04:06:10 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.4.6]
+Jan  1 04:21:12 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.4.21]
+Jan  1 00:01:38 SW-Std KMdiag: The "snmpd" agent has been restarted (3) [0.0.1]
+Jan  1 00:40:24 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (1) [0.0.40]
+=== 10.179.10.194 : 4 crash-signature lines ===
+Jan  1 03:08:26 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.3.8]
+Jan  1 03:13:26 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.3.13]
+Jan  1 03:53:30 SW-Std KMdiag: The "snmpd" agent has been restarted (3) [0.3.53]
+Jan  1 01:08:46 SW-Std KMdiag: The "subXlldp.AgentX" agent has been restarted (1) [0.1.8]
+Jan  1 02:18:54 SW-Std KMdiag: The "subXlldp.AgentX" agent has been restarted (2) [0.2.18]
+Jan  1 04:20:58 SW-Std KMdiag: The "subXlldp.AgentX" agent has been restarted (3) [0.4.20]
+Jan  1 04:46:19 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (1) [0.4.46]
+=== 10.179.10.195 : 2 crash-signature lines ===
+Jan  1 01:56:38 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.1.56]
+Jan  1 00:00:51 SW-Std KMdiag: The "subXmon.AgentX" agent has been restarted (1) [0.0.0]
+Jan  1 00:00:51 SW-Std KMdiag: The "subXbridge.AgentX" agent has been restarted (1) [0.0.0]
+Jan  1 00:00:58 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.0.0]
+######## TRAIN 6015  CCU 10.179.15.1 ########
+--- 10.179.15.178 : clean (1 plog lines) ---
+--- 10.179.15.179 : clean (1 plog lines) ---
+--- 10.179.15.180 : clean (1 plog lines) ---
+--- 10.179.15.181 : clean (1 plog lines) ---
+--- 10.179.15.182 : clean (1 plog lines) ---
+--- 10.179.15.183 : clean (1 plog lines) ---
+--- 10.179.15.184 : clean (1 plog lines) ---
+--- 10.179.15.185 : clean (1 plog lines) ---
+--- 10.179.15.186 : clean (1 plog lines) ---
+--- 10.179.15.187 : clean (1 plog lines) ---
+--- 10.179.15.188 : clean (1 plog lines) ---
+--- 10.179.15.189 : clean (1 plog lines) ---
+--- 10.179.15.190 : clean (1 plog lines) ---
+--- 10.179.15.191 : clean (1 plog lines) ---
+--- 10.179.15.192 : clean (1 plog lines) ---
+--- 10.179.15.193 : clean (1 plog lines) ---
+=== 10.179.15.194 : 2 crash-signature lines ===
+Jan  1 00:01:00 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.0.0]
+Jan  1 04:00:28 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (1) [0.4.0]
+Jan  1 04:00:29 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.4.0]
+Jan  1 04:09:30 SW-Std KMdiag: The "snmpd" agent has been restarted (3) [0.4.9]
+Jan  1 04:09:30 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (2) [0.4.9]
+--- 10.179.15.195 : clean (1 plog lines) ---
+######## TRAIN 6047  CCU 10.179.47.1 ########
+--- 10.179.47.178 : clean (1 plog lines) ---
+=== 10.179.47.179 : 3 crash-signature lines ===
+Jan  1 02:02:43 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.2.2]
+Jan  1 02:12:43 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.2.12]
+Jan  1 02:32:55 SW-Std KMdiag: The "snmpd" agent has been restarted (3) [0.2.32]
+Jan  1 03:35:11 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (1) [0.3.35]
+Jan  1 04:57:34 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (2) [0.4.57]
+Jan  1 00:09:14 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (3) [0.0.9]
+--- 10.179.47.180 : clean (1 plog lines) ---
+=== 10.179.47.181 : 3 crash-signature lines ===
+Jan  1 00:19:14 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (1) [0.0.19]
+Jan  1 00:19:16 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.0.19]
+Jan  1 01:40:02 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.1.40]
+Jan  1 02:08:34 SW-Std KMdiag: The "snmpd" agent has been restarted (3) [0.2.8]
+Jan  1 03:06:56 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (2) [0.3.6]
+Jan  1 03:42:00 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (3) [0.3.42]
+--- 10.179.47.182 : clean (1 plog lines) ---
+--- 10.179.47.183 : clean (1 plog lines) ---
+=== 10.179.47.184 : 1 crash-signature lines ===
+Jan  1 00:01:20 SW-Std SWcore: The "KMroute" module has been restarted (1) [0.0.1]
+--- 10.179.47.185 : clean (1 plog lines) ---
+--- 10.179.47.186 : clean (3 plog lines) ---
+=== 10.179.47.187 : 1 crash-signature lines ===
+Jan  1 01:43:22 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.1.43]
+Jan  1 01:47:13 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.1.47]
+Jan  1 01:49:23 SW-Std KMdiag: The "snmpd" agent has been restarted (3) [0.1.49]
+Jan  1 02:27:18 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (1) [0.2.27]
+--- 10.179.47.188 : clean (1 plog lines) ---
+=== 10.179.47.189 : 4 crash-signature lines ===
+Jan  1 00:00:33 SW-Std KMdiag: The "subXbridge.AgentX" agent has been restarted (1) [0.0.0]
+Jan  1 00:00:22 SW-Std SWcore: The "KMiogw" module has been restarted (1) [0.0.0]
+Jan  1 07:42:51 SW-Std SWcore: The "KMmon" module has been restarted (1) [0.7.42]
+Jan  1 00:01:09 SW-Std SWcore: The "KMconf" module has been restarted (1) [0.0.1]
+--- 10.179.47.190 : clean (1 plog lines) ---
+=== 10.179.47.191 : 1 crash-signature lines ===
+Jan  1 00:00:37 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (1) [0.0.0]
+=== 10.179.47.192 : 1 crash-signature lines ===
+Jan  1 02:18:27 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.2.18]
+Jan  1 02:21:27 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.2.21]
+Jan  1 02:25:18 SW-Std KMdiag: The "snmpd" agent has been restarted (3) [0.2.25]
+Jan  1 02:44:12 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (1) [0.2.44]
+--- 10.179.47.193 : clean (1 plog lines) ---
+--- 10.179.47.194 : clean (1 plog lines) ---
+--- 10.179.47.195 : clean (3 plog lines) ---
+######## TRAIN 6040  CCU 10.179.40.1 ########
+--- 10.179.40.178 : clean (0 plog lines) ---
+--- 10.179.40.179 : clean (0 plog lines) ---
+--- 10.179.40.181 : clean (0 plog lines) ---
+--- 10.179.40.182 : clean (0 plog lines) ---
+--- 10.179.40.183 : clean (0 plog lines) ---
+--- 10.179.40.185 : clean (0 plog lines) ---
+--- 10.179.40.186 : clean (0 plog lines) ---
+--- 10.179.40.187 : clean (0 plog lines) ---
+--- 10.179.40.188 : clean (0 plog lines) ---
+--- 10.179.40.189 : clean (0 plog lines) ---
+--- 10.179.40.190 : clean (0 plog lines) ---
+--- 10.179.40.191 : clean (0 plog lines) ---
+--- 10.179.40.192 : clean (0 plog lines) ---
+--- 10.179.40.193 : clean (0 plog lines) ---
+--- 10.179.40.194 : clean (0 plog lines) ---
+--- 10.179.40.195 : clean (0 plog lines) ---
+--- 10.179.40.196 : clean (0 plog lines) ---
+--- 10.179.40.197 : clean (0 plog lines) ---
+######## TRAIN 6021  CCU 10.179.21.1 ########
+=== 10.179.21.178 : 1 crash-signature lines ===
+Jan  1 00:33:20 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.0.33]
+Jan  1 00:33:22 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (1) [0.0.33]
+--- 10.179.21.179 : clean (1 plog lines) ---
+--- 10.179.21.180 : clean (1 plog lines) ---
+=== 10.179.21.181 : 1 crash-signature lines ===
+Jan  1 00:00:33 SW-Std KMdiag: The "subXtrdp.AgentX" agent has been restarted (1) [0.0.0]
+=== 10.179.21.182 : 4 crash-signature lines ===
+Jan  1 05:10:42 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.5.10]
+Jan  1 05:26:52 SW-Std SWcore: The "KMkon" module has been restarted (2) [0.5.26]
+Jan  1 00:04:19 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.0.4]
+Jan  1 00:04:23 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (1) [0.0.4]
+Jan  1 00:09:31 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.0.9]
+Jan  1 00:09:35 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (2) [0.0.9]
+Jan  1 00:35:42 SW-Std KMdiag: The "snmpd" agent has been restarted (3) [0.0.35]
+--- 10.179.21.183 : clean (1 plog lines) ---
+=== 10.179.21.184 : 1 crash-signature lines ===
+Jan  1 05:49:12 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.5.49]
+=== 10.179.21.185 : 1 crash-signature lines ===
+Jan  1 05:49:11 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.5.49]
+=== 10.179.21.186 : 1 crash-signature lines ===
+Jan  1 01:28:30 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.1.28]
+Jan  1 06:17:55 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.6.17]
+Jan  1 06:31:55 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.6.31]
+Jan  1 07:10:57 SW-Std KMdiag: The "snmpd" agent has been restarted (3) [0.7.10]
+--- 10.179.21.187 : clean (1 plog lines) ---
+=== 10.179.21.188 : 1 crash-signature lines ===
+Jan  1 05:10:41 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.5.10]
+--- 10.179.21.189 : clean (3 plog lines) ---
+=== 10.179.21.190 : 1 crash-signature lines ===
+Jan  1 05:10:41 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.5.10]
+--- 10.179.21.191 : clean (1 plog lines) ---
+=== 10.179.21.192 : 2 crash-signature lines ===
+Jan  1 01:28:31 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.1.28]
+Jan  1 00:31:48 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (1) [0.0.31]
+Jan  1 00:31:50 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.0.31]
+--- 10.179.21.193 : clean (1 plog lines) ---
+--- 10.179.21.194 : clean (1 plog lines) ---
+--- 10.179.21.195 : clean (1 plog lines) ---
+######## TRAIN 6023  CCU 10.179.23.1 ########
+=== 10.179.23.178 : 4 crash-signature lines ===
+Jan  1 06:55:03 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.6.55]
+Jan  1 02:38:30 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.2.38]
+Jan  1 03:03:10 SW-Std SWcore: The "KMkon" module has been restarted (2) [0.3.3]
+Jan  1 03:07:12 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.3.7]
+Jan  1 06:15:21 SW-Std SWcore: The "KMkon" module has been restarted (3) [0.6.15]
+Jan  1 00:07:41 SW-Std KMdiag: The "snmpd" agent has been restarted (3) [0.0.7]
+Jan  1 00:07:41 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (1) [0.0.7]
+=== 10.179.23.179 : 5 crash-signature lines ===
+Jan  1 00:55:08 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (1) [0.0.55]
+Jan  1 00:55:12 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.0.55]
+Jan  1 02:38:22 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.2.38]
+Jan  1 04:01:52 SW-Std SWcore: The "KMkon" module has been restarted (2) [0.4.1]
+Jan  1 05:23:33 SW-Std SWcore: The "KMkon" module has been restarted (3) [0.5.23]
+Jan  1 02:49:33 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.2.49]
+Jan  1 01:33:20 SW-Std KMdiag: The "subXlldp.AgentX" agent has been restarted (1) [0.1.33]
+Jan  1 01:33:25 SW-Std KMdiag: The "snmpd" agent has been restarted (3) [0.1.33]
+=== 10.179.23.180 : 6 crash-signature lines ===
+Jan  1 00:00:58 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.0.0]
+Jan  1 00:44:41 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.0.44]
+Jan  1 06:19:20 SW-Std KMdiag: The "subXlldp.AgentX" agent has been restarted (1) [0.6.19]
+Jan  1 06:19:22 SW-Std KMdiag: The "snmpd" agent has been restarted (3) [0.6.19]
+Jan  1 06:34:16 SW-Std KMdiag: The "subXlldp.AgentX" agent has been restarted (2) [0.6.34]
+Jan  1 06:59:07 SW-Std KMdiag: The "subXlldp.AgentX" agent has been restarted (3) [0.6.59]
+Jan  1 02:38:30 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.2.38]
+Jan  1 04:16:50 SW-Std SWcore: The "KMkon" module has been restarted (2) [0.4.16]
+Jan  1 06:03:21 SW-Std SWcore: The "KMkon" module has been restarted (3) [0.6.3]
+=== 10.179.23.181 : 4 crash-signature lines ===
+Jan  1 00:56:00 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (1) [0.0.56]
+Jan  1 00:56:02 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.0.56]
+Jan  1 02:38:31 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.2.38]
+Jan  1 03:24:51 SW-Std SWcore: The "KMkon" module has been restarted (2) [0.3.24]
+Jan  1 05:54:02 SW-Std SWcore: The "KMkon" module has been restarted (3) [0.5.54]
+=== 10.179.23.182 : 6 crash-signature lines ===
+Jan  1 00:01:46 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (1) [0.0.1]
+Jan  1 04:24:52 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.4.24]
+Jan  1 04:24:52 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (2) [0.4.24]
+Jan  1 00:47:42 SW-Std SWcore: The "KMttcmp" module has been restarted (1) [0.0.47]
+Jan  1 01:05:33 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (3) [0.1.5]
+Jan  1 01:05:42 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.1.5]
+Jan  1 01:28:50 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.1.28]
+Jan  1 00:00:40 SW-Std SWcore: The "KMdev" module has been restarted (1) [0.0.0]
+Jan  1 06:27:17 SW-Std KMdiag: The "snmpd" agent has been restarted (3) [0.6.27]
+=== 10.179.23.183 : 3 crash-signature lines ===
+Jan  1 00:54:03 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.0.54]
+Jan  1 02:38:31 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.2.38]
+Jan  1 05:25:11 SW-Std SWcore: The "KMkon" module has been restarted (2) [0.5.25]
+Jan  1 00:18:57 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (1) [0.0.18]
+Jan  1 00:18:59 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.0.19]
+=== 10.179.23.185 : 4 crash-signature lines ===
+Jan  1 00:00:56 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.0.0]
+Jan  1 03:20:21 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.3.20]
+Jan  1 08:07:53 SW-Std SWcore: The "KMkon" module has been restarted (2) [0.8.7]
+Jan  1 08:09:53 SW-Std SWcore: The "KMkon" module has been restarted (3) [0.8.9]
+Jan  1 01:28:44 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.1.28]
+Jan  1 01:54:52 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.1.54]
+=== 10.179.23.186 : 9 crash-signature lines ===
+Jan  1 06:14:05 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.6.14]
+Jan  1 06:14:06 SW-Std KMdiag: The "subXlldp.AgentX" agent has been restarted (1) [0.6.14]
+Jan  1 06:49:17 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.6.49]
+Jan  1 06:49:17 SW-Std KMdiag: The "subXlldp.AgentX" agent has been restarted (2) [0.6.49]
+Jan  1 07:04:17 SW-Std KMdiag: The "snmpd" agent has been restarted (3) [0.7.4]
+Jan  1 07:04:17 SW-Std KMdiag: The "subXlldp.AgentX" agent has been restarted (3) [0.7.4]
+Jan  1 01:02:15 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (1) [0.1.2]
+Jan  1 02:38:30 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.2.38]
+Jan  1 03:20:20 SW-Std SWcore: The "KMkon" module has been restarted (2) [0.3.20]
+Jan  1 03:53:20 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (2) [0.3.53]
+Jan  1 04:04:05 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (3) [0.4.4]
+Jan  1 04:16:50 SW-Std SWcore: The "KMkon" module has been restarted (3) [0.4.16]
+=== 10.179.23.187 : 8 crash-signature lines ===
+Jan  1 06:14:09 SW-Std KMdiag: The "subXlldp.AgentX" agent has been restarted (1) [0.6.14]
+Jan  1 06:14:12 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.6.14]
+Jan  1 06:19:11 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.6.19]
+Jan  1 06:19:11 SW-Std KMdiag: The "subXlldp.AgentX" agent has been restarted (2) [0.6.19]
+Jan  1 06:29:10 SW-Std KMdiag: The "snmpd" agent has been restarted (3) [0.6.29]
+Jan  1 06:29:10 SW-Std KMdiag: The "subXlldp.AgentX" agent has been restarted (3) [0.6.29]
+Jan  1 01:00:06 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (1) [0.1.0]
+Jan  1 01:01:02 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (2) [0.1.1]
+Jan  1 01:02:05 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (3) [0.1.2]
+Jan  1 04:16:50 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.4.16]
+Jan  1 06:01:51 SW-Std SWcore: The "KMkon" module has been restarted (2) [0.6.1]
+=== 10.179.23.189 : 4 crash-signature lines ===
+Jan  1 00:47:17 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (1) [0.0.47]
+Jan  1 00:47:22 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.0.47]
+Jan  1 02:38:30 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.2.38]
+Jan  1 03:03:10 SW-Std SWcore: The "KMkon" module has been restarted (2) [0.3.3]
+Jan  1 06:11:51 SW-Std SWcore: The "KMkon" module has been restarted (3) [0.6.11]
+=== 10.179.23.190 : 3 crash-signature lines ===
+Jan  1 00:28:10 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.0.28]
+Jan  1 02:54:21 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.2.54]
+Jan  1 03:24:51 SW-Std SWcore: The "KMkon" module has been restarted (2) [0.3.24]
+Jan  1 05:23:32 SW-Std SWcore: The "KMkon" module has been restarted (3) [0.5.23]
+=== 10.179.23.191 : 3 crash-signature lines ===
+Jan  1 02:38:31 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.2.38]
+Jan  1 03:20:21 SW-Std SWcore: The "KMkon" module has been restarted (2) [0.3.20]
+Jan  1 03:24:51 SW-Std SWcore: The "KMkon" module has been restarted (3) [0.3.24]
+=== 10.179.23.194 : 3 crash-signature lines ===
+Jan  1 00:54:33 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.0.54]
+Jan  1 02:38:31 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.2.38]
+Jan  1 05:47:42 SW-Std SWcore: The "KMkon" module has been restarted (2) [0.5.47]
+Jan  1 06:27:22 SW-Std SWcore: The "KMkon" module has been restarted (3) [0.6.27]
+=== 10.179.23.195 : 9 crash-signature lines ===
+Jan  1 06:19:17 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.6.19]
+Jan  1 06:19:17 SW-Std KMdiag: The "subXlldp.AgentX" agent has been restarted (1) [0.6.19]
+Jan  1 06:34:15 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.6.34]
+Jan  1 06:34:15 SW-Std KMdiag: The "subXlldp.AgentX" agent has been restarted (2) [0.6.34]
+Jan  1 00:28:44 SW-Std KMdiag: The "snmpd" agent has been restarted (3) [0.0.28]
+Jan  1 00:50:22 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (1) [0.0.50]
+Jan  1 03:23:34 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (2) [0.3.23]
+Jan  1 03:30:24 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (3) [0.3.30]
+Jan  1 04:01:52 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.4.1]
+Jan  1 05:57:13 SW-Std SWcore: The "KMkon" module has been restarted (2) [0.5.57]
+Jan  1 06:47:03 SW-Std SWcore: The "KMkon" module has been restarted (3) [0.6.47]
+Jan  1 01:28:49 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.1.28]
+=== 10.179.23.198 : 4 crash-signature lines ===
+Jan  1 00:47:58 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (1) [0.0.47]
+Jan  1 00:48:02 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.0.48]
+Jan  1 02:38:31 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.2.38]
+Jan  1 03:24:51 SW-Std SWcore: The "KMkon" module has been restarted (2) [0.3.24]
+Jan  1 05:47:42 SW-Std SWcore: The "KMkon" module has been restarted (3) [0.5.47]
+=== 10.179.23.200 : 5 crash-signature lines ===
+Jan  1 06:55:26 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.6.55]
+Jan  1 06:55:26 SW-Std KMdiag: The "subXlldp.AgentX" agent has been restarted (1) [0.6.55]
+Jan  1 02:38:30 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.2.38]
+Jan  1 04:01:50 SW-Std SWcore: The "KMkon" module has been restarted (2) [0.4.1]
+Jan  1 04:26:20 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (1) [0.4.26]
+Jan  1 04:26:22 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.4.26]
+Jan  1 04:46:33 SW-Std KMdiag: The "snmpd" agent has been restarted (3) [0.4.46]
+Jan  1 05:23:31 SW-Std SWcore: The "KMkon" module has been restarted (3) [0.5.23]
+=== 10.179.23.202 : 6 crash-signature lines ===
+Jan  1 06:40:32 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.6.40]
+Jan  1 07:10:25 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.7.10]
+Jan  1 07:10:25 SW-Std KMdiag: The "subXlldp.AgentX" agent has been restarted (1) [0.7.10]
+Jan  1 02:38:30 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.2.38]
+Jan  1 07:36:21 SW-Std SWcore: The "KMkon" module has been restarted (2) [0.7.36]
+Jan  1 00:15:11 SW-Std KMdiag: The "snmpd" agent has been restarted (3) [0.0.15]
+Jan  1 00:15:14 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (1) [0.0.15]
+Jan  1 01:04:31 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (2) [0.1.4]
+Jan  1 01:28:40 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.1.28]
+=== 10.179.23.205 : 4 crash-signature lines ===
+Jan  1 00:48:31 SW-Std KMdiag: The "subXifMib.AgentX" agent has been restarted (1) [0.0.48]
+Jan  1 00:48:35 SW-Std KMdiag: The "snmpd" agent has been restarted (1) [0.0.48]
+Jan  1 02:38:31 SW-Std SWcore: The "KMkon" module has been restarted (1) [0.2.38]
+Jan  1 02:54:21 SW-Std SWcore: The "KMkon" module has been restarted (2) [0.2.54]
+Jan  1 03:02:45 SW-Std KMdiag: The "snmpd" agent has been restarted (2) [0.3.2]
+Jan  1 05:04:42 SW-Std SWcore: The "KMkon" module has been restarted (3) [0.5.4]
+Jan  1 00:06:10 SW-Std KMdiag: The "snmpd" agent has been restarted (3) [0.0.6]

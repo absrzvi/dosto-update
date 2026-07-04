@@ -1,0 +1,30 @@
+{
+  "register": "FW_DRIFT — Vendor firmware-coupling fragility",
+  "baseline": "origin/master (clone at .tmp/gitlab-repos/obn/src)",
+  "date": "2026-06-27",
+  "author": "Abbas Rizvi",
+  "origin": "Product complaint: a vendor firmware update can change the very information OBN has hardcoded to recognise/manage that device, breaking support silently. This register characterises that coupling. It is the vendor-version surface of the same root cause as the ONBOARD register (no expectation-vs-reality reconciliation, no fail-loud seam).",
+  "summary": "OBN's device-support layer is pinned to a single firmware snapshot per device. Recognition (MAC OUI, model/revision strings), access (SNMP OIDs, auth protocol, creds), and parsing (version-string regex, MIB tree shape, band/radio ordering) are hardcoded in vendors.yaml and the lib/device/vendor/*.py classes. There is ZERO firmware-version-aware logic anywhere in the device layer and ZERO drift detection — a vendor firmware change has no seam to absorb it and fails silently at runtime. Tests pin the snapshot but cannot detect drift (new strings pass CI, break production). The code admits the recurrence twice in comments.",
+  "key_findings": {
+    "no_version_gating": "No `if firmware >= X`, no version parsing for branching, no LooseVersion/StrictVersion anywhere in the vendor classes. Every class is version-agnostic by construction.",
+    "tests_pin_not_detect": "Vendor tests assert KNOWN model strings / version formats (test_westermo pins '6.9.5-RC0' and ('RT-610-LV EU','RT-610'); test_eltec_cybox pins CyBoxAP->'1'). New firmware shipping a new string passes CI and breaks production — green tests, broken field.",
+    "self_admitted": "vendors.yaml:441-442 'It happens more often than not that Eltec changes the revision without informing Nomad, so this list requires regular TLC.' and vsc7429.py:134 error codes 'prone to change between firmware versions'."
+  },
+  "coupling_surfaces": [
+    { "id": "FWD-1", "surface": "version-string regex", "changes_on": "format of the firmware/status string", "failure": "regex returns None → silent 'unknown' or None.group() crash", "anchor": "extreme.py:137 r'(Version(.*).MIB)'; vdsrail.py:81 r'Not running. System Firmware image loaded \\[(.*)\\]' (field bug 1)", "severity": "HIGH" },
+    { "id": "FWD-2", "surface": "model/revision → generation maps", "changes_on": "new hardware/model string on a firmware or HW rev", "failure": "unknown model → wrong or no driver behaviour, silent", "anchor": "vendors.yaml:444-473 hardware_revision_map ('requires regular TLC'); eltec_cybox.py:105 platform={...}", "severity": "HIGH" },
+    { "id": "FWD-3", "surface": "MIB structure / ASCII-encoded OIDs", "changes_on": "OID tree, index depth, encoded command OIDs", "failure": "SNMP get/walk returns nothing or wrong node → silent", "anchor": "vendors.yaml:290-318 (…6.114.101.98.111.111.116 = 'reboot'); vdsrail.py:153 (?:\\.[0-9]+){16} fixed nesting", "severity": "MED" },
+    { "id": "FWD-4", "surface": "band / radio ordering", "changes_on": "adding 6 GHz, reordering wlan0/wlan1", "failure": "wrong band counted/configured", "anchor": "vendors.yaml:609-611 ('6Ghz Support??'); bssid_mapping blocks", "severity": "MED" },
+    { "id": "FWD-5", "surface": "CLI output parsing", "changes_on": "CLI text format (firmware often re-words output)", "failure": "regex miss → empty result", "anchor": "extreme.py:299 LLDP 'show lldp neighbors' parse", "severity": "MED" },
+    { "id": "FWD-6", "surface": "SNMP auth / protocol", "changes_on": "v2c→v3, MD5/DES→SHA/AES, cred change", "failure": "auth failure → device 'disappears'", "anchor": "vendors.yaml snmp_older_priv_protocol (moxa), snmp_v2c (trendnet), snmp_older_protocols (extreme)", "severity": "MED" },
+    { "id": "FWD-7", "surface": "MAC OUI prefixes", "changes_on": "new OUI block on a new hardware batch", "failure": "find_brand returns None → device skipped ENTIRELY", "anchor": "vendors.yaml per-vendor mac_prefixes; walker.py:39 'no vendor specific configuration - skipping'", "severity": "MED" }
+  ],
+  "remediations": [
+    "FW-R1 (highest leverage, cheapest) — Drift detection in CI: a scheduled job that SNMP-walks a reference device per vendor (or a captured MIB snapshot) and asserts the hardcoded OIDs/model-strings still resolve. Turns silent field failure into a CI alert before a train. No production change.",
+    "FW-R2 — Defensive parsing + explicit 'Unrecognized' state: every version/model regex on miss returns a typed Unrecognized(raw) that propagates to validate/report as an explicit flag, never a silent None/'unknown'. Folds into the None-crash workstream.",
+    "FW-R3 — Fallback chains for model/revision maps: hardware_revision_map and platform={} get a documented 'unknown rev → safest default + warn' path instead of dropping the device.",
+    "FW-R4 — Full per-brand MIB-surface contract test: capture the whole expected OID surface per vendor (not just one OID) so drift in any hardcoded value fails CI, not only the few currently asserted.",
+    "FW-R5 (strategic, larger) — Externalise the snapshot: vendor support is hardcoded imports + a do-not-edit YAML, so every drift = core code change + .deb release. A versioned vendor-capability descriptor (per firmware range) decouples 'OBN release' from 'vendor firmware support'. Roadmap item, not a quick fix."
+  ],
+  "verdict_bearing": "Does not change the IMPROVE verdict — all remediations are in-place hardening (CI job + defensive parsing + fallback), no rewrite. FW-R5 is the only design-level item and is optional/strategic. The complaint is legitimate but addresses a maintenance-process and defensive-coding gap, not a structural reason to replace OBN."
+}

@@ -1,0 +1,173 @@
+{
+  "register": "ONBOARD — OBN device onboarding & prestaging fragility sweep",
+  "baseline": "origin/master (clone at .tmp/gitlab-repos/obn/src/usr/share/obn)",
+  "date": "2026-06-27",
+  "author": "Abbas Rizvi",
+  "scope": "Failure modes in OBN's device ONBOARDING (recognise + manage) and PRESTAGING (the human/network/CCU-image preconditions OBN assumes) paths. The vendor-firmware-DRIFT theme is tracked separately (FW_DRIFT) and is deliberately EXCLUDED here so the two themes don't double-count; both are instances of the same root pattern (no expectation-vs-reality reconciliation, no fail-loud seam).",
+  "method": "Two multi-agent sweeps (6 + 2 hunters), each finding adversarially verified against source. Run 1: identity/state/push/security surfaces (10 confirmed, 5 refuted, 1 needs-runtime). Run 2 (re-verify of the surfaces run-1 could not reach before a token limit): topology + prestage (9 confirmed, 1 refuted). Refuted/placeholder candidates excluded from the confirmed list below.",
+  "unifying_root_cause": "OBN's onboarding/prestaging path has no expectation-vs-reality reconciliation and no fail-loud seam. It enrols whatever answers on the network, numbers whatever LLDP it walks, pushes whatever the rules/templates say, and reports success regardless — so a wrong precondition (mis-image, miscable, foreign/coupled consist, stale snapshot, transient SNMP miss, missing rule) overwhelmingly surfaces as a silent wrong result rather than a loud stop.",
+  "counts": { "confirmed": 19, "needs_runtime": 1, "refuted": 6, "surfaces": 5 },
+  "remediation_primitives": [
+    "P1 — Closed-loop verification on every push: read back the device's actual config/firmware/reboot state after the SNMP trigger; never `return True # TODO`. Kills PUSH-01/02 and the false-success class.",
+    "P2 — Per-train device roster / membership gate before enrol + push: cross-check discovered serial/MAC/expected-position against an expected roster; reject or quarantine non-members. Kills the entire security-trust cluster and the coupled-consist mis-config, and bounds the topology mis-number blast radius.",
+    "P3 — Fail-loud on precondition / expectation mismatch instead of silent continue + success: assert discovered consist vs expected layout, assert train_id/self-IP sanity, assert a rules target exists per device, warn on stale snapshot. Covers the topology + prestage clusters."
+  ],
+  "confirmed": [
+    {
+      "id": "PUSH-01", "surface": "push-safety", "severity": "HIGH", "silent": "SILENT", "class": "false_success",
+      "title": "VDSRail set_firmware / set_config / reboot return True without verifying the SNMP SET took",
+      "anchor": "lib/device/vendor/vdsrail.py:95,124,130; snmpdevice.py:392-426 (_snmp_set logs+continues, never raises); cli/update.py:205-219",
+      "symptom": "OBN prints 'update applied, device rebooting' and marks the device updated; switch never rebooted (config in running-config only, won't survive power-cycle) or firmware staged-but-not-activated. The SKILL safety contract ('no reboot within 60s = push didn't take') is exactly what OBN cannot detect.",
+      "remediation": "P1"
+    },
+    {
+      "id": "PUSH-02", "surface": "push-safety", "severity": "MED", "silent": "SILENT", "class": "false_success",
+      "title": "Westermo AP firmware push returns True on the rpcFwFlash SET echo alone — no completion poll, no reboot call, no post-flash verify",
+      "anchor": "lib/device/vendor/westermo.py:76-83; cli/update.py:206-219; contrast vdsrail.py:95 + snmpdevice.py:439 _wait_for_snmp",
+      "symptom": "OBN prints success; AP comes back on OLD firmware or half-staged (validate -t ap shows '6.10.0-0 (6.11.2-0) ✗'). Field-confirmed Fzg 8 box1-t29 AP .229. This is why the dosto-ap-firmware-update SKILL exists — to add the poll+re-discover OBN lacks.",
+      "remediation": "P1"
+    },
+    {
+      "id": "PUSH-03", "surface": "push-safety", "severity": "MED", "silent": "LOUD", "class": "none_deref",
+      "title": "VDSRail config/firmware poll loop does re.search on a possibly-None SNMP result during the reboot window → uncaught TypeError mid-batch",
+      "anchor": "lib/device/vendor/vdsrail.py:74,116; snmpdevice.py:340,292; cli/update.py:211,327",
+      "symptom": "obn update c/f crashes for that device with TypeError; whether the trigger/TFTP applied is left indeterminate. In a batch the ThreadPoolExecutor future surfaces it only via f.result(). The config path (always reboots) is the prestaging trigger and is firmware-version-independent.",
+      "remediation": "P1"
+    },
+    {
+      "id": "PUSH-05", "surface": "push-safety", "severity": "MED", "silent": "SILENT", "class": "false_success",
+      "title": "Empty target set exits as 'readonly devices' success — a mistyped/stale push IP reads as a benign no-op, not a miss",
+      "anchor": "cli/update.py:276-285 (all([])==True ordered before the 'no devices targeted' branch); obn.py:178 (CLI checks IP syntax only, not membership)",
+      "symptom": "OBN logs 'Update not supported for readonly devices' and exits 0 before the accurate 'no devices targeted for update' branch. Engineer believes the device was simply read-only; nothing was targeted, intended device never touched. Matches the 'obn update c silent no-op' field note.",
+      "remediation": "P3"
+    },
+    {
+      "id": "ST1", "surface": "state-persistence", "severity": "MED", "silent": "SILENT", "class": "stale_cache",
+      "title": "Transient SNMP miss caches None/'' for firmware/config (cached_property) and writes it into discovery.json",
+      "anchor": "lib/device/snmpdevice.py:226,234 (@cached_property); util/decorators.py:36 (caches None into obj.__dict__); device.py:12-21; backbone_discovery.py:95,115",
+      "symptom": "Device lands in discovery.json with firmware/config null/''; rules set a wrong/empty target; NMS shows 'unknown'; needs_configuration_update mis-decides. Only a fresh obn discover clears it — re-running report/validate does not.",
+      "remediation": "P1"
+    },
+    {
+      "id": "ST3", "surface": "state-persistence", "severity": "MED", "silent": "SILENT", "class": "stale_snapshot",
+      "title": "compare_json excludes coach/device-number/type from equality, so a pure topology renumbering never republishes to NMS",
+      "anchor": "lib/report/device.py:19,23-25 (compare=False fields); report.py:130; backbone-discovery.yaml:42 (always_publish_mqtt off)",
+      "symptom": "discovery.prev.json keeps OLD coach numbering; NMS keeps wrong coach positions even though obn report ran and exited 0. Self-heals only on an unrelated field change or by deleting prev.json. Matches the NMS positional/coach-label gaps in the field notes.",
+      "remediation": "P3"
+    },
+    {
+      "id": "ONB-MAC-OUI-TRUST", "surface": "security-trust", "severity": "MED", "silent": "SILENT", "class": "admission_control",
+      "title": "Device identity is the MAC OUI prefix only — anything answering with a vdsrail/westermo OUI is onboarded as a trusted SW/AP",
+      "anchor": "lib/configuration.py:174 (find_brand); walker.py:38; lldparpwalker.py:50,66 (is_known_mac_prefix gate); report.py:381 (type from brand)",
+      "symptom": "A device not part of this trainset is enrolled as a real SW/AP, numbered, and made push-eligible. No serial/hostname/roster authenticity check. Exploitation still needs the shared per-brand SNMP creds, so realistic trigger is a genuine sibling/foreign/mis-cabled device, not a blind spoof.",
+      "remediation": "P2"
+    },
+    {
+      "id": "ONB-COUPLED-CONSIST", "surface": "security-trust", "severity": "MED", "silent": "MIXED", "class": "admission_control",
+      "title": "Coupled neighbour consist's switches (and their APs) enrolled into discovery over the coupler and fallback-numbered as ours",
+      "anchor": "lib/device/vendor/vdsrail.py:133-165; report_dosto_neu.py:200-264 (fallback Pass A/B); report.py:254-260 (survive normalise)",
+      "symptom": "Neighbour train's devices appear in THIS train's consist + validate table. A WARNING ('OFF EXPECTED WIRING') is logged but the device is still enrolled and update-eligible. Field-observed (nv4-A1-v8-015 on a coupler port). No coupler-port exclusion in code.",
+      "remediation": "P2"
+    },
+    {
+      "id": "ONB-NO-MEMBERSHIP", "surface": "security-trust", "severity": "MED", "silent": "SILENT", "class": "admission_control",
+      "title": "No 'does this device belong to this train' gate before stamping this train's train_id config onto it",
+      "anchor": "cli/update.py:84 (case 'all': lambda i: True); report.py:306-318 (target by type alone); snmpdevice.py:488 (target['train_id']=cfg['train_id'])",
+      "symptom": "The wrong train's config — this CCU's train_id/project_id/IP-range/SSIDs — is written into a foreign/mis-bound switch and committed via TFTP+SNMP reboot. On a coupled pair this re-stamps the neighbour's identity; it later boots onto the wrong subnet/SSIDs. The Fzg133 cascade, cross-train. Silent (OBN prints success regardless).",
+      "remediation": "P2"
+    },
+    {
+      "id": "ONB-API-BINDING", "surface": "security-trust", "severity": "MED", "silent": "SILENT", "class": "stale_binding",
+      "title": "Action API (reset_device / togglePoE) acts on the stale report IP→MAC binding with no live identity re-check",
+      "anchor": "lib/server/routers/actions.py:25-34,88-118; cli/update.py:120-122 (get_device_by_ip from report_file); vdsrail.py:129 (reboot fires at report IP); _ip_address_changed never called on this path",
+      "symptom": "An operator intending to reset/PoE-cut one device hits whatever the stale report believes is at that IP — with 2-min DHCP leases, possibly a different device now holding it. togglePoE caches (parentSW, port) in-memory, so a stale mapping cuts the wrong port. No verification surfaced beyond {success}.",
+      "remediation": "P2"
+    },
+    {
+      "id": "TOPO-1", "surface": "topology-numbering", "severity": "HIGH", "silent": "SILENT", "class": "nontermination",
+      "title": "number_coaches BFS has no visited set; coach_number-only guard lets unnumbered mutually-adjacent switches re-enqueue unboundedly → obn report hang / OOM",
+      "anchor": "lib/report/report_dosto_neu.py:61 (only guard: `to_device.coach_number is not None`) + :158-159 (`queue.appendleft(to_device); continue` unconditional, no branch sets a default)",
+      "symptom": "obn report hangs and the CCU OOM-loops (observed box1-t12/Fzg147 grew to ~60GB). Discovery never completes; update c/f and validate all read a stale/empty prev.json downstream. This is exactly the field bug-10 class; the one-line guard the field patch adds is absent upstream.",
+      "remediation": "P3"
+    },
+    {
+      "id": "TOPO-3", "surface": "topology-numbering", "severity": "MED", "silent": "MIXED", "class": "no_expectation_assert",
+      "title": "DOSTO-NEU report numbers whatever LLDP it walks with no assertion against the expected consist (extra/missing/reordered/coupled coaches numbered or silently dropped)",
+      "anchor": "lib/report/report_dosto_neu.py:42-43 (train_type/max_coach used only in branch conditions, never asserted); contrast report_dani.py:88 (sys.exit on hostname mismatch) and :177 (len(ccu_coaches)!=2 warning)",
+      "symptom": "OBN emits a plausible-but-wrong consist (truncated/shifted/partial) with no warning. Sibling reports (dani) have structural-count guards DOSTO-NEU lacks.",
+      "remediation": "P3"
+    },
+    {
+      "id": "TOPO-4", "surface": "topology-numbering", "severity": "MED", "silent": "SILENT", "class": "miscable_silent",
+      "title": "Coach-numbering walk mis-numbers or silently drops primary-path miscabled switches; report_unexpected_connection never called from the DOSTO walk",
+      "anchor": "lib/report/report_dosto_neu.py:88-155 (SW-to-SW branch keyed on device_number+port); report.py:143 (report_unexpected_connection, wired into 7 sibling reports, never invoked here)",
+      "symptom": "A miscabled switch on a recognized (device,port) combo gets a confidently-WRONG coach/device number silently; a non-matching combo is dropped by normalise. Only the redundant-path fallback WARNs, and only for switches the primary walk missed — never for ones it mis-numbered.",
+      "remediation": "P3"
+    },
+    {
+      "id": "TOPO-6", "surface": "topology-numbering", "severity": "MED", "silent": "SILENT", "class": "wrong_seed",
+      "title": "DostoNeu coach-numbering silently defaults the CCU seed to coach 2 when train_type is unset → whole nv6 consist off-by-one",
+      "anchor": "lib/report/report_dosto_neu.py:42 (`ccu1_coach_map.get(self.train_type, 2)`); report.py:35 (train_type defaults 'unknown'); contrast report_generic.py:41 (sys.exit on train_type=='unknown')",
+      "symptom": "CCU seeded into wrong coach (2 vs nv6's 3); every coach shifted by one; NMS/Zabbix show consist off-by-one with no error. Co-occurs with misimage Fzg/IP issues. GenericReport hard-exits on unknown train_type; DOSTO-NEU does not.",
+      "remediation": "P3"
+    },
+    {
+      "id": "PRE-1", "surface": "prestage-preconditions", "severity": "MED", "silent": "MIXED", "class": "stale_snapshot",
+      "title": "obn update/validate consume /tmp/discovery.prev.json with no discover-before-report ordering or staleness guard",
+      "anchor": "cli/update.py:271 (get_devices(cfg.report_file), no mtime check); obn.py:66/76/104/191 (four independent click commands)",
+      "symptom": "A stale prev.json from a prior train/session is consumed silently; update operates on the wrong device list, or the stale target matches nothing and hits the readonly/'no devices' no-op (exit 0). Absent prev.json is loud; stale is silent.",
+      "remediation": "P3"
+    },
+    {
+      "id": "PRE-2", "surface": "prestage-preconditions", "severity": "MED", "silent": "SILENT", "class": "silent_noop",
+      "title": "A device slot with no matching rules.yaml entry gets an empty target and is silently dropped from the update set",
+      "anchor": "lib/report/report.py:306-318 (apply_rules None → target={}); device.py:63,69 (needs_*_update short-circuits on 'config'/'firmware' not in target); cli/update.py:114,284",
+      "symptom": "obn update c <ip> produces no update and no error; with only that device targeted, operator sees 'no devices targeted for update'. Engineer believes config was pushed; nothing happened; device never appears as failed.",
+      "remediation": "P3"
+    },
+    {
+      "id": "PRE-3", "surface": "prestage-preconditions", "severity": "MED", "silent": "SILENT", "class": "unvalidated_identity",
+      "title": "create_config stamps an unvalidated train_id into every rendered config; validate self-derives from the same value, hiding a misimage",
+      "anchor": "lib/device/snmpdevice.py:488 (target['train_id']=cfg['train_id'], no validation); :524 (Jinja2 StrictUndefined catches missing, not wrong); backbone_validate.py:42-49 (expected IP range from the same train_id)",
+      "symptom": "Configs pushed with wrong hostname/IP/subnet baked in; device reboots onto a different subnet, falls off vlan100. OBN prints success. validate derives its expected range from the SAME wrong train_id, so configs and validation are mutually self-consistent — misimage stays invisible. Trigger is upstream Puppet/hieradata being wrong (Fzg 130/8/22, box1-t40, 4736-114), not OBN-induced.",
+      "remediation": "P3"
+    },
+    {
+      "id": "PRE-4", "surface": "prestage-preconditions", "severity": "MED", "silent": "LOUD", "class": "crash_on_precondition",
+      "title": "enable_tftp_iptables raises UnboundLocalError (not a graceful return) on a missing tftp_allowed ipset, aborting the update outside its try/except",
+      "anchor": "lib/device/snmpdevice.py:246-251 (`whitelist` assigned only inside contextlib.suppress(IPSetError); referenced at `if not whitelist:`); cli/update.py:202 (call site outside the try/except at 205-214)",
+      "symptom": "Missing ipset → UnboundLocalError propagates and aborts the whole update run loudly. NOTE: this is distinct from the separately-tracked missing nf_conntrack_tftp / udp-69 CT helper rule, which is the truly-silent firmware-batch return-flow drop and is not handled in this function at all.",
+      "remediation": "P3"
+    },
+    {
+      "id": "PRE-5", "surface": "prestage-preconditions", "severity": "MED", "silent": "SILENT", "class": "unvalidated_identity",
+      "title": "CCU self-IP is arithmetically derived from hieradata and never reconciled against any interface — misimaged config yields a silent wrong self-identity",
+      "anchor": "lib/device/ccudevice.py:61 (`10.{project_id+128}.{train_id}.{unit_id}`, no interface read); dhcpwalker.py:41 + ospf.py:64 re-derive the mgmt sweep and route base from the same formula",
+      "symptom": "Discovery records the CCU under a fabricated IP that may not be its real address; IP-range membership tests, OSPF routes, and the management sweep are all anchored on the wrong base. Operator sees a plausible but wrong CCU IP and no error; manifests later as devices 'on the wrong subnet'.",
+      "remediation": "P3"
+    },
+    {
+      "id": "PRE-7", "surface": "prestage-preconditions", "severity": "LOW", "silent": "SILENT", "class": "weak_gate",
+      "title": "validate's incomplete-device gate is key-presence-only (issubset) and never checks `target`, giving false 'consist complete' confidence",
+      "anchor": "lib/validate/validate.py:177-190 (`not required_keys.issubset(device)`; 'target' absent from validate.py entirely)",
+      "symptom": "A device with no rules target (see PRE-2), which obn update c will silently skip, still passes obn validate green. validate never asserts a target/rule exists per device. False confidence that the consist is ready for push. Corroborates the existing BS sweep finding (validate.py:190).",
+      "remediation": "P3"
+    }
+  ],
+  "needs_runtime": [
+    {
+      "id": "PUSH-07", "surface": "push-safety", "severity": "LOW", "silent": "MIXED", "class": "none_deref_ordering",
+      "title": "Leaf-first update tree crashes on a None neighbour MAC; parent-reboot head-of-train isolation",
+      "anchor": "lib/tree.py:24-26 (root by serial.startswith('box')), :34-37 (unguarded neighbour None-deref; sibling report_dosto_neu.py:61 guards the identical case)",
+      "note": "Trigger (a) AttributeError is refuted by a typing invariant (a BOX always has a socket.getfqdn serial). Trigger (b) — an LLDP neighbour MAC absent from the report device list → unguarded None-deref — is a genuine but runtime-conditional topology case. Head-of-train v8 self-isolation is operational, not a code bug."
+    }
+  ],
+  "refuted": [
+    { "id": "TOPO-2", "title": "normalise_devices silently drops missing-LLDP-edge devices", "why": "A dedicated guard _number_unreachable_via_fallback() runs at report_dosto_neu.py:170 BEFORE normalise_devices and recovers redundant-path-reachable switches from their own config string, logging WARNING. The claimed silent-drop is already mitigated. Good-news refutation." },
+    { "id": "PUSH-04", "title": "Parallel fc update assumes IP unchanged after firmware reboot", "why": "The stale-IP-after-reboot scenario only arises under action='fc', which the onboarding flow never invokes (commissioning uses single-device serial or config-only batch); the firmware-reboot-then-config sequence never runs." },
+    { "id": "PUSH-06", "title": "enable_tftp_iptables silently returns on missing ipset, batch proceeds with TFTP dropped", "why": "Re-verified as PRE-4: it does NOT silently return — it raises UnboundLocalError and aborts loudly. The silent-proceed framing is inverted." },
+    { "id": "factory-ap-snmp-drop", "title": "Factory-config AP silently takes config while OBN prints rebooting", "why": "The Westermo config path (westermo.py:112-117) DOES guard its SNMP result and returns False on a dropped/credential-rejected set — the cited vdsrail.py 'return True' path does not run for an AP. The specific fear is unfounded at the OBN-code layer (operationally the LuCI workaround is still needed for factory APs that block SNMP entirely)." },
+    { "id": "ST2-uptime-none-demotes-device", "title": "One missed uptime call demotes a switch/AP to a bare {mac,ip} stub", "why": "uptime() returns -1, never None, on an SNMP miss, so the `uptime is None` stub path is unreachable for SNMPDevice subclasses; the device still serialises full fields." },
+    { "id": "placeholder", "title": "(empty hunter placeholder)", "why": "Hunter emitted a schema placeholder (id=x); no resolvable code." }
+  ]
+}

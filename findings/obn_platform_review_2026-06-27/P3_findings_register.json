@@ -1,0 +1,936 @@
+{
+  "baseline": "origin/master v2.3.12 (8042c8d)",
+  "subsystem_notes": [
+    {
+      "subsystem": "vendor_drivers",
+      "note": "Pervasive pattern: vendor drivers consume the base _snmp_get/_snmp_walk results (which silently return None / {} on any SNMP error) without guards, so regex/.startswith/indexing on SNMP-derived values crash during exactly the reboot/transient-loss windows these methods poll through; firmware/config setters compound this by returning True without verifying the SET echo."
+    },
+    {
+      "subsystem": "walkers_discovery",
+      "note": "Discovery walkers are mostly termination-safe (is_new_mac/is_new_ip guards + bounded ARP fallback), but the new-device gate has a short-circuit ordering bug that silently drops shared-IP devices and poisons their MAC; the LLDP parser and parsers.py make format/key assumptions that crash or silently lose neighbours on partial SNMP/lldpctl responses; the DHCP management-network match is a dotless prefix; and ospf.generate_entries is a silent no-op that never emits the per-device routes its own docstring promises."
+    },
+    {
+      "subsystem": "report_layer",
+      "note": "Two systemic defect classes dominate: (1) number_coaches() BFS variants that re-enqueue devices keyed only on coach_number (no visited set) — DostoNeuReport can loop forever on unmatched topology; (2) pervasive use of SNMP-derived fields (config/firmware/serial) and get_device() results without None-guards, causing NoneType crashes across device.py, dani, via, ace, dsb, ccjpa_wd2, rules_engine. GenericReport/TGV/TGV2020/Luna/Daisy/CCJPA-wd1 are comparatively well-guarded."
+    },
+    {
+      "subsystem": "server_api",
+      "note": "FastAPI action/consist routers; the actions router imports HTTPException from the wrong module (http.client, not fastapi), which turns every intended 404/405 into a runtime TypeError that is either masked as success or surfaced as a 500, and togglepoe dereferences an instantiate_device result that can be None."
+    },
+    {
+      "subsystem": "tree_update",
+      "note": "Tree build is the weak point: an unresolved neighbour MAC and a None/empty root both crash the whole update before any device is touched. Leaf-first ordering itself (calculate_parallel_update_order on a shallow tree copy) is correct, and the BFS terminates via the `mac not in tree` guard. The dominant defects are None-derefs in the tree build and in needs_*_update, plus the empty-device-set silent no-op via all([])==True."
+    },
+    {
+      "subsystem": "config_cli",
+      "note": "Backbone CLI commands are riddled with TODO stubs and missing-guard control flow; the two strongest defects are handle_ssid continuing after a failed report load (None-deref) and a hardcoded \"Waffles\" SSID stub that silently reconfigures every AP. Validation/zabbix paths trust SNMP-derived fields that can be None. Config singleton and disk cache are mostly sound."
+    }
+  ],
+  "counts": {
+    "raw": 47,
+    "confirmed": 15,
+    "needs_runtime": 24,
+    "refuted": 8,
+    "duplicate": 0
+  },
+  "confirmed": [
+    {
+      "title": "VDSRail firmware-update polling crashes on SNMP failure (None.search)",
+      "file": "lib/device/vendor/vdsrail.py",
+      "line": 74,
+      "defect_class": "none_deref",
+      "severity": "high",
+      "claim": "re.search(\"Not running\", result) raises TypeError when result is None because _snmp_get returns None on any SNMP error.",
+      "trigger": "During set_firmware_version, the switch drops/ times out the snmp_firmware_task_running_oid GET (reboot window, transient loss, wrong OID) so _snmp_get returns None.",
+      "repro": "Call VDSRailDevice.set_firmware_version(target) on a switch that stops answering SNMP after the update trigger; line 71 result=None, line 74 re.search(pattern, None) -> 'TypeError: expected string or bytes-like object'. Loops every 1s for up to 120s, each iteration re-crashing on the first None.",
+      "confidence": "high",
+      "subsystem": "vendor_drivers",
+      "verdict": {
+        "verdict": "confirmed",
+        "reasoning": "Confirmed by reading the actual code. vdsrail.py:71-74 does `result = self._snmp_get(self.device_config[\"snmp_firmware_task_running_oid\"])` then `search = re.search(\"Not running\", result)` with NO None-check between. snmpdevice.py:324-340 shows `_snmp_get` returns `result.get(oid)` (dict .get -> None when key absent). snmpdevice.py:283-322 (`_snmp_parse_results`) shows that on `error_indication or error_status` (SNMP timeout, no-response, wrong OID) the loop does `continue`, leaving the result dict empty, so `_snmp_get` returns None on any SNMP failure — the hunter's premise is statically true. `re.search(pattern, None)` raises `TypeError: expected string or bytes-like object`. The `result = \"\"` init at line 68 is overwritten at line 71 before the regex, so it gives no protection. No upstream guard prevents the trigger: the only caller (update.py:205-214) wraps the call in `try/except SNMPDeviceException`, and SNMPDeviceException is `class SNMPDeviceException(Exception)` (snmpdevice.py:56) which TypeError does NOT subclass — so the TypeError propagates uncaught. Same identical bug pattern also exists in set_configuration_version (line 116), confirming it is the intended-but-broken idiom, not a typo. Marked confirmed (not needs_runtime_confirmation) because the None can be produced by the code itself and the crash on None is statically guaranteed; the SNMP timeout that yields None during a firmware reboot window is an ordinary operating condition, not exotic hardware-specific data.",
+        "covered_by_test": "None found. tests/lib/device/vendor/test_vdsrail.py only covers test_reboot and test_neighbours; there is NO test for set_firmware_version or the None-result path. The SNMPMock._snmp_get (lines 44-45) does a strict dict lookup that would raise KeyError, not return None, so it does not model SNMP-failure behavior at all.",
+        "severity_adjusted": "high",
+        "blast_radius": "VDSRail vendor only (VDSRailDevice.set_firmware_version), i.e. the `obn update f` firmware-push path for VDS Rail consist switches — DOSTO/Stadler fleet. Does not affect the 14 report variants or other SNMP vendors (each vendor has its own set_firmware_version). The twin bug at vdsrail.py:116 extends the same exposure to `obn update c` config pushes on the same switches. Per project notes the fleet currently sits at target fw 7.4.2 so most pushes are no-ops, narrowing real-world hit rate, but any actual firmware push to a switch that times out SNMP in the reboot window crashes the updater for that device."
+      }
+    },
+    {
+      "title": "VDSRail set_firmware_version/set_configuration_version/reboot return True without verifying success",
+      "file": "lib/device/vendor/vdsrail.py",
+      "line": 96,
+      "defect_class": "silent_noop",
+      "severity": "high",
+      "claim": "These methods return True unconditionally (TODO comment admits it), so a failed SNMP SET / failed reboot is reported as a successful firmware/config push.",
+      "trigger": "Any SNMP SET in the sequence is silently dropped (e.g. factory-config switch ignoring writes, or reboot OID not honoured) but the prior poll loop happened to see 'Not running'.",
+      "repro": "On a switch that accepts the GET poll but silently ignores the set_default / reboot SETs (_snmp_set swallows errors and returns {}), set_firmware_version still returns True at line 96; reboot() returns True at line 131 even though _snmp_set never set the reboot OID. Caller marks the device updated when nothing changed.",
+      "confidence": "high",
+      "subsystem": "vendor_drivers",
+      "verdict": {
+        "verdict": "confirmed",
+        "reasoning": "Read vdsrail.py:57-131. set_firmware_version ends `self.reboot(); return True  # TODO: return True only on successful call` (line 95-96); set_configuration_version ends identically (line 124-125); reboot() does two `_snmp_set` calls then `return True  # TODO` (line 129-131) with NO read of the SET result. _snmp_set (snmpdevice.py:392-426) delegates to _snmp_parse_results (lines 283-322), which on `error_indication or error_status` logs and `continue`s, returning {} — it never raises and never propagates failure. So a silently-dropped SNMP SET (factory switch ignoring writes, unhonoured reboot OID) cannot turn the return False. The firmware path has ONE partial guard: the 120s poll loop (lines 69-93) returns False on timeout / unexpected task string, but a dropped set_default/reboot SET after a successful 'Not running' poll still returns True. set_configuration_version and reboot have zero post-SET verification. The sole consumer, cli/update.py update_device (lines 205-219), does not even read the boolean — it calls the method in a try/except (only catching SNMPDeviceException, which _snmp_set never raises) and then unconditionally pprints 'firmware/configuration update applied, device rebooting.' So a no-op push is always reported as applied. The TODO comment is an explicit admission.",
+        "covered_by_test": "tests/lib/device/vendor/test_vdsrail.py::TestVDSRail::test_reboot exists but does NOT refute — it mocks _snmp_set (so a failed SET is impossible to observe) and asserts only `mock_set.call_count == 2`, never the return value or any success verification. No test exercises set_firmware_version or set_configuration_version for VDSRail at all. No green test contradicts the claim.",
+        "severity_adjusted": "medium",
+        "blast_radius": "All VDSRail consist switches (DOSTO/Stadler) for `obn update f`/`obn update c`/reboot via cli/update.py and the /reset_device API route (actions.py:46 returns this unverified True as `success`). The same `return True # TODO` pattern is replicated in lantech.py:67, tng4500.py:76, westermo.py:83, so the no-verify anti-pattern spans multiple vendors; the CLI caller ignoring the return value affects every vendor's update path equally."
+      }
+    },
+    {
+      "title": "ACKSYS _load_file raises the device class instead of an exception",
+      "file": "lib/device/vendor/acksys.py",
+      "line": 420,
+      "defect_class": "error_masking",
+      "severity": "medium",
+      "claim": "raise AcksysDevice(...) raises the AccessPointDevice subclass (not AcksysException) with positional args its __init__ does not accept, producing a TypeError that masks the intended config/file error message; same bug at lines 424 and 453.",
+      "trigger": "snmp_firmware_instructions / snmp_config_instructions missing from vendors YAML (line 419), the firmware/config file not on disk (line 423), or the upload-init SNMP SET returning falsy (line 452).",
+      "repro": "Call set_firmware_version with a config_key absent from device_config; line 420 executes 'raise AcksysDevice(\"device config is missing %s config\", config_key)'; AcksysDevice.__init__ expects (mac, ip, ccu_interface, brand) so this raises a confusing TypeError/argument error instead of the intended descriptive AcksysException.",
+      "confidence": "high",
+      "subsystem": "vendor_drivers",
+      "verdict": {
+        "verdict": "confirmed",
+        "reasoning": "Verified at src/usr/share/obn/lib/device/vendor/acksys.py. Line 420: `raise AcksysDevice(\"device config is missing %s config\", config_key)`; line 424: `raise AcksysDevice(\"file does not exist: %s\", file_path)`; line 453: `raise AcksysDevice(\"failed to initialise ACKSYS SNMP upload\")`. `AcksysDevice` (defined line 48) is `class AcksysDevice(AccessPointDevice)`; the inheritance chain is AccessPointDevice (accesspointdevice.py:8) -> SNMPDevice (snmpdevice.py:99) -> Device (device.py:11) which is `class Device(ABC)` — NOT a BaseException subclass. Therefore `raise AcksysDevice(...)` cannot raise the intended descriptive error: Python evaluates the expression then rejects it with `TypeError: exceptions must derive from BaseException` (and the positional args `mac=\"device config is missing %s config\", ip=config_key` are fed into the full Device SNMP-backed construction chain, which can throw an unrelated error first). Either way the intended message is masked. This is unambiguously a bug because every other raise in the same file uses the proper exception class AcksysException (defined line 26 as `class AcksysException(Exception)` with `__init__(self, message)`): lines 206, 313, 482, 495, 527, 560, 562 — including lines 482/495 inside this very `_load_file` function. The three AcksysDevice raises are the only anomalies. No upstream guard prevents the trigger; the `if config is None` (419), `if not os.path.isfile(file_path)` (423), and `if not result` (452) checks ARE the branches that fire the buggy raise. Note the claim's secondary assertion about arity is imprecise: AcksysDevice.__init__ accepts 4 positional params (mac, ip, ccu_interface, brand), so 2 positional args is valid arity — the TypeError comes from raising a non-BaseException, not from an argument-count mismatch. The error-masking outcome stands regardless.",
+        "covered_by_test": "None found for the defect path. tests/lib/device/vendor/test_acksys.py has test_set_firmware_version (line 125) and test_set_configuration_version (line 132) — the only tests reaching _load_file — but both are @pytest.mark.skip(\"needs physical hardware\") (lines 124, 131) and never exercise the error branches. The two green `with pytest.raises(AcksysException)` tests (lines 345, 404) cover get_connected_devices / get_connected_devices_list, a different method, and assert the correct AcksysException — they do not touch _load_file.",
+        "severity_adjusted": "low",
+        "blast_radius": "ACKSYS vendor only, on the AP firmware/config SNMP upload path (set_firmware_version / set_configuration_version -> _load_file). Fires only on a genuine error precondition: missing snmp_firmware_instructions/snmp_config_instructions key in vendors YAML, firmware/config file absent on disk, or upload-init SNMP SET returning falsy. Not the DOSTO fleet's primary AP vendor (Westermo/Eltec/Extreme dominate); does not affect the 14 report variants or non-ACKSYS SNMP devices. Impact is degraded diagnostics (confusing TypeError instead of a clear cause) on an already-failing ACKSYS upload, not a functional regression of a working path."
+      }
+    },
+    {
+      "title": "DostoNeuReport.number_coaches() unconditional re-enqueue with no visited set → infinite loop",
+      "file": "lib/report/report_dosto_neu.py",
+      "line": 158,
+      "defect_class": "unbounded_loop",
+      "severity": "critical",
+      "claim": "A neighbour that passes the None/coach-number guard is appended to the queue at line 158 unconditionally even when no numbering branch set its coach_number, so two mutually-connected devices that never get numbered ping-pong forever.",
+      "trigger": "Any cabling/discovery state where a SW or AP neighbour relationship matches none of the if/elif branches (lines 65-155) so coach_number stays None, and that device has an unnumbered neighbour back to it.",
+      "repro": "Discovery JSON: BOX (numbered) -> SWa on port 6 (not LAN1/LAN2 -> coach_number stays None) and SWa <-> SWb mutually listed as neighbours but on ports that match no SW-SW branch. number_coaches pops SWa, enqueues SWb (coach None), pops SWb, enqueues SWa, ... loop never terminates; memory/CPU blow-up (mirrors the report-OOM seen in the field).",
+      "confidence": "high",
+      "subsystem": "report_layer",
+      "verdict": {
+        "verdict": "confirmed",
+        "reasoning": "Read report_dosto_neu.py:31-163 (whole number_coaches), device.py (Device.coach_number defaults to None, line 23), and report.py get_device (401-404). The cited line 158 `queue.appendleft(to_device)` runs UNCONDITIONALLY for every neighbour that clears the guard at line 61 (`if to_device is None or to_device.coach_number is not None: continue`). That guard is the ONLY re-enqueue protection — there is no visited/seen set and no iteration cap (grep of report.py for visited/seen/max_iter returned nothing). The numbering branches at 65-155 are all conditional on device_number/coach_number/port; if a neighbour relationship matches none of them, coach_number stays None (the branch fell through without assignment), yet line 158 still enqueues the device. So two mutually-listed neighbours (LLDP neighbour lists are mutual; get_device resolves by MAC) that both stay None ping-pong: pop SWa -> SWb still None -> appendleft(SWb); pop SWb -> SWa still None -> appendleft(SWa); forever. The line-61 guard never fires for them because neither ever gets a coach_number. Statically the loop is unavoidable given such input. The 'continue' at line 159 is a no-op (last statement in the for-body). Marked confirmed rather than needs_runtime_confirmation because the control-flow defect is fully provable from the source and the field has already observed the matching report-OOM loop, though the specific malformed-cabling discovery JSON is the actual trigger.",
+        "covered_by_test": "tests/lib/report/test_report_dosto_neu.py::TestDostoNeuReport::test_number_coaches — exercises number_coaches() but ONLY with well-formed discovery fixtures (discovery_nv4_2_coaches.json, discovery_nv6.prev.json, discovery_fv5.json, discovery_fv6.json) where every neighbour matches a numbering branch. None contains two mutually-connected unnumbered devices, so the green test neither covers nor contradicts the defect; it asserts correct numbering on correct cabling only.",
+        "severity_adjusted": "high",
+        "blast_radius": "DOSTO-NEU report only (DostoNeuReport.number_coaches); the other 13 report variants do not share this method. Within DOSTO it affects all train_types routed here (nv4/nv6/fv5/fv6). Entry point is `obn report`, which hangs and grows the queue unbounded (CPU/memory blow-up) when fed malformed cabling/discovery data."
+      }
+    },
+    {
+      "title": "VIAReport.number_coaches() references box_device before assignment when no CCU box found",
+      "file": "lib/report/report_via.py",
+      "line": 144,
+      "defect_class": "none_deref",
+      "severity": "high",
+      "claim": "box_device is only bound inside the loop when a BOX with matching serial is found (line 31-37); if no such device exists (serial None or no box), line 144 self.find_neighbour(box_device, ...) raises NameError (UnboundLocalError).",
+      "trigger": "CCU SNMP serial returns None, or no BOX device whose serial startswith the ccu device id, so the assignment at line 37 never runs.",
+      "repro": "Run VIAReport on discovery JSON where the CCU's serial is None -> 'box_device' is referenced at line 144 before assignment -> UnboundLocalError, report aborts.",
+      "confidence": "high",
+      "subsystem": "report_layer",
+      "verdict": {
+        "verdict": "confirmed",
+        "reasoning": "In src/usr/share/obn/lib/report/report_via.py, VIAReport.number_coaches() declares box_device only at line 37 (box_device = dev), inside the conditional `if dev.type == \"BOX\" and dev.serial and dev.serial.startswith(self.get_ccu_device_id())` (lines 30-34) within the loop over self.device_instances.values(). After the loop, line 144 reads it unconditionally: `master_switch = self.find_neighbour(box_device, lambda x: x.get(\"port\") == 1)`, and line 155 reads it again (parsed_devices.add(box_device.mac)). There is no post-loop guard (no `if box_device is None: return`, no try/except, no default `box_device = None` before the loop). If the loop never enters the line-30 block — because no device has type==\"BOX\" with a truthy serial that startswith the ccu device id — box_device is never bound and line 144 raises UnboundLocalError (a NameError subclass), aborting the report run inside Report.report() at report.py:624. The None-check inside find_neighbour (report.py:408 `if device is None`) does NOT rescue this: box_device is UNBOUND, not None, so the exception fires at the argument-read on line 144 before find_neighbour is even called. Device.serial defaults to None (device.py:10), and the function's own comments (report_via.py:41-43) explicitly anticipate devices that 'failed to respond to SNMP or SSH queries', so a CCU box with a None/missing serial — or a mismatched ccu_box_id — is a realistic input. I grepped the whole obn tree for box_device: it is a pure local in report_via.py (assignment at :37, reads at :144 and :155) with no instance/class attribute fallback. The unguarded reference is statically provable; classifying as confirmed since it is a definite code defect, though firing it requires discovery data with no matching BOX device.",
+        "covered_by_test": "tests/lib/report/test_report_via.py (TestVIAReport.test_via_report and test_via_report_missing_neighbours) — both ALWAYS set configuration[\"ccu_box_id\"] to a value (box1-t1 / box1-t8) that matches a BOX device with a real serial in the discovery fixtures, so box_device is bound in every parametrization. No test exercises the no-matching-BOX / serial-None path, so no green test covers or contradicts the defect.",
+        "severity_adjusted": "medium",
+        "blast_radius": "Single report variant: VIAReport only (VIA = hybrid-consist customer; report_module \"VIAReport\" per tests/test_backbone_discovery.py:67). DOSTO/ÖBB trains use report_dosto_neu.py / report_generic, which have their own number_coaches() and are unaffected. Each of the other 13 report variants has an independent number_coaches() implementation. Triggers per-run during VIA consist reporting whenever the CCU box device fails to present a serial matching get_ccu_device_id() (SNMP/SSH failure on the box, None serial, or misconfigured ccu_box_id) — aborts that train's report generation/MQTT publish."
+      }
+    },
+    {
+      "title": "actions.py imports HTTPException from http.client, not fastapi",
+      "file": "lib/server/routers/actions.py",
+      "line": 5,
+      "defect_class": "error_masking",
+      "severity": "high",
+      "claim": "`from http.client import HTTPException` means every `raise HTTPException(status_code=..., detail=...)` in this router raises TypeError (http.client.HTTPException takes no keyword args) instead of a FastAPI HTTP error.",
+      "trigger": "Any code path that raises HTTPException: device-not-found (404) or not-an-SNMP-device/CCU (405) in reset_device and getlog.",
+      "repro": "GET /actions/getlog/9.9.9.9 for an IP not in the report -> get_device_by_ip returns None -> `raise HTTPException(status_code=404, detail=...)` -> TypeError('HTTPException() takes no keyword arguments') -> FastAPI returns 500 instead of a clean 404. Verified: `from http.client import HTTPException; HTTPException(status_code=404, detail='x')` raises TypeError.",
+      "confidence": "high",
+      "subsystem": "server_api",
+      "verdict": {
+        "verdict": "confirmed",
+        "reasoning": "Read actions.py:1-120. Line 5 is `from http.client import HTTPException` (fastapi is imported separately on line 8, but only for `APIRouter, Query, status` — NOT HTTPException). Every `raise HTTPException(status_code=..., detail=...)` in the file (lines 27-30, 36-39, 41-44 in reset_device; lines 59-62, 69-72 in getlog) passes keyword args to `http.client.HTTPException`, which takes none. I reproduced the failure statically: `python -c \"from http.client import HTTPException; HTTPException(status_code=404, detail='x')\"` -> `TypeError: HTTPException() takes no keyword arguments`. The trigger is reachable and unguarded: `get_device_by_ip` (cli/update.py:120-122) returns None via `next(..., None)` when the IP is absent from the report, so the None-check at line 58 fires the broken `raise` at line 59. In getlog there is NO try/except, so the TypeError propagates -> FastAPI returns 500 instead of a clean 404/405. In reset_device the body is wrapped in `try/except Exception` (lines 48-50), which swallows the TypeError and returns `{\"success\": False}` with HTTP 200 — masking the intended 404/405 entirely (an even worse error-masking outcome). No upstream guard prevents this; the bug is statically provable.",
+        "covered_by_test": "none found — grep over tests/ for getlog|reset_device|HTTPException|actions returned zero matches; actions.py has no test coverage at all",
+        "severity_adjusted": "high",
+        "blast_radius": "Router-level, not vendor- or report-variant-specific: affects every /actions/getlog/{ip} and /actions/reset_device/{ip} call against any SNMP device on any consist (all 14 report variants). getlog leaks a 500 on device-not-found / non-SNMP / CCU; reset_device silently returns success:false. Any out-of-report or non-SNMP IP triggers it."
+      }
+    },
+    {
+      "title": "reset_device masks 404/405 (and report-missing) as {success: False} HTTP 200",
+      "file": "lib/server/routers/actions.py",
+      "line": 48,
+      "defect_class": "error_masking",
+      "severity": "high",
+      "claim": "The bare `except Exception` in reset_device swallows the TypeError from the broken HTTPException raises AND the Exception thrown by get_devices when the report file is missing, returning {'success': False} with HTTP 200.",
+      "trigger": "Unknown IP, non-SNMP device, CCU device, or missing/unreadable report file.",
+      "repro": "GET /actions/reset_device/<ip-of-CCU> -> code intends 405 -> http.client.HTTPException(kwargs) -> TypeError -> caught by `except Exception` line 48 -> logged -> returns 200 {'success': False}. Caller cannot distinguish 'not found', 'wrong device type', and 'reboot actually failed'; all collapse to success:False/200.",
+      "confidence": "high",
+      "subsystem": "server_api",
+      "verdict": {
+        "verdict": "confirmed",
+        "reasoning": "Both legs of the claim are statically provable from the code I read.\n\n(1) Wrong HTTPException import. actions.py line 5: `from http.client import HTTPException` — NOT fastapi's. http.client.HTTPException is `class HTTPException(Exception): pass` and takes no kwargs. I ran `HTTPException(status_code=404, detail='x')` and it raised `TypeError: HTTPException() takes no keyword arguments`. So the 404 raise (lines 27-30), the non-SNMP 405 raise (lines 36-39), and the CCU 405 raise (lines 41-44) each throw a TypeError, not an HTTP error.\n\n(2) Missing report. reset_device line 25 calls get_device_by_ip(ip) → cli/update.py:121 get_devices(...) → line 71 `raise Exception(f\"report file {report_file} does not exist\")` when load_report returns None (file missing/unreadable; load_report swallows FileNotFoundError/PermissionError/JSONDecodeError → None at lines 36-47).\n\nBoth the TypeError and the bare Exception propagate into reset_device's `except Exception as e:` at line 48, which does `logger.error(e); return {\"success\": False}` (line 50). FastAPI serializes that dict with its default 200 status. So unknown IP, non-SNMP device, CCU device, and missing/unreadable report all collapse to {'success': False} HTTP 200 — indistinguishable from an actual reboot() returning False (line 46). Caller cannot tell apart not-found / wrong-type / no-report / real-failure.\n\nDecisive corroboration: sibling router consist.py line 11 correctly imports `from fastapi import APIRouter, HTTPException`, and the intended contract is documented by green tests test_get_ip__not_found and test_get_mac__no_report (test_consist.py) which assert status_code==404 with a detail body for exactly the not-found and no-report cases. actions.py diverges by importing the wrong class and wrapping everything in a swallowing except.",
+        "covered_by_test": "No test covers actions.py/reset_device (grep for 'reset_device|actions' in tests/ returns nothing). test_get_devices__does_not_exist (tests/cli/test_update.py:78) confirms get_devices raises Exception on a missing report. test_get_ip__not_found and test_get_mac__no_report (tests/lib/server/test_consist.py:58,42) assert the CORRECT 404+detail behavior for the sibling consist router — documenting the opposite of what actions.py does, reinforcing this is a defect not intent.",
+        "severity_adjusted": "high",
+        "blast_radius": "Not vendor- or report-variant-specific. Affects the /actions/reset_device/{ip} endpoint for every device type and every train/report variant: all 404 (unknown IP), all 405 (non-SNMP device, CCU device), and all missing/unreadable-report cases collapse to {'success': False} HTTP 200. The same wrong import also breaks getlog (lines 59/69), but getlog has no outer try/except so it 500s instead of masking — related, outside this claim's scope."
+      }
+    },
+    {
+      "title": "togglepoe can deref parentSW.mac when cache supplies port but loop nulls parentSW",
+      "file": "lib/server/routers/actions.py",
+      "line": 112,
+      "defect_class": "none_deref",
+      "severity": "medium",
+      "claim": "When port is seeded from the powered_down_aps cache but the neighbours loop runs and sets parentSW=None (no matching switch), `not port` is False so execution reaches line 112 `LldpWalker().instantiate_device(mac=parentSW.mac, ...)` -> AttributeError on None.",
+      "trigger": "ap_ip present in powered_down_aps cache (so port is truthy) AND the AP still reports neighbours but none of those neighbour IPs match a switch in the current report.",
+      "repro": "Power an AP off (cache stores (SW,port)), then before the AP drops its neighbour list, call togglepoe again with a report where the neighbour switch IP is absent -> loop sets parentSW=None, port stays truthy from cache -> `if not port` False -> parentSW.mac -> AttributeError -> 500.",
+      "confidence": "medium",
+      "subsystem": "server_api",
+      "verdict": {
+        "verdict": "confirmed",
+        "reasoning": "Read the full togglepoe handler at actions.py:83-119. The mechanism is statically airtight. Line 96 seeds both vars from the module-global cache: `parentSW, port = powered_down_aps.get(ap_ip, (None, None))`. The cache is only populated at line 118 (`powered_down_aps[ap_ip] = (parentSW, port)`) after a successful power-off where a matching switch existed, so the cached `port` is a real truthy value. The loop at 97-105 then runs over the CURRENT report's neighbours: line 98 `parentSW = next((x for x in switches if x.ip == neigh[\"ip\"]), None)` UNCONDITIONALLY reassigns parentSW every iteration; line 99 `if parentSW:` only updates port/breaks on a match. So if the AP's current neighbours list is non-empty but none of those neigh[\"ip\"] values match a switch in the current report, the loop exits with parentSW=None while port retains its truthy cached value (port is never touched on the no-match path). Line 109 `if not port:` is therefore False (port is truthy), execution falls through to line 112 `LldpWalker().instantiate_device(mac=parentSW.mac, ip=parentSW.ip)` -> AttributeError: 'NoneType' object has no attribute 'mac'. There is NO try/except in togglepoe (unlike reset_device at lines 23/48 which wraps its body), and no FastAPI exception_handler/middleware exists under lib/server (grep returned nothing), so the uncaught AttributeError yields HTTP 500 — exactly the claimed outcome. The hunter's logic and TRIGGER are correct.",
+        "covered_by_test": "none found — grep for togglepoe/powered_down/set_port_poe across tests/ returned zero matches; the endpoint is entirely untested",
+        "severity_adjusted": "medium",
+        "blast_radius": "Single API endpoint (/actions/togglepoe). Vendor-agnostic (any AP/SW in the report), NOT tied to the 14 report-generation variants — it is a PoE-toggle action, not report rendering. Triggers on any train where the PoE-off-then-toggle-again UI action runs against an AP whose cached (SW,port) entry exists but whose current report neighbours reference no in-report switch (e.g. report regenerated between calls, switch dropped/renamed, or stale LLDP). Impact is a 500 on that one action, not data corruption."
+      }
+    },
+    {
+      "title": "getlog raises raw Exception (report missing) and broken HTTPException as 500",
+      "file": "lib/server/routers/actions.py",
+      "line": 57,
+      "defect_class": "error_masking",
+      "severity": "medium",
+      "claim": "getlog has no try/except; get_device_by_ip -> get_devices raises Exception('report file ... does not exist') when load_report returns None, and the http.client HTTPException raises TypeError, both surfacing as unhandled 500s with internal detail.",
+      "trigger": "Report file missing/unreadable, or requested IP not found, or device not an SNMPDevice.",
+      "repro": "GET /actions/getlog/1.2.3.4 with no report file present -> get_devices (cli/update.py:71) raises Exception -> propagates uncaught from getlog -> 500 leaking 'report file <path> does not exist'.",
+      "confidence": "high",
+      "subsystem": "server_api",
+      "verdict": {
+        "verdict": "confirmed",
+        "reasoning": "Both halves statically provable. (1) getlog (actions.py:53-80) has NO try/except — contrast reset_device (lines 23-50) which wraps everything in try/except and returns {\"success\": False}. getlog line 57 calls get_device_by_ip (cli/update.py:120-122), which calls get_devices(...), which at cli/update.py:65-71 does `if devices := load_report(report_file): ... else: raise Exception(f\"report file {report_file} does not exist\")`. load_report (update.py:34-47) returns None on FileNotFoundError/PermissionError/etc. So a missing/unreadable report makes get_devices raise a raw Exception that propagates uncaught out of getlog → FastAPI 500 leaking the internal report-file path. (2) Line 5 `from http.client import HTTPException` is the WRONG class (should be fastapi.HTTPException). I verified `HTTPException(status_code=404, detail='x')` raises `TypeError: HTTPException() takes no keyword arguments`. So getlog's intended-404 branch (lines 58-62, when get_device_by_ip returns None) and intended-405 branch (lines 68-72, non-SNMPDevice) instead raise TypeError on the raise statement itself → uncaught → 500. reset_device has the same broken import but its try/except masks it (lines 48-50); getlog has no such guard.",
+        "covered_by_test": "No test covers getlog or the error paths. tests/cli/test_update.py:246 test_get_device_by_ip and :253 test_get_device_by_ip__not_found only exercise get_device_by_ip with the mock_report fixture present (load_report succeeds); the not-found test confirms None is returned (which is exactly what feeds the broken HTTPException path). No test exercises the missing-report Exception or the getlog endpoint, and none asserts the opposite.",
+        "severity_adjusted": "medium",
+        "blast_radius": "Vendor-agnostic and fleet-wide: the report-file load and IP lookup are common to all 14 report variants and all SNMP devices. Any GET /actions/getlog/{ip} where the report is missing, the IP is unknown, or the device is not an SNMPDevice surfaces as a 500 with internal detail. The broken http.client.HTTPException import affects both endpoints in the file, but reset_device masks it via try/except while getlog does not."
+      }
+    },
+    {
+      "title": "get_device_by_ip uses lru_cached get_devices -> actions operate on stale device list",
+      "file": "lib/server/routers/actions.py",
+      "line": 25,
+      "defect_class": "silent_noop",
+      "severity": "low",
+      "claim": "reset_device and getlog resolve devices via get_device_by_ip -> get_devices which is @functools.lru_cache on report_file, so once cached the action endpoints never see report refreshes for the lifetime of the process (togglepoe instead reads load_report fresh, an inconsistency).",
+      "trigger": "Device set changes after first call to any action endpoint (new discover/report run) within the same server process.",
+      "repro": "Start server, GET /actions/reset_device/<ip> (caches get_devices result), re-run obn report adding a device, GET /actions/reset_device/<new-ip> -> 404 because lru_cache still returns the old list keyed by report_file path; cache is never invalidated.",
+      "confidence": "medium",
+      "subsystem": "server_api",
+      "verdict": {
+        "verdict": "confirmed",
+        "reasoning": "Statically provable. actions.py:25 (reset_device) and actions.py:57 (getlog) both call get_device_by_ip(ip), which at cli/update.py:120-122 is `devices = get_devices(Configuration().report_file); return next(...)`. get_devices is decorated `@functools.lru_cache` (update.py:50). The cache key is report_file — a stable path string (configuration.py:80-82 returns the configured value or default `/tmp/discovery.prev.json`), constant for the process lifetime. Re-running `obn report` rewrites the file content but not its path, so the cached list is never refreshed. I grepped the entire repo (src + tests) for cache_clear / get_devices.cache* and found NONE — there is no invalidation, TTL, or reset anywhere. By contrast togglepoe (actions.py:88) reads fresh via `load_report(config.report_file)`, confirming the claimed intra-router inconsistency. The `if not target_device: raise 404` blocks (actions.py:26-30, 58-62) are the symptom of a stale miss, not a guard. Caveat keeping this from being trivially universal: it only bites if the FastAPI server process stays alive across a device-set change AND an action endpoint was hit before that change (priming the cache); a per-op restart or first-call-after-report ordering never observes it — but the absence of any cache invalidation is statically certain.",
+        "covered_by_test": "None found. tests/cli/test_update.py:246 test_get_device_by_ip and :253 test_get_device_by_ip__not_found use the mock_report fixture (test_update.py:48-50) which does `mocker.patch(\"cli.update.get_devices\", ...)` — it replaces get_devices entirely, so the lru_cache-vs-report-refresh interaction is never exercised. No test asserts cache invalidation or stale-list behavior.",
+        "severity_adjusted": "medium",
+        "blast_radius": "Vendor/report-variant agnostic — get_devices filters by device type (ICL/SW/AP) independent of the 14 report variants, so all variants and all SNMP devices behind the action endpoints are affected equally. Scope is limited to the two cached action endpoints (reset_device, getlog) on a long-lived OBN server process; togglepoe is unaffected (reads fresh)."
+      }
+    },
+    {
+      "title": "Root selection: None.startswith and [0] on empty list",
+      "file": "lib/tree.py",
+      "line": 24,
+      "defect_class": "none_deref",
+      "severity": "medium",
+      "claim": "Root selection `[x for x in devices if x.type=='BOX' and x.serial.startswith('box1')][0]` crashes with AttributeError when a BOX device has serial=None, and with IndexError when no box1 BOX exists.",
+      "trigger": "A BOX device whose serial was not returned by SNMP (serial defaults to None on Device), OR a report with no BOX whose serial starts with 'box1' (alternate CCU naming / missing serial).",
+      "repro": "devices=[Device(type='BOX', serial=None, ...)] -> x.serial.startswith raises AttributeError. Or devices with a BOX whose serial='ccu-foo' -> list comprehension empty -> [0] raises IndexError. Either way create_tree() throws before building the tree.",
+      "confidence": "high",
+      "subsystem": "tree_update",
+      "verdict": {
+        "verdict": "confirmed",
+        "reasoning": "Read tree.py:16-28. Line 24-26: `root = [x for x in devices if x.type == \"BOX\" and x.serial.startswith(\"box1\")][0]`. Two distinct unguarded failures: (A) AttributeError — for any device with `x.type==\"BOX\"`, the `and` short-circuit passes (type matches) so Python then evaluates `x.serial.startswith(\"box1\")`; if that BOX has `serial=None` this is `None.startswith` → AttributeError. device.py:10 confirms `serial: str = field(default=None, ...)`, so a BOX whose serial wasn't returned by SNMP carries None. (B) IndexError — if no BOX has a serial starting with \"box1\" (serials absent, or alternate CCU naming), the comprehension is `[]` and `[0]` raises IndexError. Neither is caught: caller update.py:297 (`tree = OBNTree.create_tree(devices)`) has no try/except around it, and the devices come straight from get_devices(report_file, include_ccu=True) / load_report with no serial filtering. The bug is corroborated by the rest of the codebase: every other `.serial.startswith()` site is guarded with `device.serial and ...` — report.py:396, report_dani.py:138, report_tgv2020.py:114, report_generic.py:72, report_ace.py:45-46, report_ccjpa_wd1.py:35-36, report_ccjpa_wd2.py:89-90, report_queensland.py:31-32, report_via.py:32-33. tree.py:24 is the lone unguarded `.serial.startswith` in the tree, and additionally lacks the empty-list `[0]` guard those sites achieve via loop/next. Statically the dereference and the `[0]` on a potentially-empty comprehension are provably unguarded.",
+        "covered_by_test": "none found — grep of tests/ for create_tree|OBNTree|create_node returned no matches; OBNTree.create_tree is entirely untested (no tests/**/*tree* file exists)",
+        "severity_adjusted": "high",
+        "blast_radius": "All report variants / all vendors. OBNTree.create_tree is called only from the vendor-agnostic update() path in cli/update.py (obn update f/c/fc), which operates on the device list regardless of report type — so every train and every report variant that runs `obn update` exercises this line. Trigger fires whenever the BOX/CCU device in the report has serial=None (SNMP serial not returned) or no BOX serial starts with 'box1' (alternate naming). In normal operation the CCU's own BOX usually has a 'box1-tNN' serial, so the crash is data-dependent rather than guaranteed every run."
+      }
+    },
+    {
+      "title": "all([]) makes empty target set exit as 'readonly' silent no-op",
+      "file": "cli/update.py",
+      "line": 276,
+      "defect_class": "silent_noop",
+      "severity": "medium",
+      "claim": "When get_targeted_devices returns an empty set, the readonly guard `all(... for d in devices)` evaluates to True on the empty iterable and the function logs 'Update not supported for readonly devices' and returns success, masking a genuine 'no such target' condition.",
+      "trigger": "Operator passes an IP that matches no device, or the report/device list is empty after filtering.",
+      "repro": "Call update(cfg,'c',('10.0.0.99',)) where no device has ip 10.0.0.99. get_targeted_devices returns set(); all(generator over empty set)==True; logs readonly warning and returns. Engineer sees a benign-looking message and exit 0 despite nothing being targeted.",
+      "confidence": "high",
+      "subsystem": "tree_update",
+      "verdict": {
+        "verdict": "confirmed",
+        "reasoning": "Statically provable in cli/update.py lines 271-285. In update(): `devices = get_targeted_devices(devices, target)` (line 272). For a target tuple of a syntactically-valid IP matching no device, get_targeted_devices (lines 74-95) falls to the default case `filter_func = lambda i: i.ip in target` and returns `set(filter(...))` == empty set. Then the readonly guard runs FIRST (lines 276-281): `if all(cfg[\"vendor_specific\"][cfg.find_brand(d.mac)].get(\"readonly\", False) for d in devices):` — with `devices` empty, the generator yields nothing, so `all([]) == True`, the branch executes `logger.warning(\"Update not supported for readonly devices\")` and `return` (normal exit). The more accurate `if len(update_set) == 0: logger.warning(\"no devices targeted for update\")` at lines 283-285 is dead-on-arrival because the readonly branch returns before it. The empty generator also means the vendor_specific/find_brand lookup is never evaluated, so no incidental KeyError diverts the path. Trigger is reachable from the CLI: obn.py _update_validate_target (lines 166-181) only validates IP *syntax* via ipaddress.ip_address(ip); it does NOT check that the IP matches a discovered device, so `obn update c 10.0.0.99` passes validation and reaches bb_update. Net effect exactly as claimed: a genuine 'no such target' condition is silently reported as a benign 'readonly devices' message with success return — operator sees nothing was updated for the wrong reason.",
+        "covered_by_test": "No test covers the empty/non-matching-target path. tests/cli/test_update.py::test_update_new__none (line 574) uses target=(\"icl-all\",), which yields a NON-empty ICL device set that simply needs no update — it exercises the len(update_set)==0 branch (line 283) and asserts process_batch is not called. test_update_new__by_ip (line 561) only uses IPs that match real devices in the fixture report. None pass an IP matching zero devices, so the all([]) readonly branch is neither covered nor contradicted.",
+        "severity_adjusted": "low",
+        "blast_radius": "Affects all report variants / all device targeting via `obn update [f|c] <ip>` (the per-device push path used by dosto-sw-config-update / dosto-ap-* skills), not vendor- or report-type-specific — get_targeted_devices and the readonly guard are upstream of any vendor branching. Impact is diagnostic-only: a mistyped or stale IP, or an IP for a device absent from the current report snapshot, yields a misleading 'readonly' warning and a no-op success instead of a 'no devices targeted' message. No wrong device is touched; the cost is operator confusion / a masked 'wrong target' mistake, consistent with the known 'update c silent no-op' pattern noted in the project memory."
+      }
+    },
+    {
+      "title": "handle_ssid continues after failed report load -> NoneType not iterable",
+      "file": "backbone_handle_ssid.py",
+      "line": 57,
+      "defect_class": "none_deref",
+      "severity": "high",
+      "claim": "When load_report() returns None, handle_ssid logs critical but does not return/exit, then passes None to filter() which raises TypeError.",
+      "trigger": "report_file (discovery.prev.json) is missing, unreadable, or contains invalid JSON, making load_report return None.",
+      "repro": "Run `obn handle_ssid <network>` when /tmp/discovery.prev.json is absent or corrupt: load_report returns None; line 57 logs 'failed to load report JSON - exiting' but flow falls through to line 61 `filter(lambda x: x.type=='AP', None)` -> TypeError: 'NoneType' object is not iterable, crashing the command instead of exiting cleanly.",
+      "confidence": "high",
+      "subsystem": "config_cli",
+      "verdict": {
+        "verdict": "confirmed",
+        "reasoning": "Read backbone_handle_ssid.py in full. load_report() (lines 17-24) returns None on PermissionError/TypeError/ValueError/json.JSONDecodeError. In handle_ssid(): line 56 `device_instances = load_report(cfg.report_file)`; lines 57-58 `if device_instances is None: logger.critical(\"failed to load report JSON - exiting\")` — but there is NO return, raise, sys.exit, or else branch, so control falls through. Line 61 then unconditionally runs `access_points = filter(lambda x: x.type == \"AP\", device_instances)` with device_instances=None. CPython's filter() validates its second argument as iterable at construction time, raising `TypeError: 'NoneType' object is not iterable`. The log message says \"exiting\" but the code does not exit — a clear logic gap. This is statically provable: any path where load_report returns None reaches line 61 with None. Trigger is real and common: OBN reads the report snapshot (discovery.prev.json); if it is absent (obn report not yet run) or corrupt, load_report swallows the error and returns None.",
+        "covered_by_test": "none found. tests/ matches for load_report/device_instances all target lib.report.Report.load_device_instances (unrelated method) and vendor is_valid_handle_ssid_config; no test imports backbone_handle_ssid or exercises handle_ssid/load_report. Only non-test importer is src/usr/share/obn/obn.py:222.",
+        "severity_adjusted": "medium",
+        "blast_radius": "Vendor-independent: handle_ssid is the generic SSID-reconciliation command (obn handle_ssid <network>, obn.py:222) usable against any train's access points, not DOSTO-only. Single code path / single function, but crashes for every invocation whenever the report file is missing or unreadable. Note: load_target_ssid is still a TODO stub returning \"Waffles\", so this whole command appears to be incomplete/unreleased functionality, which caps real-world severity."
+      }
+    },
+    {
+      "title": "load_target_ssid is a TODO stub hardcoded to 'Waffles'",
+      "file": "backbone_handle_ssid.py",
+      "line": 29,
+      "defect_class": "silent_noop",
+      "severity": "high",
+      "claim": "load_target_ssid ignores cfg entirely and always returns the literal 'Waffles', so handle_ssid compares/sets the wrong SSID on every AP.",
+      "trigger": "Any invocation of `obn handle_ssid` on a real train.",
+      "repro": "handle_ssid (line 47) calls load_target_ssid(cfg) which returns 'Waffles' regardless of config; every AP whose real SSID != 'Waffles' (i.e. all of them) is then 'reconfigured' via set_ssid(network) (line 89), and APs already correct are never detected. The function silently does the wrong thing with no error, masking that the target-SSID logic was never implemented.",
+      "confidence": "high",
+      "subsystem": "config_cli",
+      "verdict": {
+        "verdict": "confirmed",
+        "reasoning": "Read backbone_handle_ssid.py in full. load_target_ssid (lines 27-30) is `def load_target_ssid(cfg) -> str: # TODO: implement\\n    return \"Waffles\"` — it ignores its cfg arg entirely and returns the literal \"Waffles\". handle_ssid (line 47) binds `target_ssid = load_target_ssid(cfg)` → always \"Waffles\". The per-AP comparison at line 82 `if found_ssid == target_ssid: continue` (\"SSID matches - skipping\") therefore can never fire for a real AP, because real SSIDs come from vendors.yaml (e.g. cybox handle_ssid name \"TGV_train_{train_id}\" / \"TGV_staff_{train_id}\", lines 421/424), never \"Waffles\". So the idempotency/skip branch is dead and every AP falls through to set_ssid(network) at line 89. The command is genuinely reachable: obn.py lines 212-224 register `handle_ssid` as a click command (`obn handle_ssid <network>`) that imports and calls backbone_handle_ssid.handle_ssid. No upstream guard prevents it (the only guards are is_valid_handle_ssid_config and the found_ssid==\"failed\" skip, neither of which corrects the hardcoded target). One correction to the hunter's wording: set_ssid(network) at line 89 resolves the CORRECT name from vendor config (name.format(train_id=...), e.g. westermo.py line 158), so it writes the correct SSID — it does NOT write \"Waffles\". The defect is precisely that the skip-if-already-correct logic is broken by the stub, forcing an unconditional SNMP set on every AP and masking that target-SSID resolution was never implemented (file is littered with \"TODO: implement\", \"TODO: rework to new YAML structure\"). Severity tempered because this is plainly unfinished code and is not part of the DOSTO commissioning pipeline (which uses obn update c/f, not handle_ssid).",
+        "covered_by_test": "none found. No tests/test_backbone_handle_ssid.py exists (backbone tests cover only discovery, telemetry, user_count, validate). Vendor-level get_ssid/set_ssid/is_valid_handle_ssid_config ARE tested (test_westermo.py, test_extreme.py, test_eltec_cybox.py, test_acksys.py) but none exercise backbone_handle_ssid.handle_ssid or load_target_ssid; \"Waffles\" appears only at the defect line.",
+        "severity_adjusted": "low",
+        "blast_radius": "Vendor-agnostic backbone orchestrator: affects all AP vendors with a handle_ssid config (cybox, westermo, extreme, acksys per vendors.yaml), not DOSTO/Westermo-only. But only reachable via the explicit `obn handle_ssid <network>` CLI command, which is not in the DOSTO commission pipeline (uses obn update c/f). Whole module is TODO-stubbed/unfinished, so production exposure is low."
+      }
+    },
+    {
+      "title": "obn update silently reports 'readonly' when device set is empty",
+      "file": "cli/update.py",
+      "line": 276,
+      "defect_class": "error_masking",
+      "severity": "medium",
+      "claim": "`all(... for d in devices)` returns True on an empty devices list, so update logs 'Update not supported for readonly devices' and returns even when the real cause is that no devices matched the target.",
+      "trigger": "get_targeted_devices returns an empty list (target filter matched nothing, or report file empty because `obn report` was not run after discover).",
+      "repro": "Run `obn update c <ip>` where the report snapshot is empty or the IP matches no device: devices==[] -> all([]) evaluates True -> line 280 logs 'Update not supported for readonly devices' and returns at line 281, masking the empty-target condition as a readonly no-op (also: find_brand(d.mac) returning None would KeyError vendor_specific[None] for unknown MACs).",
+      "confidence": "medium",
+      "subsystem": "config_cli",
+      "verdict": {
+        "verdict": "confirmed",
+        "reasoning": "Read update.py:253-285 (the `update()` function) plus helpers get_devices (51-71), get_targeted_devices (74-95), load_report (34-47), and configuration.py find_brand (174-183). Line 272 reassigns `devices = get_targeted_devices(devices, target)`. If the target is an IP (or IP-list) that matches no device in the report snapshot, get_targeted_devices returns `set()` (filter at line 92 `lambda i: i.ip in target` matches nothing → empty set). Line 276-279 then evaluates `all(cfg[\"vendor_specific\"][cfg.find_brand(d.mac)].get(\"readonly\", False) for d in devices)` over that empty set. In Python `all([])` is unconditionally True, so line 280 logs 'Update not supported for readonly devices' and line 281 returns — masking the real condition (no device matched the target IP) as a readonly no-op. The correct/honest message at line 284 ('no devices targeted for update') is unreachable for the empty case because the readonly check at 276 short-circuits and returns first. No upstream guard prevents this: there is no len()/None check between line 272 and line 276. This is statically provable (no hardware/runtime data needed — `all([])==True` is a language guarantee). This exactly matches the field-confirmed CLAUDE.md pitfall observed on box1-t47/Fzg130 2026-05-12. Note one correction to the hunter's trigger: the 'report file empty / report not run' sub-path does NOT reach this code — load_report returns None/[] (falsy) and get_devices raises an Exception at line 71 instead (loud, not masked). Only the empty-TARGET path (IP matches nothing) is masked. The secondary find_brand-None KeyError is real but is a different path (requires non-empty devices with an unknown-OUI MAC) and does not affect the empty-list masking verdict.",
+        "covered_by_test": "No test covers the empty-targeted-devices path of update(). test_update_new__none (tests/cli/test_update.py:574-582) uses target=(\"icl-all\",) which matches 7 ICL devices in the mock report (see test_get_targeted_devices__icl asserting len==7) — so devices is NON-empty and 'none' refers to none-need-update (caught by line 283), not empty devices. No test passes a non-matching IP target into update(). The readonly branch (280-281) is never asserted by any test.",
+        "severity_adjusted": "medium",
+        "blast_radius": "All report variants / all device types. update() is the consist-wide `obn update <f|c|fc> <target>` entry point for SW, AP, and ICL across every train; not vendor- or DOSTO-specific. Any `obn update c/f <ip>` where the IP is absent from the current report snapshot (e.g. discover/report not refreshed, typo'd IP, stale snapshot) silently logs a misleading 'readonly' message and returns success-shaped, hiding the operator's real mistake."
+      }
+    }
+  ],
+  "needs_runtime": [
+    {
+      "title": "VDSRail config-update polling crashes on SNMP failure (None.search)",
+      "file": "lib/device/vendor/vdsrail.py",
+      "line": 117,
+      "defect_class": "none_deref",
+      "severity": "high",
+      "claim": "re.search(\"Not running\", result) raises TypeError when result is None; result comes from unguarded _snmp_get of snmp_config_task_running_oid.",
+      "trigger": "Switch fails to answer the config-task-running GET (typical: the config import itself causes a brief SNMP outage) so _snmp_get returns None.",
+      "repro": "Call VDSRailDevice.set_configuration_version() when the switch stops responding after the config trigger; line 115 result=None, line 117 re.search(...) on None raises TypeError.",
+      "confidence": "high",
+      "subsystem": "vendor_drivers",
+      "verdict": {
+        "verdict": "needs_runtime_confirmation",
+        "reasoning": "Confirmed the cited code at vdsrail.py:113-118: the loop calls `result = self._snmp_get(self.device_config[\"snmp_config_task_running_oid\"])` (line 115) then `search = re.search(\"Not running\", result)` (line 116) with no None-guard between them. `_snmp_get` (snmpdevice.py:324-340) returns `result.get(oid)`, and `_snmp_parse_results` (snmpdevice.py:283-322) `continue`s on `error_indication or error_status` so the OID is never inserted into `result` on a failed/timed-out GET — hence `result.get(oid)` returns None. `re.search(\"Not running\", None)` raises `TypeError: expected string or bytes-like object`, which is the claimed crash. The caller update.py update_device() (line 210) wraps the call only in `try/except SNMPDeviceException` (snmpdevice.py:56, a plain `Exception` subclass unrelated to TypeError), so it does NOT catch the TypeError; in the parallel path the future re-raises it at process_batch f.result() (update.py:327). No upstream None-check, and-short-circuit, or broader except prevents it. NOT a duplicate: the firmware-side twin at line 74 (set_firmware_version) is the separately-tracked OBN Bug 2a on a distinct line/method; this is the config-side instance. Downgraded from confirmed to needs_runtime_confirmation because the None only materializes when a real switch actually fails to answer the config-task-running GET (e.g. the brief SNMP outage during config import) — that the GET fails on this specific OID is a runtime/hardware-timing condition I cannot prove statically (the happy path returns the \"Not running...\" string and works fine).",
+        "covered_by_test": "None found. tests/lib/device/vendor/test_vdsrail.py covers only test_reboot and test_neighbours; it never calls set_configuration_version and never exercises the _snmp_get-returns-None polling path. The generic set_configuration_version tests in test_acksys.py / test_westermo.py / test_extreme.py / test_eltec_cybox.py target other vendor classes whose implementations do not use the re.search-on-_snmp_get pattern, so none cover or contradict this defect.",
+        "severity_adjusted": "medium",
+        "blast_radius": "VDSRail vendor only (a0:59:3a switches) — i.e. all DOSTO VDS consist switches during `obn update c` (config push). Triggers per-switch when that switch fails to answer the config-task-running SNMP GET after the import trigger; in the parallel batch path it aborts the batch via the re-raise at process_batch. Not all 14 report variants and not all SNMP devices — sibling vendors (westermo/acksys/extreme/eltec) use None-safe result-dict checks instead of re.search on a possibly-None _snmp_get."
+      }
+    },
+    {
+      "title": "Westermo neighbours() crashes when LLDP port OID regex does not match",
+      "file": "lib/device/vendor/westermo.py",
+      "line": 182,
+      "defect_class": "none_deref",
+      "severity": "medium",
+      "claim": "match[1] raises TypeError because re.search(re_port_oid, oid) can return None, and the result is indexed without a None check.",
+      "trigger": "The LLDP ports walk (snmp_lldp_ports_oid) returns any OID key whose suffix does not match the strict re_port_oid pattern (alternate firmware OID layout, or the walk straying one OID past the subtree).",
+      "repro": "Populate port_response with an oid like '1.0.8802.1.1.2.1.3.7.1.5.3011' (note .5 not .4) -> re.search returns None -> line 182 'match[1]' raises 'TypeError: NoneType object is not subscriptable', aborting neighbours().",
+      "confidence": "high",
+      "subsystem": "vendor_drivers",
+      "verdict": {
+        "verdict": "needs_runtime_confirmation",
+        "reasoning": "The cited line is real and unguarded. westermo.py:180-182 reads `for oid, value in port_response.items(): match = re.search(re_port_oid, oid); port_id = match[1]` with re_port_oid = r\"1\\.0\\.8802\\.1\\.1\\.2\\.1\\.3\\.7\\.1\\.4\\.(\\d+)\" (lines 173,180-182). There is no None check before `match[1]`, so if any key in port_response fails the regex, `match[1]` raises TypeError and aborts the `neighbours` cached_property. The same function GUARDS the analogous matches in its second loop (`if match_mac:`/`if match_ip:`, lines 236,241), proving the author knows walk results can fail the regex — the first loop is an inconsistency, not a can't-be-None proof. However, the trigger is gated by a runtime invariant, not statically reachable: port_response = self._snmp_walk(snmp_lldp_ports_oid), the base OID is `.1.0.8802.1.1.2.1.3.7.1.4` (vendors.yaml:578), and _snmp_walk uses pysnmp nextCmd with lexicographicMode=False (snmpdevice.py:380-388), which stops the walk at the requested subtree boundary. In correct operation every returned key starts with that prefix and matches the regex. _snmp_parse_results (snmpdevice.py:283-322) does NOT independently filter to the subtree, so the only thing preventing a non-matching key is pysnmp/agent behavior. The hunter's REPRO ('...3.7.1.5.3011', .5 not .4) is exactly an out-of-subtree OID that lexicographicMode=False is designed to exclude — it requires a misbehaving agent, alternate firmware OID layout, or a pysnmp edge case to occur. Real bug, but cannot be statically proven to fire.",
+        "covered_by_test": "tests/lib/device/vendor/test_westermo.py::TestWestermoDevice::test_neighbours_one_neighbour and ::test_neighbours_two_neighbours — both green, but they exercise the happy path only: each feeds a port_response containing exclusively regex-matching OIDs (lines 133-136 and 161-163). No test injects an out-of-subtree / non-matching OID, so none covers or contradicts this path.",
+        "severity_adjusted": "low",
+        "blast_radius": "Westermo AP vendor only (WestermoDevice.neighbours). On DOSTO this is the Westermo RT610LV / IBEX APs (OUI 00:14:5a). It affects LLDP neighbour discovery for Westermo APs across any report variant that walks Westermo neighbours during discovery, but the crash is conditional on a malformed/out-of-subtree LLDP port OID from a specific AP — not all 14 report variants, not all SNMP devices, and not other vendors (vdsrail/acksys/extreme have their own neighbour code)."
+      }
+    },
+    {
+      "title": "Lantech6000 post-reboot boot-image check crashes on SNMP failure (None.startswith)",
+      "file": "lib/device/vendor/lantech_6000.py",
+      "line": 126,
+      "defect_class": "none_deref",
+      "severity": "high",
+      "claim": "image_ret.startswith(...) raises AttributeError when image_ret is None; the post-reboot re-read at line 125 is unguarded even though the pre-reboot read at line 99 is guarded.",
+      "trigger": "After _switch_to_memory_bank reboots and _wait_for_snmp returns, the very next snmp_firmware_image_oid GET still returns None (device answered the wait-loop's configuration OID but not the image OID, or a transient drop).",
+      "repro": "Drive set_firmware_version -> _switch_to_memory_bank(2, reboot=True); make the GET at line 125 return None; line 126 None.startswith('File 2') raises 'AttributeError: NoneType has no attribute startswith', aborting mid-firmware-update with one bank already switched.",
+      "confidence": "high",
+      "subsystem": "vendor_drivers",
+      "verdict": {
+        "verdict": "needs_runtime_confirmation",
+        "reasoning": "The asymmetry the hunter cites is real and verbatim in lantech_6000.py. Line 99 guards the pre-reboot read: `if image_ret is None or len(image_ret) < 6 or image_ret[5] not in [\"1\",\"2\"]: ... raise`. The post-reboot re-read at line 125 `image_ret = self._snmp_get(image_oid, str)` is followed immediately at line 126 by `if not image_ret.startswith(f\"File {memory_bank}\"):` with NO None-guard. `_snmp_get` (snmpdevice.py:339-340) does `result = self._snmp_parse_results(...)` then `return result.get(oid)` — it returns None (no exception) when the device fails to answer that specific OID. So if line 125 returns None, line 126 raises AttributeError: 'NoneType' object has no attribute 'startswith'. The trigger is plausible because `_wait_for_snmp` (snmpdevice.py:466,472) polls a DIFFERENT oid — `snmp_configuration_oid` — not the firmware-image OID; the wait-loop can therefore succeed while the very next firmware-image GET at line 125 still returns None (transient drop or that OID not yet answering post-reboot). The AttributeError is not a SNMPDeviceException, so the `except SNMPDeviceException` in set_firmware_version (line 176) does NOT catch it — it propagates uncaught, aborting mid-update with memory bank 2 already switched active (line 165). Static structure is provable; whether the firmware-image OID specifically returns None right after the configuration OID answers depends on real Lantech reboot/SNMP timing I cannot prove statically — hence needs_runtime_confirmation rather than confirmed.",
+        "covered_by_test": "No test covers the None case. tests/lib/device/vendor/test_lantech_6000.py::test_switch_to_memory_bank__reboot feeds side_effect [\"File 1...\",\"File 2...\"] (both valid strings); test_switch_to_memory_bank__failed_to_set feeds [\"File 1...\",\"File 1...\"] (valid string, hits the intended SNMPDeviceException at line 130). Neither makes the second _snmp_get return None, so none exercises line 126 None.startswith. The pre-reboot None branch (line 99) is covered indirectly by test_switch_to_memory_bank__unexpected_data (\"File 3...\") but not the None value itself.",
+        "severity_adjusted": "medium",
+        "blast_radius": "Lantech 6000 vendor only (lib/device/vendor/lantech_6000.py), firmware-update path only (set_firmware_version -> _switch_to_memory_bank(2, reboot=True)). Not the DOSTO VDS/Westermo fleet (different OUI/vendor). Lantech 6000 is used on other RD projects per file header (RD-7776/8065/10305). Does not affect the 14 report variants or general SNMP discovery — confined to the firmware push for this one switch family. Impact when triggered: uncaught AttributeError aborts the firmware update with memory bank already switched, leaving the device in a half-configured boot state."
+      }
+    },
+    {
+      "title": "Cybox get_wifi_status indexes empty SNMP walk result (IndexError not caught)",
+      "file": "lib/device/vendor/eltec_cybox.py",
+      "line": 538,
+      "defect_class": "none_deref",
+      "severity": "medium",
+      "claim": "list(self._snmp_walk(completed_oid).values())[0] raises IndexError on an empty walk dict; only KeyError is caught by the surrounding try/except, so IndexError propagates.",
+      "trigger": "A status OID returns 'No Such Instance' / empty (radio absent, SNMP timeout), so _snmp_walk returns {} and .values() is empty.",
+      "repro": "Call get_wifi_status() where the transmitter/broadcast status walk for radio1 returns {}; line 538 list({}.values())[0] raises 'IndexError: list index out of range'; the except at line 543 catches only KeyError, so the exception escapes the method.",
+      "confidence": "high",
+      "subsystem": "vendor_drivers",
+      "verdict": {
+        "verdict": "needs_runtime_confirmation",
+        "reasoning": "The cited line is exactly as claimed. eltec_cybox.py:538: `key = list(self._snmp_walk(completed_oid).values())[0]` inside a loop, wrapped by `try:` (527) ... `except KeyError as e:` (543). `_snmp_walk` (snmpdevice.py:367) delegates to `_snmp_parse_results` (snmpdevice.py:283) which initializes `result = {}` (286) and on `error_indication or error_status` (SNMP timeout) `continue`s (292), and never appends for absent/empty var_binds — so it legitimately returns `{}`. `list({}.values())[0]` raises `IndexError: list index out of range`, and `except KeyError` does NOT catch IndexError, so it propagates out of get_wifi_status. No upstream guard exists: there is no None-check, len-check, or `.get(...)` default before the `[0]` subscript. The sole caller, backbone_wifi_status.py:wifi_status(), has no try/except around `get_wifi_status()` (lines 39/46) — only a global `cfg.initialise_exception_hook` (14) which logs the top-level crash but aborts the whole `obn wifi-status` command (in `ip == 'all'` mode the AP loop terminates and no table prints). The IndexError-vs-KeyError mismatch is statically certain; it is needs_runtime_confirmation only because the trigger (a queried status OID returning empty: radio absent / SNMP timeout / 'No Such Instance') is a runtime hardware/SNMP condition, not statically guaranteed to occur.",
+        "covered_by_test": "tests/lib/device/vendor/test_eltec_cybox.py::test_get_wifi_status (line 455) — does NOT cover this path. Its patched_snmp_walk returns populated dicts for all four queried OIDs; the `return {}` fallback (line 473) only fires for unmatched OIDs the function never queries. No test exercises an empty walk on a queried OID, so no green test contradicts the claim.",
+        "severity_adjusted": "low",
+        "blast_radius": "Eltec Cybox (CyboxDevice) vendor only, reached solely via the `obn wifi-status` CLI command (backbone_wifi_status.py). Not the 14 report variants and not all SNMP devices. Westermo and Acksys have their own distinct get_wifi_status implementations and are unaffected. DOSTO/OBB fleet uses Westermo/Acksys APs, so DOSTO is NOT affected; impact is limited to Cybox-equipped trains (e.g. daisy_cybox)."
+      }
+    },
+    {
+      "title": "is_new_mac()/is_new_ip() short-circuit drops shared-IP devices and poisons their MAC",
+      "file": "lib/walker/lldparpwalker.py",
+      "line": 65,
+      "defect_class": "silent_noop",
+      "severity": "high",
+      "claim": "When a device has a new MAC but an already-seen IP, is_new_mac() records the MAC and returns True, then is_new_ip() returns False, so the device is skipped AND its MAC is permanently marked found, blocking any later legitimate discovery of that MAC.",
+      "trigger": "Two distinct devices share one IP (CLAUDE.md documents ZFR/Sprechstelle redundancy pairs sharing one IP), or the same physical device is reported with one IP on two MACs.",
+      "repro": "Queue contains {mac:A, ip:X} then {mac:B, ip:X}. A is processed and yielded (A,X recorded). For B: is_new_mac(B)=True records B; is_new_ip(X)=False; `and` fails so B is never instantiated/yielded. B is silently lost and its MAC B is now in found_mac_addresses, so a later valid {mac:B, ip:Y} is also dropped at is_new_mac(B)=False. Same bug at lib/walker/lldpwalker.py:36.",
+      "confidence": "high",
+      "subsystem": "walkers_discovery",
+      "verdict": {
+        "verdict": "needs_runtime_confirmation",
+        "reasoning": "The code defect is statically real and unguarded. lib/walker/walker.py:18-22 defines is_new_mac() as a NON-pure predicate: `if mac in self.found_mac_addresses: return False; self.found_mac_addresses.add(mac); return True`. It mutates state unconditionally when the MAC is new. At lldparpwalker.py:65 (and identically lldpwalker.py:36, and dhcpwalker.py:50) the guard is `if self.is_new_mac(mac) and self.is_new_ip(ip):`. Python `and` short-circuits the RIGHT operand only; the LEFT (is_new_mac) ALWAYS executes. So for a queue item {macB, ipX} where macB is new but ipX was already recorded: is_new_mac(B) returns True and PERMANENTLY adds B to found_mac_addresses; is_new_ip(X) returns False; the combined condition is False so the device is neither instantiated nor yielded (both the known-prefix branch at 66-88 and the GenericDevice branch at 89-90 are skipped). B is now poisoned: a later legitimate {macB, ipY} hits is_new_mac(B)=False and is dropped at the MAC check. This matches the falsifiable claim and repro exactly. No upstream guard prevents it on the normal LLDP walk path: the only None/duplicate filter (lldparpwalker.py:47-51) applies solely to ARP-fallback candidates before queueing, not to LLDP-discovered neighbours that flow through line 65; check_device_alternate_addresses (169-225) runs only AFTER successful instantiation, so it never sees devices killed by the duplicate-IP short-circuit. Why needs_runtime_confirmation rather than confirmed: the data-LOSS manifestation requires two distinct MACs sharing one IP to actually enter the walk queue. CLAUDE.md documents ZFR/Sprechstelle redundancy pairs sharing one IP, but those are end devices (often only one transmitting at a time), and it is not statically provable that two live MACs on one IP reach device_queue as LLDP neighbours on real consists. The code flaw (impure left-operand predicate poisoning the found-set under and-short-circuit) is certain; the trigger is hardware/topology-dependent.",
+        "covered_by_test": "No covering test. tests/lib/walker/test_lldpwalker.py and test_lldparpwalker.py only use unique MAC+IP pairs (mock_output, mock_arp_scan_output) and never queue two distinct MACs on one shared IP, so the is_new_mac()-poisons-then-is_new_ip()-rejects path is entirely unexercised. test_walker_third_step exercises ARP fallback but with all-unique addresses.",
+        "severity_adjusted": "medium",
+        "blast_radius": "Core discovery infrastructure, not one vendor. The defect is in Walker.is_new_mac (base class) used by all three walkers: LldpWalker (default, used by backbone_discovery.py and every consist/report/validate flow), LldpArpWalker (VIA report variant per report_via.py:11), and DhcpWalker (dhcpwalker.py:50). It affects the device-discovery scan feeding all report variants and all SNMP devices on any consist where two MACs share one IP (documented ZFR/Sprechstelle redundancy). Not DOSTO-specific."
+      }
+    },
+    {
+      "title": "sorted() on LLDP results KeyErrors when a neighbour block has no chassis.mac",
+      "file": "lib/lldp.py",
+      "line": 52,
+      "defect_class": "none_deref",
+      "severity": "high",
+      "claim": "get_lldp_neighbours ends with sorted(result, key=lambda res: res['mac']), which raises KeyError for any neighbour entry that has a `via` marker but no chassis.mac line.",
+      "trigger": "lldpctl reports a neighbour (emits `lldp.<if>.via=LLDP`) but omits chassis.mac (device with no/late chassis MAC TLV, or truncated output). The code at lines 38-47 only sets 'mac' when a chassis.mac key is seen, so that result dict lacks 'mac'.",
+      "repro": "Feed lldpctl keyvalue output containing `lldp.eth1.via=LLDP` and `lldp.eth1.chassis.mgmt-ip=10.0.0.1` but no `chassis.mac` line; sorted() at line 52 raises KeyError('mac'), aborting discovery for the whole interface. The function's own comment (lines 49-51) says mac may be absent and should be passed on regardless, contradicting the sort key.",
+      "confidence": "high",
+      "subsystem": "walkers_discovery",
+      "verdict": {
+        "verdict": "needs_runtime_confirmation",
+        "reasoning": "Code matches the claim verbatim. lldp.py:52 `return sorted(result, key=lambda res: res[\"mac\"])` dereferences res[\"mac\"] unconditionally. The parse loop (lines 38-47) appends a fresh dict on every `via` marker (line 41: `result.append({\"ccu_interface\": interface})`) and only sets 'mac' when a `chassis.mac` key is seen (lines 42-43). No default, no None-fill. So a neighbour block with `via` but no `chassis.mac` line yields a dict with no 'mac' key, and the sort key raises KeyError('mac'). The module's own comment (lines 49-51) confirms MAC \"is not optional ... However, we will pass the information on regardless, to allow caller to properly deal with it\" — directly contradicted by the sort key. The sole caller walker.py:107-118 explicitly guards this: `if \"mac\" not in result.keys(): ... skipping - no neighbour MAC address reported` — proving developers anticipated mac-less dicts — but that guard is dead for this case because line 52 raises before returning. The caller's except (walker.py:127) only catches lib.lldp.LLDPException; a KeyError is not that, so it escapes the per-interface loop uncaught and aborts the whole CCU LLDP walk. Classified needs_runtime_confirmation (not confirmed) only because triggering requires actual lldpctl output emitting a via block without a chassis MAC TLV — a hardware/data condition I cannot prove a live device produces statically; the code path from such input to the crash, however, is statically guarded-free and inevitable.",
+        "covered_by_test": "No test covers the trigger. tests/lib/test_lldp.py::TestLLDP::test_get_lldp_neighbours has four parametrized cases (ids: oring, incomplete, lantech, multiple); the \"incomplete\" case (mock_output_incomplete, lines 17-28) only drops the IP (empty mgmt-ip) and its expected dict (lines 110-118) STILL contains 'mac'. Every input includes a chassis.mac line, so the mac-absent path is untested. The tests do not contradict the claim; the \"incomplete\" case corroborates that partial dicts are an intended real scenario.",
+        "severity_adjusted": "high",
+        "blast_radius": "Not DOSTO-only and not one report variant. lib.lldp.get_lldp_neighbours is called from lib/walker/walker.py:103 during the vendor-agnostic CCU LLDP/topology discovery walk that runs before any per-vendor report split, so it affects all SNMP/discovery runs on any CCU where a neighbour emits a `via` without a chassis.mac TLV (device with no/late chassis MAC, or truncated lldpctl output). The uncaught KeyError aborts the entire CCU LLDP walk, not merely one interface."
+      }
+    },
+    {
+      "title": "ospf.generate_entries silently ignores discovered devices and master flag",
+      "file": "lib/ospf.py",
+      "line": 58,
+      "defect_class": "silent_noop",
+      "severity": "high",
+      "claim": "generate_entries(devices, master) never reads `devices` or `master`; it always returns the same CCU + client/staff + static routes, so the per-AP/per-switch routes and master/non-master differentiation promised in the module docstring are never written.",
+      "trigger": "Any call to configure_ospf_routes on a dynamic consist that relies on OSPF routes to discovered access points and switches.",
+      "repro": "Call generate_entries([dev1, dev2], master=True): output list is identical to generate_entries([], master=False). No /32 or device routes for dev1/dev2 are emitted (docstring lines 9-10 require them), and /tmp/ospf-routing is written missing all discovered-device routes — a silent functional gap that looks like success.",
+      "confidence": "high",
+      "subsystem": "walkers_discovery",
+      "verdict": {
+        "verdict": "needs_runtime_confirmation",
+        "reasoning": "Statically the hunter's mechanical claim is TRUE. lib/ospf.py:58-72 generate_entries(devices, master): the body never references `devices` or `master`. It builds `entries` only from config: ccu_ip = f\"10.{128+project_id}.{train_id}.0/24\" (line 64), f\"10.{train_id}.0.0/16\" (line 67), then appends each config[\"ospf_static_routes\"] (lines 69-70), then `return entries` (line 72). So output is identical for any devices list and either master value — exactly as the FALSIFIABLE CLAIM states. The module docstring (lines 6-14) does promise the master branch should \"set routes for all discovered access points and switches\" (line 10) and differentiate master/non-master, neither of which the implementation does. The caller backbone_discovery.py:120-121 does pass the real discovered `devices` and configure_ospf_routes calls generate_entries(devices, is_master_ccu()) (ospf.py:80) with a live master flag — both correctly computed then discarded. HOWEVER this is NOT an undetected silent break: tests/lib/test_ospf.py:29-68 contains two green tests that ASSERT this exact behavior. test_generate_entries_master passes 6 devices incl. AP/switch-like IPs .60-.64 with master=True and asserts expected = [\"10.138.1.0/24\",\"10.1.0.0/16\",\"10.138.1.7/32\"] (no /32 device routes). test_generate_entries_not_master passes a different device list with master=False and asserts the SAME expected list. The tests therefore codify \"devices/master ignored, identical output\" as the intended contract. That contradicts the hunter's framing of \"a silent functional gap that looks like success\" — the suite intentionally accepts it. The unresolved divergence is between a stale/aspirational docstring and the implementation+tests, which cannot be adjudicated statically: only product/runtime intent decides whether the missing per-device and master-differentiated routes are a real functional defect or deliberately descoped behavior the tests now pin.",
+        "covered_by_test": "tests/lib/test_ospf.py::TestMcarp::test_generate_entries_master and ::test_generate_entries_not_master — both green, both assert identical device-less, master-agnostic output, codifying (not catching) the behavior the hunter flags.",
+        "severity_adjusted": "low",
+        "blast_radius": "Not a report variant / SNMP-device issue at all. Confined to the OSPF dynamic-consist routing path, only exercised when backbone_discovery.py runs with cfg[\"ospf_enabled\"]=True (multi-CCU dynamic consist). The DOSTO/Stadler mainline does not depend on per-device OSPF /32 routes here; /tmp/ospf-routing would simply lack discovered-device entries. No effect on any of the 14 report variants or device discovery counts."
+      }
+    },
+    {
+      "title": "DHCP management-network match uses dotless prefix, matching adjacent subnets",
+      "file": "lib/walker/dhcpwalker.py",
+      "line": 41,
+      "defect_class": "regex_assumption",
+      "severity": "medium",
+      "claim": "management_network is built as '10.<128+pid>.<train_id>' with no trailing dot, and ip.startswith(management_network) on line 48 matches IPs from numerically-adjacent third octets.",
+      "trigger": "train_id whose decimal string is a prefix of another in-use third octet (e.g. train_id=10 -> prefix '10.138.10' matches 10.138.10.x but also 10.138.100.x..10.138.109.x).",
+      "repro": "project_id=10, train_id=10 -> management_network='10.138.10'. A lease for 10.138.105.7 (different train's mgmt subnet) passes ip.startswith('10.138.10') and is treated as a local management device, instantiating/yielding a foreign device. Fix needs a trailing '.' and exact third-octet match.",
+      "confidence": "high",
+      "subsystem": "walkers_discovery",
+      "verdict": {
+        "verdict": "needs_runtime_confirmation",
+        "reasoning": "The cited code is exactly as claimed. dhcpwalker.py:41 builds `management_network = f\"10.{self.cfg['project_id'] + 128}.{self.cfg['train_id']}\"` with NO trailing dot, and line 48 filters leases with `if ip and ip.startswith(management_network)`. Because `train_id` is the third octet (corroborated by ccudevice.py:61 `f\"10.{project_id+128}.{train_id}.{unit_id}\"` and ospf.py:64 `f\"10.{128+project_id}.{train_id}.0/24\"`), the legitimate mgmt subnet is `10.X.<train_id>.0/24`, but the missing '.' turns the test into a decimal-string prefix match. Numerically verified: train_id=10, project_id=10 -> management_network='10.138.10'; '10.138.105.7'.startswith('10.138.10') is True, so all of 10.138.100.* through 10.138.109.* (and 10.138.10.*) match. No guard prevents it: the `if ip and` is only a None/empty check; is_new_mac/is_new_ip merely dedupe; and the gating is_known_mac_prefix (configuration.py:186-191) checks only the MAC vendor OUI, never the IP subnet — so a same-OUI device (e.g. Westermo, fleet-shared OUI) from an adjacent train's subnet passes every gate and is instantiated/yielded as a local management device (line 52-57). Verdict is needs_runtime_confirmation rather than confirmed because firing requires two runtime-data conditions I cannot prove statically: (a) train_id must be a decimal-string prefix of another in-use third octet (true for small/round ids like 1, 2, 10, 11; false for e.g. 99), and (b) a foreign train's lease must actually be present in /var/lib/dhcp/dhcpd.leases — which only happens in the shared-DHCP deployments this walker explicitly targets (Vaneza, per the docstring lines 33-38).",
+        "covered_by_test": "tests/lib/walker/test_dhcpwalker.py::test_dhcp_walker — exists and is green, but does NOT cover the trigger: all four mocked leases share a single third octet (10.138.101.* and 127.0.0.1) and it only asserts the happy path (2 WestermoDevice + CCU). No adjacent-subnet IP is exercised, so it neither protects against nor contradicts the defect.",
+        "severity_adjusted": "medium",
+        "blast_radius": "DhcpWalker is the DHCP-based discovery path used where SNMP-direct switch discovery is unavailable (explicitly Vaneza-style projects per the docstring), not the default DOSTO SNMP walker. Impact is scoped to those shared-DHCP deployments and to fleet-shared-OUI vendors (e.g. Westermo) whose foreign devices would pass the MAC check; it can inject foreign devices into discovery/report for affected projects, but does not touch the 14 report variants or all SNMP devices generally."
+      }
+    },
+    {
+      "title": "parse_ip_address returns whole value instead of matched IP, breaking downstream split",
+      "file": "lib/parsers.py",
+      "line": 33,
+      "defect_class": "regex_assumption",
+      "severity": "medium",
+      "claim": "parse_ip_address returns the entire input `value` (not search.group()) when an IPv4 substring is present, so callers receive surrounding text and lose the clean IP.",
+      "trigger": "SNMP value that contains an IP plus other text (e.g. 'IpAddress: 10.138.101.5' or a hex/typed prefix).",
+      "repro": "parse_ip_address('IpAddress: 10.138.101.5') returns 'IpAddress: 10.138.101.5'. At lib/device/vendor/vsc7429.py:252 is_management('IpAddress: 10.138.101.5', pid) does ip.split('.') -> not 4 parts -> returns False, so the neighbour's valid IP is silently dropped and the neighbour (which requires both mac and ip at line 262) is excluded from the topology.",
+      "confidence": "high",
+      "subsystem": "walkers_discovery",
+      "verdict": {
+        "verdict": "needs_runtime_confirmation",
+        "reasoning": "The cited code is exactly as claimed. parsers.py:40-43: `search = re.search(r\"\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\", value)` then `if search: return value` — it returns the entire input `value`, not `search.group()`. Compare to parse_mac_address (line 28-29) which returns a TRANSFORMED value (`value.replace(\"-\",\":\").lower()`); the IP function clearly intends to extract the matched IP but instead returns the raw input. Downstream is unguarded: vsc7429.py:248 `ip = parse_ip_address(value)`, then line 252 `if ip and is_management(ip, self.cfg[\"project_id\"])`. is_management (lib/util/__init__.py:5-13) does `parts = ip.split(\".\")` and requires `len(parts)==4 and parts[0].isdigit() and int(parts[0])==10 ...`. If `value` were 'IpAddress: 10.138.101.5', split('.') yields ['IpAddress: 10','138','101','5'] (4 parts) but parts[0].isdigit() is False -> returns False -> data['ip'] never set -> at line 262 the `entry['mac'] and entry['ip']` precondition fails -> neighbour silently dropped from topology. No None-check, try/except, or sanitization stands between the parser and is_management. SO the defect logic is real. HOWEVER, whether the TRIGGER ever occurs is not statically provable: the `value` strings come from _snmp_walk/_snmp_parse_results (snmpdevice.py:283-322) which casts with `cast=str` and crucially calls pysnmp with `lookupMib=False` (line 386). With lookupMib=False, pysnmp renders IpAddress/OctetString values as bare dotted-quads, NOT with a net-snmp-style 'IpAddress: ' label — that prefix in the hunter's repro is a net-snmp CLI artifact, not how this code obtains values. The vendor snmp_lldp OID and its real return format live in external cfg['vendor_specific'] data, not in this tree, so I cannot confirm a real VSC7429 ever returns an embedded-IP-plus-text string. The bug is a genuine latent fragility but its activation depends on runtime hardware/data I cannot observe statically.",
+        "covered_by_test": "tests/lib/test_parsers.py::TestParsers::test_parse_ip_address (line 23-25) asserts parse_ip_address(\"10.138.101.46\") == \"10.138.101.46\". This is a GREEN test that does NOT contradict the bug — it passes only because the input is already a clean IP with no surrounding text, so returning `value` is indistinguishable from returning search.group(). The trigger case (IP embedded in other text) is uncovered. test_parse_invalid_ip_address (line 27-29) only checks the empty-string -> None path. No test exercises the embedded-text path through is_management.",
+        "severity_adjusted": "medium",
+        "blast_radius": "Limited to the VSC7429 (VDS Rail Consist Switch) vendor neighbours() topology discovery — the DOSTO/Stadler switches (OUI a0:59:3a). parse_ip_address is shared in lib/parsers.py so any vendor reusing it for LLDP IP extraction is theoretically affected, but the demonstrated caller chain (is_management gate) is in vsc7429.py only. Impact is on LLDP-based topology/neighbour discovery for DOSTO consist switches, not all 14 report variants and not all SNMP devices."
+      }
+    },
+    {
+      "title": "LLDP parser indexes result[-1] when a neighbour block lacks a leading via marker",
+      "file": "lib/lldp.py",
+      "line": 42,
+      "defect_class": "none_deref",
+      "severity": "medium",
+      "claim": "chassis.mac/chassis.mgmt-ip/port.descr lines write to result[index] where index starts at -1 and only advances on a `via` key; a chassis.mac before any via line either IndexErrors (empty list) or corrupts the previous neighbour's entry.",
+      "trigger": "Malformed/truncated lldpctl output where a chassis.* or port.descr line appears before the first `via=` line for the interface.",
+      "repro": "Output beginning with `lldp.eth1.chassis.mac=aa:bb:cc:dd:ee:ff` (no preceding via): at line 43 index is still -1 and result is empty -> result[-1] raises IndexError. If a prior neighbour exists, the orphan mac overwrites that neighbour's mac (wrong-neighbour data). lldpctl normally emits via first, so this is partial-input dependent.",
+      "confidence": "medium",
+      "subsystem": "walkers_discovery",
+      "verdict": {
+        "verdict": "needs_runtime_confirmation",
+        "reasoning": "The defect is statically present in src/usr/share/obn/lib/lldp.py. `index = -1` (line 32); only `key == \"via\"` advances index and appends a dict (lines 39-41); `chassis.mac` writes `result[index][\"mac\"]` (line 43), `chassis.mgmt-ip` writes `result[index][\"ip\"]` (line 45), `port.descr` writes `result[index][\"port_descr\"]` (line 47). `re.findall` returns matches in textual line order, so if a `chassis.*`/`port.descr` line appears before the first `via=` for the interface, index is still -1: with an empty result list `result[-1]` raises IndexError; with a prior neighbour present it silently overwrites that neighbour's fields (wrong-neighbour corruption). No upstream guard exists — there is no try/except around the indexing inside the loop, and the only caller (lib/walker/walker.py:102-133) catches solely `lib.lldp.LLDPException`, NOT IndexError, so the exception would propagate uncaught. The claim's substance is correct; the cited line 42 is the `elif` test rather than the indexing line (43/45/47), a minor off-by-one in the citation. I downgrade from confirmed to needs_runtime_confirmation because the trigger requires lldpctl to emit a chassis/port line before the per-neighbour `via=` marker. All four test fixtures and the code comment (line 15) show real lldpctl `-f keyvalue` output always emits `via=LLDP` as the leading line of every neighbour block, so the fault only fires on malformed/truncated/out-of-order lldpctl output, which cannot be reproduced statically from this repo.",
+        "covered_by_test": "tests/lib/test_lldp.py::TestLLDP::test_get_lldp_neighbours covers four cases (oring, incomplete, lantech, multiple) but every fixture places `via=LLDP` first in each neighbour block; none exercises the chassis.mac-before-via path, so no green test covers or contradicts the defect.",
+        "severity_adjusted": "low",
+        "blast_radius": "Not vendor-specific. get_lldp_neighbours runs in the LldpWalker CCU-direct-neighbour discovery phase (lib/walker/walker.py), reached by backbone_discovery, backbone_telemetry, backbone_wifi_status, backbone_user_count, cli/update.py and server actions — i.e. all trains / all report variants that perform LLDP-based CCU discovery (DOSTO included). However the trigger (malformed/out-of-order lldpctl output) is rare, so practical exposure across the fleet is narrow despite the wide call surface."
+      }
+    },
+    {
+      "title": "Device.needs_firmware_update() / needs_configuration_update() call .endswith() on possibly-None firmware/config",
+      "file": "lib/report/device.py",
+      "line": 66,
+      "defect_class": "none_deref",
+      "severity": "high",
+      "claim": "Line 66 guards self.target but not self.firmware; if SNMP returned None for firmware while target has a 'firmware' key, None.endswith(...) raises AttributeError (same at line 72 for self.config).",
+      "trigger": "Device with a rules-engine target containing 'firmware' (or 'config') but whose firmware (or config) field is None because the SNMP get silently returned None.",
+      "repro": "Device(mac=.., ip=.., firmware=None, target={'firmware':'7.4.2'}).needs_firmware_update() -> 'NoneType' object has no attribute 'endswith'. Same with config=None, target={'config':'V8'}.",
+      "confidence": "high",
+      "subsystem": "report_layer",
+      "verdict": {
+        "verdict": "needs_runtime_confirmation",
+        "reasoning": "The cited code matches the claim exactly. report/device.py:62-66 guards only self.target (\"if self.target is None or 'firmware' not in self.target: return False\") then unconditionally calls \"not self.firmware.endswith(self.target['firmware'])\"; identical pattern for config at lines 68-72. firmware/config default to None (device.py:11,13). The target['firmware'] key is set INDEPENDENTLY of device.firmware: report.py:306-318 builds target from RulesEngine.select_firmware_target, whose applicability (rules_engine.py:34-41,126-164) matches on other device properties (type, etc.), never on whether device.firmware is non-None. So a SW/AP/ICL device can legitimately carry target={'firmware':...} while firmware=None. None is a real SNMP outcome: firmware_version (snmpdevice.py:225-228) returns generic_get -> _snmp_get -> result.get(oid) (snmpdevice.py:340) which yields None on SNMP miss/timeout or empty OID (line 326-328), and that None flows through device/device.py:18 as_dict -> report Device.from_dict (device.py:55-60) into Device.firmware. No upstream guard filters None: callers get_updatable_devices (update.py:108-115), auto_update (update.py:236-248), and update (update.py:271-273) iterate all targeted devices and call these methods directly with no None-check. The only short-circuit is the target check, which does not cover firmware/config being None. Verdict is needs_runtime_confirmation rather than confirmed because the AttributeError only fires when a live device's SNMP firmware/config get actually returns None while a matching rules target exists — reachable per the code but contingent on runtime SNMP/hardware data I cannot statically pin to a specific shipped rules config.",
+        "covered_by_test": "tests/lib/report/test_device.py::test_needs_firmware_update and ::test_needs_configuration_update — both parametrized but every case passes current_version=\"v1\" (non-None). No case exercises firmware=None/config=None with a target containing the matching key, so the trigger is NOT covered and the green tests do not contradict the claim.",
+        "severity_adjusted": "medium",
+        "blast_radius": "Not DOSTO-only and not one variant. The Device class in lib/report/device.py is the shared base used by all 14 report variants, and cli/update.py is the common obn update f/c path for every SNMP-managed SW/AP/ICL device fleet-wide. Any device whose firmware/config SNMP get returns None while a rules-engine firmware/config target applies will crash get_updatable_devices/auto_update/update. DOSTO is a concrete at-risk case: factory-config APs are documented to silently drop OBN SNMP (firmware get can return None) while still matching a firmware rule."
+      }
+    },
+    {
+      "title": "VIAReport forward-traversal dereferences get_device() result and to_device.config without None guard",
+      "file": "lib/report/report_via.py",
+      "line": 251,
+      "defect_class": "none_deref",
+      "severity": "high",
+      "claim": "to_device = self.get_device(neighbour) (line 249) can be None for a neighbour MAC not in device_instances, but line 251 reads to_device.type and line 258 evaluates 'AP04' in to_device.config (config may be None) with no guard.",
+      "trigger": "A neighbour MAC that was not discovered (SNMP failed) or a neighbour AP/ICL whose config is None.",
+      "repro": "Neighbour dict references a MAC absent from device_instances -> to_device is None -> to_device.type at line 251 raises AttributeError. Or to_device.config is None -> ''AP04' in None' at line 258 raises TypeError.",
+      "confidence": "high",
+      "subsystem": "report_layer",
+      "verdict": {
+        "verdict": "needs_runtime_confirmation",
+        "reasoning": "The cited code is in VIAReport.number_coaches forward-traversal loop (report_via.py). Actual lines: 248 `for neighbour in from_device.neighbours:`, 249 `to_device = self.get_device(neighbour)`, 251 `if from_device.type == \"SW\" and to_device.type == \"BOX\":`, 255-258 `if (from_device.type == \"SW\" and to_device.type in [\"ICL\",\"AP\"] and \"AP04\" in to_device.config)`. (The claim's line numbers 251/258 map to the real code semantically.) get_device (report.py:401-404) is `return self.device_instances.get(mac, None)` with declared return type `Device | None`, so it provably can return None when a neighbour MAC is not a device_instances key. Device.config (device.py:13) defaults to None. There is NO None guard: the `and` at line 251 short-circuits on `from_device.type` (the FIRST operand), not on to_device, so `to_device.type` still evaluates → AttributeError if to_device is None; and line 258 evaluates `\"AP04\" in to_device.config` with no `to_device.config and` guard → TypeError if config is None. The omission is corroborated by an in-file asymmetry: the analogous line 241 IS guarded (`if from_device.config and \"AP04\" in from_device.config`) and map_to_physical_coach_numbers line 310 guards (`if dev.config is None: continue`) — the author knows config can be None but did not guard line 258. number_coaches runs straight after load_json (report.py:623-624) on raw discovery JSON; normalise_devices (the only None-config filter) runs only AFTER, so no upstream filtering protects the loop. I could not statically prove the trigger fires because every VIA test fixture (verified discovery_via_*.json) has zero dangling neighbour MACs and zero null configs — the data is clean — so realizing the crash depends on runtime discovery yielding an LLDP-advertised neighbour MAC that never became a queried Device, or an AP/ICL whose config read returned None.",
+        "covered_by_test": "tests/lib/report/test_report_via.py::TestVIAReport::test_via_report_missing_neighbours (and test_via_report) exist and are green, but do NOT cover the claimed trigger: I verified the fixtures discovery_via_test_2deadsw.json / discovery_via_dynamic_4_deadsw.json / poc / test all have `neighbour macs NOT in device set: []` and zero null configs. The dead-switch tests exercise the empty-neighbour synthesis path (which only builds references to existing device_instances), not a neighbour pointing to an absent device or a null-config AP/ICL. No test asserts behaviour for the None-deref path.",
+        "severity_adjusted": "medium",
+        "blast_radius": "VIAReport only — the VIA Rail hybrid-consist report variant (one of the ~14 report subclasses). Not DOSTO/OBB. Fires only when VIA-train discovery produces an LLDP neighbour MAC that was never instantiated as a Device (SNMP/SSH query failure on that peer) reached via the forward-traversal queue, or an AP/ICL device whose config string is None. Crashes number_coaches for the whole consist report when it occurs."
+      }
+    },
+    {
+      "title": "VIAReport coach-1 search dereferences get_device() result that can be None",
+      "file": "lib/report/report_via.py",
+      "line": 180,
+      "defect_class": "none_deref",
+      "severity": "medium",
+      "claim": "neighbour_device = self.get_device(neighbour) (line 179) can return None, but line 180 immediately calls self.find_type(neighbour_device, ...) and reads neighbour_device.type with no None check.",
+      "trigger": "An unparsed neighbour whose MAC is not present in device_instances during the while-True coach-1 walk.",
+      "repro": "from_device.neighbours contains a MAC not in device_instances -> get_device returns None -> find_type(None) / None.type -> AttributeError mid-traversal.",
+      "confidence": "high",
+      "subsystem": "report_layer",
+      "verdict": {
+        "verdict": "needs_runtime_confirmation",
+        "reasoning": "The cited code is real and unguarded. report_via.py:179 `neighbour_device = self.get_device(neighbour)` calls report.py:401-404 `get_device`, whose body is `return self.device_instances.get(mac, None)` with declared return type `Device | None` — it provably can return None. Line 180 then does `neighbour_device.type = self.find_type(neighbour_device, retype_icl=True)`. Two unguarded derefs of a possibly-None value: (a) attribute assignment `neighbour_device.type = ...` raises AttributeError if neighbour_device is None; (b) find_type (report.py:368-379) immediately calls `self.cfg.find_brand(device.mac)`, and find_brand (configuration.py:174-181) does `mac.startswith(...)`, so passing None dereferences `None.mac`. The while-True coach-1 loop (lines 173-217) has NO None-check, no try/except, and crucially does NOT use the None-safe helper find_neighbour (report.py:406-412, which guards `if device is None`) — it uses raw get_device instead. The synthesis block (lines 49-141) only fabricates neighbours for devices that have NONE of their own; it never prunes dangling neighbour MACs that point at devices absent from device_instances, so a dangling reference survives into the loop. The trigger is realistic: the walker (lldparpwalker.py:65-90) only adds a neighbour to device_instances when is_new_mac AND is_new_ip AND is_known_mac_prefix, and instantiate_device can return None (`if dev:` guard at line 68) — a known-prefix neighbour that fails SNMP/SSH instantiation is silently dropped while still referenced as another device's LLDP neighbour. That yields exactly a neighbour MAC present in from_device.neighbours but absent from device_instances → get_device returns None → AttributeError mid-traversal. It is statically provable that no guard exists, but whether it FIRES depends on live discovery data producing such a dangling known-prefix neighbour; I cannot prove that statically from the repo, hence needs_runtime_confirmation rather than confirmed.",
+        "covered_by_test": "No test covers this path. tests/lib/report/test_report_via.py has deadsw/2deadsw and test_via_report_missing_neighbours cases, but I scanned all six tests/resources/via/*.json and every one has dangling_neighbour_macs=0 — i.e. every neighbour MAC resolves to a device in the file. The dead-switch scenarios model devices with EMPTY neighbours (handled by the synthesis block), not dangling neighbour references, so none of them drive get_device to return None at line 179. The green tests therefore neither cover nor contradict the defect.",
+        "severity_adjusted": "medium",
+        "blast_radius": "VIAReport only (HYBRID_CONSIST / VIA Rail train type, walker_type LldpArpWalker). One of 14 report variants. Not DOSTO — DostoNeuReport is a separate class. The same unguarded get_device pattern recurs in VIAReport.number_coaches at lines 248-251 (forward traversal, to_device), but that is a distinct instance, not the cited line. Impact is a crash of report generation (number_coaches) for an affected VIA consist, blocking the report for that train; it does not corrupt other report variants."
+      }
+    },
+    {
+      "title": "DaniReport._validate_switch_hostname() runs regex on possibly-None switch.config",
+      "file": "lib/report/report_dani.py",
+      "line": 88,
+      "defect_class": "none_deref",
+      "severity": "high",
+      "claim": "self.parser.match(switch.config) crashes with TypeError when switch.config is None (SNMP hostname not returned); the validation intended to sys.exit on a bad hostname instead raises before it can.",
+      "trigger": "A switch whose config/hostname field is None because the SNMP get silently returned None.",
+      "repro": "DaniReport.number_coaches with a SW device whose config=None -> re.Pattern.match(None) -> 'expected string or bytes-like object, got NoneType'.",
+      "confidence": "high",
+      "subsystem": "report_layer",
+      "verdict": {
+        "verdict": "needs_runtime_confirmation",
+        "reasoning": "The cited line report_dani.py:88 is `if self.parser.match(switch.config) is None:` inside DaniReport._validate_switch_hostname(switch). switch.config is the SNMP hostname field; Device.config defaults to None (device.py:13). _validate_switch_hostname is called from number_coaches() at line 135 for every device whose type == \"SW\". find_type() (report.py:368-399) assigns type \"SW\" purely from the MAC-OUI brand lookup (self.cfg.find_brand(device.mac)) and never inspects config, so a discovered switch whose SNMP sysName came back None is still typed \"SW\" and flows straight into _validate_switch_hostname with config=None. I empirically confirmed `re.compile(...).match(None)` raises exactly `TypeError: expected string or bytes-like object, got 'NoneType'` — matching the hunter's REPRO string verbatim. There is no upstream guard: no None-check, no `and` short-circuit, no try/except, and no caller filtering of null-config SW devices between load_device_instances and the validator. The function is intended to log \"unexpected hostname\" and sys.exit(1) on a malformed hostname, so when config is None the TypeError is raised before that guarded exit can run — exactly the claimed failure mode. I could not make it statically guaranteed only because whether the discovery/SNMP layer actually emits a SW device with config=None is a runtime property (CLAUDE.md itself notes VDS switches return blank hostnames via `show system` and that SNMP gets can silently return None); the crash is fully provable given that input, but producing that input depends on real switch SNMP behavior, hence needs_runtime_confirmation rather than confirmed.",
+        "covered_by_test": "tests/lib/report/test_report_dani.py::TestDANIReport::test_number_coaches__invalid_hostname covers the validator but sets config to a non-None invalid STRING (\"men-dani-v1-FD\") and asserts SystemExit — it does NOT exercise config=None. No test sets a SW device's config to None; strip_and_randomize (tests/common/__init__.py) preserves config, and the bypass/dead-switch fixtures omit dead switches entirely (verified 0 SW with null config in dani__bypass_relay_scen_1.json and dani__dead_M2.json). So no green test contradicts the bug; the existing test instead documents the intended sys.exit path the None case would preempt.",
+        "severity_adjusted": "low",
+        "blast_radius": "Isolated to one report variant: DaniReport (ÖBB Nightjet/Nachtzug — \"dani\"). `_validate_switch_hostname` and `parser.match(switch.config)` exist ONLY in src/usr/share/obn/lib/report/report_dani.py; grep across lib/report confirms none of the other 13 report variants (including DostoNeuReport used by this fleet) contain this pattern. Not DOSTO-affecting. Within DANI, triggers only when a MAC-OUI-classified switch returns a null SNMP hostname."
+      }
+    },
+    {
+      "title": "ACEReport dereferences master_switch from get_device() without None check",
+      "file": "lib/report/report_ace.py",
+      "line": 73,
+      "defect_class": "none_deref",
+      "severity": "high",
+      "claim": "master_switch = self.get_device(master_switch_mac) (line 72) returns None if the CCU's first-neighbour MAC was never discovered, but line 73 sets master_switch.coach_number = 0 with no guard.",
+      "trigger": "master_ccu.neighbours[0]['mac'] references a switch that is absent from device_instances (discovery/SNMP gap).",
+      "repro": "master CCU reports a neighbour MAC not present among discovered devices -> get_device returns None -> None.coach_number = 0 -> AttributeError.",
+      "confidence": "high",
+      "subsystem": "report_layer",
+      "verdict": {
+        "verdict": "needs_runtime_confirmation",
+        "reasoning": "Cited code confirmed verbatim. report_ace.py:71-73: `master_switch_mac = master_ccu.neighbours[0][\"mac\"]` / `master_switch = self.get_device(master_switch_mac)` / `master_switch.coach_number = 0`. report.py:401-404 shows get_device returns `self.device_instances.get(mac, None)` (declared `Device | None`), so it yields None for an unknown MAC. device_instances is keyed only by top-level discovered MACs (report.py:46: `{x[\"mac\"]: Device(**x) ...}`), while neighbour MACs come from each device's LLDP neighbours list — these are independent, so a master CCU can report an LLDP neighbour switch whose own top-level discovery entry is missing. The only upstream guards are line 67 (`if not master_ccu.neighbours`) which checks the list is non-empty but NOT that its MAC resolves, and line 56/previous_train_id for the CCU itself. Crucially the SAME function guards the identical get_device return at line 90 (`if to_device is None or ...: continue`), proving the author knows get_device returns None — yet the master_switch lookup at 72/73 is left unguarded. So None.coach_number = 0 raises AttributeError. Verdict is needs_runtime_confirmation rather than confirmed because the crash requires a specific field data condition (master CCU's neighbours[0] MAC absent from device_instances due to an SNMP/discovery gap) that cannot be proven to occur from static analysis alone; the missing-guard defect itself is statically real.",
+        "covered_by_test": "None found. tests/lib/report/test_report_ace.py covers only well-formed fixtures (ace-allok-1/2/3, RD-9422, RD-10360, ace-error-1) where the master CCU's first neighbour is a discovered switch present in device_instances. No test drives the absent-neighbour-MAC path; none asserts a graceful critical-log-and-return.",
+        "severity_adjusted": "medium",
+        "blast_radius": "ACE project report variant only (ACEReport.number_coaches in lib/report/report_ace.py) — 1 of 14 report variants. DOSTO and all other projects have their own numbering implementations and are unaffected."
+      }
+    },
+    {
+      "title": "QueenslandReport min() over empty ccus list when no CCU is identified",
+      "file": "lib/report/report_queensland.py",
+      "line": 43,
+      "defect_class": "none_deref",
+      "severity": "high",
+      "claim": "master_ccu_number = min([ccu.device_number for ccu in ccus]) raises ValueError('min() arg is an empty sequence') when ccus is empty.",
+      "trigger": "No device is typed BOX with a serial starting 'box' (e.g. CCU SNMP serial returned None), leaving ccus empty.",
+      "repro": "Run QueenslandReport on discovery JSON where no box device has a non-None serial -> ccus == [] -> min([]) at line 43 raises ValueError, report aborts.",
+      "confidence": "high",
+      "subsystem": "report_layer",
+      "verdict": {
+        "verdict": "needs_runtime_confirmation",
+        "reasoning": "Line 43 of report_queensland.py is exactly `master_ccu_number = min([ccu.device_number for ccu in ccus])`, sitting immediately after the loop (lines 23-41) that appends to `ccus` only when `device.type == \"BOX\" and device.serial and device.serial.startswith(\"box\")`. There is NO guard between the loop and the min(): no `if ccus:` check, no try/except, no default. The caller chain is `Report.run_report()` (report.py:608-652) → `self.number_coaches()` at line 624, called unconditionally after `load_json()`; nothing in run_report wraps or guards number_coaches, so a ValueError('min() arg is an empty sequence') would propagate uncaught and abort the report. So the failure mode is statically real for empty `ccus`. What I cannot prove statically is that `ccus` is ever actually empty at runtime: a device enters `ccus` iff its serial starts with 'box', and OBN normally injects the running CCU (with a box… serial via get_current_ccu_box_id, report.py:654-664) into the discovery JSON. Whether that injection can be absent/None (degraded SNMP, misimaged CCU, OOM-truncated discovery — all documented field conditions in CLAUDE.md) is a data/runtime property not decidable from these source files. Hence needs_runtime_confirmation rather than confirmed.",
+        "covered_by_test": "tests/lib/report/test_report_queensland.py — TestQueenslandReport.test_number_coaches (parametrized over discovery_queensland_2_coaches.json, _3_coaches.json, _devices.json, discovery_rd_8274.json) and test_nms_report_with_devices. All five backing fixtures contain exactly one device with a serial starting 'box' (grep confirmed: 1 box-serial occurrence per fixture), and strip_and_randomize (tests/common/__init__.py) strips only type/coach_number/device_number, leaving serial intact so find_type re-derives BOX. Every test therefore has a non-empty ccus list — NO test exercises the empty-ccus path that triggers the bug. No green test contradicts the defect; none covers it either.",
+        "severity_adjusted": "low",
+        "blast_radius": "Single report variant only: QueenslandReport (Queensland/QLD project). The min([...]) pattern at line 43 is unique to report_queensland.py — not present in report.py, report_generic.py, or report_via.py. DOSTO/ÖBB trains use the nv4/nv6 generic report path, NOT this file, so the user's fleet is unaffected. Within Queensland, it would abort the entire report run (number_coaches raises before any device is numbered) whenever discovery yields no box-serial CCU device."
+      }
+    },
+    {
+      "title": "DSBReport.dynamic_consist_algo dereferences None to_switch and uses next() without default",
+      "file": "lib/report/report_dsb.py",
+      "line": 122,
+      "defect_class": "none_deref",
+      "severity": "high",
+      "claim": "For signature dd-ICL-0-AP, to_switch = self.find_neighbour(to_device, port==1) can be None (line 121) yet line 122 sets to_switch.neighbours; additionally next(...) at lines 123-127 has no default so a non-matching MAC raises StopIteration.",
+      "trigger": "An ICL-to-AP (port 0) link where the target AP has no port-1 switch neighbour, or where the switch's neighbour list does not contain the AP's MAC.",
+      "repro": "DD train discovery with an ICL-0-AP link whose AP lacks a port-1 switch neighbour -> find_neighbour returns None -> None.neighbours at line 122 -> AttributeError; or AP MAC absent from to_switch.neighbours -> next() at line 123 -> StopIteration.",
+      "confidence": "high",
+      "subsystem": "report_layer",
+      "verdict": {
+        "verdict": "needs_runtime_confirmation",
+        "reasoning": "The defect is statically present in report_dsb.py:120-127. find_neighbour provably returns None (report.py:412 `return next(it, None)`), so at line 121 `to_switch = self.find_neighbour(to_device, lambda x: x.get(\"port\")==1)` can be None when the AP has no port-1 neighbour. Line 122 `to_switch.neighbours = to_switch.neighbours or list()` then dereferences to_switch with no None-check -> AttributeError. The `or list()` only guards `.neighbours` being falsy AFTER the dereference; it does NOT guard to_switch itself. Lines 123-127 `next(dev[\"port\"] for dev in to_switch.neighbours if dev[\"mac\"] == to_device.mac)` has no default argument, so a switch whose neighbour list omits the AP's MAC raises StopIteration. I checked for upstream guards: line 84 `if to_device is None or to_device.coach_number is not None: continue` guards to_device only, not to_switch; there is no try/except in dynamic_consist_algo or number_coaches. So both failure modes in the FALSIFIABLE CLAIM are correct and unguarded. However, triggering requires malformed/incomplete discovery data (an ICL-link-to-AP hop where the AP lacks a port-1 switch backlink, or where the port-1 switch's neighbour list does not contain the AP MAC). I cannot prove statically that such data ever reaches this branch in production — it depends on real cabling errors or partial SNMP discovery. Hence needs_runtime_confirmation rather than confirmed.",
+        "covered_by_test": "tests/lib/report/test_report_dsb.py::TestDSBReport::test_number_coaches[dd_rd_7646] (resource dd/discovery_rd_7646.json) exercises the dd-ICL-0-AP branch but only with well-formed data where every AP has a port-1 switch neighbour and each switch backlinks the AP MAC; it asserts success and therefore does NOT cover the None/StopIteration failure trigger. No negative/malformed-topology test exists.",
+        "severity_adjusted": "medium",
+        "blast_radius": "One report variant: DSBReport (train_type==\"dd\", the DSB/OTU double-decker), which is also aliased as OTUReport (line 200). The dd-ICL-0-AP branch is dd-only; the fixed-consist train types (mq/otu/ic3/ic4/ir4) use fixed_consist_algo and never reach lines 120-132. Unrelated to the OBB DOSTO NEU (nv6/nv4) fleet in this project. An uncaught exception here aborts number_coaches for the whole consist report, so impact is per-train when it triggers."
+      }
+    },
+    {
+      "title": "RulesEngine.map_field runs re.match on a possibly-None device field value",
+      "file": "lib/report/rules_engine.py",
+      "line": 61,
+      "defect_class": "regex_assumption",
+      "severity": "high",
+      "claim": "field_value = getattr(device, field) passes the hasattr check (line 53) even when the attribute is None, so re.match(regex, None) at line 61 raises TypeError.",
+      "trigger": "A field-mapping rule on an SNMP-derived field (e.g. 'config' or 'firmware') for a device whose field is None because the SNMP get silently returned None. DANI uses field-mapping on config.",
+      "repro": "config_rules with a field-mapping {'field':'config','regex':'...'} applied to a device whose config=None -> re.match(regex, None) at line 61 -> 'expected string or bytes-like object, got NoneType'.",
+      "confidence": "high",
+      "subsystem": "report_layer",
+      "verdict": {
+        "verdict": "needs_runtime_confirmation",
+        "reasoning": "The claim is statically accurate. At rules_engine.py:53 the guard is `if not hasattr(device, field)`. Device (device.py:6-34) is a @dataclass where config, firmware, serial, etc. all `= field(default=None)`. For a dataclass, a declared attribute ALWAYS exists on the instance even when its value is None, so `hasattr(device, \"config\")` returns True when config is None. The guard therefore only catches a field name that is not a declared attribute at all (e.g. \"foo\"), not the field-is-None case. Lines 59-61 then run unguarded: `field_value = getattr(device, field)` -> None, then `match = re.match(regex, field_value)` -> `re.match(regex, None)` raises TypeError \"expected string or bytes-like object, got NoneType\". I also confirmed the upstream applicable() check does NOT save it: applicable() (lines 125-164) has a None-guard at lines 134-136 (`device_value = getattr(device, rule_key, None); if device_value is None: return False`), BUT it explicitly skips the \"field-mapping\" key at line 130 (`if rule_key in [\"target\", \"field-mapping\"]: continue`). So the field being mapped is never the field being checked for None — a rule {\"type\":\"SW\",\"field-mapping\":{\"field\":\"config\",...}} only checks `type`, and if type matches while config is None, applicable() returns True and map_field is reached with config=None. The caller report.py:310 calls select_config_target on every SW/AP/ICL device with no pre-filter on device.config. The TypeError cannot be statically guaranteed to fire only because it depends on config actually arriving as None at runtime (SNMP get silently returning None), so verdict is needs_runtime_confirmation rather than confirmed — but the missing-None-guard is a real, statically-provable gap.",
+        "covered_by_test": "tests/lib/report/test_rules_engine.py covers map_field but NOT this path. test_field_mapping (line 490) uses devices with non-None config. test_field_mapping__empty id=\"unknown-field\" (line 537) uses field=\"foo\" which exercises ONLY the hasattr-False branch (line 53 true), and id=\"no-regex-match\" uses config=\"1.345.8\" (non-None). No test passes a field-mapping rule whose mapped field (config/firmware) is None. The hasattr-True-but-value-None case is untested.",
+        "severity_adjusted": "medium",
+        "blast_radius": "Only report variants whose config uses field-mapping rules. Per the in-code comment (lines 72-77, \"DANI is the only project using field-mapping\") and the DANI MAC 74:8f:4d in the with-prefix test (line 479), this is DANI, a non-DOSTO project. The 14 DOSTO report variants use plain `target:` rules, not field-mapping, so DOSTO is unaffected. Scoped to field-mapping-using projects (DANI) on devices whose SNMP-derived config/firmware came back None."
+      }
+    },
+    {
+      "title": "togglepoe dereferences instantiate_device() result without None check",
+      "file": "lib/server/routers/actions.py",
+      "line": 114,
+      "defect_class": "none_deref",
+      "severity": "high",
+      "claim": "snmp_device from LldpWalker().instantiate_device(...) can be None (no vendor config / missing class / SNMP init failure), and line 114 calls snmp_device.set_port_poe(port, state) unguarded -> AttributeError 500.",
+      "trigger": "Target AP's parent switch has no vendor_specific config, missing 'class', a non-existent class name, or fails SNMP init at construction; instantiate_device returns None per walker.py lines 43/50/58/67.",
+      "repro": "POST/GET /actions/togglepoe/<ap_ip>/false where parentSW is found and port resolves, but the switch's brand isn't in vendors.yaml -> instantiate_device returns None -> None.set_port_poe(...) -> AttributeError -> 500. Unlike reset_device, togglepoe has no try/except, so it crashes outright.",
+      "confidence": "high",
+      "subsystem": "server_api",
+      "verdict": {
+        "verdict": "needs_runtime_confirmation",
+        "reasoning": "Confirmed the code shape. actions.py:112 `snmp_device = LldpWalker().instantiate_device(mac=parentSW.mac, ip=parentSW.ip)` followed immediately by 114 `success = snmp_device.set_port_poe(port, state)` with NO guard between them — no `if not snmp_device`, no `isinstance(snmp_device, SNMPDevice)`, no try/except. instantiate_device (walker.py lines 30-67) returns None on four paths: brand not in vendor_specific (43), missing 'class' (50), class_name not in lib.device.vendor (58), SNMPDeviceException at construction (67). So None.set_port_poe(...) -> AttributeError. Reachability: the only upstream guard is line 109 `if not port: return`, which gates on `port` (truthy), not on parentSW or the live re-instantiation. When port is truthy, parentSW is a report Device, but line 112 does an INDEPENDENT live vendor-config/SNMP lookup that can still return None. The two sibling handlers in the same file both protect this exact call: reset_device (lines 23-50) wraps everything in try/except returning {\"success\": False} AND isinstance-checks; getlog (lines 68-72) isinstance-checks. togglepoe alone has neither — so the AttributeError propagates as an unhandled FastAPI 500 (no global exception_handler exists in the tree). The claim's FILE:LINE, return-None lines (43/50/58/67), and crash mechanism are all accurate. Marked needs_runtime_confirmation rather than confirmed because triggering it requires the live re-instantiation at 112 to actually fail for a switch that WAS in the report (report-derived parentSW implies it was discoverable earlier, so on a healthy fleet line 112 usually succeeds); the None propagation and unguarded deref are statically provable, but whether a real parent switch hits a None branch at runtime depends on vendors.yaml/SNMP state I cannot prove statically.",
+        "covered_by_test": "No test covers the togglepoe/actions router (grep of tests/ for actions|togglepoe|reset_device|getlog returns no files). Tests tests/lib/walker/test_lldpwalker.py::test_instantiate_device__no_vendor/__no_class/__non_existent_class/__failed_instantiate independently confirm instantiate_device returns None on the four trigger paths, but none exercise actions.py line 114.",
+        "severity_adjusted": "medium",
+        "blast_radius": "Not report-variant-specific. Affects the OBN server-side action API (lib/server/routers/actions.py) for ALL trains/vendors — any POE toggle whose target AP's parent switch fails live re-instantiation (MAC absent from vendor_specific in vendors.yaml, missing/invalid class, or SNMP init failure) returns HTTP 500 instead of {\"success\": False}. Single endpoint; degrades the togglepoe feature only, not discovery/report/update flows. Same class of unguarded instantiate_device deref does NOT exist in reset_device/getlog (both guarded)."
+      }
+    },
+    {
+      "title": "Unresolved neighbour MAC crashes entire tree build (None.type)",
+      "file": "lib/tree.py",
+      "line": 37,
+      "defect_class": "none_deref",
+      "severity": "high",
+      "claim": "create_tree() dereferences neighbour_device.type without checking the next(...) result for None, so a neighbour MAC not present in the device list raises AttributeError and aborts the whole update.",
+      "trigger": "A device's neighbours list contains a MAC (from LLDP/SNMP) that has no matching entry in the report device list (partial discovery, device dropped from report, or a stale/foreign neighbour such as a coupled-consist switch).",
+      "repro": "Build devices=[BOX box1, SW-A]; give SW-A a neighbour {'mac':'aa:bb:cc:dd:ee:ff'} that is not in devices. Call OBNTree.create_tree(devices). next(...) returns None (line 36), then `if neighbour_device.type == 'BOX'` raises AttributeError: 'NoneType' object has no attribute 'type'. No device gets updated.",
+      "confidence": "high",
+      "subsystem": "tree_update",
+      "verdict": {
+        "verdict": "needs_runtime_confirmation",
+        "reasoning": "Claim is structurally accurate. tree.py:34-36 binds neighbour_device = next((x for x in devices if x.mac == neighbour[\"mac\"]), None) with a None default, and line 37 immediately does `if neighbour_device.type == \"BOX\"` with no None check — so an unmatched neighbour MAC raises AttributeError and create_tree aborts. There is no upstream guard in create_tree: only the BOX root is validated (line 24); the neighbour loop (lines 33-46) is unguarded. The trigger is reachable, not hypothetical: neighbours are raw LLDP-discovered entries (walker.py:107-126 appends whatever LLDP returns as long as it has mac+ip), and they are NOT cross-filtered against the final report device set. Meanwhile normalise_devices (report.py:254-260) actively DROPS devices that lack coach_number/device_number/type from device_instances, but does not prune those dropped MACs from the surviving devices' neighbours lists — so a surviving switch can still list a neighbour MAC that no longer exists as a Device. Strongest corroboration: the report authors KNOW unmatched neighbour MACs occur and guard for exactly this — number_coaches does `to_device = self.get_device(neighbour); if to_device is None: continue` (report_dosto_neu.py:57-61), and get_device/find_neighbour return Device|None (report.py:401-412). tree.py is the one consumer that forgot the same None guard. I mark needs_runtime_confirmation rather than confirmed because firing the crash depends on a runtime data condition (a neighbour MAC absent from the report device list — e.g. a MEDIA device, an un-numbered/dropped device, or a foreign coupled-consist switch); on a clean fully-discovered consist where every neighbour resolves, the line never throws. The defect is statically present (missing guard) but not statically guaranteed to trigger on every input.",
+        "covered_by_test": "None found. No test_tree.py exists in the tests tree, and tests/cli/test_update.py never references create_tree, OBNTree, or neighbour. The path is entirely uncovered.",
+        "severity_adjusted": "high",
+        "blast_radius": "Not DOSTO-only. create_tree is called once, from cli/update.py:297, on the generic update(action, target) path that backs `obn update f|c|fc` for all/sw/ap/icl across every report variant (the tree-ordered batch update is product-agnostic). Any consist whose loaded report contains a device whose neighbours list references a MAC not present in the get_devices(... include_ccu=True, include_unknown=True) list will abort the whole update batch with AttributeError before a single device is touched. Triggers most plausibly on partial discovery, a device dropped by normalise_devices, a MEDIA-type neighbour, or a stale/foreign coupled-consist switch — i.e. realistic field conditions during DOSTO v8 rollout, but the defect applies fleet-wide, not to one vendor or one report."
+      }
+    },
+    {
+      "title": "needs_firmware_update None.endswith when firmware unread",
+      "file": "lib/report/device.py",
+      "line": 66,
+      "defect_class": "none_deref",
+      "severity": "high",
+      "claim": "needs_firmware_update() calls self.firmware.endswith(...) without guarding self.firmware against None, so a device with a firmware target but a None firmware (SNMP read failed) crashes get_updatable_devices.",
+      "trigger": "target contains a 'firmware' key but the live firmware read returned None (snmpdevice _snmp_get returns None on any SNMP error).",
+      "repro": "Device(firmware=None, target={'firmware':'7.4.2'}).needs_firmware_update() -> 'NoneType' object has no attribute 'endswith'. This is reached from cli/update.py get_updatable_devices (line 110) during every `obn update f`.",
+      "confidence": "high",
+      "subsystem": "tree_update",
+      "verdict": {
+        "verdict": "needs_runtime_confirmation",
+        "reasoning": "The defect is real and statically provable in code. device.py:62-66 `needs_firmware_update()` guards only `self.target` (line 63: `if self.target is None or \"firmware\" not in self.target: return False`) and then unconditionally calls `not self.firmware.endswith(self.target[\"firmware\"])` (line 66) with no None-guard on self.firmware. `firmware` defaults to None (device.py:11) and IS reconstructed as None from the report: lib/device/device.py:18 `as_dict()` always emits `\"firmware\": self.firmware_version`, and snmpdevice.py:226-228 firmware_version -> generic_get -> _snmp_get returns `result.get(oid)` = None on SNMP error/empty (snmpdevice.py:288-292,340). report.py:289-318 apply_firmware_and_configuration_rules assigns `device.target` from the RulesEngine, which matches on device PROPERTIES (type/coach via rules_engine.py:126-164), NOT on whether firmware was read — so a device can simultaneously have firmware=None and target={'firmware':...}. cli/update.py:98-117 get_updatable_devices iterates ALL report devices through `dev.needs_firmware_update()` (line 110) with no None-firmware filter and no try/except, so the AttributeError propagates and aborts `obn update f`. The repro `Device(firmware=None, target={'firmware':'7.4.2'}).needs_firmware_update()` raising 'NoneType' has no attribute 'endswith' is correct. I downgrade from confirmed to needs_runtime_confirmation only because of the discovery-layer liveness gate at backbone_discovery.py:80-82: a fully-failed device (uptime None) is recorded as bare {mac,ip} and won't carry firmware=None+type, so the crash specifically requires a PARTIAL SNMP failure — the device answers the uptime OID (uptime not None -> as_dict() called at line 95) but returns None for the firmware OID. That is a real but hardware/timing-dependent condition (transient loss on the firmware GET, wrong/unsupported firmware OID for a firmware revision, switch mid-boot), not guaranteed on every run.",
+        "covered_by_test": "tests/lib/report/test_device.py:62-79 test_needs_firmware_update — does NOT cover the trigger. Its parametrize cases all use current_version=\"v1\" (a non-None firmware); the None/empty-target cases ((v1,None,False) and (v1,dict(),False)) exit via the line-63 guard before reaching .endswith. There is NO case for (firmware=None, target={'firmware':...}), so the test neither covers nor contradicts the claim — it confirms the gap.",
+        "severity_adjusted": "high",
+        "blast_radius": "Vendor/project-agnostic: needs_firmware_update lives in the shared lib.report.Device base and is invoked by cli/update.py get_updatable_devices (line 110) and auto_update (line 238) on EVERY project's `obn update f` / auto-update run — all 14+ report variants and any SNMP device (SW/AP/ICL) that returns a uptime but a None firmware. The sibling needs_configuration_update (device.py:68-72, config.endswith) is the identical defect for config=None on `obn update c`. For the DOSTO fleet specifically (VDS switches + Westermo APs with firmware_rules configured), any switch/AP that partially answers SNMP during an update window can abort the whole update set, not just skip the one device."
+      }
+    },
+    {
+      "title": "needs_configuration_update None.endswith when config unread",
+      "file": "lib/report/device.py",
+      "line": 72,
+      "defect_class": "none_deref",
+      "severity": "high",
+      "claim": "needs_configuration_update() calls self.config.endswith(...) without guarding self.config against None, crashing get_updatable_devices for any device with a config target but a None config.",
+      "trigger": "target contains a 'config' key but configuration_version SNMP read returned None.",
+      "repro": "Device(config=None, target={'config':'V8'}).needs_configuration_update() -> AttributeError on None.endswith. Reached from cli/update.py get_updatable_devices (line 114) during every `obn update c`.",
+      "confidence": "high",
+      "subsystem": "tree_update",
+      "verdict": {
+        "verdict": "needs_runtime_confirmation",
+        "reasoning": "The cited line is real and unguarded. lib/report/device.py:68-72: `def needs_configuration_update(self): if self.target is None or \"config\" not in self.target: return False; return not self.config.endswith(self.target[\"config\"])`. The guard at line 69 checks only `target`, never `self.config`. `config` defaults to None (line 13) and is populated from the SNMP `configuration_version` read, which can return None: snmpdevice.py:234-236 `configuration_version` -> `generic_get(oid)`, and `_snmp_get`/`_get` return None / empty on failed or empty SNMP (lines 287-322, 328). The trigger is reachable: report.py:289-318 `apply_firmware_and_configuration_rules` sets `device.target` from `RulesEngine.select_config_target`, and rules_engine.py:126-164 `applicable()` only requires the rule's *condition* keys (e.g. `type`) to be non-None — a static rule `{type: SW, target:{config: V8}}` matches a switch regardless of whether its `config` was read. So a device with `config=None` and `target={\"config\":\"V8\"}` is possible, and update.py:112-114 `get_updatable_devices` calls `dev.needs_configuration_update()` over every targeted device in an eager set comprehension during every `obn update c` (update.py:273) -> AttributeError 'NoneType' object has no attribute 'endswith', aborting the whole run. The codebase already knows config can be None: report.py:212-214 defensively writes `self.parse_version_string(device.config) if device.config else \"unknown\"`. I mark needs_runtime_confirmation rather than confirmed because, while statically reachable, it fires only when a real device with a config-target rule returns a None configuration_version — a hardware/SNMP data condition not provable from the static artifacts (no fixture exercises config=None). Note: line 66 `needs_firmware_update` has the identical unguarded pattern but is a distinct instance, not a duplicate of this claim.",
+        "covered_by_test": "tests/lib/report/test_device.py:82-96 test_needs_configuration_update — does NOT cover this path. Its parametrization (lines 84-88) only uses current_version=\"v1\" (a non-None string) across all cases (config=v2/v1/empty-dict/None-target); there is no case with config=None plus a config-bearing target. tests/cli/test_update.py:218 test_get_updatable_devices__config uses mock_report devices that all have config populated. No green test asserts the opposite; the None-config path is simply uncovered.",
+        "severity_adjusted": "high",
+        "blast_radius": "Project-agnostic, all report variants. The faulty method lives in shared lib/report/device.py and the caller in shared cli/update.py — used by every fleet/vendor that defines static config_rules (DOSTO/4736 VDS via vdsrail, plus any project with type-keyed config targets). One device with config=None aborts the entire `obn update c` run for ALL targeted devices, since get_updatable_devices iterates eagerly and the exception propagates out (update.py:112-117). Twin pattern on line 66 extends the same exposure to `obn update f`."
+      }
+    },
+    {
+      "title": "Per-batch firmware-then-config both sleep 5 min; config update skipped if device IP changes after firmware reboot",
+      "file": "cli/update.py",
+      "line": 310,
+      "defect_class": "other",
+      "severity": "low",
+      "claim": "update() processes firmware then config for the same batch assuming the device keeps its IP across the firmware reboot; the code's own comment admits no ARP/ping reacquisition, so a post-firmware IP change makes the subsequent config push hit a stale IP and silently fail (SNMPDeviceException swallowed in update_device).",
+      "trigger": "A device that changes IP after a firmware update is targeted with action 'fc'.",
+      "repro": "Run `obn update fc <ip>` on a device that DHCP-renews to a new IP after firmware reboot. Firmware batch reboots it; config batch (same Device.ip) talks to the old IP, set_configuration_version raises SNMPDeviceException, which update_device catches at line 211 and returns without surfacing failure -> config silently not applied.",
+      "confidence": "medium",
+      "subsystem": "tree_update",
+      "verdict": {
+        "verdict": "needs_runtime_confirmation",
+        "reasoning": "Static facts in cli/update.py confirm the structural claim. In update() the per-batch loop (lines 310-321) processes `batch & update_set.firmware_updates` via process_batch(union,\"f\"), sleeps 5*60, then processes `batch & update_set.config_updates` via process_batch(union,\"c\"), sleeps 5*60 — firmware then config for the SAME batch using the SAME Device objects, which carry the report-time device.ip. The code's own comment (lines 304-307) explicitly admits the gap: \"we _assume_ that the device won't change IP address after the firmware update. If it does, we'll need to implement a technique (combination of ARP and ping) to reacquire the IP address to proceed with the configuration update.\" I confirmed no reacquisition exists on this path: update_device() -> get_snmpdevice(device) -> LldpWalker().instantiate_device(mac=device.mac, ip=device.ip) (update.py:143-144), and instantiate_device (walker.py:30-64) constructs the vendor class with the passed-in ip verbatim — it never calls ARPLookup/DHCPLookup.get_ip_from_mac to re-resolve. So a post-firmware IP change would make the config push hit the stale report-time IP, and set_configuration_version() raising SNMPDeviceException is caught at update.py:211-214 and the function returns. TWO caveats keep this from \"confirmed\": (1) the claim says config \"silently\" fails, but update_device does NOT fail silently — it calls logger.exception(...) and prints \"error during configuration update\" to stdout (lines 212-213), so the failure IS surfaced in logs/console, contradicting the \"silently swallowed\" framing. (2) The actual fault only manifests when a real device DHCP-renews to a different IP within the firmware-reboot window AND needs both f+c; whether that occurs depends on lease timing/hardware and cannot be proven statically. The design gap is real and self-documented; the failure realization is runtime-dependent.",
+        "covered_by_test": "No test covers the stale-IP path. tests/cli/test_update.py update() tests (test_update_new__by_sw/by_ap/by_ip/none, lines 514-583) all mock time.sleep and either update_device or process_batch, so the firmware-reboot/IP-change branch and the SNMPDeviceException handler are never exercised. No test asserts IP reacquisition between firmware and config batches.",
+        "severity_adjusted": "medium",
+        "blast_radius": "Not report-variant-specific. Affects any device updated with combined firmware+config (action 'fc'/'cf') via the supervised update() path whose IP changes after the firmware reboot — i.e. all SNMP device vendors (VDS switches, Westermo/Extreme/Acksys/Lantech APs). On DOSTO the 2-min DHCP leases on switches/APs make a post-reboot IP change plausible, but the config push failure is per-device and is logged (not consist-wide). Read-only diagnostic/report paths are unaffected."
+      }
+    },
+    {
+      "title": "find_brand / is_known_mac_prefix crash on None MAC",
+      "file": "lib/configuration.py",
+      "line": 181,
+      "defect_class": "none_deref",
+      "severity": "low",
+      "claim": "find_brand and is_known_mac_prefix call mac.startswith(...) without guarding mac, so a None MAC (from a failed SNMP/LLDP MAC parse) raises AttributeError.",
+      "trigger": "A walker passes a neighbour MAC that came back None from parse_mac_address/parse_mint_id (alternate/missing device response format).",
+      "repro": "Configuration.is_known_mac_prefix(None) -> `None.startswith(prefix)` -> AttributeError: 'NoneType' object has no attribute 'startswith'. Reached when lib/walker passes an unparsed neighbour mac into is_known_mac_prefix (lldpwalker.py:37) or find_brand into vendor_specific lookup.",
+      "confidence": "low",
+      "subsystem": "config_cli",
+      "verdict": {
+        "verdict": "needs_runtime_confirmation",
+        "reasoning": "configuration.py:181 (`if mac.startswith(vendor_mac)` in find_brand) and :191 (`any(mac.startswith(prefix) for ...)` in is_known_mac_prefix) genuinely have no None guard; calling either with None raises AttributeError. The hunter's PRIMARY path is wrong: the CCU-LLDP route (lldpwalker.py:37 fed by build_ccu_device) cannot yield None — lib/lldp.py get_lldp_neighbours sets mac only from a regex match (non-None str) and walker.py:108-118 filters results lacking a 'mac' key; and the dominant device VSC explicitly guards at vsc7429.py:262 (`if entry[\"mac\"] and entry[\"ip\"]`). HOWEVER a real None-producing path the claim also names exists: extreme.py:304-306 does `mac = parse_mac_address(m[\"mac\"]); results.append({\"port\":1,\"mac\":mac,\"ip\":m[\"ip\"]})` and tipg541.py:314-316 does the same in a loop — parse_mac_address (parsers.py:17-30) returns None when its strict `[A-F0-9]{2}-...` regex misses even though the looser `Chassis ID:` regex matched. That None MAC enters dev.neighbours, is fed back via device_queue.extendleft(dev.neighbours) (lldpwalker.py:40), and reaches is_known_mac_prefix(None) at lldpwalker.py:37 (is_new_mac(None) at walker.py:18-22 does not reject it) and find_brand(None) via instantiate_device (walker.py:38). So the deref is reachable, but only when an Extreme/TIPG device returns LLDP SSH output whose Chassis ID matches the loose pattern but not the strict MAC parser — hardware/data-dependent, not statically guaranteed.",
+        "covered_by_test": "None found. tests/lib/test_configuration.py:140-160 test_find_brand is parametrized only with valid string MACs (and None as a *result*, never as input); test_extreme.py test_wired_neighbours (line 96) only feeds a well-formed MAC. No test passes None to find_brand/is_known_mac_prefix or exercises the None-MAC-into-neighbours path.",
+        "severity_adjusted": "low",
+        "blast_radius": "Not all SNMP devices — the common VSC switch path is guarded (vsc7429.py:262). Limited to discovery runs that include an Extreme Networks AP (extreme.py wired-neighbour SSH parse) or TIPG541 device (tipg541.py) whose LLDP Chassis ID line matches the loose regex but fails strict parse_mac_address. When it fires it aborts the whole walker discovery (uncaught AttributeError in LldpWalker.walk), affecting any obn discover/report/update run on such a consist, hence indirectly all report variants for that train — but only under that specific malformed-LLDP condition."
+      }
+    }
+  ],
+  "refuted": [
+    {
+      "title": "TNG4500 neighbours() crashes when LLDP value is not parseable as MAC",
+      "file": "lib/device/vendor/tng4500.py",
+      "line": 176,
+      "defect_class": "none_deref",
+      "severity": "medium",
+      "claim": "mac.rsplit(\":\",1) raises AttributeError because parse_mac_address(value) returns None for a non-6-byte value, and mac is used unguarded; the is_mac_address() validator defined at line 106 is never called.",
+      "trigger": "A section-5 LLDP entry (snmp_lldp_desc_oid ...4.1.1.5...) carries a value that is not a clean 6-byte chassis-id (empty string, padded text, alternate encoding), so parse_mac_address returns None.",
+      "repro": "Feed neighbours() a walk result with oid '<base>.5.24.15.1' and value '' (or a 5-byte string); line 175 mac=None; line 176 ccu_dev.mac.startswith(None.rsplit(...)) raises 'AttributeError: NoneType has no attribute rsplit'.",
+      "confidence": "high",
+      "subsystem": "vendor_drivers",
+      "verdict": {
+        "verdict": "refuted",
+        "reasoning": "The claim's mechanism is false as written. `parse_mac_address` (tng4500.py:113-118) does NOT validate 6-byte length and does NOT return None for the inputs the hunter cites. Its body is `\":\".join(f\"{byte:02x}\" for byte in bytes(mac, \"latin-1\"))` with `return None` ONLY in the `except ValueError` branch. For the hunter's REPRO value `''`: `bytes(\"\",\"latin-1\")` -> `b\"\"` -> join over empty -> `\"\"` (empty string, NOT None), so `mac=\"\"` and line 176 `\"\".rsplit(\":\",1)[0]` -> `\"\"`, no AttributeError. For a 5-byte string e.g. `\"abcde\"`: returns `\"61:62:63:64:65\"` (a string), no crash. So None never arises from \"empty/5-byte/padded text\". Furthermore, the empty-string trigger can never even reach neighbours(): the upstream walk parser drops zero-length values at snmpdevice.py:303-304 (`if isinstance(cast_value,(str,bytes)) and len(cast_value)==0: continue`). parse_mac_address returns None ONLY on UnicodeEncodeError, i.e. when `value` contains a codepoint > U+00FF — a very different and much narrower trigger than any cited, and one a real MAC chassis-id would not produce (raw MAC bytes are decoded UTF-8 at snmpdevice.py:297-298 and typically fail -> dropped at line 318). The hunter is correct that line 176 uses `mac` unguarded and that `is_mac_address` (line 106) is dead code (grep across the obn tree shows zero call sites), but the falsifiable claim — that empty/short/padded values yield None and crash — is contradicted by the actual code. Refuted on the stated mechanism.",
+        "covered_by_test": "none found — there are zero test files referencing tng4500/TNG4500 in tests/ (grep returned no files); neighbours() in tng4500.py is entirely untested",
+        "severity_adjusted": "low",
+        "blast_radius": "Single vendor: TNG4500Device (Moxa-brand switch platform), registered in lib/device/vendor/__init__.py among ~14 vendor classes. Not DOSTO/VDSRail (this playbook's ÖBB DOSTO trains use VDSRailDevice). Affects only deployments whose SNMP discovery includes a Moxa TNG4500 switch; no DOSTO report variant exercises this path."
+      }
+    },
+    {
+      "title": "DaniReport.number_coaches() dereferences first_coach which may be None",
+      "file": "lib/report/report_dani.py",
+      "line": 196,
+      "defect_class": "none_deref",
+      "severity": "high",
+      "claim": "previous_coach is set to first_coach (line 192), which stays None unless sw1_1 is in a CCU coach (line 181); with only one CCU coach detected the code only warns (line 178) and continues, so line 196 previous_coach.is_neighbour(coach) raises AttributeError on None.",
+      "trigger": "len(ccu_coaches) != 2 (e.g. second CCU serial None so its coach not flagged is_ccu) AND sw1_1's coach is not among the detected ccu_coaches, leaving first_coach None.",
+      "repro": "Discovery where only one CCU-coach is identified and sw1_1 lives in a non-CCU coach -> first_coach stays None -> 'NoneType' object has no attribute 'is_neighbour' at line 196.",
+      "confidence": "medium",
+      "subsystem": "report_layer",
+      "verdict": {
+        "verdict": "refuted",
+        "reasoning": "The claim's central premise — that sw1_1's coach can fail to be among ccu_coaches, leaving first_coach=None at line 192 so line 196 (previous_coach.is_neighbour) raises AttributeError — is false, proven both statically and at runtime.\n\nStatic path (report_dani.py:120-208): sw1_1 = find_neighbour(box1, port==2) (line 145); if None the function sys.exit(1) at line 149, so past 149 sw1_1 is guaranteed non-None. sw1_1 is therefore the switch directly connected to box1's lan1 — and per the discovery layer (lib/lldp.py:41, walker.py:99-124, util/__init__.py add_ccu_interfaces) exactly those switches that are LLDP neighbours of the CCU's ccu_interfaces get ccu_interface set. So sw1_1 always carries ccu_interface. _build_pair (lines 103-118) places the 'A' switch as switch_a; for an A-switch it returns Coach(switch, found) → switch_a = sw1_1. Coach.is_ccu_coach() (line 32-33) returns switch_a.ccu_interface is not None → True for sw1_1's coach. Hence sw1_1's coach is always in ccu_coaches (line 173), line 181 `if sw1_1 in coach` matches, and first_coach is set (line 183) BEFORE line 192. The len(ccu_coaches)!=2 warning at 177-178 only logs; it does not gate first_coach because first_coach depends on sw1_1's coach membership, not on finding two CCU coaches.\n\nRuntime confirmation: I executed number_coaches() against the exact trigger fixture dani_t50.json (\"9 coach, no SNMP on 2nd CCU and a missing switch\" → only ONE ccu_interface switch present, mac 74:8f:4d:12:20:60 = men-dani-v10-19911506A, which is box1's port-2 neighbour = sw1_1). It logged \"can't find all CCU coaches\" (proving the len!=2 branch was taken) yet first_coach was set, and the run terminated via the for/else sys.exit(1) at lines 199-204 (\"can't find next coach for coach 9\") — NOT an AttributeError at line 196. The trigger condition was met and the claimed None-deref did not occur.",
+        "covered_by_test": "tests/lib/report/test_report_dani.py::TestDANIReport::test_number_coaches__incorrect[dani_t50.json] — the single-CCU-coach scenario the claim describes; marked @pytest.mark.xfail (accepted DANI limitation). I reproduced it: it exits via sys.exit(1) at report_dani.py:201-204, not via AttributeError at line 196.",
+        "severity_adjusted": "low",
+        "blast_radius": "DANI report variant only (DaniReport.number_coaches) — ÖBB Nachtzug/Tagzug DANI consists. Not DOSTO. Does not affect the other report variants or SNMP devices. And it is not an actual defect."
+      }
+    },
+    {
+      "title": "ACEReport AP rule has operator-precedence bug misnumbering any port-10 neighbour",
+      "file": "lib/report/report_ace.py",
+      "line": 123,
+      "defect_class": "numbering_logic",
+      "severity": "medium",
+      "claim": "'if from_device.type == \"SW\" and port == 9 or port == 10:' parses as '(type==SW and port==9) or (port==10)', so ANY neighbour on port 10 — regardless of from_device type — is treated as an AP and assigned coach/device numbers.",
+      "trigger": "A non-SW source device (or any device type pairing) with a neighbour reported on port 10.",
+      "repro": "A BOX or AP from_device with a neighbour on port 10 enters the AP branch; to_device.coach_number/device_number get set (device_number = 10-8 = 2) even though the connection is not an SW->AP port-9/10 link, producing a wrong coach/device assignment.",
+      "confidence": "high",
+      "subsystem": "report_layer",
+      "verdict": {
+        "verdict": "refuted",
+        "reasoning": "Line 123 of src/usr/share/obn/lib/report/report_ace.py reads exactly `if from_device.type == \"SW\" and port == 9 or port == 10:`, and Python precedence does parse it as `(from_device.type == \"SW\" and port == 9) or (port == 10)`. So the operator-precedence observation is correct in isolation. However, the FALSIFIABLE CLAIM's core assertion — that ANY neighbour on port 10 \"regardless of from_device type\" is treated as an AP — is false, and the REPRO (a BOX or AP from_device entering the branch) is structurally impossible. `from_device` is obtained at line 82 via `queue.pop()`, and the queue is only ever fed by (a) line 76 `deque([master_switch])` (the CCU's neighbour switch) and (b) line 111 `queue.appendleft(to_device)`, which sits inside the rule-#1 block guarded at lines 99-103 by `from_device.type == \"SW\" and port in self.LACP_PORT and to_device.type == \"SW\"`. Therefore every device ever popped as `from_device` is guaranteed to be a switch; a BOX or AP source device is never appended and never reaches line 123. The `port == 10` short-circuit can only mis-classify a non-AP neighbour that hangs off a *switch* on port 10 — but the claim's stated trigger/repro (non-SW source) cannot occur, so the claim as written is refuted. In all valid ACE topologies port 10 carries only an AP, which is why the assignment is correct in practice.",
+        "covered_by_test": "tests/lib/report/test_report_ace.py::TestACEReport::test_number_coaches (6 green parametrized cases) and test_number_coaches__extended (2 cases) exercise number_coaches() end-to-end and assert correct coach/device numbers; test_number_coaches__ap_on_lacp covers the unexpected-connection path. None exercise a non-SW from_device with a port-10 neighbour because the queue invariant makes that path unreachable.",
+        "severity_adjusted": "low",
+        "blast_radius": "ACE project report only (lib/report/report_ace.py) — 1 of ~16 report variants. Not DOSTO/OBB, not SNMP-device-wide. The buggy branch is never reached with a non-SW source due to the SW-only queue invariant (lines 76, 102, 111), so no customer report variant is actually misnumbered by the claimed trigger."
+      }
+    },
+    {
+      "title": "CCJPAReport bypass-relay path does min(int, None) and enqueues unnumbered device",
+      "file": "lib/report/report_ccjpa_wd2.py",
+      "line": 124,
+      "defect_class": "none_deref",
+      "severity": "medium",
+      "claim": "handle_bypass_relay returns to_device (truthy) even when none of the 4 device_number/port scenarios (lines 55-62) match, leaving to_device.coach_number None; line 124 then computes min(min_coach_number, None) which raises TypeError.",
+      "trigger": "Two switches connected on mismatched-LACP-pair ports where from_device.device_number is None (numbering gap / SNMP-derived) or not 1/2, so no coach_number is assigned in handle_bypass_relay.",
+      "repro": "from_device.device_number = None, left_port in LACP_INT, right_port in LACP_EXT -> handle_bypass_relay falls through lines 55-62 without setting coach_number, returns to_device -> line 124 min(0, None) -> 'TypeError: '<' not supported between int and NoneType'.",
+      "confidence": "medium",
+      "subsystem": "report_layer",
+      "verdict": {
+        "verdict": "refuted",
+        "reasoning": "The trigger requires from_device.device_number to be None (or not 1/2) when handle_bypass_relay runs, but that state is unreachable for any from_device passed to it. handle_bypass_relay is called only at report_ccjpa_wd2.py:117, with from_device = queue.pop() (line 103). By induction over EVERY queue insertion, a popped device always has device_number in {1,2}: the seed at line 97 sets device_number = {\"lan0\":1,\"lan1\":2}[ccu_interface] (yields exactly 1 or 2; any other interface value KeyErrors, it never produces None); and every propagation that appends to the queue either hardcodes 1/2 (rule #1 line 131, #2 line 151, #3 line 168, #6 line 218, #7 line 235) or copies from_device.device_number (bypass line 63, rule #4 line 185, rule #5 line 201) from a parent that is itself 1/2 by induction. Therefore at line 55-62, with device_number guaranteed 1 or 2 and the bypass condition (lines 46-51) already excluding right_port==0 and same-LACP-pair cases, exactly one of the four branches (device 1/2 x port INT/EXT) always fires and sets to_device.coach_number to an int. Line 124 min(min_coach_number, to_device.coach_number) thus never receives None. The premise \"from_device.device_number = None\" cannot arise on the production path; the repro is statically impossible.",
+        "covered_by_test": "tests/lib/report/test_report_ccjpa_wd2.py — unit tests test_check_for_bypass_relay_scenario_1 (line 142) and _scenario_3 (line 151) exercise the four-scenario branch and assert coach_number is set (4 and 3); the parametrized end-to-end case \"with_bypass\" (line 95) runs full number_coaches() including line 124 through the bypass path with no TypeError.",
+        "severity_adjusted": "low",
+        "blast_radius": "CCJPA report variant only (report_ccjpa_wd2.py), a single non-DOSTO customer. Not the DOSTO/ÖBB fleet this project operates. And not reachable even within CCJPA given the device_number invariant."
+      }
+    },
+    {
+      "title": "Table._validate dereferences None firmware/config from SNMP",
+      "file": "backbone_validate.py",
+      "line": 89,
+      "defect_class": "none_deref",
+      "severity": "medium",
+      "claim": "The `item not in device` guard only catches missing keys, not keys present with a None value, so `target in device[item]` and `device[item] + ' '` raise TypeError when firmware/config is None.",
+      "trigger": "A device record in the report/discovery JSON has a 'firmware' or 'config' key present but set to null (SNMP get succeeded for the device but the firmware/config OID returned None, or the JSON was hand/edited or produced by the discovery output_file which can keep None fields).",
+      "repro": "Call Table._validate({'ip':'10.x','firmware':None,'target':{'firmware':'v8'}}, 'firmware'): line 75 `'firmware' not in device` is False (key exists), line 89 `target in device['firmware']` -> `'v8' in None` -> TypeError: argument of type 'NoneType' is not iterable; even with empty target, line 92 `device['firmware'] + ' '` -> None + str TypeError. Crashes the whole `obn validate` table render.",
+      "confidence": "medium",
+      "subsystem": "config_cli",
+      "verdict": {
+        "verdict": "refuted",
+        "reasoning": "The cited code is real: backbone_validate.py:75 `if item not in device: return \"incomplete\"` only catches a MISSING key, and line 89 `valid = target in device[item]` plus line 92 `device[item] + \" \"` would both TypeError if device[item] were None. The hunter's reasoning about _validate in isolation is sound. HOWEVER the trigger is unreachable through OBN's actual data flow. (1) `obn validate` reads ONLY cfg.report_file (discovery.prev.json): load_devices() hardcodes `open(cfg.report_file)` (backbone_validate.py:132-137) and the CLI `validate` command (obn.py:104-108) exposes no input-file override. (2) discovery.prev.json is written solely by Report.store_report() -> dump_device_instances() -> Device.as_dict(skip_empty=True) (lib/report/report.py:137-141, lib/report/device.py:47-53), and that serializer DROPS every field whose value is None: `{k: v for k,v in self.__dict__.items() if not (skip_empty and (v is None or v == list()))}`. (3) A device whose SNMP firmware/config OID genuinely returned None — reachable: snmpdevice.firmware_version/configuration_version -> generic_get -> _snmp_get returns None at line 328 (empty OID) or line 340 (`result.get(oid)` miss on failed/empty get; empty strings are skipped at lines 303-304) — therefore lands in the REPORT with the firmware/config key OMITTED, not set to None. (4) When validate reads it back, line 75 `item not in device` is True -> returns \"incomplete\", and None never reaches line 89/92. The skip_empty serializer is the upstream guard that converts present-None into absent-key, which the line-75 guard already handles. The hunter's escape hatches don't hold: hand-edited JSON is out of scope (any field could be corrupted that way), and validate cannot be pointed at the raw output_file (discovery.json) that retains None. Note: discovery.py's own Device.as_dict (lib/device/device.py:12-21) DOES write present-None into discovery.json, but that file is never the input to validate.",
+        "covered_by_test": "tests/test_backbone_validate.py::TestTable::test_create_incomplete_switch_overview (with resources/test_backbone_validate/discovery_incomplete.json, where firmware/config keys are absent) green-asserts the \"incomplete\" path — the same outcome the skip_empty serializer guarantees for a None firmware/config. No test feeds a present-but-None firmware/config (test_validate__empty_firmware uses an empty TARGET, not a None device value), but none is needed because the report serializer makes present-None unreachable.",
+        "severity_adjusted": "low",
+        "blast_radius": "Would have spanned all SNMP devices (switches + APs) across all report variants in `obn validate`, since _validate runs on every firmware/config cell — but it is neutralized fleet-wide by the skip_empty serializer that produces discovery.prev.json. No vendor/report variant is actually exposed through the supported obn validate flow."
+      }
+    },
+    {
+      "title": "Table._validate crashes on null IP via ipaddress.ip_address(None)",
+      "file": "backbone_validate.py",
+      "line": 83,
+      "defect_class": "none_deref",
+      "severity": "medium",
+      "claim": "When a device dict carries ip=None, ipaddress.ip_address(device['ip']) raises and aborts the entire validate overview.",
+      "trigger": "A discovered device with no resolvable IP is serialized with ip:null into the report (e.g. GenericDevice / DHCP-relay entry, or any device whose IP lookup returned None).",
+      "repro": "Feed validate a device {'type':'SW','ip':None,'coach_number':1,'device_number':1}; _create_overview calls _validate(device,'ip'); 'ip' in device is True so line 83 runs ipaddress.ip_address(None) -> TypeError/ValueError, uncaught, aborting create_switch_overview for all devices, not just the bad one.",
+      "confidence": "medium",
+      "subsystem": "config_cli",
+      "verdict": {
+        "verdict": "refuted",
+        "reasoning": "Line 83 is real: `ip = ipaddress.ip_address(device[\"ip\"])`. The upstream guard at line 75 (`if item not in device: return \"incomplete ✗\"`) only checks KEY PRESENCE, not None value, so a literal in-memory dict `{'ip': None}` passed straight to `_validate` would indeed reach line 83 and raise ValueError uncaught (the loop at lines 105-113 has no try/except). The hunter's unit-level repro is accurate AT THE FUNCTION LEVEL. BUT the stated TRIGGER (\"serialized with ip:null into the report\") is false for the file `validate` actually reads. `backbone_validate.load_devices` (lines 132-137) reads `cfg.report_file` = discovery.prev.json, which is written by lib/report/report.py:store_report (lines 137-141) -> dump_device_instances (line 50) -> lib/report/device.py:as_dict(skip_empty=True) (lines 47-53): `if not (skip_empty and (v is None or v == list()))` OMITS any None field. So a None IP serializes as an ABSENT \"ip\" key, NOT \"ip\": null. Against that report, line 75 catches it -> returns \"incomplete ✗\", line 83 never runs. Furthermore _create_overview filters on x[\"type\"]==\"SW\" (line 103) and reads x[\"coach_number\"]/x[\"device_number\"] (lines 106-107) unguarded; a GenericDevice (the claim's cited source, lib/device/genericdevice.py ip=None default) has type/coach/device defaulting to None in the report-layer Device dataclass, which skip_empty also omits, so it never matches the type filter and is excluded before IP validation. The only as_dict that emits ip:null is the discovery-layer lib/device/device.py (line 13, unconditional), but that feeds discovery.json, which backbone_validate does NOT read. The trigger's factual premise is contradicted by the serializer on the actual read path.",
+        "covered_by_test": "tests/test_backbone_validate.py::TestTable::test_create_incomplete_switch_overview and test_validate__incomplete — both exercise the missing-field/\"incomplete\" path (resources/test_backbone_validate/discovery_incomplete.json has a VALID ip \"10.171.100.41\" and omits firmware/config keys), confirming the line-75 guard handles absent keys. No test feeds ip=None, but none is needed since the report serializer never produces a null ip.",
+        "severity_adjusted": "low",
+        "blast_radius": "Would be all 4 overview variants (SW/AP/ICL/MEDIA) across every consist if reachable, since _validate is shared. But unreachable via the report-file path on all of them because lib/report/device.py:as_dict(skip_empty=True) omits None ip before backbone_validate ever loads it. No customer report variant or SNMP device class produces a \"ip\": null entry in discovery.prev.json."
+      }
+    },
+    {
+      "title": "ZabbixGenerator.generate_nodes KeyErrors on missing coach_number",
+      "file": "lib/zabbix.py",
+      "line": 46,
+      "defect_class": "none_deref",
+      "severity": "medium",
+      "claim": "generate_nodes indexes node['coach_number'] with [] rather than .get(), raising KeyError for any discovered node lacking the key.",
+      "trigger": "discovery.prev.json contains a device entry without a 'coach_number' field (e.g. a comms-failed device recorded by backbone_discovery as just {'mac','ip'}, or a GenericDevice/unknown-prefix entry).",
+      "repro": "backbone_discovery.discover() appends {'mac':..,'ip':..} (no coach_number) for devices whose SNMP uptime is None (line 82) or unknown MAC (line 70). Run `zabbix_generate.py` against that file: ZabbixGenerator.generate_nodes line 46 `node['coach_number']` -> KeyError, crashing Zabbix LLD generation. ZabbixChecker.check (line 95) guards with `all(key in device ...)` but generate_nodes does not.",
+      "confidence": "high",
+      "subsystem": "config_cli",
+      "verdict": {
+        "verdict": "refuted",
+        "reasoning": "The cited line is real: lib/zabbix.py:46 reads `node[\"coach_number\"]` with `[]`, not `.get()`, and unlike ZabbixChecker.check (line 95-96, guarded by `all(key in device ...)`) generate_nodes has no key guard. So in isolation it would KeyError on a coach_number-less record. BUT the hunter's TRIGGER is false. zabbix_generate.py:7-11 feeds DISCOVERY_PREV_JSON = \"/tmp/discovery.prev.json\" to ZabbixGenerator. That path is `Configuration.report_file` (configuration.py:80-82), NOT the raw backbone_discovery output. discovery.prev.json is written exclusively by Report.store_report() (report.py:137-141), which dumps self.device_instances. run_report() (report.py:623-624) calls number_coaches() before store_report(), and every one of the 14 concrete number_coaches implementations calls normalise_devices() (verified by grep: report_ace/ccjpa_wd1/ccjpa_wd2/daisy_cybox/dani/dhcp/dosto_neu/dsb/generic/luna/queensland/tgv/tgv2020/via). normalise_devices (report.py:253-260) explicitly removes every device where `v.coach_number is not None and v.device_number is not None and v.type is not None` is false — i.e. it strips exactly the comms-failed/{mac,ip}-only entries the hunter relies on. Belt-and-suspenders: store_report() sorts the dumped list with itemgetter(\"coach_number\",\"device_number\",\"type\") at report.py:140 BEFORE writing, so a coach_number-less record could not even be serialized into the file. The raw discovery output the hunter describes (entries with only mac/ip) lives in the separate output_file (discovery.json), which ZabbixGenerator never opens. The hunter conflated discovery.json (raw, pre-normalisation) with discovery.prev.json (post-normalisation report snapshot). No production path can produce the triggering file shape, so the defect-as-described cannot fire.",
+        "covered_by_test": "tests/lib/test_zabbix.py::TestZabbix — test_all_present, test_physical_coach_numbers, test_one_switch_per_coach all feed generator.discovered_consist entries that uniformly include coach_number (the file's invariant) and assert the happy path; none feed a coach_number-less entry, matching the real input contract enforced by normalise_devices. No test contradicts the bug, but none can reach it either.",
+        "severity_adjusted": "low",
+        "blast_radius": "All 14 report variants share the same normalise_devices guard in number_coaches, so the protective invariant on discovery.prev.json holds fleet-wide (DOSTO and every other customer). Zabbix LLD generation is unaffected across the board. The only residual is a latent defensive-coding nit on zabbix.py:46 that is not reachable via any current writer of discovery.prev.json."
+      }
+    },
+    {
+      "title": "get_walker returns None for unrecognized walker_type -> None.walk()",
+      "file": "backbone_discovery.py",
+      "line": 30,
+      "defect_class": "none_deref",
+      "severity": "low",
+      "claim": "get_walker has no else branch, so any walker_type value other than the three hardcoded strings returns None, and discover() then calls None.walk().",
+      "trigger": "A report module defines a walker_type attribute that is a string not in {'LldpWalker','LldpArpWalker','DhcpWalker'} (e.g. a renamed/new walker), or returns an unexpected value.",
+      "repro": "Set report_module to a reporter whose walker_type='SomeNewWalker'; get_walker (lines 33-38) matches no branch and falls off the function returning None; discover() line 49 `for dev in wlk.walk():` -> AttributeError: 'NoneType' object has no attribute 'walk'.",
+      "confidence": "medium",
+      "subsystem": "config_cli",
+      "verdict": {
+        "verdict": "refuted",
+        "reasoning": "The hunter is right that get_walker (backbone_discovery.py:30-38) has no else branch and would implicitly return None for a walker_type string outside {\"LldpWalker\",\"LldpArpWalker\",\"DhcpWalker\"}. But the falsifiable claim and its TRIGGER (\"a report module defines walker_type as a string not in the three names\") describe data that does not exist anywhere in the tree. I enumerated every source of walker_type: (1) get_walker_type line 26 `walker_type = getattr(reporter, \"walker_type\", \"LldpWalker\".__str__)` falls back to the string \"LldpWalker\"; (2) grep for `walker_type` across lib/report shows ONLY two definitions — report_dhcp.py:8 returns \"DhcpWalker\" and report_via.py:10 returns \"LldpArpWalker\"; (3) the base Report class (report.py) defines no walker_type, so all other report classes inherit nothing and hit the fallback \"LldpWalker\". Thus the only three reachable values are exactly the three handled branches. The separate None case the hunter conflated into the trigger is explicitly guarded upstream at lines 31-32: `if (walker_type := get_walker_type(cfg)) is None: return LldpWalker()`. To make get_walker fall off and return None you would have to ADD a new report whose walker_type returns a novel string — a hypothetical future edit, not a live defect. Statically, the bug is unreachable.",
+        "covered_by_test": "tests/test_backbone_discovery.py::test_get_walker__unknown_module (report_module=\"UnknownReport\" -> getattr returns None -> fallback \"LldpWalker\" -> asserts isinstance(walker, LldpWalker)); plus test_get_walker__lldp_arp_walker, test_get_walker__default_lldp_walker, test_get_walker__default_dhcp_walker, test_get_walker_type__default, test_get_walker_type__via_report — all six exercise the function and assert a concrete walker, never None.",
+        "severity_adjusted": "low",
+        "blast_radius": "None in practice. All 16 report modules resolve to one of the three handled walker types (14 inherit the \"LldpWalker\" fallback, report_dhcp -> DhcpWalker, report_via -> LldpArpWalker). The missing else is a latent defensive gap that only a future broken/renamed report could trip; no current report variant or device path reaches it."
+      }
+    }
+  ],
+  "duplicate": []
+}

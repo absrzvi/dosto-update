@@ -32,9 +32,13 @@ All 36 switches agree on root `0/a0:59:3a:d0:59:20` = **nv6-D1-v8-138** (priorit
 
 Coupler counters reconcile across the link pairs (B1-147 TX 29.7M ≈ B3-138 RX 29.8M; B1-138 TX 14.2M ≈ B3-147 RX 14.5M). Zero CRC / carrier-false on all four coupler ports.
 
-### F2 — Max-age margin: passed, but thin
+### F2 — Max-age margin: on the cliff edge (numbers corrected 2026-06-20 from full harvest)
 
-Worst observed root path cost 28000 (A3-147) = **14 hops** from root (2000/hop on 10G backbone). The far extremity of 147 sits ~15–16 hops out vs the 20-hop max-age BPDU horizon. No split-root observed anywhere. **Interpretation:** this composition passed because the priority-0 root (D1-138) lies near the middle of the merged 36-switch chain. Root election between the two trains' priority-0 bridges is decided by MAC tie-break, i.e. luck: a composition whose elected root sits nearer one extremity would push the far end past 20 hops, partition the tree, unblock the redundant coupler link, and close a genuine L2 loop — Giorgio's mechanism, fully consistent with the June 109+110 storm. A 3×6-car composition (54 switches) exceeds even max-age 40.
+**Corrected from v1.0** (which read 28000/14 hops off an early/partial A3-147 sample). Full root-path-cost harvest (root = D1-138, cost 0; 2000/hop on 10G): the far extremity **F2-147 = cost 40000 = exactly 20 hops** — sitting *on* the default 20-hop max-age horizon, not 14–16 below it. The 138 side's far end (B1-138) is only 11 hops. **Network diameter (extremity-to-extremity) = 11 + 20 = 31 hops.** No split-root observed — but the margin was ≈0, not "thin". This composition stayed converged only because the message-age increment hadn't quite tipped a far-end port to discard.
+
+**Worst-case eval (Giorgio's ask):** max-age 38 (firmware ceiling; effective reach ~36 hops) covers the 31-hop 2×18 diameter with usable margin. A 3×18 composition adds ~18–20 hops (~50 total), exceeding max-age 38 and Giorgio's ~40-node ring guidance → **no supported RSTP topology for 3-unit multi-traction.** Root election is still MAC-tie-break luck; an unfavourable root pushes the far end past the horizon and closes the loop (the June 109+110 mechanism).
+
+**Separate physical anomaly in the same data:** B3-147 (cost 414100) and F3-147 (cost 418100) each carry one ~200000-cost leg = a sub-10G (≈100 Mbps FE) link in their root path. Degraded inter/intra-coach link, unrelated to the coupler — logged for cabling/SFP inspection.
 
 ### F3 — Perpetual topology-change storm (NEW, coupling-specific)
 
@@ -59,7 +63,7 @@ Consequences of a 2-second FDB flush cycle across 36 switches:
 ## Recommendations
 
 1. **Tactical (fleet, before further multi-traction):** raise RSTP timers on all switches — `configure spanning-tree forward-delay 20` then `configure spanning-tree max-age 38` (+ `save running-config force`). Order matters: the firmware enforces 2×(FwdDelay−1) ≥ MaxAge, so max-age 38 is rejected at the default forward-delay 15. Covers all 2-train compositions regardless of root placement. Must be added to the v8 templates (Part G MR) or the next `obn update c` reverts it.
-2. **Escalate F3 to VDS support (Giorgio):** provide tc_trace files + this report. Key question: why do both ends of a P2P coupler link continuously re-negotiate the designated role? Ask whether the very large hand-set port-cost (146999999) on coupler ports is implicated, and whether a firmware fix or config change (e.g. restoring default cost) stabilizes the link role.
+2. **Escalate F3 to VDS support (Giorgio):** provide tc_trace files + this report. Key question: why do both ends of a P2P coupler link continuously re-negotiate the designated role? **[VDS answered 2026-06-xx — see Addendum 3:** port-costs up to 200M are legal/uint32, **no overflow**; the overflow theory is dead. Remaining question narrowed to: do *unequal* large costs on the two link ends sustain the role duel?**]** Symmetric sane costs (20000) stop it regardless.
 3. **Controlled experiment available on request:** revert coupler port-cost to default on the active link while coupled, watch whether the TC churn stops (the debug logging is still enabled fleet-wide on both trains).
 4. **Strategic (Stadler/R&D):** terminate L2 at the coupler — route VLAN 5/15 between consists via the Stadler FWs (IEC 61375 pattern). Removes the max-age ceiling, TC churn, multicast flood-through, and the 54-switch impossibility in one move.
 5. **Multicast hygiene:** ~3 kpps of unsnooped VLAN-5 multicast crosses the coupler continuously. Evaluate enabling IGMP snooping + querier, or rate-limit `multicast` (current coupler rate-limit covers broadcast only) — with care not to starve RSTP BPDUs (01:80:C2 should bypass storm-control per spec; verify with VDS).
@@ -145,9 +149,16 @@ Crew recoupled with one cable "on B1". B1-147 e0-2 re-enabled at 16:51Z (undoing
 
 ### Consolidated handover items
 
-1. **VDS (Giorgio):** TC churn evidence + port-cost >2^27 overflow question + max-age 38/forward-delay 20 recommendation + RSTP debug traces (tc_trace files). Also: confirm BPDUs bypass `rate-limit broadcast`.
+1. **VDS (Giorgio):** ✅ answered 2026-06-xx (Addendum 3) — overflow refuted, BPDUs exempt, max-age ~40 for rings / undefined otherwise → wants worst-case eval (now done: 31-hop diameter, F2). Open: unequal-cost role-duel question; deeper tcpdump read deferred until config mismatches fixed.
 2. **Stadler:** (a) C2-147 dead — physical/power check, (b) 5↔15 FW relay vs direct VLAN-5 coupler bridge design question + FDB evidence, (c) coupler cable integrity — flapping phantom links observed after decoupling, (d) ZFR/ÖBB-logo symptom correlation data.
-3. **Nomad fleet actions:** odd-Fzg FW = `.129` correction (CLAUDE.md, 08_e2e_probe, re-verify all odd-Fzg `FW reach` verdicts); v8 template fixes (coupler port-cost < 2^27, B1-147-style missing `native vlan 999`); fleet-status update for 110/119.
+3. **Nomad fleet actions:** odd-Fzg FW = `.129` correction (CLAUDE.md, 08_e2e_probe, re-verify all odd-Fzg `FW reach` verdicts); v8 template fixes (**symmetric coupler port-cost 20000** — not "< 2^27", overflow refuted; B1-147-style missing `native vlan 999`); investigate B3-147/F3-147 degraded sub-10G backbone link; fleet-status update for 110/119.
+
+## Addendum 3 (2026-06-xx) — VDS (Giorgio) response to the F3/max-age questions
+
+1. **Port-cost width — overflow REFUTED.** "The standard supports values up to 200000000. Internally this value is saved on a uint32 variable. So no overflow for the reported values." → the 2²⁷ overflow hypothesis (F3 / v1.0 report) is dead. The cost revert (146999999/137999999 → 20000) still fixed the churn, so the driver is the **asymmetry** between the two legal costs on the P2P link, not arithmetic. Narrowed question stands: can unequal large costs sustain the designated-role duel?
+2. **BPDU rate-limit exemption — CONFIRMED.** "The rate-limit does not apply to management packets." → our `rate-limit broadcast 1M` containment is BPDU-safe (caps the ARP/DHCP flood symptom only, never the TC churn).
+3. **Max-age / node count.** "Max nodes is a function of the L2 topology. For a ring this limit is 40; for other topologies it is not well defined. A deep evaluation of the worst condition should be made." → our coupled fabric is a *chain* (one coupler blocked), not a ring. Worst-case eval supplied in corrected F2: **31-hop diameter for 2×18**, covered by max-age 38; **3×18 (~50 hops) not viable**.
+4. **tcpdumps — deferred.** Giorgio sees sporadic broadcast/multicast (ARP/DHCP) duplication, can't yet separate loop vs config-mismatch, and wants **our known config mismatches fixed first** (coupler native-VLAN, addressing) before a deeper read. → gating Nomad action before re-engaging VDS on the captures.
 
 ## Cleanup before trains split
 

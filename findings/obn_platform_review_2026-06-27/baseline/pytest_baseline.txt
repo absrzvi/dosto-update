@@ -1,0 +1,787 @@
+
+=================================== ERRORS ====================================
+__________________ ERROR collecting tests/cli/test_update.py __________________
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\python.py:508: in importtestmodule
+    mod = import_path(
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+..\..\..\..\AppData\Roaming\uv\python\cpython-3.13.3-windows-x86_64-none\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\assertion\rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests\cli\test_update.py:6: in <module>
+    import cli.update
+src\usr\share\obn\cli\update.py:17: in <module>
+    from lib.device import SNMPDevice, SNMPDeviceException
+src\usr\share\obn\lib\device\__init__.py:1: in <module>
+    from .accesspointdevice import AccessPointDevice
+src\usr\share\obn\lib\device\accesspointdevice.py:5: in <module>
+    from lib.device.snmpdevice import SNMPDevice
+src\usr\share\obn\lib\device\snmpdevice.py:18: in <module>
+    import lib.util.decorators
+src\usr\share\obn\lib\util\__init__.py:2: in <module>
+    from .ip_lookup import ARPLookup, DHCPLookup
+src\usr\share\obn\lib\util\ip_lookup.py:8: in <module>
+    from isc_dhcp_leases import IscDhcpLeases
+..\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\__init__.py:2: in <module>
+    from .iscdhcpleases import IscDhcpLeases, Lease, Lease6
+E     File "C:\Users\AbbasRizvi\Documents\dosto-troubleshooting\.tmp\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\iscdhcpleases.py", line 94
+E       >>> r"\s+(?P<key>(?:option|set)\s+\S+|\S+) (?P<value>[\s\S]+?);"
+E             ^^
+E   SyntaxError: invalid escape sequence '\s'
+_________ ERROR collecting tests/lib/device/test_accesspointdevice.py _________
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\python.py:508: in importtestmodule
+    mod = import_path(
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+..\..\..\..\AppData\Roaming\uv\python\cpython-3.13.3-windows-x86_64-none\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\assertion\rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests\lib\device\test_accesspointdevice.py:4: in <module>
+    from lib.device import AccessPointDevice
+src\usr\share\obn\lib\device\__init__.py:1: in <module>
+    from .accesspointdevice import AccessPointDevice
+src\usr\share\obn\lib\device\accesspointdevice.py:5: in <module>
+    from lib.device.snmpdevice import SNMPDevice
+src\usr\share\obn\lib\device\snmpdevice.py:19: in <module>
+    import lib.util.ip_lookup
+src\usr\share\obn\lib\util\__init__.py:2: in <module>
+    from .ip_lookup import ARPLookup, DHCPLookup
+src\usr\share\obn\lib\util\ip_lookup.py:8: in <module>
+    from isc_dhcp_leases import IscDhcpLeases
+..\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\__init__.py:2: in <module>
+    from .iscdhcpleases import IscDhcpLeases, Lease, Lease6
+E     File "C:\Users\AbbasRizvi\Documents\dosto-troubleshooting\.tmp\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\iscdhcpleases.py", line 94
+E       >>> r"\s+(?P<key>(?:option|set)\s+\S+|\S+) (?P<value>[\s\S]+?);"
+E             ^^
+E   SyntaxError: invalid escape sequence '\s'
+_____________ ERROR collecting tests/lib/device/test_ccudevice.py _____________
+ImportError while importing test module 'C:\Users\AbbasRizvi\Documents\dosto-troubleshooting\.tmp\obn-origin-master\tests\lib\device\test_ccudevice.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\..\..\AppData\Roaming\uv\python\cpython-3.13.3-windows-x86_64-none\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\lib\device\test_ccudevice.py:1: in <module>
+    import fcntl
+E   ModuleNotFoundError: No module named 'fcntl'
+____________ ERROR collecting tests/lib/device/test_snmpdevice.py _____________
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\python.py:508: in importtestmodule
+    mod = import_path(
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+..\..\..\..\AppData\Roaming\uv\python\cpython-3.13.3-windows-x86_64-none\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\assertion\rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests\lib\device\test_snmpdevice.py:9: in <module>
+    from lib.device.snmpdevice import SNMPDevice
+src\usr\share\obn\lib\device\__init__.py:1: in <module>
+    from .accesspointdevice import AccessPointDevice
+src\usr\share\obn\lib\device\accesspointdevice.py:5: in <module>
+    from lib.device.snmpdevice import SNMPDevice
+src\usr\share\obn\lib\device\snmpdevice.py:19: in <module>
+    import lib.util.ip_lookup
+src\usr\share\obn\lib\util\__init__.py:2: in <module>
+    from .ip_lookup import ARPLookup, DHCPLookup
+src\usr\share\obn\lib\util\ip_lookup.py:8: in <module>
+    from isc_dhcp_leases import IscDhcpLeases
+..\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\__init__.py:2: in <module>
+    from .iscdhcpleases import IscDhcpLeases, Lease, Lease6
+E     File "C:\Users\AbbasRizvi\Documents\dosto-troubleshooting\.tmp\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\iscdhcpleases.py", line 94
+E       >>> r"\s+(?P<key>(?:option|set)\s+\S+|\S+) (?P<value>[\s\S]+?);"
+E             ^^
+E   SyntaxError: invalid escape sequence '\s'
+___________ ERROR collecting tests/lib/device/vendor/test_acksys.py ___________
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\python.py:508: in importtestmodule
+    mod = import_path(
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+..\..\..\..\AppData\Roaming\uv\python\cpython-3.13.3-windows-x86_64-none\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\assertion\rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests\lib\device\vendor\test_acksys.py:2: in <module>
+    from lib.device.vendor.acksys import AcksysDevice, AcksysException
+src\usr\share\obn\lib\device\__init__.py:1: in <module>
+    from .accesspointdevice import AccessPointDevice
+src\usr\share\obn\lib\device\accesspointdevice.py:5: in <module>
+    from lib.device.snmpdevice import SNMPDevice
+src\usr\share\obn\lib\device\snmpdevice.py:19: in <module>
+    import lib.util.ip_lookup
+src\usr\share\obn\lib\util\__init__.py:2: in <module>
+    from .ip_lookup import ARPLookup, DHCPLookup
+src\usr\share\obn\lib\util\ip_lookup.py:8: in <module>
+    from isc_dhcp_leases import IscDhcpLeases
+..\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\__init__.py:2: in <module>
+    from .iscdhcpleases import IscDhcpLeases, Lease, Lease6
+E     File "C:\Users\AbbasRizvi\Documents\dosto-troubleshooting\.tmp\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\iscdhcpleases.py", line 94
+E       >>> r"\s+(?P<key>(?:option|set)\s+\S+|\S+) (?P<value>[\s\S]+?);"
+E             ^^
+E   SyntaxError: invalid escape sequence '\s'
+________ ERROR collecting tests/lib/device/vendor/test_eltec_cybox.py _________
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\python.py:508: in importtestmodule
+    mod = import_path(
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+..\..\..\..\AppData\Roaming\uv\python\cpython-3.13.3-windows-x86_64-none\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\assertion\rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests\lib\device\vendor\test_eltec_cybox.py:10: in <module>
+    from lib.device.vendor import CyboxDevice, CyboxException
+src\usr\share\obn\lib\device\__init__.py:1: in <module>
+    from .accesspointdevice import AccessPointDevice
+src\usr\share\obn\lib\device\accesspointdevice.py:5: in <module>
+    from lib.device.snmpdevice import SNMPDevice
+src\usr\share\obn\lib\device\snmpdevice.py:19: in <module>
+    import lib.util.ip_lookup
+src\usr\share\obn\lib\util\__init__.py:2: in <module>
+    from .ip_lookup import ARPLookup, DHCPLookup
+src\usr\share\obn\lib\util\ip_lookup.py:8: in <module>
+    from isc_dhcp_leases import IscDhcpLeases
+..\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\__init__.py:2: in <module>
+    from .iscdhcpleases import IscDhcpLeases, Lease, Lease6
+E     File "C:\Users\AbbasRizvi\Documents\dosto-troubleshooting\.tmp\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\iscdhcpleases.py", line 94
+E       >>> r"\s+(?P<key>(?:option|set)\s+\S+|\S+) (?P<value>[\s\S]+?);"
+E             ^^
+E   SyntaxError: invalid escape sequence '\s'
+__________ ERROR collecting tests/lib/device/vendor/test_extreme.py ___________
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\python.py:508: in importtestmodule
+    mod = import_path(
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+..\..\..\..\AppData\Roaming\uv\python\cpython-3.13.3-windows-x86_64-none\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\assertion\rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests\lib\device\vendor\test_extreme.py:7: in <module>
+    from lib.device.vendor.extreme import ExtremeDevice, ExtremeException
+src\usr\share\obn\lib\device\__init__.py:1: in <module>
+    from .accesspointdevice import AccessPointDevice
+src\usr\share\obn\lib\device\accesspointdevice.py:5: in <module>
+    from lib.device.snmpdevice import SNMPDevice
+src\usr\share\obn\lib\device\snmpdevice.py:19: in <module>
+    import lib.util.ip_lookup
+src\usr\share\obn\lib\util\__init__.py:2: in <module>
+    from .ip_lookup import ARPLookup, DHCPLookup
+src\usr\share\obn\lib\util\ip_lookup.py:8: in <module>
+    from isc_dhcp_leases import IscDhcpLeases
+..\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\__init__.py:2: in <module>
+    from .iscdhcpleases import IscDhcpLeases, Lease, Lease6
+E     File "C:\Users\AbbasRizvi\Documents\dosto-troubleshooting\.tmp\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\iscdhcpleases.py", line 94
+E       >>> r"\s+(?P<key>(?:option|set)\s+\S+|\S+) (?P<value>[\s\S]+?);"
+E             ^^
+E   SyntaxError: invalid escape sequence '\s'
+__________ ERROR collecting tests/lib/device/vendor/test_lantech.py ___________
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\python.py:508: in importtestmodule
+    mod = import_path(
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+..\..\..\..\AppData\Roaming\uv\python\cpython-3.13.3-windows-x86_64-none\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\assertion\rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests\lib\device\vendor\test_lantech.py:4: in <module>
+    from lib.device.vendor.lantech import LantechDevice
+src\usr\share\obn\lib\device\__init__.py:1: in <module>
+    from .accesspointdevice import AccessPointDevice
+src\usr\share\obn\lib\device\accesspointdevice.py:5: in <module>
+    from lib.device.snmpdevice import SNMPDevice
+src\usr\share\obn\lib\device\snmpdevice.py:19: in <module>
+    import lib.util.ip_lookup
+src\usr\share\obn\lib\util\__init__.py:2: in <module>
+    from .ip_lookup import ARPLookup, DHCPLookup
+src\usr\share\obn\lib\util\ip_lookup.py:8: in <module>
+    from isc_dhcp_leases import IscDhcpLeases
+..\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\__init__.py:2: in <module>
+    from .iscdhcpleases import IscDhcpLeases, Lease, Lease6
+E     File "C:\Users\AbbasRizvi\Documents\dosto-troubleshooting\.tmp\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\iscdhcpleases.py", line 94
+E       >>> r"\s+(?P<key>(?:option|set)\s+\S+|\S+) (?P<value>[\s\S]+?);"
+E             ^^
+E   SyntaxError: invalid escape sequence '\s'
+________ ERROR collecting tests/lib/device/vendor/test_lantech_6000.py ________
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\python.py:508: in importtestmodule
+    mod = import_path(
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+..\..\..\..\AppData\Roaming\uv\python\cpython-3.13.3-windows-x86_64-none\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\assertion\rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests\lib\device\vendor\test_lantech_6000.py:5: in <module>
+    from lib.device import SNMPDeviceException
+src\usr\share\obn\lib\device\__init__.py:1: in <module>
+    from .accesspointdevice import AccessPointDevice
+src\usr\share\obn\lib\device\accesspointdevice.py:5: in <module>
+    from lib.device.snmpdevice import SNMPDevice
+src\usr\share\obn\lib\device\snmpdevice.py:19: in <module>
+    import lib.util.ip_lookup
+src\usr\share\obn\lib\util\__init__.py:2: in <module>
+    from .ip_lookup import ARPLookup, DHCPLookup
+src\usr\share\obn\lib\util\ip_lookup.py:8: in <module>
+    from isc_dhcp_leases import IscDhcpLeases
+..\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\__init__.py:2: in <module>
+    from .iscdhcpleases import IscDhcpLeases, Lease, Lease6
+E     File "C:\Users\AbbasRizvi\Documents\dosto-troubleshooting\.tmp\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\iscdhcpleases.py", line 94
+E       >>> r"\s+(?P<key>(?:option|set)\s+\S+|\S+) (?P<value>[\s\S]+?);"
+E             ^^
+E   SyntaxError: invalid escape sequence '\s'
+_________ ERROR collecting tests/lib/device/vendor/test_nomad_ccu.py __________
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\python.py:508: in importtestmodule
+    mod = import_path(
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+..\..\..\..\AppData\Roaming\uv\python\cpython-3.13.3-windows-x86_64-none\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\assertion\rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests\lib\device\vendor\test_nomad_ccu.py:5: in <module>
+    from lib.device.vendor.nomad_ccu import NomadCCUDevice
+src\usr\share\obn\lib\device\__init__.py:1: in <module>
+    from .accesspointdevice import AccessPointDevice
+src\usr\share\obn\lib\device\accesspointdevice.py:5: in <module>
+    from lib.device.snmpdevice import SNMPDevice
+src\usr\share\obn\lib\device\snmpdevice.py:19: in <module>
+    import lib.util.ip_lookup
+src\usr\share\obn\lib\util\__init__.py:2: in <module>
+    from .ip_lookup import ARPLookup, DHCPLookup
+src\usr\share\obn\lib\util\ip_lookup.py:8: in <module>
+    from isc_dhcp_leases import IscDhcpLeases
+..\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\__init__.py:2: in <module>
+    from .iscdhcpleases import IscDhcpLeases, Lease, Lease6
+E     File "C:\Users\AbbasRizvi\Documents\dosto-troubleshooting\.tmp\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\iscdhcpleases.py", line 94
+E       >>> r"\s+(?P<key>(?:option|set)\s+\S+|\S+) (?P<value>[\s\S]+?);"
+E             ^^
+E   SyntaxError: invalid escape sequence '\s'
+__________ ERROR collecting tests/lib/device/vendor/test_vdsrail.py ___________
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\python.py:508: in importtestmodule
+    mod = import_path(
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+..\..\..\..\AppData\Roaming\uv\python\cpython-3.13.3-windows-x86_64-none\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\assertion\rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests\lib\device\vendor\test_vdsrail.py:5: in <module>
+    from lib.device import SNMPDeviceException
+src\usr\share\obn\lib\device\__init__.py:1: in <module>
+    from .accesspointdevice import AccessPointDevice
+src\usr\share\obn\lib\device\accesspointdevice.py:5: in <module>
+    from lib.device.snmpdevice import SNMPDevice
+src\usr\share\obn\lib\device\snmpdevice.py:19: in <module>
+    import lib.util.ip_lookup
+src\usr\share\obn\lib\util\__init__.py:2: in <module>
+    from .ip_lookup import ARPLookup, DHCPLookup
+src\usr\share\obn\lib\util\ip_lookup.py:8: in <module>
+    from isc_dhcp_leases import IscDhcpLeases
+..\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\__init__.py:2: in <module>
+    from .iscdhcpleases import IscDhcpLeases, Lease, Lease6
+E     File "C:\Users\AbbasRizvi\Documents\dosto-troubleshooting\.tmp\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\iscdhcpleases.py", line 94
+E       >>> r"\s+(?P<key>(?:option|set)\s+\S+|\S+) (?P<value>[\s\S]+?);"
+E             ^^
+E   SyntaxError: invalid escape sequence '\s'
+__________ ERROR collecting tests/lib/device/vendor/test_vsc7429.py ___________
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\python.py:508: in importtestmodule
+    mod = import_path(
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+..\..\..\..\AppData\Roaming\uv\python\cpython-3.13.3-windows-x86_64-none\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\assertion\rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests\lib\device\vendor\test_vsc7429.py:5: in <module>
+    from lib.device import SNMPDeviceException
+src\usr\share\obn\lib\device\__init__.py:1: in <module>
+    from .accesspointdevice import AccessPointDevice
+src\usr\share\obn\lib\device\accesspointdevice.py:5: in <module>
+    from lib.device.snmpdevice import SNMPDevice
+src\usr\share\obn\lib\device\snmpdevice.py:19: in <module>
+    import lib.util.ip_lookup
+src\usr\share\obn\lib\util\__init__.py:2: in <module>
+    from .ip_lookup import ARPLookup, DHCPLookup
+src\usr\share\obn\lib\util\ip_lookup.py:8: in <module>
+    from isc_dhcp_leases import IscDhcpLeases
+..\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\__init__.py:2: in <module>
+    from .iscdhcpleases import IscDhcpLeases, Lease, Lease6
+E     File "C:\Users\AbbasRizvi\Documents\dosto-troubleshooting\.tmp\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\iscdhcpleases.py", line 94
+E       >>> r"\s+(?P<key>(?:option|set)\s+\S+|\S+) (?P<value>[\s\S]+?);"
+E             ^^
+E   SyntaxError: invalid escape sequence '\s'
+__________ ERROR collecting tests/lib/device/vendor/test_westermo.py __________
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\python.py:508: in importtestmodule
+    mod = import_path(
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+..\..\..\..\AppData\Roaming\uv\python\cpython-3.13.3-windows-x86_64-none\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\assertion\rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests\lib\device\vendor\test_westermo.py:2: in <module>
+    from lib.device.vendor.westermo import WestermoDevice, WestermoException
+src\usr\share\obn\lib\device\__init__.py:1: in <module>
+    from .accesspointdevice import AccessPointDevice
+src\usr\share\obn\lib\device\accesspointdevice.py:5: in <module>
+    from lib.device.snmpdevice import SNMPDevice
+src\usr\share\obn\lib\device\snmpdevice.py:19: in <module>
+    import lib.util.ip_lookup
+src\usr\share\obn\lib\util\__init__.py:2: in <module>
+    from .ip_lookup import ARPLookup, DHCPLookup
+src\usr\share\obn\lib\util\ip_lookup.py:8: in <module>
+    from isc_dhcp_leases import IscDhcpLeases
+..\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\__init__.py:2: in <module>
+    from .iscdhcpleases import IscDhcpLeases, Lease, Lease6
+E     File "C:\Users\AbbasRizvi\Documents\dosto-troubleshooting\.tmp\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\iscdhcpleases.py", line 94
+E       >>> r"\s+(?P<key>(?:option|set)\s+\S+|\S+) (?P<value>[\s\S]+?);"
+E             ^^
+E   SyntaxError: invalid escape sequence '\s'
+______________ ERROR collecting tests/lib/server/test_consist.py ______________
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\python.py:508: in importtestmodule
+    mod = import_path(
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+..\..\..\..\AppData\Roaming\uv\python\cpython-3.13.3-windows-x86_64-none\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\assertion\rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests\lib\server\test_consist.py:4: in <module>
+    from lib.server import api
+src\usr\share\obn\lib\server\__init__.py:1: in <module>
+    from .server import api
+src\usr\share\obn\lib\server\server.py:5: in <module>
+    from .routers import actions, consist
+src\usr\share\obn\lib\server\routers\actions.py:7: in <module>
+    from cli.update import get_device_by_ip, load_report
+src\usr\share\obn\cli\update.py:17: in <module>
+    from lib.device import SNMPDevice, SNMPDeviceException
+src\usr\share\obn\lib\device\__init__.py:1: in <module>
+    from .accesspointdevice import AccessPointDevice
+src\usr\share\obn\lib\device\accesspointdevice.py:5: in <module>
+    from lib.device.snmpdevice import SNMPDevice
+src\usr\share\obn\lib\device\snmpdevice.py:19: in <module>
+    import lib.util.ip_lookup
+src\usr\share\obn\lib\util\__init__.py:2: in <module>
+    from .ip_lookup import ARPLookup, DHCPLookup
+src\usr\share\obn\lib\util\ip_lookup.py:8: in <module>
+    from isc_dhcp_leases import IscDhcpLeases
+..\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\__init__.py:2: in <module>
+    from .iscdhcpleases import IscDhcpLeases, Lease, Lease6
+E     File "C:\Users\AbbasRizvi\Documents\dosto-troubleshooting\.tmp\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\iscdhcpleases.py", line 94
+E       >>> r"\s+(?P<key>(?:option|set)\s+\S+|\S+) (?P<value>[\s\S]+?);"
+E             ^^
+E   SyntaxError: invalid escape sequence '\s'
+______________ ERROR collecting tests/lib/util/test_ip_lookup.py ______________
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\python.py:508: in importtestmodule
+    mod = import_path(
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+..\..\..\..\AppData\Roaming\uv\python\cpython-3.13.3-windows-x86_64-none\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\assertion\rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests\lib\util\test_ip_lookup.py:7: in <module>
+    from lib.util.ip_lookup import ARPLookup, DHCPLookup
+src\usr\share\obn\lib\util\__init__.py:2: in <module>
+    from .ip_lookup import ARPLookup, DHCPLookup
+src\usr\share\obn\lib\util\ip_lookup.py:8: in <module>
+    from isc_dhcp_leases import IscDhcpLeases
+..\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\__init__.py:2: in <module>
+    from .iscdhcpleases import IscDhcpLeases, Lease, Lease6
+E     File "C:\Users\AbbasRizvi\Documents\dosto-troubleshooting\.tmp\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\iscdhcpleases.py", line 94
+E       >>> r"\s+(?P<key>(?:option|set)\s+\S+|\S+) (?P<value>[\s\S]+?);"
+E             ^^
+E   SyntaxError: invalid escape sequence '\s'
+________________ ERROR collecting tests/lib/util/test_util.py _________________
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\python.py:508: in importtestmodule
+    mod = import_path(
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+..\..\..\..\AppData\Roaming\uv\python\cpython-3.13.3-windows-x86_64-none\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\assertion\rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests\lib\util\test_util.py:5: in <module>
+    import lib.util
+src\usr\share\obn\lib\util\__init__.py:2: in <module>
+    from .ip_lookup import ARPLookup, DHCPLookup
+src\usr\share\obn\lib\util\ip_lookup.py:8: in <module>
+    from isc_dhcp_leases import IscDhcpLeases
+..\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\__init__.py:2: in <module>
+    from .iscdhcpleases import IscDhcpLeases, Lease, Lease6
+E     File "C:\Users\AbbasRizvi\Documents\dosto-troubleshooting\.tmp\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\iscdhcpleases.py", line 94
+E       >>> r"\s+(?P<key>(?:option|set)\s+\S+|\S+) (?P<value>[\s\S]+?);"
+E             ^^
+E   SyntaxError: invalid escape sequence '\s'
+____________ ERROR collecting tests/lib/walker/test_dhcpwalker.py _____________
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\python.py:508: in importtestmodule
+    mod = import_path(
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+..\..\..\..\AppData\Roaming\uv\python\cpython-3.13.3-windows-x86_64-none\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\assertion\rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests\lib\walker\test_dhcpwalker.py:2: in <module>
+    from isc_dhcp_leases.iscdhcpleases import Lease
+..\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\__init__.py:2: in <module>
+    from .iscdhcpleases import IscDhcpLeases, Lease, Lease6
+E     File "C:\Users\AbbasRizvi\Documents\dosto-troubleshooting\.tmp\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\iscdhcpleases.py", line 94
+E       >>> r"\s+(?P<key>(?:option|set)\s+\S+|\S+) (?P<value>[\s\S]+?);"
+E             ^^
+E   SyntaxError: invalid escape sequence '\s'
+___________ ERROR collecting tests/lib/walker/test_lldparpwalker.py ___________
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\python.py:508: in importtestmodule
+    mod = import_path(
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+..\..\..\..\AppData\Roaming\uv\python\cpython-3.13.3-windows-x86_64-none\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\assertion\rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests\lib\walker\test_lldparpwalker.py:5: in <module>
+    from lib.device import SNMPDeviceException, ccudevice, device
+src\usr\share\obn\lib\device\__init__.py:1: in <module>
+    from .accesspointdevice import AccessPointDevice
+src\usr\share\obn\lib\device\accesspointdevice.py:5: in <module>
+    from lib.device.snmpdevice import SNMPDevice
+src\usr\share\obn\lib\device\snmpdevice.py:19: in <module>
+    import lib.util.ip_lookup
+src\usr\share\obn\lib\util\__init__.py:2: in <module>
+    from .ip_lookup import ARPLookup, DHCPLookup
+src\usr\share\obn\lib\util\ip_lookup.py:8: in <module>
+    from isc_dhcp_leases import IscDhcpLeases
+..\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\__init__.py:2: in <module>
+    from .iscdhcpleases import IscDhcpLeases, Lease, Lease6
+E     File "C:\Users\AbbasRizvi\Documents\dosto-troubleshooting\.tmp\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\iscdhcpleases.py", line 94
+E       >>> r"\s+(?P<key>(?:option|set)\s+\S+|\S+) (?P<value>[\s\S]+?);"
+E             ^^
+E   SyntaxError: invalid escape sequence '\s'
+____________ ERROR collecting tests/lib/walker/test_lldpwalker.py _____________
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\python.py:508: in importtestmodule
+    mod = import_path(
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+..\..\..\..\AppData\Roaming\uv\python\cpython-3.13.3-windows-x86_64-none\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\assertion\rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests\lib\walker\test_lldpwalker.py:5: in <module>
+    from lib.device import SNMPDeviceException, ccudevice, device
+src\usr\share\obn\lib\device\__init__.py:1: in <module>
+    from .accesspointdevice import AccessPointDevice
+src\usr\share\obn\lib\device\accesspointdevice.py:5: in <module>
+    from lib.device.snmpdevice import SNMPDevice
+src\usr\share\obn\lib\device\snmpdevice.py:19: in <module>
+    import lib.util.ip_lookup
+src\usr\share\obn\lib\util\__init__.py:2: in <module>
+    from .ip_lookup import ARPLookup, DHCPLookup
+src\usr\share\obn\lib\util\ip_lookup.py:8: in <module>
+    from isc_dhcp_leases import IscDhcpLeases
+..\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\__init__.py:2: in <module>
+    from .iscdhcpleases import IscDhcpLeases, Lease, Lease6
+E     File "C:\Users\AbbasRizvi\Documents\dosto-troubleshooting\.tmp\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\iscdhcpleases.py", line 94
+E       >>> r"\s+(?P<key>(?:option|set)\s+\S+|\S+) (?P<value>[\s\S]+?);"
+E             ^^
+E   SyntaxError: invalid escape sequence '\s'
+______________ ERROR collecting tests/test_backbone_discovery.py ______________
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\python.py:508: in importtestmodule
+    mod = import_path(
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+..\..\..\..\AppData\Roaming\uv\python\cpython-3.13.3-windows-x86_64-none\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\assertion\rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests\test_backbone_discovery.py:4: in <module>
+    from backbone_discovery import discover, get_walker, get_walker_type
+src\usr\share\obn\backbone_discovery.py:12: in <module>
+    from lib.device import GenericDevice
+src\usr\share\obn\lib\device\__init__.py:1: in <module>
+    from .accesspointdevice import AccessPointDevice
+src\usr\share\obn\lib\device\accesspointdevice.py:5: in <module>
+    from lib.device.snmpdevice import SNMPDevice
+src\usr\share\obn\lib\device\snmpdevice.py:19: in <module>
+    import lib.util.ip_lookup
+src\usr\share\obn\lib\util\__init__.py:2: in <module>
+    from .ip_lookup import ARPLookup, DHCPLookup
+src\usr\share\obn\lib\util\ip_lookup.py:8: in <module>
+    from isc_dhcp_leases import IscDhcpLeases
+..\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\__init__.py:2: in <module>
+    from .iscdhcpleases import IscDhcpLeases, Lease, Lease6
+E     File "C:\Users\AbbasRizvi\Documents\dosto-troubleshooting\.tmp\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\iscdhcpleases.py", line 94
+E       >>> r"\s+(?P<key>(?:option|set)\s+\S+|\S+) (?P<value>[\s\S]+?);"
+E             ^^
+E   SyntaxError: invalid escape sequence '\s'
+______________ ERROR collecting tests/test_backbone_telemetry.py ______________
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\python.py:508: in importtestmodule
+    mod = import_path(
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+..\..\..\..\AppData\Roaming\uv\python\cpython-3.13.3-windows-x86_64-none\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\assertion\rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests\test_backbone_telemetry.py:1: in <module>
+    import backbone_telemetry
+src\usr\share\obn\backbone_telemetry.py:9: in <module>
+    from lib.device import SNMPDevice
+src\usr\share\obn\lib\device\__init__.py:1: in <module>
+    from .accesspointdevice import AccessPointDevice
+src\usr\share\obn\lib\device\accesspointdevice.py:5: in <module>
+    from lib.device.snmpdevice import SNMPDevice
+src\usr\share\obn\lib\device\snmpdevice.py:19: in <module>
+    import lib.util.ip_lookup
+src\usr\share\obn\lib\util\__init__.py:2: in <module>
+    from .ip_lookup import ARPLookup, DHCPLookup
+src\usr\share\obn\lib\util\ip_lookup.py:8: in <module>
+    from isc_dhcp_leases import IscDhcpLeases
+..\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\__init__.py:2: in <module>
+    from .iscdhcpleases import IscDhcpLeases, Lease, Lease6
+E     File "C:\Users\AbbasRizvi\Documents\dosto-troubleshooting\.tmp\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\iscdhcpleases.py", line 94
+E       >>> r"\s+(?P<key>(?:option|set)\s+\S+|\S+) (?P<value>[\s\S]+?);"
+E             ^^
+E   SyntaxError: invalid escape sequence '\s'
+_____________ ERROR collecting tests/test_backbone_user_count.py ______________
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\python.py:508: in importtestmodule
+    mod = import_path(
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+..\..\..\..\AppData\Roaming\uv\python\cpython-3.13.3-windows-x86_64-none\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+..\gitlab-repos\obn\.venv\Lib\site-packages\_pytest\assertion\rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests\test_backbone_user_count.py:4: in <module>
+    from backbone_user_count import current_time_to_the_minute
+src\usr\share\obn\backbone_user_count.py:9: in <module>
+    from lib.device import AccessPointDevice
+src\usr\share\obn\lib\device\__init__.py:1: in <module>
+    from .accesspointdevice import AccessPointDevice
+src\usr\share\obn\lib\device\accesspointdevice.py:5: in <module>
+    from lib.device.snmpdevice import SNMPDevice
+src\usr\share\obn\lib\device\snmpdevice.py:19: in <module>
+    import lib.util.ip_lookup
+src\usr\share\obn\lib\util\__init__.py:2: in <module>
+    from .ip_lookup import ARPLookup, DHCPLookup
+src\usr\share\obn\lib\util\ip_lookup.py:8: in <module>
+    from isc_dhcp_leases import IscDhcpLeases
+..\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\__init__.py:2: in <module>
+    from .iscdhcpleases import IscDhcpLeases, Lease, Lease6
+E     File "C:\Users\AbbasRizvi\Documents\dosto-troubleshooting\.tmp\gitlab-repos\obn\.venv\Lib\site-packages\isc_dhcp_leases\iscdhcpleases.py", line 94
+E       >>> r"\s+(?P<key>(?:option|set)\s+\S+|\S+) (?P<value>[\s\S]+?);"
+E             ^^
+E   SyntaxError: invalid escape sequence '\s'
+=========================== short test summary info ===========================
+ERROR tests/cli/test_update.py
+ERROR tests/lib/device/test_accesspointdevice.py
+ERROR tests/lib/device/test_ccudevice.py
+ERROR tests/lib/device/test_snmpdevice.py
+ERROR tests/lib/device/vendor/test_acksys.py
+ERROR tests/lib/device/vendor/test_eltec_cybox.py
+ERROR tests/lib/device/vendor/test_extreme.py
+ERROR tests/lib/device/vendor/test_lantech.py
+ERROR tests/lib/device/vendor/test_lantech_6000.py
+ERROR tests/lib/device/vendor/test_nomad_ccu.py
+ERROR tests/lib/device/vendor/test_vdsrail.py
+ERROR tests/lib/device/vendor/test_vsc7429.py
+ERROR tests/lib/device/vendor/test_westermo.py
+ERROR tests/lib/server/test_consist.py
+ERROR tests/lib/util/test_ip_lookup.py
+ERROR tests/lib/util/test_util.py
+ERROR tests/lib/walker/test_dhcpwalker.py
+ERROR tests/lib/walker/test_lldparpwalker.py
+ERROR tests/lib/walker/test_lldpwalker.py
+ERROR tests/test_backbone_discovery.py
+ERROR tests/test_backbone_telemetry.py
+ERROR tests/test_backbone_user_count.py
+!!!!!!!!!!!!!!!!!! Interrupted: 22 errors during collection !!!!!!!!!!!!!!!!!!!
+22 errors in 4.50s
