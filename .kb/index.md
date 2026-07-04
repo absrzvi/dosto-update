@@ -7,7 +7,7 @@ description: Component-oriented knowledge base for the DOSTO NEU onboard-network
 
 # DOSTO NEU Knowledge Base
 
-New here? Read [HOW-TO-USE.md](HOW-TO-USE.md) first.
+New here? Read [HOW-TO-USE.md](HOW-TO-USE.md) first. Maintaining the KB? See [MAINTENANCE.md](MAINTENANCE.md).
 
 ## Components — how each device type behaves
 

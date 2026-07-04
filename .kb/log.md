@@ -15,3 +15,7 @@
 * **Extraction**: Port-level fv5/fv6 topology extracted from the IP-Port-Allocation PDFs via `scripts/extract_fv_topology.py` → `train-ip-allocation-commission/extracted/_shared/fv5-topology.md` (4705, Fzg 231, 15 switches, coach order A-C-E-F-B, CCU in coach C) and `fv6-topology.md` (4706, Fzg 189, 18 switches, A-C-D-E-F-B). Backbone taken from the authoritative `e0-0`/`e0-1` FIS-Switch rows (raw .cfg descriptions are asymmetric). 4705/4706 fleet records + the fv5/fv6 topic now link these instead of a placeholder.
 * **Creation**: `deliverables/mar5-tunnel-architecture.md` — stub for the MAR5 train-to-ground tunnel SDD template; added to the deliverables index.
 * **Validation**: 134 docs — 124/124 concept docs conformant, 0 problems, 0 broken links (incl. allocation-tree links).
+
+## 2026-07-04 (harness integration)
+* **Creation**: `MAINTENANCE.md` (how to add/regenerate/validate KB docs, type vocabulary, golden rules) + `check_conformance.py` (committed conformance+link checker).
+* **Integration**: CLAUDE.md now has a "Knowledge base (`.kb/`)" section + Folder-layout entry pointing here. Session memory `project_kb_okf_knowledge_base` + MEMORY.md index line added so any future session knows the KB exists, when to read it, and how to maintain it.

@@ -6,11 +6,23 @@ This is the project guide for running consistent L2 network health checks on Sta
 
 The v8 rollout is a stateful, multi-train workflow. Trains get powered off mid-update, Stadler cable fixes take days, and engineers must be able to pick up where the last person left off.
 
+**For a project-wide view first** — if you're not sure which workstream you're picking up, or you want the bird's-eye "what's done / open / blocked" across everything (commissioning, SDD docs, Zabbix/NMS, OBN bugs, 6040/GPS, hardware faults), start at **[PROJECT-STATUS.md](PROJECT-STATUS.md)**. It's a derived summary that indexes every scoped tracker; for train-session work, the three files below remain the read-first.
+
 1. **[fleet-status.md](fleet-status.md)** — single source of truth for "where did we leave off" on every train in the fleet. **Read the row for the train you're working on before doing anything else.** Update the row at the end of every session (Step 11 of the checklist below). Holds **current state only** — at-a-glance table + per-train diagnostic-state bullet lists.
 2. **[fleet-journal.md](fleet-journal.md)** — narrative companion to fleet-status. Per-train append-only history: recovery sequences, discovered lessons, session context, Stadler investigation notes. Where fleet-status answers *"what is the current state"*, the journal answers *"what happened, in what order, and why."* Entries graduate to this file's "Pitfalls" section once observed on a second train.
 3. **[train-login-checklist.md](train-login-checklist.md)** — the canonical 11-step procedure for any train session. Even on a fully-known train, follow it; the steps in order prevent the patches/cabling/AP-config issues that have caused real outages in this rollout.
 
 The rest of this file is the *methodology* (how to read schemas, what counters mean, what "healthy" looks like). The checklist is the *workflow* (what to do, in what order). fleet-status is the *current state* (which trains are where). fleet-journal is the *history* (how each train got there).
+
+## Knowledge base (`.kb/`) — component knowledge & "what already failed"
+
+**[`.kb/`](.kb/)** is an [OKF](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md)-format knowledge base: markdown docs, each with `type:` YAML frontmatter, organised **by component** (not by folder) so the distilled technical knowledge is reusable — including on a non-DOSTO project. Start at [`.kb/index.md`](.kb/index.md) (or [`.kb/HOW-TO-USE.md`](.kb/HOW-TO-USE.md)).
+
+**When to read it:** troubleshooting a switch / AP / CCU-OBN, or picking up a cross-cutting subject (vlan7, RSTP, Zabbix, Fzg-ID). **Every component/topic doc has a `# Proven dead ends` section — check it before attempting a fix, so you don't re-test what's already been disproven on live hardware.** Structure: `components/` (VDS switch, Westermo AP, Nomad-Connect/OBN), `topics/` (vlan7, L2-health, coupled-RSTP, Fzg-ID, Zabbix, fv5/fv6 topology), `fleet/` (51 per-train identity records), `tickets/`, `deliverables/`, `assets/` (per-train PDF/cfg indexes).
+
+**It complements, does not replace, the read-first files.** `fleet-status.md` remains the live source of truth; `.kb/fleet/*` records hold *stable identity + topology* and link back to it — never edit fleet-status from a KB record.
+
+**Maintaining it** (do this as you learn things — the KB is meant to grow): see **[`.kb/MAINTENANCE.md`](.kb/MAINTENANCE.md)** for the doc format, the `type:` vocabulary, how to regenerate fleet records (`scripts/gen_kb_fleet_records.py`) and fv5/fv6 topology (`scripts/extract_fv_topology.py`), and the conformance check. Golden rule: it's **additive** — `.kb/` never moves or rewrites files outside itself (several scripts parse `fleet-status.md`/`CLAUDE.md` positionally). A newly-proven dead end is the single highest-value thing to add.
 
 ## Orchestration architecture (multi-train days)
 
@@ -224,6 +236,35 @@ Even Fzg → host `.2`. Odd Fzg → host `.130`. The Stadler firewall is always 
 - **CCU SSH key**: `openssh` (OpenSSH RSA, no passphrase) in this folder. Originally converted from `pvt_key.ppk` via PuTTYgen. To SSH: `ssh -i "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh" developer@<ccu-ip>`.
 - **Switch admin password**: `Nom@dCome1n` (use with `sshpass`). Switches require legacy SSH algorithms — see the connect snippet below.
 - **Tools on CCU**: `sshpass`, `fping`, `ip`, standard ping, `nc`. iperf3 may or may not be installed — check with `command -v iperf3`.
+
+## OBN / template release + deploy pipeline (how a change reaches a train)
+
+A config/firmware/engine change is NOT live on trains until it walks the **whole** pipeline. Merging git is only step 3 of 7. (Full detail + gotchas: memory `project_obn_deb_publish_process` and `project_puppet_deploy_chain_vmpuppet01`.)
+
+```
+1 edit templates/engine → 2 bump version → 3 git push/merge → 4 build .deb →
+5 publish to vmrepo01 (apt repo) → 6 pin the version in the Puppet env (hieradata) →
+7 deploy the env to the vmpuppet01 MASTER → 8 factory up / puppet agent -t on the CCU (pulls from master)
+```
+
+**Two package families, two publish paths:**
+- **Templates** (`nd-obn-template-dostoneu-{nv4,nv6,fv5,fv6}`): NO CI. Build with `./build.sh` (needs `fpm`; `dpkg-deb` equivalent works — see repo `PUBLISHING.md`). Publish MANUALLY: `scp <deb> admin21net@vmrepo01.ovh2.21net.com:/tmp/` then `ssh` + `sudo nd-registerpkg-bookworm.sh /tmp/<deb>` (registers into **unstable**, `-promote` moves to main). Script refuses duplicate versions — always bump `version` first.
+- **OBN engine** (`onboard/obn`, package `nd-obn`): HAS CI. Release = merge MR + `make tag` (git tag) → CI builds+publishes. Do NOT hand-build/publish the engine — it's shared across all fleets and CI-gated (653-test suite).
+
+**The deploy step (6→8) is agent/master, not CCU-pulls-git.** CCUs are Puppet agents fetching their catalog from the master `vmpuppet01.ovh2.21net.com`, which holds a git clone per branch at `/etc/puppetlabs/code/environments/<env>_<branch>` (DOSTO = `dostoneu_migration_mar5`; ALL DOSTO trains deploy from the `migration_mar5` branch). Merging to GitLab does **nothing** to trains until the master's clone is refreshed: `rake ci:deploy:remote` (= `ssh admin21net@vmpuppet01 'cd <envdir> && nd-update-puppetenv.sh migration_mar5'`). The master routinely LAGS GitLab — verify with `nd-systemupdate.sh.dont version` on a CCU (its "Remote version" = the master's copy, compare to GitLab HEAD).
+
+**Access:** the release identity is user `admin21net` (Abbas's `~/.ssh/id_ed25519`, the same key as git-nc). As of 2026-07-03 it is on git-nc + vmrepo01 + **vmpuppet01** (all three) — so Abbas can run the full pipeline end-to-end. ⚠️ **WSL2 does not route the Windows VPN** — scp/ssh to these hosts from **Git-Bash (Windows)**, not WSL; WSL-built debs are reachable from Git-Bash at `//wsl$/Ubuntu/home/<user>/...`.
+
+**The master does NOT auto-sync** — proven 2026-07-03: pushed to `migration_mar5`, but 3 CCUs still reported the old commit ~a day later. You MUST run the deploy after any push:
+```
+ssh admin21net@vmpuppet01.ovh2.21net.com
+cd /etc/puppetlabs/code/environments/dostoneu_migration_mar5 && sudo nd-update-puppetenv.sh migration_mar5
+```
+Verify the CCU picks it up: `nd-systemupdate.sh.dont version` on a CCU → its "Remote version" should now match GitLab HEAD.
+
+**`dbc12` / the `:9494` env API on vmpuppet01 is NOT a deploy shortcut** — it only SELECTS which branch a CCU uses (`dbc12 <fqdn> <branch>`) and clears certs (`dbc12 -c <fqdn>` — needed after a re-IP factory-up when you hit "certificate does not match its private key"). It does not refresh env code. DOSTO CCUs are already set to `migration_mar5`.
+
+**⚠️ box=Fzg does NOT work for 6-car/CAT/FV** (memory `project_box_fzg_breaks_127_octet_limit`): `factory up` train-ID caps at 0–127 (= 3rd IP octet), but Fzg for 4736/4706/4705 is 129–231. box=Fzg only fits 4734 (Fzg 1–90). The v9 templates' remap-drop assumes train_id=Fzg → renders wrong hostnames on a box-id-commissioned 6-car/CAT/FV train. Needs an R&D decision (fzg_id-key path for those fleets). Don't `obn update c` a CAT train commissioned with box-id.
 
 ## Standard SSH-into-switch snippet
 
@@ -494,6 +535,7 @@ The project is organised into the following subfolders. Anything not listed here
 ### Root
 
 - `CLAUDE.md` — this file (the playbook / methodology).
+- `.kb/` — **OKF knowledge base**: component knowledge (switch/AP/CCU-OBN), cross-cutting topics, 51 per-train identity records, tickets, deliverables, per-train asset indexes. Every component/topic doc has a `# Proven dead ends` section. Read [`.kb/index.md`](.kb/index.md); maintain per [`.kb/MAINTENANCE.md`](.kb/MAINTENANCE.md). Additive-only — links to `fleet-status.md`, never edits it.
 - `fleet-status.md` — **per-train v8 rollout status. Read first, update last.** Status row per Fzg with `Next action` so any engineer can pick up mid-rollout.
 - `train-login-checklist.md` — **canonical 11-step procedure** for any train session. Step 11 is "update fleet-status.md".
 - `troubleshooting-runbook.md` — operational runbook (LLDP cabling check, OBN bug fixes, AP manual config push, etc.).
