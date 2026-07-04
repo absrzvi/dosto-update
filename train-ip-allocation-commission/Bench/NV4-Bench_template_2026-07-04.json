@@ -1,0 +1,1099 @@
+{
+  "projectId": 50,
+  "activatedOn": 1780946487080,
+  "createdOn": 1780946531566,
+  "version": 16,
+  "availabilityTimeExceptions": [],
+  "availabilityGroups": [],
+  "backendZabbixConfiguration": null,
+  "zabbixConfiguration": {
+    "url": "https://trainzabbix-obb-alpin.nomadrail.com/api_jsonrpc.php",
+    "username": "okapi",
+    "password": "5te8x7Dg5pweMu4R",
+    "https": null,
+    "proxyName": "dostoneu-bench-zproxy-",
+    "proxyTemplate": "dostoneu-bench-zproxy-%da",
+    "proxyHostGroupId": 50,
+    "trainLayout": null,
+    "zabbix6": true
+  },
+  "dynamicConsistConfig": {
+    "verifyImpactUseActualTrainLayout": false,
+    "deviceConfigurations": [
+      {
+        "type": "AP",
+        "templateId": "10465",
+        "agentAndSnmp": false,
+        "proxyEnabled": true,
+        "port": null,
+        "remapIPto": null,
+        "zabbixHostNameTemplate": "%d_%d_R%d_AP%d",
+        "ipRemappingPort": null,
+        "enableSSL": false,
+        "ignoreUpdates": false,
+        "snmpVersion": 3,
+        "communityString": "nomad",
+        "bulk": 1,
+        "securityName": "admin",
+        "securityLevel": 2,
+        "authPassphrase": "NomadStayOut!",
+        "authProtocol": 1,
+        "privPassphrase": "NomadStayOut!",
+        "privProtocol": 1,
+        "contextName": null,
+        "alarmColor": null,
+        "snmp": true
+      },
+      {
+        "type": "SW",
+        "templateId": "10723",
+        "agentAndSnmp": false,
+        "proxyEnabled": true,
+        "port": null,
+        "remapIPto": null,
+        "zabbixHostNameTemplate": "%d_%d_R%d_SW%d",
+        "ipRemappingPort": null,
+        "enableSSL": false,
+        "ignoreUpdates": false,
+        "snmpVersion": 3,
+        "communityString": "nomad",
+        "bulk": 1,
+        "securityName": "snmpadmin",
+        "securityLevel": 2,
+        "authPassphrase": "NomadStayOut!",
+        "authProtocol": 1,
+        "privPassphrase": "NomadStayOut!",
+        "privProtocol": 1,
+        "contextName": null,
+        "alarmColor": null,
+        "snmp": true
+      },
+      {
+        "type": "BOX",
+        "templateId": "10463",
+        "agentAndSnmp": false,
+        "proxyEnabled": true,
+        "port": null,
+        "remapIPto": null,
+        "zabbixHostNameTemplate": "%d_%d_MAR3-B%d",
+        "ipRemappingPort": null,
+        "enableSSL": false,
+        "ignoreUpdates": false,
+        "snmpVersion": null,
+        "communityString": null,
+        "bulk": 0,
+        "securityName": null,
+        "securityLevel": 0,
+        "authPassphrase": null,
+        "authProtocol": 0,
+        "privPassphrase": null,
+        "privProtocol": 0,
+        "contextName": null,
+        "alarmColor": null,
+        "snmp": false
+      },
+      {
+        "type": "MEDIA",
+        "templateId": "10089",
+        "agentAndSnmp": true,
+        "proxyEnabled": true,
+        "port": null,
+        "remapIPto": null,
+        "zabbixHostNameTemplate": "%d_%d_R%d_%s%d",
+        "ipRemappingPort": null,
+        "enableSSL": false,
+        "ignoreUpdates": false,
+        "snmpVersion": null,
+        "communityString": null,
+        "bulk": 0,
+        "securityName": null,
+        "securityLevel": 0,
+        "authPassphrase": null,
+        "authProtocol": 0,
+        "privPassphrase": null,
+        "privProtocol": 0,
+        "contextName": null,
+        "alarmColor": null,
+        "snmp": false
+      }
+    ]
+  },
+  "trainLayout": {
+    "divide": 4000,
+    "devices": [
+      {
+        "messageInfo": "DEVICE_CONSIST_V1",
+        "trainId": 0,
+        "boxId": 0,
+        "id": 0,
+        "projectId": 0,
+        "timestamp": null,
+        "coachId": 1,
+        "deviceId": 1,
+        "devicePosition": null,
+        "ipAddr": "7.7.7.7",
+        "type": "SW",
+        "macAddr": null,
+        "firmwareVersion": null,
+        "configVersion": null,
+        "deviceSerial": "sw%d-train-%d",
+        "statusCode": null,
+        "coachModel": 0,
+        "add": 0,
+        "paintedCoachId": null
+      },
+      {
+        "messageInfo": "DEVICE_CONSIST_V1",
+        "trainId": 0,
+        "boxId": 0,
+        "id": 0,
+        "projectId": 0,
+        "timestamp": null,
+        "coachId": 1,
+        "deviceId": 2,
+        "devicePosition": null,
+        "ipAddr": "7.7.7.7",
+        "type": "SW",
+        "macAddr": null,
+        "firmwareVersion": null,
+        "configVersion": null,
+        "deviceSerial": "sw%d-train-%d",
+        "statusCode": null,
+        "coachModel": 0,
+        "add": 0,
+        "paintedCoachId": null
+      },
+      {
+        "messageInfo": "DEVICE_CONSIST_V1",
+        "trainId": 0,
+        "boxId": 0,
+        "id": 0,
+        "projectId": 0,
+        "timestamp": null,
+        "coachId": 1,
+        "deviceId": 3,
+        "devicePosition": null,
+        "ipAddr": "7.7.7.7",
+        "type": "SW",
+        "macAddr": null,
+        "firmwareVersion": null,
+        "configVersion": null,
+        "deviceSerial": "sw%d-train-%d",
+        "statusCode": null,
+        "coachModel": 0,
+        "add": 0,
+        "paintedCoachId": null
+      },
+      {
+        "messageInfo": "DEVICE_CONSIST_V1",
+        "trainId": 0,
+        "boxId": 0,
+        "id": 0,
+        "projectId": 0,
+        "timestamp": null,
+        "coachId": 2,
+        "deviceId": 1,
+        "devicePosition": null,
+        "ipAddr": "7.7.7.7",
+        "type": "BOX",
+        "macAddr": null,
+        "firmwareVersion": null,
+        "configVersion": null,
+        "deviceSerial": "box%d-train-%d",
+        "statusCode": null,
+        "coachModel": 0,
+        "add": 0,
+        "paintedCoachId": null
+      },
+      {
+        "messageInfo": "DEVICE_CONSIST_V1",
+        "trainId": 0,
+        "boxId": 0,
+        "id": 0,
+        "projectId": 0,
+        "timestamp": null,
+        "coachId": 2,
+        "deviceId": 1,
+        "devicePosition": null,
+        "ipAddr": "7.7.7.7",
+        "type": "SW",
+        "macAddr": null,
+        "firmwareVersion": null,
+        "configVersion": null,
+        "deviceSerial": "sw%d-train-%d",
+        "statusCode": null,
+        "coachModel": 0,
+        "add": 0,
+        "paintedCoachId": null
+      },
+      {
+        "messageInfo": "DEVICE_CONSIST_V1",
+        "trainId": 0,
+        "boxId": 0,
+        "id": 0,
+        "projectId": 0,
+        "timestamp": null,
+        "coachId": 2,
+        "deviceId": 2,
+        "devicePosition": null,
+        "ipAddr": "7.7.7.7",
+        "type": "SW",
+        "macAddr": null,
+        "firmwareVersion": null,
+        "configVersion": null,
+        "deviceSerial": "sw%d-train-%d",
+        "statusCode": null,
+        "coachModel": 0,
+        "add": 0,
+        "paintedCoachId": null
+      },
+      {
+        "messageInfo": "DEVICE_CONSIST_V1",
+        "trainId": 0,
+        "boxId": 0,
+        "id": 0,
+        "projectId": 0,
+        "timestamp": null,
+        "coachId": 2,
+        "deviceId": 3,
+        "devicePosition": null,
+        "ipAddr": "7.7.7.7",
+        "type": "SW",
+        "macAddr": null,
+        "firmwareVersion": null,
+        "configVersion": null,
+        "deviceSerial": "sw%d-train-%d",
+        "statusCode": null,
+        "coachModel": 0,
+        "add": 0,
+        "paintedCoachId": null
+      },
+      {
+        "messageInfo": "DEVICE_CONSIST_V1",
+        "trainId": 0,
+        "boxId": 0,
+        "id": 0,
+        "projectId": 0,
+        "timestamp": null,
+        "coachId": 3,
+        "deviceId": 1,
+        "devicePosition": null,
+        "ipAddr": "7.7.7.7",
+        "type": "AP",
+        "macAddr": null,
+        "firmwareVersion": null,
+        "configVersion": null,
+        "deviceSerial": "ap%d-train-%d",
+        "statusCode": null,
+        "coachModel": 0,
+        "add": 0,
+        "paintedCoachId": null
+      },
+      {
+        "messageInfo": "DEVICE_CONSIST_V1",
+        "trainId": 0,
+        "boxId": 0,
+        "id": 0,
+        "projectId": 0,
+        "timestamp": null,
+        "coachId": 3,
+        "deviceId": 1,
+        "devicePosition": null,
+        "ipAddr": "7.7.7.7",
+        "type": "SW",
+        "macAddr": null,
+        "firmwareVersion": null,
+        "configVersion": null,
+        "deviceSerial": "sw%d-train-%d",
+        "statusCode": null,
+        "coachModel": 0,
+        "add": 0,
+        "paintedCoachId": null
+      },
+      {
+        "messageInfo": "DEVICE_CONSIST_V1",
+        "trainId": 0,
+        "boxId": 0,
+        "id": 0,
+        "projectId": 0,
+        "timestamp": null,
+        "coachId": 3,
+        "deviceId": 2,
+        "devicePosition": null,
+        "ipAddr": "7.7.7.7",
+        "type": "SW",
+        "macAddr": null,
+        "firmwareVersion": null,
+        "configVersion": null,
+        "deviceSerial": "sw%d-train-%d",
+        "statusCode": null,
+        "coachModel": 0,
+        "add": 0,
+        "paintedCoachId": null
+      },
+      {
+        "messageInfo": "DEVICE_CONSIST_V1",
+        "trainId": 0,
+        "boxId": 0,
+        "id": 0,
+        "projectId": 0,
+        "timestamp": null,
+        "coachId": 3,
+        "deviceId": 3,
+        "devicePosition": null,
+        "ipAddr": "7.7.7.7",
+        "type": "SW",
+        "macAddr": null,
+        "firmwareVersion": null,
+        "configVersion": null,
+        "deviceSerial": "sw%d-train-%d",
+        "statusCode": null,
+        "coachModel": 0,
+        "add": 0,
+        "paintedCoachId": null
+      },
+      {
+        "messageInfo": "DEVICE_CONSIST_V1",
+        "trainId": 0,
+        "boxId": 0,
+        "id": 0,
+        "projectId": 0,
+        "timestamp": null,
+        "coachId": 4,
+        "deviceId": 1,
+        "devicePosition": null,
+        "ipAddr": "7.7.7.7",
+        "type": "SW",
+        "macAddr": null,
+        "firmwareVersion": null,
+        "configVersion": null,
+        "deviceSerial": "sw%d-train-%d",
+        "statusCode": null,
+        "coachModel": 0,
+        "add": 0,
+        "paintedCoachId": null
+      },
+      {
+        "messageInfo": "DEVICE_CONSIST_V1",
+        "trainId": 0,
+        "boxId": 0,
+        "id": 0,
+        "projectId": 0,
+        "timestamp": null,
+        "coachId": 4,
+        "deviceId": 2,
+        "devicePosition": null,
+        "ipAddr": "7.7.7.7",
+        "type": "SW",
+        "macAddr": null,
+        "firmwareVersion": null,
+        "configVersion": null,
+        "deviceSerial": "sw%d-train-%d",
+        "statusCode": null,
+        "coachModel": 0,
+        "add": 0,
+        "paintedCoachId": null
+      },
+      {
+        "messageInfo": "DEVICE_CONSIST_V1",
+        "trainId": 0,
+        "boxId": 0,
+        "id": 0,
+        "projectId": 0,
+        "timestamp": null,
+        "coachId": 4,
+        "deviceId": 3,
+        "devicePosition": null,
+        "ipAddr": "7.7.7.7",
+        "type": "SW",
+        "macAddr": null,
+        "firmwareVersion": null,
+        "configVersion": null,
+        "deviceSerial": "sw%d-train-%d",
+        "statusCode": null,
+        "coachModel": 0,
+        "add": 0,
+        "paintedCoachId": null
+      }
+    ]
+  },
+  "trainConsistView": {
+    "gridSize": {
+      "width": 2500,
+      "height": 850
+    },
+    "deviceTypes": [
+      {
+        "type": "port",
+        "managed": true,
+        "size": {
+          "width": 5,
+          "height": 5
+        },
+        "ports": null,
+        "radios": null
+      },
+      {
+        "type": "sw",
+        "managed": true,
+        "size": {
+          "width": 140,
+          "height": 105
+        },
+        "ports": [
+          {
+            "id": "p1",
+            "name": "",
+            "side": "S",
+            "position": 0.5
+          },
+          {
+            "id": "p2",
+            "name": "",
+            "side": "W",
+            "position": 0.5
+          },
+          {
+            "id": "p3",
+            "name": "",
+            "side": "N",
+            "position": 0.5
+          },
+          {
+            "id": "p4",
+            "name": "",
+            "side": "E",
+            "position": 0.5
+          },
+          {
+            "id": "p5",
+            "name": "",
+            "side": "N",
+            "position": 0.2
+          },
+          {
+            "id": "p6",
+            "name": "",
+            "side": "N",
+            "position": 0.8
+          },
+          {
+            "id": "p7",
+            "name": "",
+            "side": "S",
+            "position": 0.2
+          },
+          {
+            "id": "p8",
+            "name": "",
+            "side": "S",
+            "position": 0.8
+          }
+        ],
+        "radios": null
+      },
+      {
+        "type": "ap",
+        "managed": true,
+        "size": {
+          "width": 80,
+          "height": 95
+        },
+        "ports": [
+          {
+            "id": "p1",
+            "name": "",
+            "side": "S",
+            "position": 0.5
+          }
+        ],
+        "radios": null
+      },
+      {
+        "type": "box",
+        "managed": true,
+        "size": {
+          "width": 140,
+          "height": 105
+        },
+        "ports": [
+          {
+            "id": "p1",
+            "name": "",
+            "side": "N",
+            "position": 0.5
+          },
+          {
+            "id": "p2",
+            "name": "",
+            "side": "S",
+            "position": 0.5
+          },
+          {
+            "id": "p3",
+            "name": "",
+            "side": "E",
+            "position": 0.5
+          }
+        ],
+        "radios": null
+      }
+    ],
+    "drawingContextParameters": {
+      "onlyDrawConnectedPorts": true
+    },
+    "staticConsistLayout": {
+      "deviceLayouts": [
+        {
+          "name": "A",
+          "id": "R1",
+          "type": "coach",
+          "coach": 1,
+          "up": false,
+          "position": {
+            "center": null,
+            "object": null,
+            "distance": 0,
+            "bounds": {
+              "left": 0,
+              "top": 0,
+              "width": 600,
+              "height": 800
+            },
+            "position": null,
+            "type": "absolute"
+          },
+          "connections": null
+        },
+        {
+          "name": "G",
+          "id": "R2",
+          "type": "coach",
+          "coach": 2,
+          "up": false,
+          "position": {
+            "center": null,
+            "object": null,
+            "distance": 0,
+            "bounds": {
+              "left": 625,
+              "top": 0,
+              "width": 600,
+              "height": 800
+            },
+            "position": null,
+            "type": "absolute"
+          },
+          "connections": null
+        },
+        {
+          "name": "E",
+          "id": "R3",
+          "type": "coach",
+          "coach": 3,
+          "up": false,
+          "position": {
+            "center": null,
+            "object": null,
+            "distance": 0,
+            "bounds": {
+              "left": 1250,
+              "top": 0,
+              "width": 600,
+              "height": 800
+            },
+            "position": null,
+            "type": "absolute"
+          },
+          "connections": null
+        },
+        {
+          "name": "B",
+          "id": "R4",
+          "type": "coach",
+          "coach": 4,
+          "up": false,
+          "position": {
+            "center": null,
+            "object": null,
+            "distance": 0,
+            "bounds": {
+              "left": 1875,
+              "top": 0,
+              "width": 600,
+              "height": 800
+            },
+            "position": null,
+            "type": "absolute"
+          },
+          "connections": null
+        },
+        {
+          "name": "SW-A1",
+          "id": "R1_SW1",
+          "type": "sw",
+          "coach": 1,
+          "up": true,
+          "position": {
+            "center": null,
+            "object": "R1",
+            "distance": 0,
+            "bounds": null,
+            "position": {
+              "center": {
+                "x": "75%",
+                "y": "25%"
+              },
+              "object": null,
+              "distance": 0,
+              "bounds": null,
+              "position": null,
+              "type": "percentage"
+            },
+            "type": "relative"
+          },
+          "connections": null
+        },
+        {
+          "name": "SW-A2",
+          "id": "R1_SW2",
+          "type": "sw",
+          "coach": 1,
+          "up": true,
+          "position": {
+            "center": null,
+            "object": "R1",
+            "distance": 0,
+            "bounds": null,
+            "position": {
+              "center": {
+                "x": "75%",
+                "y": "75%"
+              },
+              "object": null,
+              "distance": 0,
+              "bounds": null,
+              "position": null,
+              "type": "percentage"
+            },
+            "type": "relative"
+          },
+          "connections": null
+        },
+        {
+          "name": "SW-A3",
+          "id": "R1_SW3",
+          "type": "sw",
+          "coach": 1,
+          "up": true,
+          "position": {
+            "center": null,
+            "object": "R1",
+            "distance": 0,
+            "bounds": null,
+            "position": {
+              "center": {
+                "x": "25%",
+                "y": "50%"
+              },
+              "object": null,
+              "distance": 0,
+              "bounds": null,
+              "position": null,
+              "type": "percentage"
+            },
+            "type": "relative"
+          },
+          "connections": [
+            {
+              "source": ".p6",
+              "target": "R1_SW1.p7",
+              "onlyDrawWhenCoachCount": null
+            },
+            {
+              "source": ".p8",
+              "target": "R1_SW2.p5",
+              "onlyDrawWhenCoachCount": null
+            }
+          ]
+        },
+        {
+          "name": "SW-G1",
+          "id": "R2_SW1",
+          "type": "sw",
+          "coach": 2,
+          "up": true,
+          "position": {
+            "center": null,
+            "object": "R2",
+            "distance": 0,
+            "bounds": null,
+            "position": {
+              "center": {
+                "x": "25%",
+                "y": "25%"
+              },
+              "object": null,
+              "distance": 0,
+              "bounds": null,
+              "position": null,
+              "type": "percentage"
+            },
+            "type": "relative"
+          },
+          "connections": [
+            {
+              "source": ".p2",
+              "target": "R1_SW1.p4",
+              "onlyDrawWhenCoachCount": null
+            }
+          ]
+        },
+        {
+          "name": "SW-G2",
+          "id": "R2_SW2",
+          "type": "sw",
+          "coach": 2,
+          "up": true,
+          "position": {
+            "center": null,
+            "object": "R2",
+            "distance": 0,
+            "bounds": null,
+            "position": {
+              "center": {
+                "x": "75%",
+                "y": "75%"
+              },
+              "object": null,
+              "distance": 0,
+              "bounds": null,
+              "position": null,
+              "type": "percentage"
+            },
+            "type": "relative"
+          },
+          "connections": null
+        },
+        {
+          "name": "SW-G3",
+          "id": "R2_SW3",
+          "type": "sw",
+          "coach": 2,
+          "up": true,
+          "position": {
+            "center": null,
+            "object": "R2",
+            "distance": 0,
+            "bounds": null,
+            "position": {
+              "center": {
+                "x": "25%",
+                "y": "75%"
+              },
+              "object": null,
+              "distance": 0,
+              "bounds": null,
+              "position": null,
+              "type": "percentage"
+            },
+            "type": "relative"
+          },
+          "connections": [
+            {
+              "source": ".p2",
+              "target": "R1_SW2.p4",
+              "onlyDrawWhenCoachCount": null
+            },
+            {
+              "source": ".p4",
+              "target": "R2_SW2.p2",
+              "onlyDrawWhenCoachCount": null
+            }
+          ]
+        },
+        {
+          "name": "CCU",
+          "id": "MAR3-B1",
+          "type": "box",
+          "coach": 2,
+          "up": false,
+          "position": {
+            "center": null,
+            "object": "R2",
+            "distance": 0,
+            "bounds": null,
+            "position": {
+              "center": {
+                "x": "75%",
+                "y": "50%"
+              },
+              "object": null,
+              "distance": 0,
+              "bounds": null,
+              "position": null,
+              "type": "percentage"
+            },
+            "type": "relative"
+          },
+          "connections": [
+            {
+              "source": ".p2",
+              "target": "R2_SW1.p7",
+              "onlyDrawWhenCoachCount": null
+            },
+            {
+              "source": ".p1",
+              "target": "R2_SW3.p6",
+              "onlyDrawWhenCoachCount": null
+            }
+          ]
+        },
+        {
+          "name": "SW-E1",
+          "id": "R3_SW1",
+          "type": "sw",
+          "coach": 3,
+          "up": true,
+          "position": {
+            "center": null,
+            "object": "R3",
+            "distance": 0,
+            "bounds": null,
+            "position": {
+              "center": {
+                "x": "75%",
+                "y": "75%"
+              },
+              "object": null,
+              "distance": 0,
+              "bounds": null,
+              "position": null,
+              "type": "percentage"
+            },
+            "type": "relative"
+          },
+          "connections": [
+            {
+              "source": ".p2",
+              "target": "R2_SW2.p4",
+              "onlyDrawWhenCoachCount": null
+            }
+          ]
+        },
+        {
+          "name": "SW-E2",
+          "id": "R3_SW2",
+          "type": "sw",
+          "coach": 3,
+          "up": true,
+          "position": {
+            "center": null,
+            "object": "R3",
+            "distance": 0,
+            "bounds": null,
+            "position": {
+              "center": {
+                "x": "25%",
+                "y": "25%"
+              },
+              "object": null,
+              "distance": 0,
+              "bounds": null,
+              "position": null,
+              "type": "percentage"
+            },
+            "type": "relative"
+          },
+          "connections": [
+            {
+              "source": ".p2",
+              "target": "R2_SW1.p4",
+              "onlyDrawWhenCoachCount": null
+            }
+          ]
+        },
+        {
+          "name": "SW-E3",
+          "id": "R3_SW3",
+          "type": "sw",
+          "coach": 3,
+          "up": true,
+          "position": {
+            "center": null,
+            "object": "R3",
+            "distance": 0,
+            "bounds": null,
+            "position": {
+              "center": {
+                "x": "75%",
+                "y": "25%"
+              },
+              "object": null,
+              "distance": 0,
+              "bounds": null,
+              "position": null,
+              "type": "percentage"
+            },
+            "type": "relative"
+          },
+          "connections": [
+            {
+              "source": ".p2",
+              "target": "R3_SW2.p4",
+              "onlyDrawWhenCoachCount": null
+            }
+          ]
+        },
+        {
+          "name": "AP-E1",
+          "id": "R3_AP1",
+          "type": "ap",
+          "coach": 3,
+          "up": false,
+          "position": {
+            "center": null,
+            "object": "R3_SW1.p1",
+            "distance": 30,
+            "bounds": null,
+            "position": null,
+            "type": "relative"
+          },
+          "connections": [
+            {
+              "source": ".p1",
+              "target": "R3_SW1.p1",
+              "onlyDrawWhenCoachCount": null
+            }
+          ]
+        },
+        {
+          "name": "SW-B1",
+          "id": "R4_SW1",
+          "type": "sw",
+          "coach": 4,
+          "up": true,
+          "position": {
+            "center": null,
+            "object": "R4",
+            "distance": 0,
+            "bounds": null,
+            "position": {
+              "center": {
+                "x": "25%",
+                "y": "75%"
+              },
+              "object": null,
+              "distance": 0,
+              "bounds": null,
+              "position": null,
+              "type": "percentage"
+            },
+            "type": "relative"
+          },
+          "connections": [
+            {
+              "source": ".p2",
+              "target": "R3_SW1.p4",
+              "onlyDrawWhenCoachCount": null
+            }
+          ]
+        },
+        {
+          "name": "SW-B2",
+          "id": "R4_SW2",
+          "type": "sw",
+          "coach": 4,
+          "up": true,
+          "position": {
+            "center": null,
+            "object": "R4",
+            "distance": 0,
+            "bounds": null,
+            "position": {
+              "center": {
+                "x": "25%",
+                "y": "25%"
+              },
+              "object": null,
+              "distance": 0,
+              "bounds": null,
+              "position": null,
+              "type": "percentage"
+            },
+            "type": "relative"
+          },
+          "connections": [
+            {
+              "source": ".p2",
+              "target": "R3_SW3.p4",
+              "onlyDrawWhenCoachCount": null
+            }
+          ]
+        },
+        {
+          "name": "SW-B3",
+          "id": "R4_SW3",
+          "type": "sw",
+          "coach": 4,
+          "up": true,
+          "position": {
+            "center": null,
+            "object": "R4",
+            "distance": 0,
+            "bounds": null,
+            "position": {
+              "center": {
+                "x": "75%",
+                "y": "50%"
+              },
+              "object": null,
+              "distance": 0,
+              "bounds": null,
+              "position": null,
+              "type": "percentage"
+            },
+            "type": "relative"
+          },
+          "connections": [
+            {
+              "source": ".p7",
+              "target": "R4_SW1.p6",
+              "onlyDrawWhenCoachCount": null
+            },
+            {
+              "source": ".p5",
+              "target": "R4_SW2.p8",
+              "onlyDrawWhenCoachCount": null
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "portalServiceClasses": [],
+  "testUrl1": null,
+  "testUrl2": null,
+  "testUrl3": null,
+  "puppetEnvironments": {
+    "url": "http://vmpuppet01.ovh.21net.com/config",
+    "environments": [
+      "dosto"
+    ],
+    "boxes": [
+      1
+    ],
+    "template": "box%d-t%d.dostoneu-nv4-bench.21net.com"
+  },
+  "batchTaskConfiguration": null,
+  "dynamicConsist": true,
+  "obisComponentsInContainer": null,
+  "type": "NV4 - Bench",
+  "displayTypeName": null,
+  "ip": null,
+  "shareVlinks": true,
+  "vlinkOperatorName": "Vlink",
+  "vlinksAreAnOperator": false,
+  "coachMappings": null,
+  "_id": "6a271663b29b630001793fb3"
+}
