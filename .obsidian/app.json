@@ -1,0 +1,19 @@
+{
+  "userIgnoreFilters": [
+    "node_modules/",
+    ".claude/",
+    ".tmp/",
+    ".git/",
+    ".archive/",
+    "design freeze/",
+    "findings/",
+    "reports/",
+    "rd-handoff/",
+    "OEBB-251/",
+    "docs/",
+    "rtpi/",
+    "trackers/",
+    "project plan/",
+    "train-ip-allocation-commission/"
+  ]
+}

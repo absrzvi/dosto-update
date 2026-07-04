@@ -32,5 +32,7 @@ design freeze/
 # Slides working dir (heavy PDF/docx build artifacts)
 .frontend-slides/
 
-# Obsidian per-vault UI state (machine-local)
-.obsidian/
+# Obsidian per-vault UI state (machine-local) — but DO track app.json
+# (the graph exclusion filters, so the KB graph scope reproduces on any clone)
+.obsidian/*
+!.obsidian/app.json
