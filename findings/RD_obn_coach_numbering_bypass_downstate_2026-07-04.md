@@ -125,6 +125,18 @@ The reciprocal-on-expected-ports signature is a **strong lead**, not proof — a
 
 `dosto-device-discovery` Step 4b (2026-07-04) does the reciprocal-LLDP bypass classification from the CCU side and reports `switches_missing[].bypass_status ∈ {cold_bypass, dead_link, link_down, miscable}` with a Stadler-actionable "check power/health of X first" instruction. This gives operators the DOWN signal today **outside** OBN. The engine change above is what puts the signal **inside** OBN/NMS so monitoring can alarm on it.
 
+## 6b. Field confirmation — 4736-109 / Fzg 137 (2026-07-04)
+
+First **production** occurrence, on a live train (not the bench), confirming the bench RCA generalises:
+
+- CCU `10.179.28.1`, nd-obn **2.2.23** (pre-fix), 6-car nv6.
+- OBN/DHCP see **16/18 switches**. The two absent (E2, C3) are exactly the two failure classes this doc separates:
+  - **E2 = cold_bypass** (§5a/5b case). D1 e0-1 LLDP→ E3 across E2's slot, both links UP 10G / 0 CRC / carrier-false 0 (reciprocal clean-link). Powered-off/failed switch, backbone relayed through — surfaced today only by ops-side reciprocal LLDP, invisible to OBN/NMS.
+  - **C3 = healthy-but-unnumbered** (§5c case). Present and forwarding heavily (C2 e0-0→C3 UP 10G, RX 9.9 GB / TX 280 GB, 0 CRC) but with **no DHCP lease / no mgmt IP** — dropped from the report, invisible to NMS. Note C3's root cause is a mgmt-IP/DHCP fault local to the switch, so the §5c floor would surface it as `UNPLACED` (good) but the *full* fix also needs C3 to reacquire a vlan100 IP to become a normal monitored host.
+- **NMS was not alarming on either** — the dashboard read 16/18 as green. This is the exact "dead switch with no alarm" consequence from §0, observed in the field.
+
+Tracked ops-side: cable register #13 (E2), fleet-journal Fzg 137 entry 2026-07-04 (both). Reinforces the §0 severity framing and the §5c "correctness floor" priority.
+
 ## 7. Test fixtures
 
 The bench `discovery.json` (A1 + B3 bypassed, 10 present) is a ready-made regression fixture — captured 2026-07-04, committed at `findings/fixture_bench_box1-t122_discovery_2026-07-04.json`. Suggested unit tests:
