@@ -1,3 +1,12 @@
+---
+type: guide
+title: OKF organisation plan (superseded)
+description: First plan — applying OKF additively to the markdown corpus. Superseded by the component-oriented KB.
+project: dosto-neu
+tags: [design-history, planning, meta]
+timestamp: 2026-07-04T00:00:00Z
+---
+
 # Plan: Organise the DOSTO knowledge corpus with OKF v0.1
 
 **Author:** Abbas Rizvi

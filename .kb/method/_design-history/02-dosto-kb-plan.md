@@ -1,3 +1,12 @@
+---
+type: guide
+title: DOSTO KB build plan
+description: Plan of record for the project-specific KB build (structure, ingestion, generators).
+project: dosto-neu
+tags: [design-history, planning, meta]
+timestamp: 2026-07-04T00:00:00Z
+---
+
 # Plan: DOSTO NEU project knowledge base (OKF v0.1, project-specific)
 
 **Author:** Abbas Rizvi · **Date:** 2026-07-04 · **Method:** [OKF v0.1](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md)

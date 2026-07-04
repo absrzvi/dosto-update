@@ -1,3 +1,12 @@
+---
+type: guide
+title: Backlog harvest + portable method plan
+description: Plan for harvesting the June–July backlog into evidence/tools and building the portable method.
+project: dosto-neu
+tags: [design-history, planning, meta]
+timestamp: 2026-07-04T00:00:00Z
+---
+
 # Plan: Harvest the backlog + build a portable KB method
 
 **Date:** 2026-07-04 · **Decisions locked:** harvest into KB (keep raw files as evidence) · portable template + written method (no automation yet) · build here, extract later.
