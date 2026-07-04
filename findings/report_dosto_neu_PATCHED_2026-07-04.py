@@ -154,9 +154,17 @@ class DostoNeuReport(Report):
         adj = model["adj"]
         chain = model["chain"]
         coach_of = model["coach_of"]
+        # coach the CCU sits in — same mapping the legacy walk used to seed the BOX.
+        ccu1_coach = {"nv4": 2, "nv6": 3, "fv5": 2, "fv6": 3}.get(self.train_type, 2)
 
         for device in self.device_instances.values():
             device.type = self.find_type(device, retype_icl=False)
+            # Number the CCU (BOX) exactly as the legacy walk did: coach = ccu1_coach,
+            # device 1. WITHOUT this the CCU stays unnumbered, normalise_devices() drops
+            # it, and the CCU vanishes from the NMS report (regression, 2026-07-04).
+            if device.type == "BOX":
+                device.coach_number = ccu1_coach
+                device.device_number = 1
 
         by_mac = {d.mac: d for d in self.device_instances.values()}
         switches = [d for d in self.device_instances.values() if d.type == "SW"]
