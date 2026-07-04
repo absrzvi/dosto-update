@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coupled DOSTO — RSTP, coupler links &amp; VLAN 5/15 ring</title>
+<style>
+  :root{
+    --txt:#2c2c2a; --mut:#5f5e5a; --hint:#888780;
+    --bg:#ffffff; --surf:#f5f4ee; --brd:#dcdad0; --brd2:#c2c0b6;
+    --blue:#378ADD; --teal:#1D9E75; --coral:#D85A30; --amber:#BA7517;
+    --red:#E24B4A; --purple:#7F77DD; --gray:#888780; --green:#639922;
+    --info:#185FA5;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --txt:#e8e6dc; --mut:#b4b2a9; --hint:#9c9a92;
+      --bg:#1f1e1c; --surf:#2c2c2a; --brd:#444441; --brd2:#5f5e5a;
+      --info:#85B7EB;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+       font-family:"Anthropic Sans","Segoe UI",system-ui,sans-serif;
+       line-height:1.6;font-size:15px;padding:24px}
+  .wrap{max-width:820px;margin:0 auto}
+  h1{font-size:22px;font-weight:500;margin:0 0 4px}
+  h2{font-size:18px;font-weight:500;margin:32px 0 8px}
+  .sub{color:var(--mut);font-size:13px;margin:0 0 20px}
+  p{color:var(--mut);font-size:14px}
+  .ctrls{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+  .ctrls button{font-size:13px;padding:6px 12px;border-radius:8px;
+       border:0.5px solid var(--brd2);cursor:pointer;
+       font-family:inherit;background:transparent;color:var(--mut)}
+  .ctrls button.on{background:var(--info);color:#fff;border-color:var(--info)}
+  .caption{font-size:13px;line-height:1.5;color:var(--mut);background:var(--surf);
+       border:0.5px solid var(--brd);border-radius:8px;padding:8px 12px;margin-bottom:10px}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--mut);margin-top:6px}
+  .legend > div{display:flex;align-items:center;gap:6px}
+  .legend i{width:14px;height:3px;border-radius:2px;display:inline-block}
+  svg{display:block;width:100%;height:auto}
+  .card{border:0.5px solid var(--brd);border-radius:12px;padding:16px;background:var(--bg)}
+  .foot{font-size:12px;color:var(--hint);margin-top:28px;border-top:0.5px solid var(--brd);padding-top:12px}
+  text{font-family:"Anthropic Sans","Segoe UI",system-ui,sans-serif}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Coupled DOSTO — RSTP, coupler links &amp; the VLAN 5 / 15 ring</h1>
+  <p class="sub">Two coupled 6-car consists (36 VDS switches). Grounded in the 2026-06-12 coupling test of 4736-110 (Fzg 138) + 4736-119 (Fzg 147). Toggle the layers below.</p>
+
+  <div class="card">
+    <div id="ctrls" class="ctrls"></div>
+    <div id="caption" class="caption"></div>
+    <svg id="net" viewBox="0 0 680 360" role="img">
+      <title>Coupled DOSTO RSTP and VLAN topology</title>
+      <desc>Two 6-car consists coupled B-end to B-end, with RSTP and VLAN overlays.</desc>
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+      <g id="layer"></g>
+    </svg>
+    <div id="legend" class="legend"></div>
+  </div>
+
+  <h2>Root path cost &amp; max-age margin</h2>
+  <p>Cost rises 2000 per 10G hop from the elected root. Because the priority-0 root (D1-138) sits near the centre of the merged chain, the worst case (A3-147, 14 hops) clears the 20-hop max-age horizon — but only by ~5–6 hops.</p>
+  <div class="card">
+  <svg viewBox="0 0 680 300" role="img">
+    <title>RSTP root path cost and max-age margin across the coupled fabric</title>
+    <desc>Cost rises with hop distance from the centrally-elected root; the far extremity of train 147 sits at 14 hops, five short of the 20-hop max-age horizon.</desc>
+    <text x="40" y="34" text-anchor="start" font-size="14" font-weight="500" fill="var(--txt)">Root path cost from D1-138 outward · 2000 per 10G hop</text>
+    <line x1="40" y1="150" x2="640" y2="150" stroke="var(--brd2)" stroke-width="0.5"/>
+    <circle cx="300" cy="150" r="7" fill="#D85A30" stroke="var(--bg)" stroke-width="0.8"/>
+    <text x="300" y="128" text-anchor="middle" font-size="12" font-weight="500" fill="#D85A30">ROOT · D1-138</text>
+    <text x="300" y="172" text-anchor="middle" font-size="11" fill="var(--mut)">cost 0</text>
+    <circle cx="220" cy="150" r="4" fill="#888780"/>
+    <circle cx="150" cy="150" r="4" fill="#888780"/>
+    <circle cx="80"  cy="150" r="5" fill="#BA7517"/>
+    <circle cx="380" cy="150" r="4" fill="#888780"/>
+    <circle cx="460" cy="150" r="4" fill="#888780"/>
+    <circle cx="540" cy="150" r="4" fill="#888780"/>
+    <circle cx="610" cy="150" r="6" fill="#E24B4A"/>
+    <text x="80"  y="128" text-anchor="middle" font-size="11" fill="var(--mut)">A3-138</text>
+    <text x="80"  y="172" text-anchor="middle" font-size="11" fill="#BA7517">~8 hops · 16000</text>
+    <text x="220" y="172" text-anchor="middle" font-size="11" fill="var(--mut)">4 · 8000</text>
+    <text x="370" y="128" text-anchor="middle" font-size="11" fill="var(--mut)">across coupler →</text>
+    <text x="460" y="172" text-anchor="middle" font-size="11" fill="var(--mut)">9 · 18000</text>
+    <text x="610" y="128" text-anchor="middle" font-size="11" fill="#E24B4A">A3-147 · worst case</text>
+    <text x="610" y="172" text-anchor="middle" font-size="11" font-weight="500" fill="#E24B4A">14 hops · 28000</text>
+    <line x1="610" y1="158" x2="610" y2="225" stroke="#E24B4A" stroke-width="0.5" stroke-dasharray="3 3"/>
+    <rect x="40" y="244" width="600" height="40" rx="8" fill="var(--surf)" stroke="var(--brd)" stroke-width="0.5"/>
+    <text x="56" y="258" text-anchor="start" font-size="11" font-weight="500" fill="#E24B4A">Max-age BPDU horizon = 20 hops</text>
+    <text x="56" y="274" text-anchor="start" font-size="11" fill="var(--mut)">Far end sits at 14 — only ~5–6 hops of margin. A root elected nearer one extremity, or a 3rd consist (54 switches), pushes the far end past 20: tree partitions, redundant coupler unblocks, loop closes.</text>
+    <text x="40" y="208" text-anchor="start" font-size="11" fill="var(--mut)">← Train 138 extremity</text>
+    <text x="640" y="208" text-anchor="end" font-size="11" fill="var(--mut)">Train 147 extremity →</text>
+  </svg>
+  </div>
+
+  <div class="foot">
+    Source: REPORT_coupling_test_2026-06-12 (4736-110 + 4736-119). Schematic abstracts each 18-switch consist as a backbone chain for legibility — real LLDP adjacency is in <code>_shared/nv6-topology.md</code>. Per A8, the VLAN 5↔15 ring is refuted as the proven service-outage cause; the VLAN-15 firewall-to-firewall transit is the prime suspect. Generated 2026-06-20.
+  </div>
+</div>
+
+<script>
+const SVGNS="http://www.w3.org/2000/svg";
+const L=document.getElementById("layer");
+const cap=document.getElementById("caption");
+const leg=document.getElementById("legend");
+function v(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+const c={blue:"#378ADD",teal:"#1D9E75",coral:"#D85A30",amber:"#BA7517",red:"#E24B4A",purple:"#7F77DD",gray:"#888780",green:"#639922"};
+function el(t,a){const e=document.createElementNS(SVGNS,t);for(const k in a)e.setAttribute(k,a[k]);return e;}
+function line(x1,y1,x2,y2,o={}){return el("line",{x1,y1,x2,y2,stroke:o.s||v("--brd2"),"stroke-width":o.w||0.5,"stroke-dasharray":o.d||"","stroke-linecap":"round"});}
+function txt(x,y,s,o={}){const e=el("text",{x,y,"text-anchor":o.a||"middle","dominant-baseline":o.b||"central","font-size":o.fs||12,fill:o.fill||v("--mut"),"font-weight":o.fw||400});e.textContent=s;return e;}
+function rect(x,y,w,h,o={}){return el("rect",{x,y,width:w,height:h,rx:o.rx||4,fill:o.fill||"none",stroke:o.s||"none","stroke-width":o.w||0.5,"stroke-dasharray":o.d||""});}
+
+const coaches=["A","C","D","E","F","B"];
+const rowY1=120,rowY2=240,x0=46,x1=634,span=x1-x0;
+const sub=[-14,0,14];
+function coachX(i){return x0+(span/6)*(i+0.5);}
+function switchPos(train,ci,si){const idx=train===1?ci:(5-ci);return{x:coachX(idx)+sub[si],y:train===1?rowY1:rowY2};}
+const special={"A3":1,"D1":1,"D3":1,"B1":1,"B3":1,"A1":1};
+const views={phys:"Physical",rstp:"RSTP costs & block",vlan:"VLAN 5 / 15 paths",fail:"Failure modes"};
+let view="phys";
+
+function drawBase(){
+  L.appendChild(line(x0-6,rowY1,x1+6,rowY1,{s:v("--brd2"),w:0.5}));
+  L.appendChild(line(x0-6,rowY2,x1+6,rowY2,{s:v("--brd2"),w:0.5}));
+  L.appendChild(txt(x0-8,rowY1-44,"Train 4736-110 · Fzg 138",{a:"start",fill:v("--mut"),fw:500}));
+  L.appendChild(txt(x0-8,rowY2+46,"Train 4736-119 · Fzg 147",{a:"start",fill:v("--mut"),fw:500}));
+  for(let t=1;t<=2;t++)for(let ci=0;ci<6;ci++){
+    const idx=t===1?ci:(5-ci),cx=coachX(idx),y=t===1?rowY1:rowY2;
+    L.appendChild(rect(cx-22,y-15,44,30,{rx:6,s:v("--brd2"),w:0.5,d:"2 2"}));
+    L.appendChild(txt(cx,t===1?y-26:y+26,"Coach "+coaches[ci],{fs:11,fill:v("--mut")}));
+  }
+}
+function switchColor(t,ci,si){const pos=coaches[ci]+(si+1);
+  if(view==="rstp")return(t===1&&pos==="D1")?c.coral:c.gray;
+  return special[pos]?c.blue:c.gray;}
+function drawSwitches(){
+  for(let t=1;t<=2;t++)for(let ci=0;ci<6;ci++)for(let si=0;si<3;si++){
+    const p=switchPos(t,ci,si),pos=coaches[ci]+(si+1),col=switchColor(t,ci,si);
+    const isRoot=(view==="rstp"&&t===1&&pos==="D1"),r=isRoot?6:4.2;
+    L.appendChild(el("circle",{cx:p.x,cy:p.y,r,fill:col,stroke:v("--bg"),"stroke-width":0.8}));
+    if(isRoot){
+      L.appendChild(el("circle",{cx:p.x,cy:p.y,r:9,fill:"none",stroke:c.coral,"stroke-width":1,"stroke-dasharray":"2 2"}));
+      L.appendChild(txt(p.x,p.y-16,"ROOT",{fs:11,fill:c.coral,fw:500}));
+      L.appendChild(txt(p.x,p.y+15,"D1",{fs:11,fill:c.coral}));
+    }
+  }
+}
+function drawTrunks(){
+  for(let t=1;t<=2;t++){let prev=null;
+    for(let ci=0;ci<6;ci++)for(let si=0;si<3;si++){
+      const p=switchPos(t,ci,si);
+      if(prev)L.appendChild(line(prev.x,prev.y,p.x,p.y,{s:v("--brd2"),w:1}));
+      prev=p;
+    }
+  }
+}
+function couplerEnds(){return{b1_t1:switchPos(1,5,0),b3_t1:switchPos(1,5,2),b1_t2:switchPos(2,5,0),b3_t2:switchPos(2,5,2)};}
+function drawCoupler(){
+  const e=couplerEnds();
+  L.appendChild(line(e.b3_t1.x,e.b3_t1.y,e.b1_t2.x,e.b1_t2.y,(view==="fail")?{s:c.amber,w:2.2}:{s:c.teal,w:2.2}));
+  L.appendChild(line(e.b1_t1.x,e.b1_t1.y,e.b3_t2.x,e.b3_t2.y,{s:c.red,w:1.6,d:"5 4"}));
+  const mx=(e.b3_t1.x+e.b1_t2.x)/2;
+  if(view==="rstp"||view==="phys"||view==="fail"){
+    L.appendChild(txt(mx+58,180,"Active coupler · FWD",{fs:11,fill:c.teal,fw:500,a:"start"}));
+    L.appendChild(txt(mx+58,196,"Blocked coupler · ALTR/BLK",{fs:11,fill:c.red,a:"start"}));
+    if(view==="rstp"){
+      L.appendChild(txt(mx-70,166,"asymmetric cost 138M / 147M",{fs:11,fill:c.amber,a:"end"}));
+      L.appendChild(txt(mx-70,182,"(legal per VDS — not overflow)",{fs:11,fill:c.amber,a:"end"}));
+    }
+    if(view==="fail"){
+      L.appendChild(txt(mx-70,166,"designated-role duel",{fs:11,fill:c.amber,a:"end",fw:500}));
+      L.appendChild(txt(mx-70,182,"TC + FDB flush every ~2s",{fs:11,fill:c.amber,a:"end"}));
+    }
+  }
+}
+function attach(train,coach,si,label,col,off){
+  const p=switchPos(train,coaches.indexOf(coach),si),dir=train===1?-1:1,ay=p.y+dir*off;
+  L.appendChild(line(p.x,p.y,p.x,ay,{s:col,w:1}));
+  L.appendChild(rect(p.x-26,ay+(dir<0?-14:0),52,14,{rx:3,fill:v("--surf"),s:col,w:0.5}));
+  L.appendChild(txt(p.x,ay+(dir<0?-7:7),label,{fs:10,fill:col}));
+  return p;
+}
+function drawAttachments(){
+  attach(1,"A",2,"Stadler FW",c.purple,34);attach(2,"A",2,"Stadler FW",c.purple,34);
+  attach(1,"D",0,"OBS/RDC",c.green,20);attach(2,"D",0,"OBS/RDC",c.green,20);
+  attach(1,"B",0,"ZFR",c.amber,20);attach(2,"B",0,"ZFR",c.amber,20);
+}
+function drawVlanPaths(){
+  const e=couplerEnds();
+  L.appendChild(line(e.b3_t1.x,e.b3_t1.y,e.b1_t2.x,e.b1_t2.y,{s:c.teal,w:3}));
+  L.appendChild(txt((e.b3_t1.x+e.b1_t2.x)/2,176,"VLAN 5 — direct L2 bridge",{fs:11,fill:c.teal,fw:500}));
+  attach(1,"A",2,"Stadler FW",c.purple,40);attach(2,"A",2,"Stadler FW",c.purple,40);
+  const p1=switchPos(1,coaches.indexOf("A"),2),p2=switchPos(2,coaches.indexOf("A"),2);
+  L.appendChild(el("path",{d:`M ${p1.x} ${p1.y-40} C ${p1.x} 20, ${p2.x} 320, ${p2.x} ${p2.y+40}`,fill:"none",stroke:c.purple,"stroke-width":2,"stroke-dasharray":"6 4"}));
+  L.appendChild(txt(340,30,"VLAN 15 — firewall-to-firewall transit (RSTP-invisible)",{fs:11,fill:c.purple,fw:500}));
+  L.appendChild(txt(340,338,"Two parallel paths in different VLANs = a forwarding ring RSTP cannot see",{fs:11,fill:c.coral}));
+}
+function drawFailNotes(){
+  L.appendChild(txt(340,30,"If root elects near one extremity, far end exceeds 20-hop max-age horizon",{fs:11,fill:c.red,fw:500}));
+  L.appendChild(txt(340,330,"Blocked coupler then unblocks → genuine L2 loop closes (the June storm mechanism)",{fs:11,fill:c.red}));
+}
+const captions={
+  phys:"Physical fabric. Two 6-car consists (A·C·D·E·F·B), 18 VDS switches each, coupled B-end to B-end. Two coupler cables join them — one carries traffic, the redundant one is held by RSTP. Stadler firewall sits on A3 e1-4; OBS/RDC on D1/D3; ZFR on B1/B3.",
+  rstp:"RSTP converged state (proven 2026-06-12). Single root = D1-138 (priority 0, near the chain centre). Active coupler forwards; redundant coupler is correctly ALTR/BLK. The two coupler-port ends carried mismatched hand-set costs (137,999,999 on 138 / 146,999,999 on 147). VDS confirmed (2026-06-xx) these are legal — no overflow; the asymmetry is the suspected role-instability driver. Reverting to 20000 stopped the churn.",
+  vlan:"The ring. VLAN 5 bridges directly across the coupler (L2). VLAN 15 is the Stadler firewall-to-firewall transit. Together they form a forwarding cycle in two different VLANs — invisible to RSTP because no BPDUs cross the firewalls. Per A8, pruning VLAN 5 did not restore service; the VLAN-15 FW transit is the prime suspect.",
+  fail:"Two coupling-specific pathologies. (1) Proven: a perpetual designated-role duel on the active coupler → a topology-change + FDB flush every ~2s fleet-wide → permanent flood domain. Fixed at source by reverting coupler port-cost to 20000. (2) Latent: max-age partition — only ~5 hops of margin; unlucky root placement (or a 3rd consist) unblocks the redundant link and closes a real loop."
+};
+const legends={
+  phys:[["Load-bearing switch",c.blue],["Backbone switch",c.gray],["Active coupler",c.teal],["Blocked coupler",c.red]],
+  rstp:[["Root bridge (D1-138)",c.coral],["Other switch",c.gray],["Active / FWD",c.teal],["Blocked / ALTR",c.red]],
+  vlan:[["VLAN 5 direct L2",c.teal],["VLAN 15 FW↔FW",c.purple],["Stadler firewall",c.purple]],
+  fail:[["Active coupler (churning)",c.amber],["Blocked → may unblock",c.red]]
+};
+function render(){
+  L.innerHTML="";
+  drawBase();drawTrunks();drawCoupler();
+  if(view==="phys")drawAttachments();
+  if(view==="vlan")drawVlanPaths();
+  if(view==="fail")drawFailNotes();
+  drawSwitches();
+  cap.textContent=captions[view];
+  leg.innerHTML="";
+  legends[view].forEach(([t,col])=>{
+    const d=document.createElement("div");
+    d.innerHTML=`<i style="background:${col}"></i><span>${t}</span>`;
+    leg.appendChild(d);
+  });
+  document.querySelectorAll("#ctrls button").forEach(b=>b.classList.toggle("on",b.dataset.v===view));
+}
+const ctrls=document.getElementById("ctrls");
+Object.entries(views).forEach(([k,label])=>{
+  const b=document.createElement("button");
+  b.dataset.v=k;b.textContent=label;
+  b.onclick=()=>{view=k;render();};
+  ctrls.appendChild(b);
+});
+render();
+</script>
+</body>
+</html>

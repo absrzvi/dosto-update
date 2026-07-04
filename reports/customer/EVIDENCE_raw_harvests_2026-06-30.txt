@@ -1,0 +1,232 @@
+================================================================================
+RAW EVIDENCE & HARVESTS — Coupled-Train Test 2026-06-30
+ÖBB DOSTO 4736-117 (Fzg 145) + 4736-105 (Fzg 133)
+Nomad Digital. Companion to DOSTO_Coupled_Train_Test_Report_2026-06-30_v1.0.docx
+All timestamps UTC unless noted. Switch log timestamps are relative-to-boot (no RTC).
+================================================================================
+
+
+================================================================================
+E0 — DEVICE INVENTORY / IDENTITY
+================================================================================
+
+4736-117 (Fzg 145) — CCU box1-t32 / 10.179.32.1
+  vlan100 10.179.32.129/25
+  vlan7   172.19.200.130/17  (corrected from misrendered 172.19.208.2 — see E1)
+  Stadler FW peer 172.19.200.129 (Westermo 00:90:e8:cb:5d:cc), ARP reachable, ICMP filtered = commissioned
+  18 consist switches nv6-{A1,A2,A3,B1,B2,B3,C1,C2,C3,D1,D2,D3,E1,E2,E3,F1,F2,F3}-v8-145
+  Priority-0 root: nv6-D1-v8-145 = a0:59:3a:d0:76:e0
+
+4736-105 (Fzg 133) — CCU box1-t1 / 10.179.1.1
+  vlan100 10.179.1.129/25
+  vlan7   172.19.194.130/17 (correct on arrival)
+  Stadler FW peer 172.19.194.129
+  18 consist switches nv6-*-v8-133
+  Priority-0 root: nv6-D1-v8-133 = a0:59:3a:d0:6c:80
+
+
+================================================================================
+E1 — vlan7 CORRECTION ON 4736-117 (commissioning fix, pre-test)
+================================================================================
+
+Found on arrival (live + persistent nmconnection):
+  vlan7@bond0  172.19.208.2/17        <-- decodes to Fzg 160 (wrong)
+  address1=172.19.208.2/17
+
+Expected for Fzg 145 (odd): octet3 = 128 + 145//2 = 200 ; octet4 = 128 + 2 = 130
+  => 172.19.200.130/17
+
+Applied via persistent-edit chroot (nd-systemupdate.sh) + safe_reboot. Post-reboot verification:
+  A. nmconnection address1=172.19.200.130/17      PASS
+  B. live  vlan7  172.19.200.130/17               PASS
+  C. ARP   172.19.200.129 lladdr 00:90:e8:cb:5d:cc DELAY/REACHABLE (Westermo)  PASS
+  D. ICMP  5 packets transmitted, 0 received, 100% loss  => FW commissioned (policy drops echo)
+
+
+================================================================================
+E2 — COUPLER PORT-COST: BASELINE (v8) AND APPLIED (v9 M1)
+================================================================================
+
+BASELINE (from running-config, decoupled solo, ~07:50Z):
+  117  A1 e0-2: spanning-tree port-cost 144999999
+       A3 e0-2: (no explicit port-cost — default)
+       B1 e0-2: (no explicit port-cost — default)
+       B3 e0-2: spanning-tree port-cost 144999999
+  105  A1 e0-2: spanning-tree port-cost 132999999
+       A3 e0-2: (default)
+       B1 e0-2: (default)
+       B3 e0-2: spanning-tree port-cost 132999999
+
+  Pattern = v8 template (train_id x 1,000,000 - 1) on A1/B3; A3/B1 default. Per-train ASYMMETRIC.
+
+APPLIED v9 M1 (symmetric 20000) + saved, verified in STARTUP-config:
+  117  A1: port-cost 20000   A3: port-cost 20000   B1: port-cost 20000   B3: port-cost 20000
+  105  A1: port-cost 20000   A3: port-cost 20000   B1: port-cost 20000   B3: port-cost 20000
+
+
+================================================================================
+E3 — RSTP TOPOLOGY AFTER COUPLING (symmetric cost) — CLEAN MERGE
+================================================================================
+
+nv6-B1-v8-145 (117, active coupler port e0-2):
+  Root bridge : 0/a0:59:3a:d0:6c:80     (= 105 D1; 105 is merged-fabric root)
+  Root port   : e0-2
+  e0-2  128.3  ROOT  FWD  cost 20000  rstp,p2p,adminEdgeOff
+
+nv6-A1-v8-133 (105, active coupler peer e0-2):
+  e0-2  128.3  DESG  FWD  cost 20000  rstp,p2p,adminEdgeOff
+
+Coupler link summary: 117 B1 e0-2 = up 10G Full; redundant coupler links down/blocked. One fwd link.
+
+TC / FLUSH COUNT (topology-change + "Flushing all entries" events), both trains:
+  Sample 1  08:00:12Z : 117 B1=0  A3=0  D1=0    105 A1=0
+  Sample 2  08:02:47Z : 117 B1=0  A3=0  D1=0    105 A1=0  A3=0  D1=0
+  => FROZEN at 0 over the window = converged, NO churn.
+
+Switch log content on the active coupler (only boot lines, no churn):
+  Jan  1 00:00:17  KMswitch: RSTP Protocol Handler -- Ver:1.0.0 loaded.
+  Jan  1 00:00:17  KMswitch: IGMP protocol handler -- Ver:1.6.0 loaded.
+  (no "Flushing all entries", no "received Tc", no "sending designated proposal")
+
+CONTRAST (June 2026-06-12, asymmetric cost): every switch logged "Flushing all entries" ~every 2s,
+continuously, for >40 min.
+
+
+================================================================================
+E4 — CCTV RESOLVED BY COST FIX ALONE (Layer-2 evidence while coupled+healthy)
+================================================================================
+
+VLAN-5 forwarding table on active coupler (117 B1), stability check:
+  show mac-address vlan 5  count: 119  (sample 1)
+                                  119  (sample 2, 8s later)  => STABLE, not flushing.
+  Stadler FW MAC 00:90:e8:cb:5d:cc learned on e0-1, held.
+
+Coupler live rate (117 B1 e0-2), two-snapshot delta:
+  RX 94.76 Mbps   TX 91.65 Mbps   => ~symmetric healthy bidirectional video.
+
+Driver/HMI: both trains' CCTV showing on 117 HMI, no latency. NO change made to VLAN 5 or firewalls.
+
+
+================================================================================
+E5 — SWITCH-DHCP FAILURE WITH NATIVE VLAN 1 (the M2 fault) — CCU DHCP LOG (117)
+================================================================================
+
+Coupler trunk baseline:  e0-2  up  native 0001  prune allow 5,15   (native VLAN 1)
+
+DHCP server log (isc-dhcp-server, 117) — every affected switch loops at OFFER, never REQUESTs:
+  10:39:56  DHCPOFFER   on 10.179.32.202 to a0:59:3a:d0:79:60 (nv6-A1-v8-145) via vlan100
+  10:40:04  DHCPDISCOVER from a0:59:3a:d0:79:60 (nv6-A1-v8-145) via vlan100
+  10:40:04  DHCPOFFER   on 10.179.32.202 to a0:59:3a:d0:79:60 (nv6-A1-v8-145) via vlan100
+  10:40:17  DHCPDISCOVER from a0:59:3a:d0:79:60 (nv6-A1-v8-145) via vlan100
+  10:40:17  DHCPOFFER   on 10.179.32.202 to a0:59:3a:d0:79:60 (nv6-A1-v8-145) via vlan100
+  10:41:20  DHCPDISCOVER from a0:59:3a:d0:76:e0 (nv6-D1-v8-145) via vlan100
+  10:41:22  DHCPOFFER   on 10.179.32.201 to a0:59:3a:d0:76:e0 (nv6-D1-v8-145) via vlan100
+  10:41:28  DHCPDISCOVER from a0:59:3a:d0:76:e0 (nv6-D1-v8-145) via vlan100
+  10:41:28  DHCPOFFER   on 10.179.32.201 to a0:59:3a:d0:76:e0 (nv6-D1-v8-145) via vlan100
+  => DISCOVER -> OFFER -> (NO REQUEST, NO ACK) -> DISCOVER again. Loops. Same offered IP each time.
+
+Single DHCP server confirmed (no rogue/2nd server): all OFFERs carry Server-ID 10.179.32.129 (117 CCU).
+  tcpdump: 50 OFFERs in window, all Server-ID 10.179.32.129. No 10.179.1.x (105) offers crossed.
+
+
+================================================================================
+E6 — NATIVE-VLAN-1 CROSS-TRAIN BRIDGE (root-cause proof) — VLAN-1 MAC TABLE (117 B1)
+================================================================================
+
+show mac-address vlan 1  (entries learned via coupler port e0-2):
+  BEFORE M2:  57 MACs
+  Sample foreign (105-side) MACs present on 117's VLAN 1 via e0-2 (105 switches are d0:2x..d0:4x):
+     a0:59:3a:d0:2c:e0  Dynamic  e0-2
+     a0:59:3a:d0:2e:60  Dynamic  e0-2
+     a0:59:3a:d0:34:e0  Dynamic  e0-2
+     a0:59:3a:d0:35:40  Dynamic  e0-2
+     a0:59:3a:d0:38:00  Dynamic  e0-2
+     a0:59:3a:d0:38:40  Dynamic  e0-2
+  => The two trains' VLAN-1 (192.168.1.0/24, shared) switch-management segments are BRIDGED
+     across the coupler via native VLAN 1. Switch DHCP REQUEST (broadcast) is disrupted on this
+     overlapping path -> switches loop at OFFER.
+
+AFTER M2 (native 999 on active coupler B1), VLAN-1 MAC count drops as foreign entries age out:
+  57  ->  39  ->  10     (cross-train VLAN-1 bridge closed)
+
+
+================================================================================
+E7 — M2 FIX APPLIED (native VLAN 999) AND PERSISTED
+================================================================================
+
+Per coupler switch (combined form — native + prune in one command, never native alone):
+  configure vlan 999 name blackhole-native
+  configure interface e0-2 switchport mode trunk native vlan 999 prune allow 5,15
+  save running-config
+
+Verified in STARTUP-config, all 8 coupler ports both trains, cost AND native together:
+  117  A1: [port-cost 20000] [native vlan 999]
+       A3: [port-cost 20000] [native vlan 999]
+       B1: [port-cost 20000] [native vlan 999]
+       B3: [port-cost 20000] [native vlan 999]
+  105  A1..B3: [port-cost 20000] [native vlan 999]   (all 4)
+
+Post-fix DHCP: switches began completing the handshake again (DHCPREQUEST -> DHCPACK observed),
+e.g.  DHCPREQUEST for 10.179.32.199 from a0:59:3a:d0:74:20 (nv6-D2-v8-145)
+      DHCPACK     on  10.179.32.199 to   a0:59:3a:d0:74:20 (nv6-D2-v8-145)
+
+
+================================================================================
+E8 — DECOUPLE RECOVERY (confirming test) AND COLD-BOOT RESULT
+================================================================================
+
+4736-117 management-lease count vs coupling state (repeated consistently across the day):
+  Coupled (native VLAN 1):    9 / 18
+  ~1 min after decouple:     18 / 18
+  => loss is coupled-state-specific, NOT switch power (dead switches do not recover on decouple).
+
+COLD RESTART with full v9 persisted (M1 cost 20000 + M2 native 999):
+  4736-105: 18/18 switches, single root, no churn => clean cold-boot convergence.
+  4736-117: v9 config rendered from start-up (B1 e0-2 native 999 + cost 20000);
+            VLAN-1 cross-train leak absent (FDB ~19, not 57); switches that came up leased cleanly;
+            residual issue still present: ~9/18 switches do not complete a lease while coupled
+            (recover on decouple). Open — see report F4. Nomad-side, not service-affecting.
+
+Ruled out for the residual 117 issue (each by direct measurement):
+  - DHCP pool exhaustion (46 of ~70 addresses used; server still OFFERing)
+  - second/rogue DHCP server (only 117 CCU 10.179.32.129 answers)
+  - transient broadcast flood from test device ccu20230725 (7c:70:bc:70:d9:58/59) — that device
+    later disconnected; the 9/18 condition persisted unchanged in a quiet broadcast domain.
+
+
+================================================================================
+E9 — CCTV PATH HEALTH (4736-105) AND THE MASS-BOUNCE / RESTART OPERATIONAL NOTE
+================================================================================
+
+105 VLAN-5 camera health (after rollback to own FW 172.18.194.129):
+  VLAN-5 camera ports up (A1/C1/D1/F1): 5 of 5 each coach.
+  Camera video rate (e1-0 representative): 4.1 – 7.1 Mbps (healthy stream).
+  Stadler FW MAC 00:90:e8:c1:a7:b0 learned on VLAN 5.
+  A3 e1-4 Stadler FW trunk: up, 1000 Full, allow 2,3,5,6,7,8,9,12,15.
+
+VLAN-5 camera gateway (video DHCP group default-router) on all 18 of 105's switches:
+  Rolled back to 172.18.194.129 (own FW) and verified in STARTUP-config 18/18.
+
+Operational note: bouncing ALL of 105's VLAN-5 camera ports at once (to apply the reverted gateway)
+disrupted the Stadler firewall's camera->display (VLAN 5 -> VLAN 3) session state — the HMI showed
+no CCTV despite a healthy L2 path. A firewall-trunk port bounce did not recover it; a full train
+restart did. Lesson: stagger camera-port operations, or plan a firewall/display session refresh.
+
+
+================================================================================
+E10 — FINAL CONFIG STATE LEFT ON THE TRAINS (both shut down at end of test)
+================================================================================
+
+  Coupler port-cost 20000 (M1)      8 coupler ports both trains   Persisted (start-up config)
+  Coupler native VLAN 999 (M2)      8 coupler ports both trains   Persisted (start-up config)
+  VLAN-5 camera gateway (105)       18 switches                   Own FW 172.18.194.129 (persisted)
+  vlan7 address (117)               CCU                           172.19.200.130/17 (persisted)
+  RSTP max-age / forward-delay      —                             Not changed (recommend via templates)
+
+NOTE: per-switch changes are persisted against a power cycle. A future OBN config push from the
+current (v8) templates would revert them — hence the recommendation to carry M1+M2 into the v9
+templates.
+
+================================================================================
+END OF EVIDENCE FILE
+================================================================================
