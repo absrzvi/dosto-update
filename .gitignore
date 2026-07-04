@@ -26,3 +26,8 @@ desktop.ini
 design freeze/
 # untracked SDD working copy at root (v2.1 set is already tracked; leave those)
 /ND-DEL-OBB-035-SDD-002-01_v2.2.docx
+
+# Large firmware images — kept on disk, too heavy for git (44MB+)
+*.tar.gz
+# Slides working dir (heavy PDF/docx build artifacts)
+.frontend-slides/
