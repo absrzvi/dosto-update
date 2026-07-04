@@ -732,7 +732,60 @@ A never-commissioned AP sits on factory `192.168.1.x`, off the management VLAN, 
 
 - **No project 51** in NMS — DOSTO-NEU's NMS project is **50** ("Dosto-Neu-National"). The CCU's `project_id 51` is only the Nomad-Connect MQTT topic namespace, not an NMS project; NMS keys on `rtl_project_id 50 / rtl_train_id` (e.g. 6018). [`project_nms_train_record_vs_monitoring_layer`]
 - **Alarm "Device" column `C<n>`** (C2/C4/C6) = positional coach index from the Zabbix host `R<n>` (frontend R→C relabel), NOT the physical car letter or painted number. Real painted numbers require OBN `physical_coach_map_file` (a MAC→coach YAML, currently UNSET for DOSTO-NEU → all "unknown") AND `paintedCoach:true` on the project config. [`project_nms_painted_coach_number_source`]
-- **Summary In-depot/Trip/Location/Next-trip** = the RTPI **journey feed** (backend MQTT, keyed by `Vehicles[].vehicleNumber`), not telemetry/Zabbix. The ÖBB feed historically carried only `4744xxx`, not `4736xxx` — a journey-feed coverage gap, not a train fault.
+- **Summary In-depot/Trip/Location/Next-trip** = the RTPI **journey feed** (backend MQTT), not telemetry/Zabbix. The whole pipeline is **Nomad-backend, nothing on the CCU** (verified 2026-06-30: no `rtpiJourney` consumer on the train, no DNS for the RTPI host): ÖBB REST API (`api-gateway.oebb.at/JourneyFeed_API`) → **Nomad Ingestion Service** pulls every ~4–30 min → generic JSON → RTPI DB importer → MariaDB → **RTPI Publisher** → HIVE broker (`emqx-obb`) → NMS tiles. Two backend knobs decide what you see, and they're independent (see "RTPI journey-feed mapping" below for the full trace). [`project_nms_train_record_vs_monitoring_layer`] [`project_rtpi_journey_feed_lookup_mapping`]
+  - **Visibility** is gated by `journeySelectionMode: inLoadRangeInMinutes` / `loadRangeInMinutes [5,720]` — the importer only publishes journeys active within a time window. **Trains in commissioning have no live ÖBB schedule → absent by design; self-resolves on entry to revenue service.** This (not a "4736 coverage gap") is why our trains' tiles are blank.
+  - **Friendly naming** is governed by `lookup.xlsx` on the importer pod. DOSTO stock is **not in it** (audited 2026-06-30: 71 rows, all Railjet/CAT/Nightjet, zero `4736`/`4734`/`4744`/`4746`/`4748`). So in-service DOSTO trains publish as **raw `T4736xxx`** until rows are added — cosmetic only, not why tiles are blank.
+
+### Subscribing to the RTPI journey feed (verify whether a train is published)
+
+The journey feed is a **downlink** on the same backend broker the telemetry bridge uses: `emqx-obb.nomadrail.com:8883` (TLS, per-train client certs at `/etc/mqtt-bridge/ssl/` on every NV6 CCU). Topic structure (confirmed live):
+
+```
+to/obb/train/-/<vehicle>/<vehicle>/<vehicle>-MMC-01/rtpiJourney/<subtopic>
+```
+
+`<vehicle>` is the join key — e.g. `T4744036`, `T4746113`, `CAT80`, `NGII13`, `RG001`. Run from any commissioned NV6 CCU (validated on box1-t22 / `10.179.22.1`):
+
+```bash
+ssh -i "C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/openssh" developer@10.179.22.1
+cd /etc/mqtt-bridge/ssl
+mosquitto_sub -h emqx-obb.nomadrail.com -p 8883 \
+  --cafile hive-emqx-obb.nomadrail.com-ca.pem \
+  --cert   hive-emqx-obb.nomadrail.com-cert.pem \
+  --key    hive-emqx-obb.nomadrail.com-key.pem \
+  -i br-p50-t6022-u1-sniff \
+  -t "to/obb/train/#" -v
+```
+
+Quick "is my train in the feed" check — list distinct vehicle nodes:
+
+```bash
+... -t "to/obb/train/+/+/+/+/rtpiJourney/#" -v \
+  | sed -E 's#^to/obb/train/[^/]+/([^/]+)/.*#\1#' | sort -u
+```
+
+Gotchas:
+- Use a **unique `-i` client-id suffix** so you don't collide with the live bridge's own MQTT session (which is `br-p50-t6022-u1`).
+- Journey messages are **low-cadence and largely retained** — capture for 60–90s, not a few seconds.
+- The `<vehicle>` node is either a friendly Nomad ID (`RG001`, `CAT80`, `NGII13` — these are `lookup.xlsx`-mapped) or a raw `T<digits>` (unmapped, e.g. `T4744036`). Both are normal; raw `T…` just means no lookup row.
+- Absence of a train is usually **inLoadRange gating** (not in service), NOT a coverage gap. Don't conclude "ÖBB doesn't carry it" from absence — confirm against the schedule window.
+
+### RTPI journey-feed mapping (the "is there a mapping on our side?" answer)
+
+There **is** a mapping on our side, but it is **backend, not on any CCU** — a manually-maintained `lookup.xlsx` consumed by the ÖBB RTPI importer. It only controls **friendly naming**, not whether a train appears.
+
+**How the join works** (per Confluence OBIS "ÖBB API-JSON Data Mapping" p2009989160 + "Dani Adoption / lookup.xlsx" p4162322433 + "setting.json" p4860739585):
+1. ÖBB `GetVehicleSchedules` returns `vehicle_code` (UIC, e.g. `948147361109`).
+2. Importer computes `vehicleNumber = T{vehicle_code.substring(4,11)}` → `T4736110`. **So ÖBB's API does carry 4736 codes** — the digits are not the problem.
+3. If `excelFileAdoption: true` and that `T…` matches the **"Schedule feed vehicle number"** column in `lookup.xlsx`, it's swapped for the **"Nomad ID"** (→ `RG001` etc.). No match → raw `T…` retained.
+
+**`lookup.xlsx` location & update** (importer pod, repo `nd-rtpi-kubernetes-obb`, host `vmrtpi01.oebb.21net.com` — no DNS/route from the CCU):
+- Path in pod: `/opt/nd/nd-rtpi-obb-importer/fleetFile/lookup.xlsx` (config `dataOutput.fleetPath`). **Must be placed manually**, not in Puppet.
+- Columns: `Nomad ID`, `NMS serial number`, `Schedule feed vehicle code`, `Schedule feed vehicle number`.
+- Update: `kubectl cp lookup.xlsx nd-obb-rtpi-importer-<pod>:/opt/nd/nd-rtpi-obb-importer/fleetFile/lookup.xlsx` then `kubectl rollout restart deployment nd-obb-rtpi-importer`.
+- A working copy is checked into this workspace at `rtpi/lookup.xlsx`.
+
+**Audit 2026-06-30:** the current `lookup.xlsx` has 71 rows, all Railjet (`RG`, 60) / CAT (9) / Nightjet (`NGII`/`RGII`). **Zero DOSTO rows.** Adding DOSTO-NEU rows is the only "mapping on our side" action — and it's cosmetic (friendly name vs `T4736xxx`), relevant only once trains run in service. It is **not** the cause of today's blank tiles (that's inLoadRange gating).
 
 ---
 

@@ -13,23 +13,27 @@ This register uses **generic switch IDs only** (A1, A2, A3, B1…B3, C1…C3, D1
   - `wrong neighbour` — cable goes to the wrong far-end switch
   - `missing trunk` — no LLDP either end, cable absent or unplugged
   - `AP not connected` — AP trunk port admin-enabled but no link / no PoE draw
+  - `end-device not connected` — access port admin-enabled for an end device (FIS display, energy meter, etc.) but link never establishes (no negotiation, 0 RX, 0 errors), and a port bounce does not recover it; switch side proven healthy via an UP sibling port. Fault is the cable or the device end (Stadler-side)
   - `wrong far-end port` — cable lands on the correct switch but wrong port number
   - `PoE PSE fault` — switch PoE power-sourcing subsystem fails to initialise (0 W available, survives reboot); hardware repair/replacement
+  - `PoE port fault` — a single PoE port reports a PSE error state (e.g. `E(1e)`) and delivers 0 W while the rest of the PSE is healthy; the powered device stays dark and link/RX never establishes; survives a switch reboot. Fault is the cable, connector, or powered device on that port (Stadler-side), or the port's PoE PHY
 
 ## Open issues — at a glance
 
 | #  | Trainset  | Switch / Port      | Fault type        | Status   |
 |----|-----------|--------------------|-------------------|----------|
-| 1  | 4734-101  | E2 ↔ B1            | wrong neighbour   | 🔴 OPEN |
+| 1  | 4734-101  | E2 ↔ B1            | wrong neighbour   | 🔴 OPEN (⚠️ not in Zabbix) |
 | 2  | 4736-108  | C3 e0-0 / e0-1     | cable swap        | ✅ RESOLVED |
 | 3  | 4736-108  | D1 ↔ E2            | missing trunk     | ✅ RESOLVED |
 | 4  | 4736-109  | B3 e0-4            | AP not connected  | 🔴 OPEN |
 | 5  | 4736-104  | D3 e1-2            | physical-layer    | 🔴 OPEN |
 | 6  | 4736-120  | C2 e0-4            | AP not connected  | ✅ RESOLVED |
-| 7  | 4736-108  | A2.e0-1 ↔ A3.e0-1  | physical-layer    | 🔴 OPEN |
+| 7  | 4736-108  | A2.e0-1 ↔ A3.e0-1  | physical-layer    | 🔴 OPEN (⚠️ no Zabbix trigger) |
 | 8  | 4736-115  | B3 e0-4 (Coach6)   | AP not connected  | 🔴 OPEN |
-| 9  | 4736-118  | E1 (whole switch)  | PoE PSE fault     | 🔴 OPEN |
+| 9  | 4736-118  | E1 (whole switch)  | PoE PSE fault     | 🟡 MONITORING (PoE healthy 2026-06-20) |
 | 10 | 4734-109  | A1 e0-0/e0-2 ↔ A3  | cable swap (coupler) | ✅ RESOLVED (A1 switch replaced + re-cabled, 2026-06-17) |
+| 11 | 4736-114  | 14× e2-* (FIS displays + 1 energy meter, all coaches) | end-device not connected | 🔴 OPEN |
+| 12 | 4736-120  | A2 e1-9 (redundant Sprechstelle) | PoE port fault | 🔴 OPEN |
 
 ---
 
@@ -40,6 +44,8 @@ This register uses **generic switch IDs only** (A1, A2, A3, B1…B3, C1…C3, D1
 **Diagnosis:** the intra-E-coach trunk and the E↔B inter-coach trunk are cross-wired.
 
 **Required action:** re-patch the E-coach end so E2.e0-0 lands on E3, and the inter-coach E↔B trunk lands on E1.e0-0 ↔ B1.e0-1.
+
+**Zabbix coverage (2026-06-20):** ⚠️ **monitoring gap** — 4734-101 (CCU `10.179.4.1`, would be group `50_6004`) is **not provisioned in Zabbix**; no host group exists. This fault cannot be corroborated or alarmed from the NMS. "No Zabbix alarm" here does NOT mean "no fault." Provisioning 6004 is a separate NMS task.
 
 **Status:** 🔴 OPEN
 
@@ -143,6 +149,8 @@ All other RX error categories — CRC, runts, giants, frag, jabber, carrier-fals
 
 **Report:** [reports/customer/OBB_Fzg136_145_4736-108_117_Post_Storm_Verification_v1.1.docx](reports/customer/OBB_Fzg136_145_4736-108_117_Post_Storm_Verification_v1.1.docx)
 
+**Zabbix coverage (2026-06-20):** ⚠️ **monitoring gap by design** — this fault is an *error-accumulating trunk that stays link-UP* (RX errors at idle), not a down port. Zabbix 6008 has port-down and SNMP-unreachable triggers but **no RX-error-rate trigger**, so this fault is invisible in the NMS (confirmed: no corresponding alarm on 6008). Catching trunk degradation like this would need an ifInErrors-rate item/trigger added to the switch template. Until then, "no Zabbix alarm" does NOT mean the trunk is clean.
+
 **Status:** 🔴 OPEN
 
 ---
@@ -194,7 +202,9 @@ ARP for 192.168.1.20 returns INCOMPLETE even after adding a temporary 192.168.1.
 
 Root cause narrowed to a **degraded `KMkon` device-management module**: `show log persistent` carries `The "KMkon" module has been restarted (1)`. `KMkon` owns *both* the PoE PSE control and the SNMP reboot action — explaining why PoE delivers 0 W **and** why the SNMP reboot OID is ignored (CLI reboot uses a different path and still works). This is a board-level fault that survives a full reboot. Confirms Stadler hardware repair/replace is the only fix; remote recovery is not possible.
 
-**Status:** 🔴 OPEN
+**2026-06-20 re-verification (AR) — fault NOT currently present:** Live check of E1 (`10.179.21.180`, same chassis — MAC `a0:59:3a:d0:4b:40`, serial `240602`, **not replaced**) shows **PoE fully healthy**: `show poe` Total **33 W** / Available 168 W / Max 202 W, with `e0-4` (AP) at 6.7 W and the e1-* camera ports all powered (2.7–3.9 W each). E1 is reachable via SNMP (`obn validate` returns it ✓ on `nv6-E1-v8-146`), and the persistent log shows no recent `KMkon` restart. The Zabbix 6021 access-point "cannot be pinged" alarms also cleared (resolved 2026-06-20 10:39Z), consistent with E1 sourcing PoE again. **Caveat:** the original fault was intermittent and reboot-surviving, so this is recorded as "not currently present" rather than confirmed-fixed — the PSE may have come up clean on the current boot (uptime ~20 h). Monitor across further power-cycles before closing. Stadler hardware replacement may no longer be required.
+
+**Status:** 🟡 MONITORING — PoE healthy on 2026-06-20 live check; was 🔴 OPEN. Confirm stable across power-cycles before resolving.
 
 ---
 
@@ -252,6 +262,57 @@ This frees Fzg9 A3 e0-0 and G1 e0-0 (currently patched to each other as a side-e
 **Status:** ✅ RESOLVED 2026-06-17 (AR). Stadler **replaced the A1 switch** and re-cabled the A-head correctly. The replacement (chassis `a0:59:3a:d0:c1:c0`, DHCP `.186`) came up on factory config (`dosto-000000000000-v1-FD`) but is now cabled per the as-designed map — live LLDP confirms: A1 e0-0 → Fzg9 A3 ✓, e0-1 → Fzg9 G1 ✓, e0-2 → Fzg15 A3 (front coupler) ✓. Config `nv4-A1-v8-009` pushed via `obn update c .186` (RRQ seen, switch rebooted, hostname adopted, persisted) → **12/12 switches now `nv4-X-v8-009`**, RSTP single-root G1 (`a0:59:3a:d0:43:a0`) unchanged + converged. The OLD A1 (`a0:59:3a:d0:8f:a0`, was hand-corrected in-band on 2026-06-08) is now a spare hanging off A3 e0-2 coupler trunk (VLAN 5/15 only, no vlan100) — no fabric clash; Stadler can remove/retain as spare.
 
 **OBN note:** `obn update c` initially crashed with `AttributeError: 'NoneType' object has no attribute 'type'` at `tree.py:34` (`OBNTree.create_tree`) — the cross-consist None-guard (Bug 6) was **absent** on this 2.2.23 CCU despite the "bugs 1–10 native" assumption. Applied the canonical `if neighbour_device is None: continue` guard at runtime (backup `tree.py.pre-bug6`); push then succeeded. Runtime-only — wiped on reboot unless persisted via NDSU chroot.
+
+---
+
+### #11 — 4736-114 (6-car, Fzg 142) — 14× FIS-display / energy-meter ports link-down (end-device not connected)
+
+**What we see:** 14 access ports configured for end devices (13 FIS passenger displays — *Bildschirm* — plus 1 energy meter — *Energiezähler E*) are admin-enabled per the nv6 template but show `line protocol down`, never negotiated (Speed/Duplex Auto/Auto), 0 RX/TX packets, and **all error counters zero** (no CRC, carrier-false, runts, giants). Spread across coaches, partial within each switch:
+
+| Switch (R/SW) | Down port(s) | Device |
+|---|---|---|
+| A1 (R1_SW1) | e2-0, e2-2 | Bildschirm A7, A1 |
+| C1 (R2_SW1) | e2-1, e2-3 | Bildschirm C5, C3 |
+| C2 (R2_SW2) | e2-1 | Bildschirm C6 |
+| D2 (R3_SW2) | e2-0 | Bildschirm D8 |
+| E1 (R4_SW1) | e2-0 | Bildschirm E7 |
+| E2 (R4_SW2) | e2-2 | Bildschirm E2 |
+| E3 (R4_SW3) | e2-0 | **Energiezähler E** (energy meter) |
+| F1 (R5_SW1) | e2-3 | Bildschirm F3 |
+| B1 (R6_SW1) | e2-0, e2-1, e2-3 | Bildschirm B7, B5, B3 |
+| B2 (R6_SW2) | e2-2 | Bildschirm B2 |
+
+**Diagnosis:** for each down port the **switch side is proven healthy** — every affected switch has multiple *other* `e2-*` display ports UP at 100 Mb/s Full passing traffic, on identical hardware/config. The down ports never establish a link and carry zero errors, i.e. the electrical path to the device is simply open. Fault is the **cable/connector or the display's own network interface** — the device end, not the switch.
+
+**CCU-side checks performed (exhausted, 2026-06-20 AR):**
+1. Confirmed port config matches the nv6-X-v8-142 template (admin-enabled, VLAN 3 FIS, correct).
+2. `show interface <port> details` on every down port — line protocol down, Auto/Auto, 0 packets, 0 errors, no `RUNNING` flag.
+3. Same-switch UP sibling comparison — proves the switch PHY/port-block is good (e.g. A1 e2-1/e2-3/e2-4/e2-5 all up while e2-0/e2-2 down).
+4. **Port bounce** (`configure interface <port> no enable` / `enable`) on all 14 ports, 30–35 s settle — **none recovered.** (Port bounce DID recover a transient stall on cable reg #6, so a non-recovery here is meaningful.)
+5. PoE not applicable — `e2-*` are non-PoE ports (displays externally powered); confirmed via `show poe` (e2-* block absent from PoE table).
+6. **Switch logs verified clean** (`show log` + `show log persistent` on all 10 affected switches) — no link up/down (flap) events on any of the down e2-* ports, no PHY/CRC/interface errors, no PoE faults. The *absence* of any link-transition history on those ports supports "no device ever connected" over an intermittent/faulting link. The only non-routine entry is a `KMkon` module restart (count 1–2) present on 9 of 10 switches fleet-wide and self-recovered — benign, mechanistically unrelated to the data-only display ports (distinct from the Fzg 118 #9 case, where `KMkon` degraded with a dead PoE PSE; here PoE is healthy, e.g. B1 28 W / 202 W).
+
+VLAN 3 (FIS) is a Stadler-side device VLAN with no CCU visibility, so whether each display's NIC is actually up cannot be confirmed remotely — the irreducible boundary.
+
+**Required action:** Stadler to verify, per listed port, (a) the patch cable from the switch port to the display/energy-meter is intact and seated, and (b) the device is powered with its Ethernet interface up. Acceptance: link comes up (100/Full) on the listed port. Nomad can re-verify remotely on request via `show interface <port> details`.
+
+**Caveat (open question for Stadler/ÖBB):** this train (4736-114 / Fzg 142) had its CCU misimage corrected on 2026-06-20 and its device-side commissioning state is not independently confirmed. If some displays are simply **not yet fitted/powered** as part of ongoing fit-out, those ports are expected-down (commissioning state), not faults. The partial-per-coach pattern is consistent with incremental fit-out. Confirm device power/fit status before treating all 14 as hard cable faults.
+
+**Status:** 🔴 OPEN
+
+---
+
+### #12 — 4736-120 (6-car) — A2 e1-9 PoE port fault (redundant Sprechstelle)
+
+**What we see:** A2 port e1-9 (the redundant intercom/operator-station — Sprechstelle — link) reports PoE status `E(1e)` (PSE error state) and delivers 0.00 W, while every other PoE port on A2 is healthy (`on/on`, ~2–4 W) and the PSE has 173 W available. The port's link shows protocol-up but the device is silent: **RX packets 0 / RX bytes 0** (switch TX-only — RSTP/IGMP/LLDP multicast), 0 RX/CRC/carrier errors. The condition **survived a switch reboot** by the on-site tester (2026-06-24).
+
+**Diagnosis:** single-port PoE delivery fault. Because the PSE itself is healthy and only this port faults, the cause is the cable, connector, or the powered device on e1-9 — or that port's PoE PHY. Not a Nomad config issue (PoE config on A2 is uniform across ports).
+
+**Context:** the tester's reboot of A2 restored ZFR reachability for *almost all* screens — but e1-9 stayed faulted, confirming e1-9 is independent of the screen/ZFR-path symptom (the reboot cleared a transient forwarding condition on the inter-coach path; the A3↔Stadler-FW trunk and all inter-coach trunks verify clean post-recovery). e1-9 is the redundant Sprechstelle leg, not a ZFR uplink.
+
+**Required action (Stadler):** inspect the e1-9 cable/connector and the Sprechstelle device end; reseat or replace as needed. Re-verify with `show poe` (expect `on/on`, non-zero W, valid class) and `show interface e1-9 details` (expect non-zero RX). If the device end and cable are proven good and the port still faults, the switch's PoE PHY on e1-9 is suspect → switch repair/replacement.
+
+**Status:** 🔴 OPEN
 
 ---
 
