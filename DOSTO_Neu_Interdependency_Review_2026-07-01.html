@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DOSTO Neu — Project Status &amp; Interdependency Review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;800&family=Nunito:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ===========================================
+   CSS CUSTOM PROPERTIES (THEME) — Swiss Modern
+   =========================================== */
+:root {
+    --white: #ffffff;
+    --black: #0a0a0a;
+    --red: #ff3300;
+    --green: #1c7a4d;
+    --green-bg: #e9f5ee;
+    --amber: #b8790a;
+    --amber-bg: #fdf3e0;
+    --grey: #6b6b6b;
+    --grey-light: #dcdcdc;
+    --grey-bg: #f4f4f2;
+
+    --font-display: 'Archivo', sans-serif;
+    --font-body: 'Nunito', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --duration-fast: 0.25s;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: var(--font-body); }
+
+/* ===========================================
+   VIEWPORT BASE (mandatory, from viewport-base.css)
+   =========================================== */
+html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: var(--stage-bg, #000); }
+.deck-viewport { position: fixed; inset: 0; overflow: hidden; background: var(--stage-bg, #000); }
+.deck-stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; transform-origin: 0 0; background: var(--slide-bg, #fff); }
+.slide { position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden; display: block; visibility: hidden; opacity: 0; pointer-events: none; background: var(--slide-bg, #fff); }
+.slide.active, .slide.visible { visibility: visible; opacity: 1; pointer-events: auto; z-index: 1; }
+img, video, canvas, svg { max-width: 100%; max-height: 100%; }
+.deck-controls { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 1000; }
+@media print {
+    html, body { width: 1920px; height: auto; overflow: visible; background: #fff; }
+    .deck-viewport { position: static; overflow: visible; background: #fff; }
+    .deck-stage { position: static; width: auto; height: auto; transform: none !important; background: none; }
+    .slide { position: relative; display: block !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; width: 1920px; height: 1080px; break-after: page; page-break-after: always; }
+    .slide:last-child { break-after: auto; page-break-after: auto; }
+    .deck-controls { display: none !important; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; } }
+
+/* ===========================================
+   SWISS MODERN — SHARED CHROME
+   =========================================== */
+.deck-stage { background: var(--white); }
+
+.grid-v { position: absolute; top: 0; bottom: 0; width: 1px; background: rgba(10,10,10,0.06); }
+.grid-h { position: absolute; left: 0; right: 0; height: 1px; background: rgba(10,10,10,0.06); }
+
+.corner-mark { position: absolute; width: 34px; height: 34px; border: 3px solid var(--black); pointer-events: none; }
+.corner-mark.tr { top: 40px; right: 40px; border-left: none; border-bottom: none; }
+.corner-mark.bl { bottom: 40px; left: 40px; border-right: none; border-top: none; }
+
+.kicker {
+    position: absolute; top: 64px; left: 120px;
+    font-family: var(--font-display); font-weight: 800;
+    font-size: 20px; letter-spacing: 0.05em; text-transform: uppercase;
+    color: var(--black);
+    display: flex; align-items: center;
+}
+.kicker::before { content: ''; display: inline-block; width: 12px; height: 12px; background: var(--red); margin-right: 12px; }
+
+.page-num {
+    position: absolute; top: 64px; right: 120px;
+    font-family: var(--font-display); font-weight: 800; font-size: 20px; color: var(--grey);
+}
+
+.section-hairline { position: absolute; left: 120px; right: 120px; top: 156px; height: 3px; background: var(--black); }
+
+.slide-title {
+    position: absolute; left: 120px; top: 190px;
+    font-family: var(--font-display); font-weight: 800;
+    font-size: 54px; line-height: 1.05; letter-spacing: -0.01em;
+    color: var(--black); text-transform: uppercase; max-width: 1500px;
+}
+.slide-title .accent { color: var(--red); }
+
+.footer-bar {
+    position: absolute; left: 120px; right: 120px; bottom: 56px;
+    display: flex; justify-content: space-between; align-items: center;
+    border-top: 2px solid var(--black); padding-top: 16px;
+    font-family: var(--font-display); font-weight: 500; font-size: 15px; letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--black);
+}
+.footer-bar .tag { background: var(--black); color: white; padding: 5px 14px; font-weight: 800; font-size: 14px; }
+
+/* reveal animations — subtle, fast, corporate */
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity var(--duration-fast) var(--ease-out-expo), transform var(--duration-fast) var(--ease-out-expo); }
+.slide.visible .reveal { opacity: 1; transform: translateY(0); }
+.slide.visible .reveal:nth-child(1) { transition-delay: 0.05s; }
+.slide.visible .reveal:nth-child(2) { transition-delay: 0.1s; }
+.slide.visible .reveal:nth-child(3) { transition-delay: 0.15s; }
+.slide.visible .reveal:nth-child(4) { transition-delay: 0.2s; }
+.slide.visible .reveal:nth-child(5) { transition-delay: 0.25s; }
+.slide.visible .reveal:nth-child(6) { transition-delay: 0.3s; }
+
+/* status pill */
+.pill { display: inline-block; padding: 4px 12px; font-family: var(--font-mono); font-size: 15px; font-weight: 500; border-radius: 3px; }
+.pill.todo { background: var(--grey-bg); color: var(--grey); border: 1px solid var(--grey-light); }
+.pill.progress { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber); }
+.pill.done { background: var(--green-bg); color: var(--green); border: 1px solid var(--green); }
+.pill.overdue { background: var(--red); color: white; border: 1px solid var(--red); }
+
+/* placeholder marker */
+.placeholder { color: var(--grey); font-style: italic; }
+
+/* ===========================================
+   DECK CONTROLS (progress + nav, outside stage)
+   =========================================== */
+.deck-controls {
+    display: flex; align-items: center; gap: 16px;
+    background: rgba(10,10,10,0.85); backdrop-filter: blur(6px);
+    padding: 10px 20px; border-radius: 8px;
+    font-family: var(--font-mono); color: white; font-size: 14px;
+}
+.deck-controls button {
+    background: none; border: none; color: white; cursor: pointer;
+    font-family: var(--font-mono); font-size: 16px; padding: 4px 10px;
+    transition: opacity 0.2s;
+}
+.deck-controls button:hover { opacity: 0.6; }
+.deck-controls .progress-track { width: 160px; height: 3px; background: rgba(255,255,255,0.25); border-radius: 2px; overflow: hidden; }
+.deck-controls .progress-fill { height: 100%; background: var(--red); transition: width 0.3s var(--ease-out-expo); }
+
+/* edit affordance */
+.edit-hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 10000; cursor: pointer; }
+.edit-toggle {
+    position: fixed; top: 16px; left: 16px; z-index: 10001;
+    width: 40px; height: 40px; border-radius: 50%; border: none;
+    background: rgba(10,10,10,0.85); color: white; font-size: 18px; cursor: pointer;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+}
+.edit-toggle.show, .edit-toggle.active { opacity: 1; pointer-events: auto; }
+[contenteditable="true"] { outline: 2px dashed var(--red); outline-offset: 4px; cursor: text; }
+</style>
+</head>
+<body>
+<div class="edit-hotzone"></div>
+<button class="edit-toggle" id="editToggle" title="Edit mode (E)">✏️</button>
+
+<div class="deck-viewport">
+<main class="deck-stage" id="deckStage">
+
+<!-- ============ SLIDE 1 — TITLE ============ -->
+<section class="slide active">
+    <div class="grid-v" style="left:120px"></div>
+    <div class="grid-v" style="left:960px"></div>
+    <div class="grid-v" style="left:1800px"></div>
+    <div class="grid-h" style="top:210px"></div>
+    <div class="corner-mark tr"></div>
+    <div class="corner-mark bl"></div>
+    <div class="kicker reveal">Dosto Neu</div>
+    <div class="page-num reveal">01 / 11</div>
+    <div style="position:absolute; left:120px; top:300px; width:1600px;">
+        <h1 class="reveal" style="font-family:var(--font-display); font-weight:800; font-size:104px; line-height:1.02; letter-spacing:-0.01em; color:var(--black); margin:0 0 32px 0; text-transform:uppercase;">
+            Project Status &amp;<br>Interdependency<br><span style="color:var(--red);">Review</span>
+        </h1>
+        <div class="reveal" style="display:flex; align-items:center; gap:24px; font-family:var(--font-body); font-weight:600; font-size:30px; color:var(--black);">
+            <span style="width:10px;height:10px;border-radius:50%;background:var(--red);display:inline-block;"></span>
+            Nomad&nbsp;&nbsp;/&nbsp;&nbsp;ÖBB&nbsp;&nbsp;/&nbsp;&nbsp;Stadler
+        </div>
+    </div>
+    <div class="footer-bar reveal">
+        <span>Abbas Rizvi — Nomad</span>
+        <span class="tag" contenteditable="true">01.07.2026</span>
+    </div>
+</section>
+
+<!-- ============ SLIDE 2 — PURPOSE / AGENDA ============ -->
+<section class="slide">
+    <div class="kicker reveal">Dosto Neu</div>
+    <div class="page-num reveal">02 / 11</div>
+    <div class="section-hairline"></div>
+    <div class="slide-title reveal">Purpose of Today</div>
+
+    <div class="reveal" style="position:absolute; left:120px; top:300px; width:1500px; font-family:var(--font-body); font-weight:600; font-size:32px; color:var(--black); line-height:1.4;">
+        Align on status, technical risks, and the process to close open items — together, on the record.
+    </div>
+
+    <div class="reveal" style="position:absolute; left:120px; top:420px; right:120px; bottom:180px; display:grid; grid-template-columns:1fr 1fr; gap:0;">
+        <div style="border-right:2px solid var(--black); padding-right:60px;">
+            <div style="font-family:var(--font-mono); font-size:16px; letter-spacing:0.1em; color:var(--grey); text-transform:uppercase; margin-bottom:18px;">Agenda — Part 1</div>
+            <ol style="font-family:var(--font-body); font-size:26px; font-weight:600; color:var(--black); line-height:2.1; padding-left:28px;">
+                <li>Current project status</li>
+                <li>CCU stability — single traction</li>
+                <li>Multi-traction roadmap</li>
+            </ol>
+        </div>
+        <div style="padding-left:60px;">
+            <div style="font-family:var(--font-mono); font-size:16px; letter-spacing:0.1em; color:var(--grey); text-transform:uppercase; margin-bottom:18px;">Agenda — Part 2</div>
+            <ol start="4" style="font-family:var(--font-body); font-size:26px; font-weight:600; color:var(--black); line-height:2.1; padding-left:28px;">
+                <li>Release &amp; change management process</li>
+                <li>Remote SW updates &amp; notification process</li>
+                <li>Vehicle config transparency / SW-version visibility</li>
+                <li>Schedule, quality &amp; warranty impact</li>
+                <li>Agreement on next steps</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="footer-bar reveal">
+        <span>Dosto Neu — Interdependency Review</span>
+        <span class="tag">02 / 11</span>
+    </div>
+</section>
+
+<!-- ============ SLIDE 3 — DEPENDENCY MAP ============ -->
+<section class="slide">
+    <div class="kicker reveal">Dosto Neu</div>
+    <div class="page-num reveal">03 / 11</div>
+    <div class="section-hairline"></div>
+    <div class="slide-title reveal">What's Actually <span class="accent">Blocking</span> What</div>
+    <div class="reveal" style="position:absolute; left:120px; top:275px; font-family:var(--font-mono); font-size:16px; color:var(--grey);">Today's agenda items, mapped against their real dependency</div>
+
+    <div class="reveal" style="position:absolute; left:120px; top:330px; width:1680px;">
+        <table style="width:100%; border-collapse:collapse; font-family:var(--font-body); font-size:18px;">
+            <tr style="border-bottom:3px solid var(--black);">
+                <td style="padding:12px 10px; font-family:var(--font-display); font-weight:800; font-size:15px; text-transform:uppercase; letter-spacing:0.03em; width:32%;">Agenda item</td>
+                <td style="padding:12px 10px; font-family:var(--font-display); font-weight:800; font-size:15px; text-transform:uppercase; letter-spacing:0.03em; text-align:center;">Design Freeze</td>
+                <td style="padding:12px 10px; font-family:var(--font-display); font-weight:800; font-size:15px; text-transform:uppercase; letter-spacing:0.03em; text-align:center;">Functionality Testing</td>
+                <td style="padding:12px 10px; font-family:var(--font-display); font-weight:800; font-size:15px; text-transform:uppercase; letter-spacing:0.03em; text-align:center;">No VO / Out of Scope</td>
+                <td style="padding:12px 10px; font-family:var(--font-display); font-weight:800; font-size:15px; text-transform:uppercase; letter-spacing:0.03em; text-align:center;">Nomad-Actionable Now</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--grey-light);">
+                <td style="padding:16px 10px; font-weight:600;">CCU stability — single traction</td>
+                <td style="text-align:center; color:var(--grey-light);">—</td>
+                <td style="text-align:center; color:var(--grey-light);">—</td>
+                <td style="text-align:center; color:var(--grey-light);">—</td>
+                <td style="text-align:center; font-size:26px; color:var(--green);">✓</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--grey-light); background:var(--grey-bg);">
+                <td style="padding:16px 10px; font-weight:600;">Multi-traction roadmap</td>
+                <td style="text-align:center; color:var(--grey-light);">—</td>
+                <td style="text-align:center; color:var(--grey-light);">—</td>
+                <td style="text-align:center; font-size:26px; color:var(--amber);">●</td>
+                <td style="text-align:center; font-size:26px; color:var(--green);">✓</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--grey-light);">
+                <td style="padding:16px 10px; font-weight:600;">Release &amp; change management process</td>
+                <td style="text-align:center; font-size:26px; color:var(--red);">●</td>
+                <td style="text-align:center; font-size:26px; color:var(--red);">●</td>
+                <td style="text-align:center; color:var(--grey-light);">—</td>
+                <td style="text-align:center; color:var(--grey-light);">—</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--grey-light); background:var(--grey-bg);">
+                <td style="padding:16px 10px; font-weight:600;">Remote SW updates &amp; notification process</td>
+                <td style="text-align:center; font-size:26px; color:var(--red);">●</td>
+                <td style="text-align:center; font-size:26px; color:var(--red);">●</td>
+                <td style="text-align:center; color:var(--grey-light);">—</td>
+                <td style="text-align:center; color:var(--grey-light);">—</td>
+            </tr>
+            <tr>
+                <td style="padding:16px 10px; font-weight:600;">Vehicle config transparency / SW visibility</td>
+                <td style="text-align:center; color:var(--grey-light);">—</td>
+                <td style="text-align:center; color:var(--grey-light);">—</td>
+                <td style="text-align:center; color:var(--grey-light);">—</td>
+                <td style="text-align:center; font-size:26px; color:var(--green);">✓</td>
+            </tr>
+        </table>
+        <div style="margin-top:14px; font-family:var(--font-mono); font-size:14px; color:var(--grey);"><span style="color:var(--red);">●</span> = blocking dependency &nbsp;&nbsp; <span style="color:var(--amber);">●</span> = commercial-process dependency &nbsp;&nbsp; <span style="color:var(--green);">✓</span> = Nomad already delivering</div>
+    </div>
+
+    <div class="reveal" style="position:absolute; left:120px; top:790px; width:1680px; background:var(--grey-bg); border-left:8px solid var(--black); padding:22px 30px; font-family:var(--font-body); font-size:19px; color:var(--black); line-height:1.5;">
+        Three of five items trace back to two things ÖBB/Stadler control: <b>design freeze</b> and <b>functionality testing</b>. Nomad's own Q2 2026 phase plan shows engineering time fully committed to tracked, dated work — and contains <b>zero line items</b> for the multi-traction remediation already delivered. That work was unplanned and unbudgeted.
+    </div>
+
+    <div class="footer-bar reveal">
+        <span>Dosto Neu — Interdependency Review</span>
+        <span class="tag">03 / 11</span>
+    </div>
+</section>
+
+<!-- ============ SLIDE 4 — DELIVERY STATUS VS PLAN ============ -->
+<section class="slide">
+    <div class="kicker reveal">Dosto Neu</div>
+    <div class="page-num reveal">04 / 11</div>
+    <div class="section-hairline"></div>
+    <div class="slide-title reveal">Delivery Status <span class="accent">vs.</span> Committed Plan</div>
+    <div class="reveal" style="position:absolute; left:120px; top:275px; font-family:var(--font-mono); font-size:17px; color:var(--grey);">Source: DostoNeu Phase Plan Q2 2026 — status as of 01 July 2026</div>
+
+    <div class="reveal" style="position:absolute; left:120px; top:330px; width:840px; bottom:250px;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:20px; text-transform:uppercase; letter-spacing:0.03em; color:var(--black); border-bottom:3px solid var(--black); padding-bottom:10px; margin-bottom:18px;">Nomad-owned — active right now</div>
+        <table style="width:100%; border-collapse:collapse; font-family:var(--font-body); font-size:17px;">
+            <tr><td style="padding:9px 0; border-bottom:1px solid var(--grey-light); width:64%;">NMS Rollout <span style="color:var(--grey); font-family:var(--font-mono); font-size:13px;">active KW19–24</span></td><td style="padding:9px 0; border-bottom:1px solid var(--grey-light); text-align:right;"><span class="pill progress">In Progress</span></td></tr>
+            <tr><td style="padding:9px 0; border-bottom:1px solid var(--grey-light);">Portal: fleet rollout <span style="color:var(--grey); font-family:var(--font-mono); font-size:13px;">active KW22–30</span></td><td style="padding:9px 0; border-bottom:1px solid var(--grey-light); text-align:right;"><span class="pill progress">In Progress</span></td></tr>
+            <tr><td style="padding:9px 0; border-bottom:1px solid var(--grey-light);">Portal: backend check <span style="color:var(--grey); font-family:var(--font-mono); font-size:13px;">active KW24–28</span></td><td style="padding:9px 0; border-bottom:1px solid var(--grey-light); text-align:right;"><span class="pill progress">In Progress</span></td></tr>
+            <tr><td style="padding:9px 0; border-bottom:1px solid var(--grey-light);">Release notes — sign-off <span style="color:var(--grey); font-family:var(--font-mono); font-size:13px;">active KW19–26</span></td><td style="padding:9px 0; border-bottom:1px solid var(--grey-light); text-align:right;"><span class="pill progress">In Progress</span></td></tr>
+            <tr><td style="padding:9px 0; border-bottom:1px solid var(--grey-light);">Fleet migration to MAR5 <span style="color:var(--grey); font-family:var(--font-mono); font-size:13px;">EMEAE-5395, at-risk KW25</span></td><td style="padding:9px 0; border-bottom:1px solid var(--grey-light); text-align:right;"><span class="pill progress">In Progress</span></td></tr>
+            <tr><td style="padding:9px 0; border-bottom:1px solid var(--grey-light);">Switch v9 for fleet <span style="color:var(--grey); font-family:var(--font-mono); font-size:13px;">TRIAG-8521</span></td><td style="padding:9px 0; border-bottom:1px solid var(--grey-light); text-align:right;"><span class="pill todo">To Do</span></td></tr>
+            <tr><td style="padding:9px 0;">VDS Firmware 7.4.8 <span style="color:var(--grey); font-family:var(--font-mono); font-size:13px;">HWI-257</span></td><td style="padding:9px 0; text-align:right;"><span class="pill todo">To Do</span></td></tr>
+        </table>
+    </div>
+
+    <div class="reveal" style="position:absolute; left:1000px; top:330px; width:800px; bottom:250px; border-left:2px solid var(--black); padding-left:60px;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:20px; text-transform:uppercase; letter-spacing:0.03em; color:var(--black); border-bottom:3px solid var(--black); padding-bottom:10px; margin-bottom:18px;">ÖBB / Stadler-owned — blocking</div>
+        <table style="width:100%; border-collapse:collapse; font-family:var(--font-body); font-size:17px;">
+            <tr><td style="padding:9px 0; border-bottom:1px solid var(--grey-light); width:66%;">Design freeze (Application layer) <span style="color:var(--red); font-family:var(--font-mono); font-size:13px; font-weight:600;">due 16 Jun — 15 days overdue</span></td><td style="padding:9px 0; border-bottom:1px solid var(--grey-light); text-align:right;"><span class="pill overdue">Overdue</span></td></tr>
+            <tr><td style="padding:9px 0; border-bottom:1px solid var(--grey-light);">Freigabe ÖBB — PM-06 Functional Test Report</td><td style="padding:9px 0; border-bottom:1px solid var(--grey-light); text-align:right;"><span class="pill todo">To Do</span></td></tr>
+            <tr><td style="padding:9px 0; border-bottom:1px solid var(--grey-light);">Freigabe ÖBB — PM-07 Ready-for-Service</td><td style="padding:9px 0; border-bottom:1px solid var(--grey-light); text-align:right;"><span class="pill todo">To Do</span></td></tr>
+            <tr><td style="padding:9px 0; border-bottom:1px solid var(--grey-light);">Freigabe ÖBB — PM-08 Kapazitätsplan <span style="color:var(--grey); font-family:var(--font-mono); font-size:13px;">blocks PM-12 fleet acceptance</span></td><td style="padding:9px 0; border-bottom:1px solid var(--grey-light); text-align:right;"><span class="pill todo">To Do</span></td></tr>
+            <tr><td style="padding:9px 0; border-bottom:1px solid var(--grey-light);">Freigabe Phase 4 <span style="color:var(--grey); font-family:var(--font-mono); font-size:13px;">owner: Stadler — confirm portal done</span></td><td style="padding:9px 0; border-bottom:1px solid var(--grey-light); text-align:right;"><span class="pill todo">To Do</span></td></tr>
+            <tr><td style="padding:9px 0;">Final Nomad technical description — review/approval <span style="color:var(--grey); font-family:var(--font-mono); font-size:13px;">security &amp; Stadler</span></td><td style="padding:9px 0; text-align:right;"><span class="pill progress">In Progress</span></td></tr>
+        </table>
+    </div>
+
+    <div class="reveal" style="position:absolute; left:120px; top:840px; width:1680px; background:var(--amber-bg); border-left:8px solid var(--amber); padding:16px 26px; font-family:var(--font-body); font-size:17px; color:var(--black); line-height:1.4;">
+        <b>Not on this plan at all:</b> the multi-traction / v9 remediation (RSTP fix, native-VLAN containment) — delivered in goodwill, fully unbudgeted, on top of the schedule above.
+    </div>
+
+    <div class="footer-bar reveal">
+        <span>Dosto Neu — Interdependency Review</span>
+        <span class="tag">04 / 11</span>
+    </div>
+</section>
+
+<!-- ============ SLIDE 5 — CCU STABILITY ============ -->
+<section class="slide">
+    <div class="kicker reveal">Dosto Neu</div>
+    <div class="page-num reveal">05 / 11</div>
+    <div class="section-hairline"></div>
+    <div class="slide-title reveal">CCU Stability <span class="accent">— Single Traction</span></div>
+
+    <div class="reveal" style="position:absolute; left:120px; top:280px; width:1680px;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:19px; letter-spacing:0.04em; text-transform:uppercase; color:var(--black); margin-bottom:10px;">Finding 1 — Modem / SIM instability</div>
+        <div style="background:var(--grey-bg); border-left:8px solid var(--black); padding:22px 30px; font-family:var(--font-body); font-size:20px; color:var(--black); line-height:1.5;">
+            <b>Root cause:</b> CPDL hardware fault on modem carrier blades — first two SIM slots fail to come up, reducing redundant dual-SIM operation to a single SIM.<br>
+            <b>Fix:</b> blade replacement. <b>4 trains completed to date</b> (2 by SPL, 2 by Nomad); remaining fleet count and completion target <span class="placeholder" contenteditable="true">[ Abbas: to confirm ]</span>.
+        </div>
+    </div>
+
+    <div class="reveal" style="position:absolute; left:120px; top:470px; width:1680px;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:19px; letter-spacing:0.04em; text-transform:uppercase; color:var(--black); margin-bottom:10px;">Finding 2 — Power resets (ignition-sense signature)</div>
+        <div style="background:var(--amber-bg); border-left:8px solid var(--amber); padding:22px 30px; font-family:var(--font-body); font-size:20px; color:var(--black); line-height:1.5;">
+            Repeatable signature captured via hardened CCU logging on 4736-110: ignition-sense voltage drops to 0V while main input voltage stays stable; ignition reads 0 for ~90s, then the CCU hard-cuts. <b>Three occurrences captured, 16–18 June 2026.</b><br>
+            <b>Status:</b> root cause narrowed to the ignition-sense input, not the power supply. Investigation ongoing — <b>not yet resolved.</b>
+        </div>
+    </div>
+
+    <div class="reveal" style="position:absolute; left:120px; top:700px; width:1680px; border-top:1px solid var(--grey-light); padding-top:18px; font-family:var(--font-body); font-size:17px; color:var(--grey); line-height:1.5;">
+        Other items raised in ÖBB's 10 March test protocol (client isolation on staff WLAN, switch-visibility during the incident) remain open pending design freeze and functionality testing completion — see slide 10.
+    </div>
+
+    <div class="footer-bar reveal">
+        <span>Dosto Neu — Interdependency Review</span>
+        <span class="tag">05 / 11</span>
+    </div>
+</section>
+
+<!-- ============ SLIDE 6 — MULTI-TRACTION ROADMAP ============ -->
+<section class="slide">
+    <div class="kicker reveal">Dosto Neu</div>
+    <div class="page-num reveal">06 / 11</div>
+    <div class="section-hairline"></div>
+    <div class="slide-title reveal">Multi-Traction <span class="accent">Roadmap</span></div>
+
+    <div class="reveal" style="position:absolute; left:120px; top:290px; width:1680px; background:var(--green-bg); border-left:8px solid var(--green); padding:26px 32px;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:19px; letter-spacing:0.04em; text-transform:uppercase; color:var(--green); margin-bottom:10px;">✓ Found and fixed, fast — Nomad-owned</div>
+        <div style="font-family:var(--font-body); font-size:20px; color:var(--black); line-height:1.5;">
+            12 June coupling test surfaced a perpetual ~2s RSTP topology-change storm on coupled 6+6 consists. Root cause: asymmetric coupler port-costs in Nomad's own v8 template. Fixed in v9 (symmetric cost 20000, max-age raised to 38, native-VLAN containment) — <b>validated stable across all 2-train orientations</b> by the 30 June re-test.
+        </div>
+    </div>
+
+    <div class="reveal" style="position:absolute; left:120px; top:480px; width:1680px; background:var(--green-bg); border-left:8px solid var(--green); padding:26px 32px;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:19px; letter-spacing:0.04em; text-transform:uppercase; color:var(--green); margin-bottom:10px;">✓ CCTV / ZFR degradation — resolved, same fix</div>
+        <div style="font-family:var(--font-body); font-size:20px; color:var(--black); line-height:1.5;">
+            The 30 June test isolated the variable: the v9 cost fix alone — no firewall change, no VLAN-5 change — stopped the churn <b>and</b> the CCTV feed recovered immediately. This revises the earlier hypothesis: the degradation was driven by the RSTP storm flooding camera traffic, not by any Stadler firewall interaction. <b>No further Stadler dependency on this item.</b>
+        </div>
+    </div>
+
+    <div class="reveal" style="position:absolute; left:120px; top:670px; width:1680px; border-top:1px solid var(--grey-light); padding-top:18px; font-family:var(--font-body); font-size:17px; color:var(--grey); line-height:1.5;">
+        <b style="color:var(--black);">Roadmap input:</b> triple traction (3×6, 54 switches) exceeds RSTP's node/diameter limits — requires an L3 / routed segmentation redesign if triple traction is ever required. Flagged now, not a current defect.
+    </div>
+
+    <div class="reveal" style="position:absolute; left:120px; top:790px; width:1680px; background:var(--grey-bg); border-left:8px solid var(--black); padding:18px 26px; font-family:var(--font-body); font-size:18px; color:var(--black); line-height:1.4;">
+        This work was delivered as goodwill, outside contracted scope, and is not on Nomad's committed phase plan — see <b>Scope &amp; VO Status</b>, slide 9.
+    </div>
+
+    <div class="footer-bar reveal">
+        <span>Dosto Neu — Interdependency Review</span>
+        <span class="tag">06 / 11</span>
+    </div>
+</section>
+
+<!-- ============ SLIDE 7 — RELEASE/CHANGE MGMT + REMOTE UPDATES (MERGED) ============ -->
+<section class="slide">
+    <div class="kicker reveal">Dosto Neu</div>
+    <div class="page-num reveal">07 / 11</div>
+    <div class="section-hairline"></div>
+    <div class="slide-title reveal">Change &amp; Update Process <span class="accent">— Ready for O&amp;M</span></div>
+
+    <div class="reveal" style="position:absolute; left:120px; top:290px; width:800px; bottom:280px;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:20px; text-transform:uppercase; letter-spacing:0.03em; color:var(--black); border-bottom:3px solid var(--black); padding-bottom:10px; margin-bottom:18px;">Release &amp; Change Management</div>
+        <div style="font-family:var(--font-body); font-size:20px; color:var(--black); line-height:1.6;">
+            A formal process — release notes, impact assessment, sign-off gates — is <b>already defined</b> for the O&amp;M phase.
+        </div>
+    </div>
+
+    <div class="reveal" style="position:absolute; left:1000px; top:290px; width:800px; bottom:280px; border-left:2px solid var(--black); padding-left:60px;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:20px; text-transform:uppercase; letter-spacing:0.03em; color:var(--black); border-bottom:3px solid var(--black); padding-bottom:10px; margin-bottom:18px;">Remote Updates &amp; Notification</div>
+        <div style="font-family:var(--font-body); font-size:20px; color:var(--black); line-height:1.6;">
+            Update trigger, advance notification, and post-update verification are <b>already defined</b> for the O&amp;M phase.
+        </div>
+    </div>
+
+    <div class="reveal" style="position:absolute; left:120px; top:700px; width:1680px; background:var(--red); padding:24px 32px;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:19px; letter-spacing:0.03em; text-transform:uppercase; color:white; margin-bottom:8px;">Both are blocked from activating</div>
+        <div style="font-family:var(--font-body); font-size:20px; color:white; line-height:1.5;">
+            The fleet cannot enter O&amp;M until <b>design freeze</b> and <b>functionality testing</b> (bench + prototype) are complete. These are not missing Nomad capabilities — they are ready and waiting on the same two ÖBB/Stadler-owned gates. See slide 3.
+        </div>
+    </div>
+
+    <div class="reveal" style="position:absolute; left:120px; top:850px; width:1680px; font-family:var(--font-mono); font-size:16px; color:var(--grey);">
+        The phase plan itself has no target date for O&amp;M handover — the ÖBB-owned "decision on maintenance" line item has no stated deadline.
+    </div>
+
+    <div class="footer-bar reveal">
+        <span>Dosto Neu — Interdependency Review</span>
+        <span class="tag">07 / 11</span>
+    </div>
+</section>
+
+<!-- ============ SLIDE 8 — VEHICLE CONFIG TRANSPARENCY ============ -->
+<section class="slide">
+    <div class="kicker reveal">Dosto Neu</div>
+    <div class="page-num reveal">08 / 11</div>
+    <div class="section-hairline"></div>
+    <div class="slide-title reveal">Vehicle Config Transparency &amp; <span class="accent">SW Visibility</span></div>
+
+    <div class="reveal" style="position:absolute; left:120px; top:280px; width:1680px; font-family:var(--font-body); font-size:20px; color:var(--black); line-height:1.5;">
+        ÖBB has requested Stadler be given access to view switch config &amp; firmware version. Two candidate routes — only one is safe to hand to a third party:
+    </div>
+
+    <div class="reveal" style="position:absolute; left:120px; top:360px; width:800px; bottom:280px; background:var(--grey-bg); border:2px solid var(--red); padding:30px;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:19px; letter-spacing:0.04em; text-transform:uppercase; color:var(--red); margin-bottom:12px;">✗ Engineering Pages — not viable for Stadler</div>
+        <div style="font-family:var(--font-body); font-size:20px; color:var(--black); line-height:1.6;">
+            Now carries a live <b>"obn update"</b> control that triggers a fleet-wide device update. This cannot be exposed to a third party — no way to grant read-only access without also granting that trigger.
+        </div>
+    </div>
+
+    <div class="reveal" style="position:absolute; left:1000px; top:360px; width:800px; bottom:280px; background:var(--green-bg); border:2px solid var(--green); padding:30px;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:19px; letter-spacing:0.04em; text-transform:uppercase; color:var(--green); margin-bottom:12px;">✓ NMS — the correct route</div>
+        <div style="font-family:var(--font-body); font-size:20px; color:var(--black); line-height:1.6;">
+            Already exposes, per train: exact switch config &amp; firmware version, and real-time port-level alerts (e.g. port-down). Read-only, no destructive control surface. Live today.
+        </div>
+    </div>
+
+    <div class="reveal" style="position:absolute; left:120px; top:820px; width:1680px; font-family:var(--font-body); font-size:19px; color:var(--black); font-weight:600; line-height:1.5;">
+        <b>Ask:</b> Stadler access to be provisioned via NMS, not Engineering Pages. If NMS is missing something Stadler specifically needs, please specify it.
+    </div>
+
+    <div class="footer-bar reveal">
+        <span>Dosto Neu — Interdependency Review</span>
+        <span class="tag">08 / 11</span>
+    </div>
+</section>
+
+<!-- ============ SLIDE 9 — SCOPE & VO STATUS ============ -->
+<section class="slide">
+    <div class="kicker reveal">Dosto Neu</div>
+    <div class="page-num reveal">09 / 11</div>
+    <div class="section-hairline"></div>
+    <div class="slide-title reveal">Scope &amp; Variation <span class="accent">Orders</span></div>
+
+    <div class="reveal" style="position:absolute; left:120px; top:275px; width:1680px; font-family:var(--font-body); font-size:20px; color:var(--black); line-height:1.5;">
+        Nomad has already delivered significant work beyond Chapter 6 standard/extended scope, at no charge, in goodwill:
+    </div>
+    <div class="reveal" style="position:absolute; left:120px; top:330px; width:1680px;">
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr 1fr; gap:20px;">
+            <div style="background:var(--grey-bg); border-left:6px solid var(--black); padding:16px 18px; font-family:var(--font-body); font-size:15px; line-height:1.4;">IP planning for <b>267 Stadler 3rd-party devices</b> per train</div>
+            <div style="background:var(--grey-bg); border-left:6px solid var(--black); padding:16px 18px; font-family:var(--font-body); font-size:15px; line-height:1.4;">Repeated switch-config re-issues from incomplete Stadler design freeze</div>
+            <div style="background:var(--grey-bg); border-left:6px solid var(--black); padding:16px 18px; font-family:var(--font-body); font-size:15px; line-height:1.4;">Portal-Lite pages built post-CMS handover to ÖBB</div>
+            <div style="background:var(--grey-bg); border-left:6px solid var(--black); padding:16px 18px; font-family:var(--font-body); font-size:15px; line-height:1.4;">Fleet-wide L2 diagnostics &amp; cabling fault register</div>
+            <div style="background:var(--grey-bg); border-left:6px solid var(--black); padding:16px 18px; font-family:var(--font-body); font-size:15px; line-height:1.4;">Multi-traction network-fabric remediation (v9/v10)</div>
+        </div>
+    </div>
+
+    <div class="reveal" style="position:absolute; left:120px; top:530px; width:1680px; font-family:var(--font-mono); font-size:15px; color:var(--grey);">
+        Formally communicated to ÖBB in writing — Chapter 6, ND-BID-OBB-036 Technical Description v0.3.
+    </div>
+
+    <div class="reveal" style="position:absolute; left:120px; top:575px; width:1680px; background:var(--amber-bg); border-left:8px solid var(--amber); padding:20px 28px;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:16px; letter-spacing:0.04em; text-transform:uppercase; color:var(--amber); margin-bottom:8px;">No VO has ever been quoted for this specific work</div>
+        <div style="font-family:var(--font-body); font-size:17px; color:var(--black); line-height:1.5;">
+            The multi-traction network-fabric work (common network across coupled consists, shared switch-config management) is not just unordered — it has <b>never appeared in any Nomad offer</b>, including the lapsed Extended offer (EXT1, valid to 01.03.2024). Nomad's Q2 2026 phase plan confirms it: <b>zero line items</b> budgeted for this work — it was delivered entirely outside the committed, resourced schedule.
+        </div>
+    </div>
+
+    <div class="reveal" style="position:absolute; left:120px; top:770px; width:1680px; border-top:2px solid var(--black); padding-top:18px; font-family:var(--font-body); font-size:19px; color:var(--black); line-height:1.5;">
+        <b>Ask:</b> no further work outside Chapter 6 standard scope — multi-traction or otherwise — proceeds without an approved RFQ/VO, using the provided template.
+        <span style="display:block; margin-top:6px; font-size:16px; color:var(--grey);">Live example of the same pattern: ÖBB's own Application-layer design freeze — due 16 June 2026, still open as of 01 July 2026.</span>
+    </div>
+
+    <div class="footer-bar reveal">
+        <span>Dosto Neu — Interdependency Review</span>
+        <span class="tag">09 / 11</span>
+    </div>
+</section>
+
+<!-- ============ SLIDE 10 — SCHEDULE / QUALITY / WARRANTY ============ -->
+<section class="slide">
+    <div class="kicker reveal">Dosto Neu</div>
+    <div class="page-num reveal">10 / 11</div>
+    <div class="section-hairline"></div>
+    <div class="slide-title reveal">Schedule, Quality &amp; <span class="accent">Warranty Impact</span></div>
+
+    <div class="reveal" style="position:absolute; left:120px; top:280px; width:1680px; background:var(--grey-bg); border-left:8px solid var(--red); padding:26px 32px;">
+        <div style="font-family:var(--font-body); font-size:24px; font-weight:700; color:var(--black); line-height:1.5;">
+            Trains are entering ÖBB commercial service without a completed design freeze, and without completed functionality testing on bench and prototype train.
+        </div>
+    </div>
+
+    <div class="reveal" style="position:absolute; left:120px; top:440px; width:1680px;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:19px; letter-spacing:0.04em; text-transform:uppercase; color:var(--black); border-bottom:3px solid var(--black); padding-bottom:10px; margin-bottom:20px;">Already visible in the field</div>
+        <div style="display:grid; grid-template-columns:1fr 2fr; gap:40px;">
+            <div style="display:flex; align-items:baseline; gap:16px;">
+                <span style="font-family:var(--font-display); font-weight:800; font-size:80px; color:var(--red); line-height:1;">12</span>
+                <span style="font-family:var(--font-body); font-size:19px; color:var(--grey);">logged cabling / hardware faults, fleet-wide<br><b style="color:var(--black);">7 still open</b></span>
+            </div>
+            <ul style="font-family:var(--font-body); font-size:20px; color:var(--black); line-height:1.7; padding-left:26px;">
+                <li>Physical Stadler-side install error — coupler cable cross-wiring between two trains <span style="color:var(--grey); font-family:var(--font-mono); font-size:15px;">resolved 17 Jun via Stadler switch replacement</span></li>
+                <li>14 still-open FIS-display / energy-meter port faults on one train — diagnosed as device/cable-end issues</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="reveal" style="position:absolute; left:120px; top:700px; width:1680px; border-top:2px solid var(--black); padding-top:20px; font-family:var(--font-body); font-size:22px; color:var(--black); font-weight:600; line-height:1.5;">
+        This risk stems from process and schedule decisions — not Nomad equipment defects. Flagging now, before warranty exposure grows.
+    </div>
+
+    <div class="footer-bar reveal">
+        <span>Dosto Neu — Interdependency Review</span>
+        <span class="tag">10 / 11</span>
+    </div>
+</section>
+
+<!-- ============ SLIDE 11 — NEXT STEPS ============ -->
+<section class="slide">
+    <div class="kicker reveal">Dosto Neu</div>
+    <div class="page-num reveal">11 / 11</div>
+    <div class="section-hairline"></div>
+    <div class="slide-title reveal">Proposed Next <span class="accent">Steps</span></div>
+
+    <div class="reveal" style="position:absolute; left:120px; top:300px; width:1680px; bottom:190px; display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:28px;">
+        <div style="border:2px solid var(--black); padding:28px; display:flex; gap:20px;">
+            <div style="font-family:var(--font-display); font-weight:800; font-size:56px; color:var(--red);">1</div>
+            <div>
+                <div style="font-family:var(--font-display); font-weight:800; font-size:20px; text-transform:uppercase; margin-bottom:8px;">ÖBB: Complete Design Freeze</div>
+                <div style="font-family:var(--font-body); font-size:19px; color:var(--black); line-height:1.5;">Application-layer design freeze — no further slip beyond the 16 June milestone.</div>
+            </div>
+        </div>
+        <div style="border:2px solid var(--black); padding:28px; display:flex; gap:20px;">
+            <div style="font-family:var(--font-display); font-weight:800; font-size:56px; color:var(--red);">2</div>
+            <div>
+                <div style="font-family:var(--font-display); font-weight:800; font-size:20px; text-transform:uppercase; margin-bottom:8px;">ÖBB: Submit RFQs</div>
+                <div style="font-family:var(--font-body); font-size:19px; color:var(--black); line-height:1.5;">Against Chapter 6, using the provided template, for any additional/changed scope — before further requests are actioned.</div>
+            </div>
+        </div>
+        <div style="border:2px solid var(--black); padding:28px; display:flex; gap:20px;">
+            <div style="font-family:var(--font-display); font-weight:800; font-size:56px; color:var(--red);">3</div>
+            <div>
+                <div style="font-family:var(--font-display); font-weight:800; font-size:20px; text-transform:uppercase; margin-bottom:8px;">ÖBB: No Out-of-Scope Work Without a VO</div>
+                <div style="font-family:var(--font-body); font-size:19px; color:var(--black); line-height:1.5;">Applies to multi-traction and any other request outside Chapter 6 standard scope. Nomad to re-share the RFQ template.</div>
+            </div>
+        </div>
+        <div style="border:2px solid var(--black); padding:28px; display:flex; gap:20px;">
+            <div style="font-family:var(--font-display); font-weight:800; font-size:56px; color:var(--red);">4</div>
+            <div>
+                <div style="font-family:var(--font-display); font-weight:800; font-size:20px; text-transform:uppercase; margin-bottom:8px;">Joint: Formal Change Process</div>
+                <div style="font-family:var(--font-body); font-size:19px; color:var(--black); line-height:1.5;">Agreement on release &amp; change management process. <span class="placeholder" contenteditable="true">[ target date ]</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-bar reveal">
+        <span>Dosto Neu — Interdependency Review</span>
+        <span class="tag">11 / 11</span>
+    </div>
+</section>
+
+</main>
+</div>
+
+<div class="deck-controls">
+    <button id="prevBtn" aria-label="Previous slide">←</button>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span id="slideCounter">1 / 11</span>
+    <button id="nextBtn" aria-label="Next slide">→</button>
+</div>
+
+<script>
+/* ===========================================
+   SLIDE PRESENTATION CONTROLLER
+   =========================================== */
+class SlidePresentation {
+    constructor() {
+        this.slides = document.querySelectorAll('.slide');
+        this.currentSlide = 0;
+        this.stage = document.getElementById('deckStage');
+        this.setupStageScale();
+        this.setupKeyboardNav();
+        this.setupTouchNav();
+        this.setupControls();
+        this.showSlide(0);
+    }
+    setupStageScale() {
+        const scale = () => {
+            const factor = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+            const x = (window.innerWidth - 1920 * factor) / 2;
+            const y = (window.innerHeight - 1080 * factor) / 2;
+            this.stage.style.transform = `translate(${x}px, ${y}px) scale(${factor})`;
+        };
+        scale();
+        window.addEventListener('resize', scale);
+    }
+    setupKeyboardNav() {
+        document.addEventListener('keydown', (e) => {
+            if (e.target.getAttribute('contenteditable') === 'true') return;
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); this.next(); }
+            if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); this.prev(); }
+        });
+    }
+    setupTouchNav() {
+        let startX = 0;
+        this.stage.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; });
+        this.stage.addEventListener('touchend', (e) => {
+            const diff = e.changedTouches[0].clientX - startX;
+            if (diff > 60) this.prev();
+            if (diff < -60) this.next();
+        });
+    }
+    setupControls() {
+        document.getElementById('nextBtn').addEventListener('click', () => this.next());
+        document.getElementById('prevBtn').addEventListener('click', () => this.prev());
+    }
+    next() { this.showSlide(this.currentSlide + 1); }
+    prev() { this.showSlide(this.currentSlide - 1); }
+    showSlide(index) {
+        this.currentSlide = Math.max(0, Math.min(index, this.slides.length - 1));
+        this.slides.forEach((slide, i) => {
+            slide.classList.toggle('active', i === this.currentSlide);
+            slide.classList.toggle('visible', i === this.currentSlide);
+        });
+        document.getElementById('slideCounter').textContent = `${this.currentSlide + 1} / ${this.slides.length}`;
+        document.getElementById('progressFill').style.width = `${((this.currentSlide + 1) / this.slides.length) * 100}%`;
+    }
+}
+const presentation = new SlidePresentation();
+
+/* ===========================================
+   INLINE EDIT MODE
+   =========================================== */
+class InlineEditor {
+    constructor() {
+        this.isActive = false;
+        this.editables = document.querySelectorAll('[contenteditable]');
+        this.toggle = document.getElementById('editToggle');
+        this.setup();
+    }
+    setup() {
+        this.toggle.addEventListener('click', () => this.toggleEditMode());
+        const hotzone = document.querySelector('.edit-hotzone');
+        let hideTimeout = null;
+        hotzone.addEventListener('mouseenter', () => { clearTimeout(hideTimeout); this.toggle.classList.add('show'); });
+        hotzone.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!this.isActive) this.toggle.classList.remove('show'); }, 400); });
+        this.toggle.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+        this.toggle.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!this.isActive) this.toggle.classList.remove('show'); }, 400); });
+        hotzone.addEventListener('click', () => this.toggleEditMode());
+        document.addEventListener('keydown', (e) => {
+            if ((e.key === 'e' || e.key === 'E') && e.target.getAttribute('contenteditable') !== 'true') this.toggleEditMode();
+            if (e.key === 's' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); this.save(); }
+        });
+        this.editables.forEach(el => el.setAttribute('contenteditable', 'false'));
+        this.load();
+    }
+    toggleEditMode() {
+        this.isActive = !this.isActive;
+        this.toggle.classList.toggle('active', this.isActive);
+        this.editables.forEach(el => el.setAttribute('contenteditable', this.isActive ? 'true' : 'false'));
+        if (!this.isActive) this.save();
+    }
+    save() {
+        const data = {};
+        this.editables.forEach((el, i) => { data[i] = el.innerHTML; });
+        localStorage.setItem('dosto-deck-edits', JSON.stringify(data));
+    }
+    load() {
+        const raw = localStorage.getItem('dosto-deck-edits');
+        if (!raw) return;
+        try {
+            const data = JSON.parse(raw);
+            this.editables.forEach((el, i) => { if (data[i] !== undefined) el.innerHTML = data[i]; });
+        } catch (e) {}
+    }
+}
+const editor = new InlineEditor();
+</script>
+</body>
+</html>
