@@ -64,11 +64,12 @@ DIRECTORIES = [
 EMBEDDED_FILES_SCAFFOLD = [
     # Settings + MCP
     (".claude/settings.local.json", "json"),  # if present — engineer-specific
-    # Contracts (4)
+    # Contracts (5)
     (".claude/contracts/subagent-report.md", "markdown"),
     (".claude/contracts/autonomy-boundary.md", "markdown"),
     (".claude/contracts/approval-gates.md", "markdown"),
     (".claude/contracts/confluence-sync.md", "markdown"),
+    (".claude/contracts/auto-scanner-boundary.md", "markdown"),
     # Agents (1, reduced from 2 in v2 — dosto-orchestrator retired per audit F5 2026-05-11; orchestration logic lives in dosto-orchestrate skill)
     (".claude/agents/dosto-train-worker.md", "markdown"),
     # Skills (14) — alphabetised for deterministic output
@@ -229,7 +230,7 @@ echo "=== Scaffold complete ==="
 ```
 
 Expected:
-- `.claude/contracts/` — 4 files: subagent-report.md, autonomy-boundary.md, approval-gates.md, confluence-sync.md
+- `.claude/contracts/` — 5 files: subagent-report.md, autonomy-boundary.md, approval-gates.md, confluence-sync.md, auto-scanner-boundary.md
 - `.claude/agents/` — 1 file: dosto-train-worker.md (Sonnet 4.6). (dosto-orchestrator.md retired 2026-05-11 per audit F5 — orchestration logic moved into dosto-orchestrate skill body, executed inline in the engineer's top-level session.)
 - `.claude/skills/` — 14 directories, each with a SKILL.md
 - `scripts/` — fix_obn.py, fix_obn_bug8.py, fix_obn_bugs67.py, fix_bug1_regex.py, lldp_topology_check.py (more, including the regenerator itself, are also present)
@@ -362,7 +363,7 @@ python scripts/regenerate_bootstrap.py --include-state   # scaffold + fleet-stat
 ```
 
 **What's in the bootstrap:**
-- 4 contract docs in `.claude/contracts/`
+- 5 contract docs in `.claude/contracts/`
 - 1 agent definition in `.claude/agents/` (dosto-train-worker only; dosto-orchestrator retired per F5)
 - 14 skills in `.claude/skills/` (the per-device, orchestration, and reporting skills)
 - `CLAUDE.md` (project constitution + orchestration architecture)

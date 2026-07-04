@@ -73,7 +73,7 @@ Engineer types: /dosto-orchestrate trains=4736-102,4736-104,4736-120
 
 **Why inline rather than agent-as-orchestrator** (audit finding F5, 2026-05-11): the Claude Code platform rule "subagents cannot spawn further subagents" means a `dosto-orchestrator` agent spawned via `Agent` cannot itself call `Agent` to spawn workers — verified by the 2026-05-11 first-run test. The orchestration logic therefore lives in the skill, executed by the engineer's top-level session (which DOES have `Agent` + `SendMessage`). The previous `.claude/agents/dosto-orchestrator.md` was retired. See [`handoff-bootstrap-audit-2026-05-11.md`](handoff-bootstrap-audit-2026-05-11.md) §F5.
 
-**The four contracts** that pin this stack down:
+**The five contracts** that pin this stack down:
 
 | Contract | What it specifies |
 |---|---|
@@ -81,6 +81,7 @@ Engineer types: /dosto-orchestrate trains=4736-102,4736-104,4736-120
 | [`.claude/contracts/autonomy-boundary.md`](.claude/contracts/autonomy-boundary.md) | Five approval gates and what subagents may do without asking |
 | [`.claude/contracts/approval-gates.md`](.claude/contracts/approval-gates.md) | Engineer-facing prompt format and response protocol |
 | [`.claude/contracts/confluence-sync.md`](.claude/contracts/confluence-sync.md) | One-way local → Confluence push policy + drift detection |
+| [`.claude/contracts/auto-scanner-boundary.md`](.claude/contracts/auto-scanner-boundary.md) | Read-only bounds + fleet-status write-allowlist for the `dosto-auto-scan` scheduled probe (strict mutex with `/dosto-orchestrate`) |
 
 **Single-train debug runs** skip the orchestrator skill entirely: invoke `/dosto-commission-train --train-number ... --ccu-ip ...` directly, no worker subagent, no fleet-day wrapper.
 
@@ -116,7 +117,7 @@ Before any stateful action (spawning a subagent, calling a destructive skill, wr
 - If a simpler approach exists than the one requested, say so. Push back when warranted.
 - If something is unclear, stop. Name what is confusing. Ask.
 
-Operationalised as the **MANDATORY PRE-FLIGHT BLOCK** every agent must emit before its first stateful action — see [`.claude/agents/dosto-orchestrator.md`](.claude/agents/dosto-orchestrator.md) and [`.claude/agents/dosto-train-worker.md`](.claude/agents/dosto-train-worker.md).
+Operationalised as the **MANDATORY PRE-FLIGHT BLOCK** every agent must emit before its first stateful action — see [`.claude/agents/dosto-train-worker.md`](.claude/agents/dosto-train-worker.md) (the worker) and the orchestration section of [`.claude/skills/dosto-orchestrate/SKILL.md`](.claude/skills/dosto-orchestrate/SKILL.md) (the `dosto-orchestrator.md` agent was retired 2026-05-11 per audit F5 — its logic folded into that skill).
 
 The five approval gates ([`.claude/contracts/autonomy-boundary.md`](.claude/contracts/autonomy-boundary.md)) are this principle in concrete form for destructive ops: stop, surface, ask the human.
 
@@ -143,7 +144,7 @@ When editing existing code or files:
 - Match existing style, even if you'd do it differently.
 - If you notice unrelated dead code or stale notes, mention it — don't delete it.
 
-When the orchestrator writes `fleet-status.md`, it edits **only the columns it owns** (the `fields` block from subagent reports — per the Surgical-Changes contract in `dosto-orchestrator.md`). Engineer hand-edits to other columns (`Customer report`, `Health check date`) survive every cycle.
+When the orchestrator writes `fleet-status.md`, it edits **only the columns it owns** (the `fields` block from subagent reports — per the Surgical-Changes contract, now in `dosto-orchestrate/SKILL.md` since the `dosto-orchestrator.md` agent was retired). Engineer hand-edits to other columns (`Customer report`, `Health check date`) survive every cycle.
 
 When `dosto-confluence-sync` detects drift on the Confluence page, it **halts** rather than auto-merging. Surgical: don't auto-resolve what wasn't the skill's mess to begin with.
 

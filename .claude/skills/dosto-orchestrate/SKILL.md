@@ -471,7 +471,7 @@ Use the `Agent` tool with one tool-use block per train, **all in a single messag
 - `subagent_type: "dosto-train-worker"`
 - `name: "train-<train_number>"` (e.g. `train-4736-104` — so you can `SendMessage` it later)
 - `description: "DOSTO per-train worker for <train_number>"`
-- `prompt`: **pointer-not-dump** per the F2 contract — pass Train#, CCU IP, consist, engineer name, dry-run flag, ip_source, `scripts_staged: true/false` (from Step 5.5 staging result — tells the worker whether `/var/tmp/fix_obn*.py` is guaranteed present or whether it must request the orchestrator to SCP), `session_id` (so the worker can echo it into its reports for cross-correlation), and nothing else. The worker reads `fleet-status.md`, `fleet-journal.md`, the four contracts, and the per-device skills itself. Do NOT inline per-train prose, recovery sequences, or historical context — those bloat the worker's context window for its entire lifetime.
+- `prompt`: **pointer-not-dump** per the F2 contract — pass Train#, CCU IP, consist, engineer name, dry-run flag, ip_source, `scripts_staged: true/false` (from Step 5.5 staging result — tells the worker whether `/var/tmp/fix_obn*.py` is guaranteed present or whether it must request the orchestrator to SCP), `session_id` (so the worker can echo it into its reports for cross-correlation), and nothing else. The worker reads `fleet-status.md`, `fleet-journal.md`, the contracts in `.claude/contracts/`, and the per-device skills itself. Do NOT inline per-train prose, recovery sequences, or historical context — those bloat the worker's context window for its entire lifetime.
 
 After spawning, **start the cycle clock**. Cycle 1 runs for `cycle_minutes` (default 5).
 
@@ -908,7 +908,7 @@ This skill prints human-readable status. It does NOT support `--json` output —
 - [`.claude/skills/dosto-commission-train/SKILL.md`](../dosto-commission-train/SKILL.md) — what the per-train worker invokes
 - [`fleet-status.md`](../../../fleet-status.md) — the source-of-truth file (sole writer during runtime)
 - [`cable-issues-register.md`](../../../cable-issues-register.md) — read at Step 3.5 (pre-flight); appended at Step 7.5 (new fault auto-append)
-- All four contracts in `.claude/contracts/` — `subagent-report.md` v2, `autonomy-boundary.md`, `approval-gates.md` v2, `confluence-sync.md`
+- All five contracts in `.claude/contracts/` — `subagent-report.md` v2, `autonomy-boundary.md`, `approval-gates.md` v2, `confluence-sync.md`, `auto-scanner-boundary.md`
 
 ## Reference / design history
 
