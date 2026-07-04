@@ -49,6 +49,10 @@ New here? Read [HOW-TO-USE.md](HOW-TO-USE.md) first. Maintaining the KB? See [MA
 * [Tickets index](tickets/index.md) - TRIAG-8585, OEBB-251, SA-2444, RD-12434.
 * [Asset index](assets/index.md) - per-train allocation PDFs + switch cfgs (46 trains).
 
+## Sources — the raw corpus, categorised & linked
+
+* [Sources index](sources/index.md) - every raw finding/report/email/plan/handoff (82 docs) as a categorised node linked to the trains + knowledge it concerns. Raw files stay in place; nodes link via `resource:`.
+
 ## Method (portable — reusable on any project)
 
 * [The Evidence-First Method](method/index.md) - the methodology + an empty `_TEMPLATE/` to copy into a new repo.
