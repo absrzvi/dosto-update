@@ -163,6 +163,24 @@ The completeness gate counts distinct **switch positions** (from `client-hostnam
 
 Productionization note: a fleet version might prefer the expected consist size (12/nv4, 18/nv6, minus known-absent positions) or a Puppet-provided count as the ground truth instead of the lease file. Also note a swap breaks **NMS/Zabbix** (hosts are MAC-joined) — the new MAC needs a Zabbix reconcile; that's pre-existing NMS behavior, outside this fix.
 
+## 7d. NMS-consumption constraint (learned the hard way, 2026-07-04)
+
+`number_coaches` writes to `self.device_instances`, which feeds THREE consumers, not one:
+1. `obn validate` console table (via the `discovery.prev.json` snapshot),
+2. the **NMS/MQTT report** (`create_nms_device_nodes`) — which **provisions Zabbix hosts** and **draws the consist diagram**,
+3. the snapshot file itself.
+
+Two mistakes were made and corrected in sequence:
+
+- **First mistake — placeholders polluted NMS.** The synthetic DOWN/UNKNOWN/UNPLACED/banner devices were added to `device_instances`, so NMS created **junk Zabbix hosts** from them: `Car 0` (from the coach-0 INCOMPLETE banner), `Car 99` (from the coach-99 UNPLACED sentinel), and `DOWN:A1` leaked into a real host's MAC field. A device with a bogus coach (0/99) or a `PLACEHOLDER:`/`SCAN:` mac becomes a junk host.
+- **Second mistake — over-correction blanked the diagram.** Moving **all** placeholders out of the report (to a console-only side-file) removed the A1/B3 DOWN devices too. But **NMS needs a device in every chain slot to render the consist diagram** — with slots (1,1) and (4,3) missing, the diagram pane went **blank**.
+
+**The correct split (now running):**
+- **In the report / `device_instances`:** DOWN/UNKNOWN devices for **real chain slots** (A1=coach1/dev1, B3=coach4/dev3, …), each with a **valid coach/device** (so NMS matches them to the correct `R#_SW#` host, not a junk host) and a **`7.7.7.7` ip** (the not-found placeholder address). NMS draws these as down boxes — this is what makes the diagram show A1/B3 as down. Verified: diagram renders + shows the right alerts; a **complete** report even let NMS self-heal a host (G2) that a prior messy re-create had dropped.
+- **Console-only side-file (`discovery.placeholders.json`, merged by `backbone_validate.load_devices`):** ONLY the coach-0 `DISCOVERY INCOMPLETE` banner and the UNPLACED (unnumberable real switch) rows — these have no valid slot, so publishing them makes junk hosts.
+
+**MR rule:** a bypassed/absent switch at a *known chain position* MUST appear in the NMS report (valid slot, 7.7.7.7 ip, DOWN status) so the diagram renders it. Only rows with no valid position (banners, unplaceable devices) stay console-only. Productionize with a real `status` field rather than the `DOWN:`/`7.7.7.7` conventions, and a NMS-report flag that marks a device "down/placeholder" so NMS colours it without treating it as a live host.
+
 ## 8. Scope / risk
 
 - `report_dosto_neu.py` is shared-engine, CI-gated (653-test suite). This is a real algorithm change, not a hand-patch — must go through the normal MR + `make tag` release path, not a bench chroot.

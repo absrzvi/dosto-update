@@ -63,37 +63,33 @@ def _claimed_pos(dev, coach_of):
 
 
 class DostoNeuReport(Report):
-    # ── NDP-BYPASS-FIX: retain discovered-but-unnumberable devices (§5c) ──
-    # Override the base normalise_devices (shared with ace/ccjpa reports) so this
-    # behaviour is scoped to DostoNeu only. A device OBN discovered and could poll
-    # is NEVER silently dropped: if it could not be placed it is kept as UNPLACED.
-    # Sentinel coach/device for UNPLACED devices: keeps them sortable/renderable in
-    # backbone_validate._create_overview (which sorts on coach/device and would
-    # TypeError on None) and sorts them to the end of the table.
-    _UNPLACED_COACH = 99
-    _UNPLACED_DEVICE = 0
+    # ── NDP-BYPASS-FIX ──
+    # DESIGN: device_instances holds ONLY real, successfully-numbered devices — exactly
+    # like base OBN. This is what feeds create_nms_device_nodes() (MQTT→NMS) and the
+    # discovery.prev.json snapshot, so NMS provisions ONLY real devices (no junk hosts).
+    #
+    # The DOWN / UNKNOWN / UNPLACED / INCOMPLETE-banner rows are CONSOLE-ONLY: they go
+    # to a side-file (discovery.placeholders.json) that backbone_validate.py merges at
+    # display time. They MUST NEVER enter device_instances — an earlier version did, and
+    # NMS created junk Zabbix hosts from them (Car 0, Car 99, DOWN:A1). 2026-07-04.
+    _PLACEHOLDER_FILE = "/tmp/discovery.placeholders.json"
 
     def normalise_devices(self, inc=0):
-        kept = {}
-        for k, v in self.device_instances.items():
-            if v.type is None:
-                continue
-            if "UNPLACED" in (getattr(v, "config", "") or ""):
-                # discovered but unnumbered — retained (§5c) with sortable sentinels
-                if v.coach_number is None:
-                    v.coach_number = self._UNPLACED_COACH
-                if v.device_number is None:
-                    v.device_number = self._UNPLACED_DEVICE
-                if getattr(v, "firmware", None) is None:
-                    v.firmware = "-"
-                kept[k] = v
-            elif v.coach_number is not None and v.device_number is not None:
-                kept[k] = v  # numbered (incl. DOWN placeholders)
-        self.device_instances = kept
-        if inc != 0:
-            for device in self.device_instances.values():
-                if device.coach_number is not None and device.coach_number < 90:
-                    device.coach_number += inc
+        # base behaviour: drop anything not fully numbered. (Real UNPLACED switches are
+        # surfaced for the console via the placeholder side-file, NOT kept here — keeping
+        # them here with a fake coach is what polluted NMS.)
+        super().normalise_devices(inc)
+
+    def _write_placeholders(self, placeholders):
+        """Persist console-only placeholder rows to the side-file for obn validate.
+        Written as plain dicts shaped like the report devices so backbone_validate's
+        _create_overview can render them alongside the real devices."""
+        try:
+            import json as _json
+            with open(self._PLACEHOLDER_FILE, "w") as fp:
+                _json.dump(placeholders, fp, indent=2)
+        except OSError as exc:
+            self.logger.warning("could not write placeholder side-file: %s", exc)
 
     _LEASES_FILE = "/var/lib/dhcp/dhcpd.leases"
 
@@ -123,25 +119,24 @@ class DostoNeuReport(Report):
         except (OSError, ValueError):
             return None
 
-    def _make_placeholder(self, pos, status, note, coach_of):
-        """Synthetic Device row for an absent/unplaced position so it appears in the
-        report instead of vanishing. Fields are stubbed so backbone_validate's
-        _create_overview renders it without edits (it reads ip/firmware/config and
-        sorts on coach/device — all non-None here)."""
-        coach, dev = _cd_of(pos, coach_of)
-        # ip must be a parseable address: backbone_validate._validate("ip") calls
-        # ipaddress.ip_address(device["ip"]) and would ValueError on a placeholder
-        # string. 0.0.0.0 parses, is not in the management range (renders NOK), and
-        # flags the row as not-a-real-device. firmware/config are non-None strings so
-        # _validate("firmware"/"config") and the incomplete-device test are satisfied.
-        ph = Device(mac=f"DOWN:{pos}", ip="0.0.0.0")
-        ph.type = "SW"
-        ph.coach_number = coach
-        ph.device_number = dev
-        ph.firmware = f"{pos} {status}"
-        ph.config = f"{pos} {status} ({note})"
-        ph.target = {}
-        return ph
+    def _placeholder_row(self, coach, dev, status, note, ip="0.0.0.0", dtype="SW"):
+        """A console-only placeholder as a PLAIN DICT (never a Device / never added to
+        device_instances). Shaped like a report device so backbone_validate's
+        _create_overview can render it: ip is a parseable address (0.0.0.0), firmware
+        and config are non-None strings. mac is a marker prefix so nothing downstream
+        mistakes it for a real device."""
+        return {
+            "mac": f"PLACEHOLDER:{status}:{coach}-{dev}",
+            "ip": ip,
+            "type": dtype,
+            "coach_number": coach,
+            "device_number": dev,
+            "firmware": f"{status}",
+            "config": f"{status} ({note})",
+            "serial": None,
+            "target": {},
+            "_placeholder": True,
+        }
 
     def number_coaches(self):
         model = _EXPECTED.get(self.train_type)
@@ -189,12 +184,18 @@ class DostoNeuReport(Report):
                         acc.add(fpos)
             return acc
 
+        # Console-only placeholder rows accumulate here; written to the side-file at the
+        # end. A switch that lands here is NOT numbered and NOT kept in device_instances
+        # (base normalise_devices drops it) — so it never reaches NMS as a junk host.
+        placeholders = []
+
         # Validate each switch's hostname claim against expected adjacency.
         claims = {}
+        unplaced = []  # (switch, reason)
         for sw in switches:
             cp = _claimed_pos(sw, coach_of)
             if cp is None:
-                sw.config = f"{(sw.config or sw.ip)} UNPLACED (no position in hostname)"
+                unplaced.append((sw, "no position in hostname"))
                 continue
             live = live_neigh_positions(sw)
             stray = live - acceptable(cp)
@@ -207,7 +208,7 @@ class DostoNeuReport(Report):
                     "switch %s claims %s but neighbours %s inconsistent (misimage?)",
                     sw.mac, cp, sorted(live),
                 )
-                sw.config = f"{(sw.config or sw.ip)} UNPLACED (hostname claims {cp}, neighbours {sorted(live)} inconsistent)"
+                unplaced.append((sw, f"hostname claims {cp}, neighbours {sorted(live)} inconsistent"))
 
         anchored = set()
         for pos, claimants in claims.items():
@@ -217,7 +218,13 @@ class DostoNeuReport(Report):
                 anchored.add(pos)
             else:
                 for sw in claimants:
-                    sw.config = f"{(sw.config or sw.ip)} UNPLACED (duplicate claim on {pos})"
+                    unplaced.append((sw, f"duplicate claim on {pos}"))
+
+        # Emit UNPLACED real switches as CONSOLE-ONLY placeholder rows (coach 90 = sorts
+        # last in the validate table; NOT written to device_instances → never an NMS host).
+        for sw, reason in unplaced:
+            placeholders.append(self._placeholder_row(
+                90, 0, "UNPLACED", f"{sw.config or sw.ip}: {reason}", ip=sw.ip or "0.0.0.0"))
 
         # Discovery-completeness gate: compare discovered switches to the DHCP-lease
         # count. If discovery under-scanned (flaky link / SNMP timeouts), we CANNOT
@@ -254,6 +261,14 @@ class DostoNeuReport(Report):
                            for nb in dR.neighbours if by_mac.get(nb.get("mac")))
             return l_sees_r and r_sees_l
 
+        # Absent-but-expected chain positions (e.g. A1, B3) get a DOWN/UNKNOWN device
+        # that IS published to the report — NMS needs a device in the slot to draw the
+        # (down) box in the consist diagram; without it the diagram fails to render.
+        # These carry a VALID coach/device (the real slot) so NMS matches them to the
+        # correct host (R1_SW1 etc.) rather than making a junk host, and a "7.7.7.7"-style
+        # ip so the host is the not-found placeholder. They are NOT junk — the junk that
+        # created Car 0 / Car 99 was the banner (coach 0) and UNPLACED sentinel (coach 99),
+        # which remain console-only below.
         for pos in chain:
             if pos in anchored:
                 continue
@@ -263,23 +278,25 @@ class DostoNeuReport(Report):
                 Ls = ",".join(adj[pos].values())
                 status, note = "DOWN", f"cold-bypass confirmed (reciprocal via {Ls})"
             else:
-                # absent but no positive bypass evidence — do NOT assert DOWN.
                 status, note = "UNKNOWN", "not discovered; no bypass evidence (verify power/SNMP)"
-            ph = self._make_placeholder(pos, status, note, coach_of)
-            self.device_instances[ph.mac] = ph
+            coach, dev = _cd_of(pos, coach_of)
+            down_dev = Device(mac=f"DOWN:{pos}", ip="7.7.7.7")
+            down_dev.type = "SW"
+            down_dev.coach_number, down_dev.device_number = coach, dev
+            down_dev.firmware = f"{pos} {status}"
+            down_dev.config = f"{pos} {status} ({note})"
+            down_dev.target = {}
+            self.device_instances[down_dev.mac] = down_dev   # in report → diagram draws it
+            # also mirror into the console side-file so obn validate shows the note
+            placeholders.append(self._placeholder_row(coach, dev, f"{pos} {status}", note, ip="7.7.7.7"))
 
+        # CONSOLE-ONLY: the discovery-incomplete banner. coach 0 → would make a "Car 0"
+        # junk host if published, so it stays out of device_instances.
         if scan_incomplete:
-            banner = self._make_placeholder(
-                "A1", "INCOMPLETE",
-                f"DISCOVERY INCOMPLETE: scanned {discovered}/{leased} switches "
-                f"(DHCP leases) — re-run 'obn discover'; absences below are UNKNOWN not DOWN",
-                coach_of,
-            )
-            banner.mac = "SCAN:INCOMPLETE"
-            banner.coach_number, banner.device_number = 0, 0
-            banner.config = (f"⚠ DISCOVERY INCOMPLETE {discovered}/{leased} switches scanned "
-                             f"— re-run obn discover")
-            self.device_instances[banner.mac] = banner
+            placeholders.append(self._placeholder_row(
+                0, 0, "DISCOVERY INCOMPLETE",
+                f"scanned {discovered}/{leased} switches (DHCP leases) — re-run 'obn discover'; "
+                f"absences below are UNKNOWN not DOWN"))
 
         # APs: same coach as the switch that hosts them (unchanged intent).
         for sw in switches:
@@ -296,6 +313,8 @@ class DostoNeuReport(Report):
                 if sw.device_number == 3 and port == DostoNeuPort.E1_2:
                     nd.device_number = 4
 
+        # Console-only placeholders → side-file (NOT device_instances). NMS never sees them.
+        self._write_placeholders(placeholders)
         self.normalise_devices()
 
     # Legacy neighbour-following walk, kept verbatim as the fallback for train_types
