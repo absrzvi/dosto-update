@@ -87,6 +87,43 @@ A missing switch is more severe than a missing AP because:
 - Switches host the network. Missing one means a coach has no connectivity.
 - Likely a power issue, a dead switch, or a fundamental cabling fault — not a typical "AP not installed" issue.
 
+### Step 4b: Classify each missing switch — cold bypass vs cabling error (VDS-specific)
+
+**Do this for every switch flagged missing in Step 4.** A missing switch is NOT necessarily a cabling fault. VDS Rail Consist Switches have **cold bypass**: when a switch is powered off or failed, its backbone trunk ports (`e0-0`/`e0-1`) are relay-passed-through, so its two chain-neighbours end up LLDP-adjacent to *each other* across the dead switch's position. This is indistinguishable from "switch removed and re-cabled" **unless you check the LLDP reciprocal.** (See memory `vds-switch-cold-bypass`; mis-called twice — Fzg 137 2026-06-12, bench A1 2026-07-04 — before the reciprocal check was formalised here.)
+
+OBN's own `number_coaches` walk (`report_dosto_neu.py`) has NO expected-topology model — it follows live LLDP only, so a bypass gap silently dead-ends the walk and `normalise_devices()` **deletes every device the walk couldn't reach past the gap**. They vanish from the report entirely rather than showing as "down." This step is where *our* tooling recovers the "switch DOWN" verdict OBN can't produce (Option 3, 2026-07-04 — the engine-side fix that would make OBN itself show a DOWN switch is a separate R&D ask).
+
+**The expected-adjacency source of truth** is the "Inter-coach trunks (LLDP topology) — aliasing resolved" table in `_shared/<schema>-topology.md`. For each missing switch `X`, read off its two expected chain-neighbours `L` (via `X e0-0`) and `R` (via `X e0-1`) from that table — the switches that sit either side of `X` in the A-G-E-B (nv4) / A-C-D-E-F-B (nv6) chain.
+
+Then SSH to `L` and `R` (both must be present/leased) and read LLDP on the ports that face `X`:
+
+```bash
+SSH_OPTS="-o StrictHostKeyChecking=no -o ConnectTimeout=8 \
+  -o KexAlgorithms=+diffie-hellman-group14-sha1,diffie-hellman-group1-sha1 \
+  -o HostKeyAlgorithms=+ssh-rsa,ssh-dss -o PubkeyAuthentication=no"
+sshpass -p "Nom@dCome1n" ssh $SSH_OPTS admin@<L-ip> "show lldp neighbours"      # the port toward X
+sshpass -p "Nom@dCome1n" ssh $SSH_OPTS admin@<R-ip> "show lldp neighbours"
+# and the physical link state on those ports:
+sshpass -p "Nom@dCome1n" ssh $SSH_OPTS admin@<L-ip> "show interface <port-toward-X> details" \
+  | grep -iE "Speed|Duplex|carrier|RX errors|crc"
+```
+
+Classify from the signatures:
+
+| Signature at L and R (ports facing X) | Classification | `bypass_status` |
+|---|---|---|
+| L LLDP-sees **R** and R LLDP-sees **L** (reciprocal), both links UP, clean (0 CRC) | **Cold bypass** — X is powered off / failed in place, backbone relayed through it | `cold_bypass` |
+| One neighbour's port is **UP but shows NO LLDP peer**, ± CRC/RX errors | **Dead / half-connected** — X powered off at a chain end (no second neighbour to bypass to), or a bad patch cable to X | `dead_link` |
+| Neighbour port **DOWN / no carrier** | **Physically disconnected** — cable to X pulled or never landed | `link_down` |
+| L/R see some *other, unexpected* switch (not each other, not X) | **Genuine miscable** — Stadler wired the wrong port | `miscable` |
+
+**What this classification is for:** it starts the investigation pointed the right way — it is a **strong lead, not proof.** LLDP alone cannot fully separate a genuine cold bypass from a bypass-shaped miswire (Stadler patched L straight to R and X is actually fine on a dangling cable) — both show the same reciprocal. That's acceptable: the `cold_bypass` verdict tells the field tech **"check power/health of X first,"** and if they find X powered and healthy, the investigation pivots to the cable on its own. Either outcome is better than the device silently vanishing with no localisation. Two things sharpen the lead (use them when present, don't block on them): (a) the reciprocal must land on the **port the schema says faces X** — bypass is a relay, so L sees R on L's normal toward-X port; a peer seen on the *wrong* port leans `miscable`; (b) if X is later independently confirmed powered (a lease, ICMP on a stub, physical LED, Stadler says it's energised), then "neighbours bridged **and** X alive" flips the call to `miscable`. Phrase the Stadler instruction as a starting hypothesis ("cold-bypass signature — check power/health of X first; if X is powered, inspect the L↔X / X↔R cabling"), never as a settled fact.
+
+Notes:
+- **Two neighbours vs one.** Most switches have two chain-neighbours (an intra-coach and an inter-coach one) — a cold bypass there gives the clean **reciprocal** signature (e.g. bench A1: A3 via e0-0 intra-coach ↔ G1 via e0-1 inter-coach both see each other). A true chain **terminus** (last-coach SW3, e.g. B3 on nv4) has only ONE neighbour, so there's nothing to bypass *to* — a dead terminus shows as **link-up-no-LLDP on that single neighbour** (the `dead_link` signature), not a reciprocal. Classify a terminus as `cold_bypass` only if the single link is clean (0 CRC); `dead_link` if CRC/RX errors are present (points at the switch being crashed or the cable being bad).
+- Cold bypass covers **backbone trunks only.** Any AP hanging off the bypassed switch (its `e0-4` / `e1-2`) stays dark — expect a correlated missing-AP finding for that coach.
+- The engineer/Stadler instruction differs by class: `cold_bypass`/`dead_link` → "check **power/health** of switch X" (NOT re-cabling); `miscable`/`link_down` → "check the **cable** to X."
+
 ### Step 5: Parse AP config names and slots
 
 Lease hostnames look like `AP1-v1-00145a04...` or `AP1m-v1-00145a04...`. Extract:
@@ -245,6 +282,26 @@ Verdict: 🔴 1 device missing.
 Recommended action: P (Partial — proceed with CCU-local fixes, stop before obn update c)
 ```
 
+**With a missing switch classified via Step 4b** (real data, bench box1-t122, 2026-07-04):
+
+```
+─── Device Discovery — bench 4122 (10.179.122.1) ───
+Consist:         4-car (nv4)  coaches A, G, E, B
+
+Switches:        🔴 10/12  (A1, B3 absent)
+  Classifying absent switches (Step 4b)...
+    A1: expected between A3(e0-0) and G1(e0-0).
+        A3 e0-0 LLDP→ G1 ✓   G1 e0-0 LLDP→ A3 ✓   (reciprocal, both UP 10G, 0 CRC)
+        → COLD BYPASS — A1 powered off/failed in place. NOT a cabling fault.
+        → Action: check power/health of A1.
+    B3: expected as coach-B end switch, single neighbour B1(e0-0).
+        B1 e0-0: link UP 10G, NO LLDP peer, RX crc 2 / TX crc 3 / 60718 RX errors.
+        → DEAD LINK — B3 powered off/boot-crashed, or bad B1↔B3 cable.
+        → Action: check power/health of B3; if link stays up-no-LLDP after reboot, swap B1↔B3 cable.
+
+Verdict: 🔴 2 switches absent (1 cold_bypass, 1 dead_link) — both single-device power/health, NOT re-cabling.
+```
+
 ### `--json` mode (subagent consumption)
 
 JSON shape per [.claude/contracts/subagent-report.md](../../contracts/subagent-report.md) `skill_outputs[].raw`:
@@ -287,12 +344,35 @@ JSON shape per [.claude/contracts/subagent-report.md](../../contracts/subagent-r
 }
 ```
 
+**`switches_missing[]` entry shape** (one per missing switch, populated by Step 4b). Empty `[]` when all switches present:
+
+```json
+"switches_missing": [
+  {
+    "position": "A1",
+    "coach": "A",
+    "bypass_status": "cold_bypass",
+    "expected_neighbours": {"e0-0": "A3", "e0-1": "G1"},
+    "probe": {
+      "A3": {"port_toward_x": "e0-0", "lldp_peer": "G1", "link": "up", "speed": "10G", "crc_errors": 0},
+      "G1": {"port_toward_x": "e0-0", "lldp_peer": "A3", "link": "up", "speed": "10G", "crc_errors": 0}
+    },
+    "reciprocal": true,
+    "stadler_instruction": "Switch A1 not visible; neighbours A3 and G1 are LLDP-adjacent to each other over a clean 10G link on their expected toward-A1 ports (cold-bypass signature). Most likely A1 is powered off or failed in place — CHECK POWER/HEALTH OF A1 FIRST. If A1 is confirmed powered and healthy, this is instead a bypass-shaped miscable: inspect the A3↔A1 / A1↔G1 cabling."
+  }
+]
+```
+
+`bypass_status` is one of `cold_bypass` | `dead_link` | `link_down` | `miscable` (see Step 4b). It drives whether the instruction says "check power/health" vs "check the cable." A DOWN switch that is cold-bypassed is a *recoverable, single-device* condition — flag it, but it does not by itself mean the consist was re-cabled.
+
 `verdict` is one of:
 - `all_present` — counts match expected for both switches and APs
 - `missing_aps` — APs short, switches OK (recoverable: partial path is safe)
 - `missing_switches` — switches short (severe: localise + escalate, do not proceed)
 - `missing_both` — APs AND switches short
 - `unexpected_extras` — more devices than expected (rare; stale leases from coupled consist?)
+
+Note: `verdict` still reflects raw counts (a cold-bypassed switch is genuinely missing from the fabric, so `missing_switches` is correct). The **`bypass_status` field is what lets the engineer/orchestrator downgrade the *response*** from "escalate re-cabling to Stadler" to "check power on switch X" — without it, every missing switch reads as a cabling fault, which is the trap this step exists to close.
 
 **The "any device missing" predicate** (consumed by `dosto-commission-train` Stage 1 → Stage 2 routing): a train has missing devices iff `verdict in {"missing_aps", "missing_switches", "missing_both"}` OR `len(raw.ap_missing) > 0` OR `len(raw.switches_missing) > 0`. Belt-and-braces — check the structured arrays, not just the verdict string, in case a future verdict value gets added without an enum update. If ANY of these conditions hold, the caller MUST emit Gate 5 (`device_count_mismatch`) before any consist-wide push.
 
