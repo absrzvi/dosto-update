@@ -1,0 +1,51 @@
+---
+type: ticket
+title: TRIAG-8585 — Upstream the v8 OBN hand-patches
+description: R&D ticket to upstream the DOSTO v8 OBN hand-patches into the shared nd-obn engine. As of 2026-06-09 covers 11 code bugs (7 files) + 1 infra fix, including Bug 11 (Westermo AP firmware-activation verify).
+ticket: TRIAG-8585
+status: open
+project: dosto-neu
+tags: [ticket, triag, obn, bug-suite, bug11, upstream]
+timestamp: 2026-07-04T00:00:00Z
+---
+
+# TRIAG-8585 — Upstream the v8 OBN hand-patches
+
+- **Jira:** https://nomad-digital.atlassian.net/browse/TRIAG-8585 · **Status:** Open ·
+  **Assignee:** Julia Frick.
+- **Scope (as of 2026-06-09):** 11 OBN **code** bugs across 7 files + **1 infra** fix. Filed
+  originally with 10 code bugs; **Bug 11 (`westermo.py` AP-firmware activation verify, marker
+  `NDP-PATCH-BUG11-FW-VERIFY`)** was discovered in the 2026-06-08 9-train run and added afterward.
+
+# Numbering trap
+
+In the ticket, section B's **TFTP conntrack helper** is the *infra* fix (Puppet
+`60-allow-management`), **NOT "code bug #11"** — earlier ticket revisions mislabeled it. Code
+**Bug 11 = Westermo activation verify**.
+
+# Delivered
+
+- Comment posted documenting Bug 11; summary + description renumbered to 11.
+- Drop-in patch package `findings/TRIAG-8585-patches/` (patches `01`–`08` + README, marker map,
+  11-marker acceptance) regenerated as `findings/TRIAG-8585-patches.zip` and **attached to the
+  ticket by Abbas**. Bug 11 patch = `scripts/fix_obn_bug11_westermo_fw_verify.py` →
+  `08-westermo.py.patch`.
+
+# Caveat
+
+Bug 11 is **not yet live-validated end-to-end across a full consist** — single-AP confirmed on
+4736-109 `.236` (activated) and the `.226`-class hang correctly reported as failure. The ~10-min
+poll bound is generous on purpose (slow flash→reboot can exceed 5 min). Once R&D ships this,
+`dosto-obn-patches` flips from **apply → verify**.
+
+# Related
+
+- [Nomad Connect / OBN — bug suite](/.kb/components/nomad-connect-obn/bug-suite.md)
+- [4736-119 (Fzg 147) — OBN OOM event](/.kb/fleet/4736-119.md)
+- [RD-12434 — engine-key change](RD-12434-obn-engine-key.md)
+- [Tickets index](index.md)
+
+# Citations
+
+[1] Memory `project_triag8585_obn_bug11_upstream`.
+[2] findings/TRIAG-8585-patches/ + findings/TRIAG-8585-patches.zip.

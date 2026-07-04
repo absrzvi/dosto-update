@@ -1,0 +1,24 @@
+---
+type: index
+title: Tickets — R&D / TRIAG / OEBB / SA
+description: Jira tickets tracked against the DOSTO NEU project, with status and linked evidence.
+project: dosto-neu
+tags: [tickets, jira, index]
+timestamp: 2026-07-04T00:00:00Z
+---
+
+# Tickets
+
+| Ticket | Title | Status | Record |
+|---|---|---|---|
+| TRIAG-8585 | Upstream the v8 OBN hand-patches (11 code bugs + 1 infra) | Open | [TRIAG-8585](TRIAG-8585-obn-bug11.md) |
+| RD-12434 | Upstream v8 OBN hand-patches (natural home for OBN engine-key change) | To Do | [RD-12434](RD-12434-obn-engine-key.md) |
+| SA-2444 | OEBB Dosto NEU migration complete — GitLab clean-up + mar5 backends | To Do | [SA-2444](SA-2444-mar5-id-migration.md) |
+| OEBB-251 | 2-coach bench (nv2) enablement + v4 config push | In progress | [OEBB-251](OEBB-251-bench-enablement.md) |
+| TRIAG-8586 | nv2 R&D-access-blocked items (engine patch + new template repo) | Open | see [OEBB-251](OEBB-251-bench-enablement.md) |
+
+# Related
+
+- [Fleet index](/.kb/fleet/index.md)
+- [Nomad Connect / OBN — bug suite](/.kb/components/nomad-connect-obn/bug-suite.md)
+- [Root KB index](/.kb/index.md)

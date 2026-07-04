@@ -1,0 +1,32 @@
+---
+type: deliverable-ref
+title: Phase Plan Q2 2026 — DostoNeu_Phase_plan_Q2_2026.xlsx
+description: Q2 2026 phase/schedule plan for the DOSTO NEU rollout. Companion to the v9 + fzg_id + 4734-migration task list; the execution of that plan is gated on SA-2444.
+resource: /DostoNeu_Phase_plan_Q2_2026.xlsx
+project: dosto-neu
+tags: [deliverable, phase-plan, schedule, q2-2026, migration]
+timestamp: 2026-07-04T00:00:00Z
+---
+
+# Phase Plan Q2 2026
+
+**Resource:** `/DostoNeu_Phase_plan_Q2_2026.xlsx` (do not deep-parse the binary here).
+
+The Q2 2026 phase/schedule plan for the DOSTO NEU rollout. It sits alongside the v9 + fzg_id +
+4734-migration workstreams whose master task list is
+`findings/coupling_test_4736-110_119_2026-06-12/TASKLIST_v9_fzg_migration_2026-06-30.md` (5
+workstreams: A engine decision / B template push / C Puppet / D 4734 migration / E deploy+verify).
+
+Execution of the migration portion is **gated on SA-2444** (mar5 backends + GitLab normalization);
+the 6-car fzg_id workstream can start sooner because its ID-51 backend is already serving.
+
+# Related
+
+- [SA-2444 — mar5 ID migration (gate)](/.kb/tickets/SA-2444-mar5-id-migration.md)
+- [Project Status (master)](project-status.md)
+- [Deliverables index](index.md)
+
+# Citations
+
+[1] Memory `project_sa2444_gate_and_v9_migration_tasklist`.
+[2] PROJECT-STATUS.md — workstream list.

@@ -1,0 +1,65 @@
+---
+type: ticket
+title: OEBB-251 — 2-coach bench (nv2) enablement + v4 config push
+description: Enable the OEBB-251 2-coach workshop bench (NMS train 2123) for OBN discovery so the NMS consist diagram labels coach A, and push the v4 switch configs. Blocked R&D items tracked as TRIAG-8586.
+ticket: OEBB-251
+status: in-progress
+project: dosto-neu
+tags: [ticket, oebb, bench, nv2, obn, config-push, nms]
+timestamp: 2026-07-04T00:00:00Z
+---
+
+# OEBB-251 — 2-coach bench enablement
+
+The OEBB-251 **2-coach bench** = NMS train **2123 / `OEBB-Bench-2C`** (type `NV2 - Bench`,
+project 50), CCU `developer@10.179.123.1` (`box1-t123`). 6 switches `2t-{A1,A2,A3,B1,B2,B3}-v3-251`
++ 1 AP (A1.e0-4, down). This is a **workshop bench, skipped in fleet sweeps.**
+
+# Two workstreams
+
+## 1. v4 config push (manual TFTP/SNMP bypass)
+
+Pushing the 6 `OEBB-251/2t-bench-*-v4.cfg` configs via the manual OBN bypass. Progress as of
+2026-06-01 (leaf→mid→head order): **A3, B3, A2 done**; **B2 reboot triggered but unconfirmed**
+(CCU dropped); **A1, B1 pending head-of-train gate.**
+
+- **Syntax fix (confirmed):** every original `.cfg` had `spanning-tree edge on` inside the SVI
+  stanzas (`interface vlan1` + `interface vlan100`) — invalid on an SVI. The `.patched/` files
+  delete those lines. All 6 patched.
+- **Config-update trigger is `3`, NOT `2`** (`vdsrail.py:108`); value `2` gives `inconsistentValue`.
+  Firmware trigger + reboot value are also `3`.
+- **CCU-facing switch is B2 (its e0-4)** on this bench wiring — the head-of-train "isolate the CCU"
+  risk is whichever switch carries CCU MAC `00:21:21:21:10:01`. Re-verify live before the A1/B1 gate.
+- **Bench has genuinely NO APs** (zero `00:14:5a` radios on vlan100); e0-4 is not PoE here — an AP
+  would need external power.
+
+## 2. nv2 OBN enablement (why coach A shows "N/A" in NMS)
+
+- **Root cause:** OBN has **no nv2 support**. `report_dosto_neu.py number_coaches()` seeds from
+  `ccu1_coach_map`/`max_coaches` dicts with **no `nv2` key**; `backbone-discovery.yaml` says
+  `train_type: nv4`. So OBN never produces a valid 2-coach consist → NMS skeleton stuck at 8 hosts
+  all `R2`/coach 2 at placeholder `7.7.7.7`.
+- **Decided 2026-06-04:** coach A=1, B=2; CCU in coach A ⇒ `ccu1_coach=1`, `max_coach=2`.
+- **CCU uplink is bonded** (lan0+lan1=bond0); OBN seeds coach by slave name. Bench is mis-cabled
+  (lan0 DOWN, lan1→A2.e0-1). **Re-cable target (approved): lan0→A1, lan1→A3.**
+- **Built 2026-06-04:** engine patch `scripts/fix_obn_nv2_report_dosto_neu.py` (Option A: nv2 dict +
+  e0-1 inter-coach hop + bug-10 guard); nv2 template package at `OEBB-251/nv2-template-src/`.
+
+# Blocked items → TRIAG-8586
+
+**TRIAG-8586** (filed 2026-06-04, Julia Frick) tracks the 2 R&D-access-blocked pieces: the engine
+patch into `onboard/obn`, and creating the `onboard/nd-obn-template-dostoneu-nv2` repo. The hiera
+node flip + physical re-cable are Abbas's to do (not blocked).
+
+# Related
+
+- [Nomad Connect / OBN — bug suite](/.kb/components/nomad-connect-obn/bug-suite.md)
+- [Nomad Connect / OBN — discover→report→update](/.kb/components/nomad-connect-obn/discover-report-update.md)
+- [Zabbix / NMS monitoring model](/.kb/topics/zabbix-nms-model.md)
+- [Tickets index](index.md)
+
+# Citations
+
+[1] Memory `project_nv2_bench_obn_enablement`.
+[2] Memory `project_oebb251_bench_v4_push` (resume state 2026-06-01).
+[3] OEBB-251/nv2-bench-obn-enablement-plan.md; findings/RD_tickets_nv2_bench_enablement_2026-06-04.md.

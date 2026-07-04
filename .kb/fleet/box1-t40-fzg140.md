@@ -1,0 +1,62 @@
+---
+type: train-record
+title: 4736-112 (Fzg 140) — box1-t40 misimage
+description: box1-t40 = CCU 10.179.40.1 = Fzg 140 (4736-112). Was misimaged toward Fzg 168 by the broken 128+train_id formula; fixed 2026-06-09 in one chroot one-shot + reboot. Commissioning not yet started.
+train: 4736-112
+fzg: 140
+ccu: box1-t40 / 10.179.40.1
+project: dosto-neu
+tags: [fleet, 4736, 6-car, misimage, chroot, unknown]
+maturity: field-validated
+timestamp: 2026-07-04T00:00:00Z
+---
+
+# 4736-112 — Fzg 140 (box1-t40)
+
+- **Series / layout:** 4736 (DOSTO NEU 6-car).
+- **CCU:** `box1-t40`, `10.179.40.1`. Confirmed by hostname + engineer 2026-06-09.
+- **Identity note:** the old `10.179.12.1` attribution for Fzg 140 was **WRONG** — that IP is
+  Fzg 147 / 4736-119 ([4736-119](4736-119.md)). Don't re-litigate.
+- **Fzg 140 is even** → vlan7 `172.19.198.2/17`.
+
+# Current state (summary)
+
+**⚪ UNKNOWN — train_id + vlan7 fixed; commissioning not yet started.** The misimage is corrected
+and the CCU is safe for `obn update c all` (renders `nv6-X-v8-140`). OBN patches, switch/AP
+firmware+config, device discovery, and L2 health have **not** been run.
+
+# The misimage (fixed 2026-06-09)
+
+- **One bug, two symptoms:** the broken `{%- set train_id = 128 + train_id -%}` formula in all 18
+  nv6 templates rendered `128 + 40 = 168`, and vlan7 had been set to `172.19.212.2/17` (the .168
+  encoding) to match. The CCU was drifting toward a phantom **Fzg 168**.
+- **Fix:** one non-interactive chroot one-shot + `safe_reboot`. Templates hardcoded to
+  `{%- set train_id = 140 -%}` (Form 1); vlan7 nmconnection → `172.19.198.2/17`. Verified live
+  post-reboot: renders `nv6-X-v8-140` ✅, vlan7 `.198.2` ✅, FW peer `172.19.198.1` ARP REACHABLE +
+  ICMP 100% loss = Stadler FW **commissioned** ✅.
+
+# Known quirks
+
+- **Chroot heredoc technique.** `nd-systemupdate.sh.dont shell` runs `chroot $MOUNT_DIR bash` with
+  **no `-c`**, so it reads commands from stdin. A heredoc piped into
+  `ssh … 'sudo nd-systemupdate.sh.dont shell' <<EOF … EOF` runs edits inside the chroot and
+  promotes on `EOF` — a way to drive the otherwise-interactive chroot non-interactively inside the
+  ~90s SSH window. **Verify the promoted run1/release snapshot content BEFORE `safe_reboot`.**
+- After any snapshot promote, re-check OBN patch state with `dosto-obn-patches --check` — a promote
+  can shift it.
+
+# Proven dead ends
+
+- Interactive paste into the chroot shell can silently no-op; feed edits via heredoc-into-stdin,
+  not paste (see also 4736-109/117 vlan7 fixes where paste failed twice).
+
+# Related
+
+- [4736-114 misimage + collision](4736-114.md) — same misimage family, but a live IP collision
+- [Fzg-ID two-namespace problem](/.kb/topics/fzg-id-two-namespaces.md)
+- [Fleet index](index.md) · live row in [fleet-status.md](/fleet-status.md)
+
+# Citations
+
+[1] Memory `project_box1t40_fzg140_misimage` (fixed 2026-06-09).
+[2] fleet-status.md — 4736-112 row (2026-06-09 AR).
