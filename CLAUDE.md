@@ -564,6 +564,8 @@ The project is organised into the following subfolders. Anything not listed here
 - `check_cabling.py`, `build_cable_tracker.py` — cabling validation and tracker generation.
 - `gen_report_108.py`, `generate_health_check_report.js`, `generate_report.js`, `generate_report_109.js` — report generators.
 - `push_ap_config.sh` / `push_all_aps.sh` / `push_remaining_aps.sh` / `apply_ap_configs.sh` — pushing Nomad config to factory-default APs via LuCI HTTP when OBN SNMP fails.
+- `zbx_reconcile.py` — fleet Zabbix interface-IP reconciler (DHCP drift). Joins live DHCP lease → Zabbix host by **MAC**. Explicit per-train enrolment; dry-run default, `--commit` to write. Fine for real trains (rare hardware swaps).
+- `zbx_reconcile_bench_4122.py` — **bench** Zabbix IP reconciler, **POSITION-keyed** (swap-safe: joins lease-hostname `4t-A3` → Zabbix `R1_SW3`, not MAC — bench switches get replaced). Switches only; skips no-lease positions (bypassed/absent). Dry-run default, `--commit` + then restart the CCU's `zabbix-proxy`. See memory `bench-4122-nms-two-layer-fix`.
 - `dbc12` — utility script.
 
 ### `findings/` — raw L2 health-check JSON output
