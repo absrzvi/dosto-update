@@ -181,6 +181,17 @@ Two mistakes were made and corrected in sequence:
 
 **MR rule:** a bypassed/absent switch at a *known chain position* MUST appear in the NMS report (valid slot, 7.7.7.7 ip, DOWN status) so the diagram renders it. Only rows with no valid position (banners, unplaceable devices) stay console-only. Productionize with a real `status` field rather than the `DOWN:`/`7.7.7.7` conventions, and a NMS-report flag that marks a device "down/placeholder" so NMS colours it without treating it as a live host.
 
+## 7e. Fleet-sharing of the changed files (checked 2026-07-04)
+
+| File | Package | Shared? | Notes for the MR |
+|---|---|---|---|
+| `lib/report/report_dosto_neu.py` | nd-obn | **DOSTO-only** | One of 14 per-fleet report classes (ace, ccjpa_wd1/wd2, daisy_cybox, dani, dsb, luna, queensland, tgv, tgv2020, via, generic…). Each fleet selects its own via `report_module` config. Editing this cannot affect other fleets. The `normalise_devices`/`create_nms_device_nodes` behaviour is scoped by OVERRIDE in DostoNeuReport — base `report.py` untouched. |
+| `backbone_validate.py` | nd-obn | **SHARED — every fleet's `obn validate`** | The side-file merge is GUARDED: `if cfg.get("report_module") != "DostoNeuReport": return devices`. Proven no-op for non-DOSTO (unit-tested: DOSTO merges the side-file, Ace/others skip it even when the file exists). Guard uses the same idiom as `backbone_discovery.py:24`. Reviewers should still scrutinise it as a shared-file change. |
+| `pyproject.toml` (version) | nd-obn | metadata | own commit, per convention |
+| `lib/report/device.py` (IF adding a real `status` field — clean route) | nd-obn | **SHARED base Device (all report types)** | additive field is low-risk but touches the shared base class; keep default so existing code is unaffected |
+
+Rule: the fleet MR should keep every shared-file change **provably inert for non-DOSTO** (guard on `report_module`/`train_type`), not merely incidentally inert.
+
 ## 8. Scope / risk
 
 - `report_dosto_neu.py` is shared-engine, CI-gated (653-test suite). This is a real algorithm change, not a hand-patch — must go through the normal MR + `make tag` release path, not a bench chroot.

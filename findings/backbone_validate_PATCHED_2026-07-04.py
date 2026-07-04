@@ -127,14 +127,23 @@ class Table:
         return self._create_overview(devices, "MEDIA")
 
 
+# Side-file of console-only placeholder rows, written by DostoNeuReport.number_coaches.
+# backbone_validate is SHARED by every fleet's `obn validate`; the merge below is
+# therefore GUARDED to the DostoNeu report type so this file's behaviour is provably
+# unchanged for all other fleets (ace/ccjpa/tgv/luna/queensland/dsb/via/dani/…).
+_DOSTO_PLACEHOLDER_FILE = "/tmp/discovery.placeholders.json"
+
+
 def load_devices(cfg) -> list:
     """Load discovery.prev.json into a list of devices.
 
-    NDP-BYPASS-FIX (2026-07-04): merge in console-only placeholder rows (DOWN /
-    UNKNOWN / UNPLACED / INCOMPLETE-banner) from the side-file written by
+    NDP-BYPASS-FIX (2026-07-04): for DostoNeu ONLY, merge in console-only placeholder
+    rows (DOWN / UNKNOWN / UNPLACED / INCOMPLETE-banner) from the side-file written by
     DostoNeuReport.number_coaches. These rows are DELIBERATELY absent from the report
     snapshot and the NMS/MQTT message (they must not create Zabbix hosts) — they exist
-    only to be shown here in `obn validate`. Absence of the side-file is normal."""
+    only to be shown here in `obn validate`. For every other fleet this is a no-op:
+    the report_module guard skips the merge entirely (and the side-file wouldn't exist
+    anyway, since only DostoNeuReport writes it)."""
     if not os.path.exists(cfg.report_file):
         logger.critical("no OBN report - exiting")
         sys.exit(1)
@@ -142,13 +151,17 @@ def load_devices(cfg) -> list:
     with open(cfg.report_file) as fp:
         devices = json.load(fp)
 
-    placeholder_file = "/tmp/discovery.placeholders.json"
+    # GUARD: DostoNeu only. Non-DOSTO fleets return here with identical behaviour to
+    # before this change.
+    if cfg.get("report_module") != "DostoNeuReport":
+        return devices
+
     try:
-        if os.path.exists(placeholder_file):
-            with open(placeholder_file) as fp:
+        if os.path.exists(_DOSTO_PLACEHOLDER_FILE):
+            with open(_DOSTO_PLACEHOLDER_FILE) as fp:
                 devices = devices + json.load(fp)
     except (OSError, ValueError) as exc:
-        logger.warning("could not merge placeholder side-file: %s", exc)
+        logger.warning("could not merge DostoNeu placeholder side-file: %s", exc)
 
     return devices
 
