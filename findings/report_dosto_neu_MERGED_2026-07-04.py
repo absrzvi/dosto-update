@@ -224,56 +224,23 @@ class DostoNeuReport(Report):
                 f"discovered {len(switches)} switches > {len(chain)} chain slots for "
                 f"{self.train_type} — single-consist numbering only; second consist not numbered"))
 
-        # ── Validate each switch's hostname claim against expected adjacency ──────────
-        claims = {}
-        unplaced = []  # (switch, reason)
-        for sw in switches:
-            cp = _claimed_pos(sw, coach_of)
-            if cp is None:
-                unplaced.append((sw, "no/invalid position in hostname"))
-                continue
-            live = live_neigh_positions(sw)
-            stray = live - acceptable(cp)
-            if not live:
-                claims.setdefault(cp, []).append(sw)   # isolated: tentatively trust
-            elif not stray:
-                claims.setdefault(cp, []).append(sw)
-            else:
-                self.logger.warning(
-                    "switch %s claims %s but neighbours %s inconsistent (misimage/miswire?)",
-                    sw.mac, cp, sorted(live))
-                unplaced.append((sw, f"hostname claims {cp}, neighbours {sorted(live)} inconsistent"))
-
-        anchored = set()
-        anchored_dev = {}
-        for pos, claimants in claims.items():
-            if len(claimants) == 1:
-                sw = claimants[0]
-                sw.coach_number, sw.device_number = _cd_of(pos, coach_of)
-                sw.status = "UP"
-                anchored.add(pos)
-                anchored_dev[pos] = sw
-            else:
-                # duplicate claim on one position = at least one misimage; can't trust
-                # either, both UNPLACED (operator investigates).
-                for sw in claimants:
-                    unplaced.append((sw, f"duplicate claim on {pos} ({len(claimants)} switches) — misimage?"))
-
-        # ── FEATURE A: off-expected-wiring recovery ──────────────────────────────────
-        # An anchored switch whose EXPECTED inter-coach edge is down but which is still
-        # reachable via a redundant SW-SW LLDP path is a single-cable-fault (switch fine).
-        # It is already placed above (anchored by validated hostname); here we just FLAG
-        # it off-expected-wiring so the fault is surfaced, not hidden, and so it is never
-        # mistaken for healthy. Build the undirected SW-SW graph and BFS from the CCU-
-        # reachable set; an anchored switch NOT on its expected edge but IN the reachable
-        # set is off-expected-wiring.
+        # ── Redundant-reachability graph (feature A): the SW-SW LLDP graph,
+        #    BFS-reachable from the switches the CCU is directly cabled to. A switch IN
+        #    this set is reachable (possibly via an alternate path); a switch NOT in it is
+        #    genuinely isolated. Built BEFORE claim validation so the miswire-vs-
+        #    off-expected-wiring decision can use it.
+        #    RECIPROCAL edges only: an edge counts only if BOTH ends LLDP-see each other.
+        #    A one-directional claim (A says it sees B, B doesn't see A) is a spoofed /
+        #    stale / miswired peer and must NOT confer reachability — otherwise a misimaged
+        #    switch claiming a bogus neighbour gets "recovered" for free. ─────────────────
+        neigh_macs = {_mac(sw.mac): {_mac(nd.mac) for nd in sw_neighbours(sw)} for sw in switches}
         graph = {}
-        for sw in switches:
-            graph.setdefault(_mac(sw.mac), set())
-            for nd in sw_neighbours(sw):
-                graph[_mac(sw.mac)].add(_mac(nd.mac))
-                graph.setdefault(_mac(nd.mac), set()).add(_mac(sw.mac))
-        # seed reachability from the BOX's directly-cabled switches (its SW neighbours)
+        for sm, peers in neigh_macs.items():
+            graph.setdefault(sm, set())
+            for pm in peers:
+                if sm in neigh_macs.get(pm, ()):          # reciprocal only
+                    graph[sm].add(pm)
+                    graph.setdefault(pm, set()).add(sm)
         seed = set()
         for d in self.device_instances.values():
             if d.type == "BOX":
@@ -288,19 +255,58 @@ class DostoNeuReport(Report):
                     reach.add(y)
                     frontier.append(y)
 
-        def on_expected_edge(sw, pos):
-            """True if sw is LLDP-adjacent to at least one of pos's EXPECTED neighbours."""
+        # ── Validate each switch's hostname claim against expected adjacency ──────────
+        # Three outcomes per switch:
+        #   on-expected-edge (or isolated)  -> claim it normally
+        #   stray neighbours BUT reachable  -> off-expected-wiring candidate (feature A):
+        #                                      claim it, but mark for the flag. This is a
+        #                                      single-broken-cable case — switch is fine.
+        #   stray neighbours AND unreachable / duplicate -> UNPLACED (miswire/misimage)
+        claims = {}
+        off_expected = set()   # positions claimed via the off-expected-wiring path
+        unplaced = []          # (switch, reason)
+        for sw in switches:
+            cp = _claimed_pos(sw, coach_of)
+            if cp is None:
+                unplaced.append((sw, "no/invalid position in hostname"))
+                continue
             live = live_neigh_positions(sw)
-            return bool(live & set(adj[pos].values()))
+            stray = live - acceptable(cp)
+            if not live or not stray:
+                claims.setdefault(cp, []).append(sw)                 # normal claim
+            elif _mac(sw.mac) in reach:
+                # off its expected edge, but reachable via a redundant path AND its
+                # hostname claim is a valid position → treat as off-expected-wiring
+                # (feature A), NOT miswire. Still subject to the duplicate check below.
+                claims.setdefault(cp, []).append(sw)
+                off_expected.add(cp)
+            else:
+                # off expected edge AND not reachable any other way, OR genuinely
+                # contradictory → miswire/misimage, UNPLACED (surface, don't mis-number).
+                self.logger.warning(
+                    "switch %s claims %s but neighbours %s inconsistent + not redundantly reachable (miswire?)",
+                    sw.mac, cp, sorted(live))
+                unplaced.append((sw, f"hostname claims {cp}, neighbours {sorted(live)} inconsistent (miswire?)"))
 
-        for pos, sw in anchored_dev.items():
-            if _mac(sw.mac) in reach and not on_expected_edge(sw, pos):
-                sw.status = "OFF_EXPECTED_WIRING"
-                placeholders.append(self._placeholder_row(
-                    sw.coach_number, sw.device_number, "OFF-EXPECTED-WIRING",
-                    f"{pos}: reachable via redundant path, not on expected edge "
-                    f"(broken inter-coach cable?) — verify wiring",
-                    ip=sw.ip or "0.0.0.0"))
+        anchored = set()
+        anchored_dev = {}
+        for pos, claimants in claims.items():
+            if len(claimants) == 1:
+                sw = claimants[0]
+                sw.coach_number, sw.device_number = _cd_of(pos, coach_of)
+                sw.status = "OFF_EXPECTED_WIRING" if pos in off_expected else "UP"
+                anchored.add(pos)
+                anchored_dev[pos] = sw
+                if pos in off_expected:
+                    placeholders.append(self._placeholder_row(
+                        sw.coach_number, sw.device_number, "OFF-EXPECTED-WIRING",
+                        f"{pos}: reachable via redundant path, not on expected edge "
+                        f"(broken inter-coach cable?) — verify wiring", ip=sw.ip or "0.0.0.0"))
+            else:
+                # duplicate claim on one position = at least one misimage; can't trust
+                # either, both UNPLACED (operator investigates).
+                for sw in claimants:
+                    unplaced.append((sw, f"duplicate claim on {pos} ({len(claimants)} switches) — misimage?"))
 
         # ── Emit UNPLACED real switches as CONSOLE-ONLY rows (coach 90 = sorts last;
         #    never in device_instances → never an NMS junk host) ───────────────────────
@@ -338,7 +344,7 @@ class DostoNeuReport(Report):
                 status, note = "UNKNOWN", "not seen this scan (discovery incomplete)"
             elif bypass_reciprocal(pos):
                 Ls = ",".join(adj[pos].values())
-                status, note = "DOWN", f"cold-bypass confirmed (reciprocal via {Ls}) — verify power"
+                status, note = "DOWN", f"cold-bypass confirmed (reciprocal via {Ls}) - verify power"
             else:
                 status, note = "UNKNOWN", "not discovered; no bypass evidence (verify power/SNMP)"
             coach, dev = _cd_of(pos, coach_of)

@@ -83,6 +83,32 @@ Existing real fixtures to reuse: `findings/fixture_bench_box1-t122_discovery_202
 4. `make tag` → CI builds+publishes the .deb. Do NOT hand-build the engine.
 5. Deploy to trains via the normal Puppet pin → `nd-update-puppetenv.sh` → CCU `ndsu up` + reboot (nd-obn is `/usr/share/obn/**`, package-owned, so it lands on upgrade).
 
+## ✅ Merged code written + harness-verified (2026-07-04)
+
+`report_dosto_neu_MERGED_2026-07-04.py` implements B + A + the guards. Verified against
+the real bench fixture via `coach_numbering_harness_2026-07-04.py` (stubs lib.report,
+runs offline) — **7/7 checks pass**, one per your three conditions:
+
+| Condition | Test | Result |
+|---|---|---|
+| switch down / bypass | bench A1/B3 absent | 10 discovered switches retained + numbered; A1 → DOWN (reciprocal-proven); B3 → UNKNOWN (terminus, no false DOWN) |
+| alternate path up, primary down | G2 severed from both expected edges, reciprocal redundant edge to E2 | G2 PLACED at slot 2/2 + `OFF_EXPECTED_WIRING` (not dropped) |
+| genuine miswire | G2 sees only a one-directional/unreachable bogus peer | G2 → UNPLACED (surfaced, not mis-numbered, not DOWN) |
+
+**Two real bugs the harness forced out (not just test noise):**
+1. First cut put the off-expected-wiring flag *after* anchoring, but a switch with stray
+   neighbours never got anchored → feature A silently didn't fire. Fixed: the claim loop
+   now routes stray-but-reachable switches to a place-and-flag path, stray-and-unreachable
+   to UNPLACED.
+2. The reachability graph counted one-directional LLDP claims as edges → a misimaged switch
+   claiming a bogus neighbour got "recovered" for free. Fixed: **reciprocal edges only**
+   (both ends must LLDP-see each other) — matches the DOWN reciprocal test. This is what
+   makes the miswire vs off-expected-wiring distinction correct.
+
+Caveat: only nv4 is exercised (the only `_EXPECTED` model in the prototype). nv6/fv5/fv6
+take the legacy walk until their chains are added — no regression, but their bypass/A
+behaviour is NOT yet covered. Productionising must add those models + fixtures.
+
 ## What is NOT in this MR (deferred, documented)
 - CCUContext / CCU2 anchor (feature C) — current hardcode is correct; per-type config fix has a per-hostname-key trap. Separate engine MR when DOSTO gets a 2nd CCU.
 - fv5 `box1_coach_number:3` config value — latent, masked at NMS today; folds into the deferred C work.
