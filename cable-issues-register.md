@@ -34,6 +34,7 @@ This register uses **generic switch IDs only** (A1, A2, A3, B1…B3, C1…C3, D1
 | 10 | 4734-109  | A1 e0-0/e0-2 ↔ A3  | cable swap (coupler) | ✅ RESOLVED (A1 switch replaced + re-cabled, 2026-06-17) |
 | 11 | 4736-114  | 14× e2-* (FIS displays + 1 energy meter, all coaches) | end-device not connected | 🔴 OPEN |
 | 12 | 4736-120  | A2 e1-9 (redundant Sprechstelle) | PoE port fault | 🔴 OPEN |
+| 13 | 4736-109  | E2 (whole switch)  | cold bypass (power/health, NOT cabling) | 🔴 OPEN (⚠️ not in Zabbix) |
 
 ---
 
@@ -311,6 +312,22 @@ VLAN 3 (FIS) is a Stadler-side device VLAN with no CCU visibility, so whether ea
 **Context:** the tester's reboot of A2 restored ZFR reachability for *almost all* screens — but e1-9 stayed faulted, confirming e1-9 is independent of the screen/ZFR-path symptom (the reboot cleared a transient forwarding condition on the inter-coach path; the A3↔Stadler-FW trunk and all inter-coach trunks verify clean post-recovery). e1-9 is the redundant Sprechstelle leg, not a ZFR uplink.
 
 **Required action (Stadler):** inspect the e1-9 cable/connector and the Sprechstelle device end; reseat or replace as needed. Re-verify with `show poe` (expect `on/on`, non-zero W, valid class) and `show interface e1-9 details` (expect non-zero RX). If the device end and cable are proven good and the port still faults, the switch's PoE PHY on e1-9 is suspect → switch repair/replacement.
+
+**Status:** 🔴 OPEN
+
+---
+
+### #13 — 4736-109 (6-car) — E2 cold-bypassed (whole switch absent from fabric + monitoring)
+
+**What we see:** E2 has no DHCP lease and no vlan100 management IP — invisible to the CCU sweep and to NMS/Zabbix. Its two chain-neighbours (E3 via E2 e0-0 intra-coach, D1 via E2 e0-1 inter-coach) are LLDP-adjacent to each other across E2's slot: D1 e0-1 LLDP→ E3, both links UP 10G, 0 CRC, carrier-false 0.
+
+**Diagnosis:** **cold bypass** — E2 is powered off or failed in place, and its backbone trunks relay straight through (the VDS cold-bypass behaviour). This is the reciprocal, clean-link signature. It is **NOT a cabling fault** and NOT re-cabling: LLDP alone can't fully separate a true cold bypass from a bypass-shaped miswire, but the clean reciprocal on the expected toward-E2 ports makes power/health of E2 the first thing to check.
+
+**Required action (Stadler):** check **power/health of switch E2** (coach E, middle switch) first. If E2 is confirmed powered and healthy, pivot to inspecting the E3↔E2 / E2↔D1 cabling. Once E2 is back, verify it leases a vlan100 IP and appears in `dhcp-lease-list`.
+
+**Zabbix coverage (2026-07-04):** ⚠️ **monitoring blind spot** — because E2 never entered the OBN report (coach-numbering walk drops the bypassed position), NMS never provisioned a host for it, so **nothing can alarm on E2 being down.** The dashboard reads 16/18 as green. This is the field confirmation of the OBN coach-numbering false-negative — see [findings/RD_obn_coach_numbering_bypass_downstate_2026-07-04.md](findings/RD_obn_coach_numbering_bypass_downstate_2026-07-04.md). Engine fix (surface bypassed switches as DOWN rows so NMS can alarm) is the durable close.
+
+**Note:** C3 on the same train is ALSO absent from monitoring (no lease) but is a **different** root cause — C3 is present, healthy, and forwarding heavily (C2 e0-0→C3 UP 10G, RX 9.9GB/TX 280GB, 0 CRC); it simply never got a mgmt IP. That is a Nomad-side DHCP/mgmt-VLAN fault on C3, not a cabling fault, so it is tracked in the fleet-journal, not here.
 
 **Status:** 🔴 OPEN
 

@@ -277,7 +277,77 @@ Same investigation as Fzg 19 (see entry above). AP→switch-port mapping on Fzg 
 
 ## Bench — box1-t122 @ 10.179.122.1 (4122, nv4 A-G-E-B)
 
-### 2026-07-04 — AR — Attempted manual 7.4.8 switch-firmware push; BLOCKED by consist TTCMP-critical interlock (fabric-level, not per-switch)
+### 2026-07-05 (session 2) — AR — Loop-guard VALIDATED live; islanded A/G arm recovery attempted (blocked, physical); RSTP costs normalised; second-uplink + B3 findings
+
+Follow-on to the flash session below. Goal: recover the islanded A/G arm (A3/A2/G3/G2/E1) and verify loop-guard works. Loop-guard confirmed working; arm recovery is blocked by physical/wedged-state issues (documented for a bench visit).
+
+**Loop-guard force-block VALIDATED live.** Re-enabled **B1 e0-1** (reconnecting the flashed side to the unflashed 7.4.2 arm via E1) — a path that *before* the upgrade would have re-ignited the storm. Result: **zero storm.** Multicast +6/6s, all 5 flashed switches stayed at load ~0.1, no KON/coldStart. Every backbone port stayed `FWD` with the `loopGuardBlock` capability flag (armed, not tripped — verified none in DISCARDING). This is the durable fix proven under real conditions: a reconnected welded-ring path is now held safe instead of storming. See [[project_vds_loopguard_forceblock]].
+
+**The islanded A/G arm: alive at L2, management-DEAD, cannot be recovered in-band.** The 5 arm switches (A3/A2/G3/G2/E1) are **powered + forwarding** (their MACs are learned on B1 e0-1; A3 `52:20` and E1-neighbours actively broadcast) but have **no vlan100 IP** → no SSH/SNMP/ICMP → **no way to send `sysadmin reboot`**. Why they differ from the B/E arm (which recovered): the B/E switches **kept their DHCP lease** (renewing from a configured IP → unicast DHCP works) so I could SSH in and reboot them; the A/G arm **lost its lease during the storm** and dropped to IP-less DHCP-INIT. Catch-22: no IP ⇒ no management ⇒ can't reboot ⇒ can't clear the wedge ⇒ can't get an IP.
+
+**DHCP INIT deadlock + the `always-broadcast` fix.** The arm switches send DHCPDISCOVER with **`Flags [none]`** (broadcast flag OFF) while at 0.0.0.0 → dhcpd replies **unicast to the offered IP**, which an IP-less client can't receive → DISCOVER→OFFER→DISCOVER forever, never ACKs. Fix applied on the CCU: `always-broadcast on;` in the vlan100 subnet stanza of **`/tmp/dhcp/networks/management.conf`** (runtime-generated file; backup `.bak-prebroadcast`; `sudo systemctl restart isc-dhcp-server`). Verified dhcpd now broadcasts replies (`10.179.122.129.67 > 255.255.255.255.68`). **BUT the arm still didn't complete** — the broadcast OFFER egresses B1→E1 (confirmed B1 e0-1 TX-broadcasts climbing) but doesn't propagate into the deep arm; it dies at/inside the wedged **E1**. So `always-broadcast` is necessary-but-not-sufficient; it will help the moment the arm gets a management foothold. (`/tmp/dhcp/*` is regenerated on CCU reboot → the edit is NOT persistent; re-apply if needed. Same INIT/broadcast-flag family as [[project_dhcp_pingcheck_abandon_cascade]].)
+
+**Both arm entry-points are hard-blocked — ruled out loop-guard, ruled in physical/wedged:**
+1. **G1 e0-0 → A3 (direct, via A1 cold-bypass):** re-enabled G1 e0-0, link **never comes up** (RX=0 ever, no LLDP). Cause = **A3's own e0-0 is admin-disabled** — *our* storm-fix cut (`no configure interface e0-0 enable` on A3), which we can't undo because A3 is unreachable. (Corrects an earlier mis-read that blamed the A1 bypass hardware — earlier in the day G1 *did* see A3 through a working A1 bypass, so the bypass passes; the block is our A3 port-disable.)
+2. **B1 e0-1 → E1 (long path):** forwards fine to E1, but E1 is management-wedged and doesn't complete DHCP into the deep arm.
+- **NOT loop-guard:** every reachable backbone port is `FWD` (armed, not tripped) — verified on all 5 switches. Loop-guard is not dropping the return path.
+- **NOT a disable-able reachable port:** the reachable fabric is a single **linear chain** (CCU–G1–E2–E3–B2–[B3✗]–B1–E1–arm; ring open at our cuts + the two dead bypasses). Every working switch is load-bearing for the arm's path, so "disable a working switch to fix asymmetry" only re-isolates the arm.
+- **NOT fixable by rebooting a neighbour (tried, negative):** rebooted **B1** to bounce the B1↔E1 link, on the theory the link-drop might jolt the wedged E1's forwarding loose. B1 came back in ~15s, e0-1 re-linked to E1 (10G up) — **arm stayed all-DOWN, 0 leases across 90s.** Confirms the arm switches are **genuinely IP-stack-wedged**, not merely stuck-forwarding: a neighbour link-bounce doesn't reach a dead management CPU. Don't re-try this expecting it to work — only a reboot of the arm switch *itself* (physical) or a fresh path in (lan1→G3) clears the wedge.
+
+**CCU second uplink (redundancy) → G3 is DOWN — the best in-band recovery lever, currently dead.** The CCU is designed dual-homed: `/etc/nd-redundancy/networks.yaml` lists `bond0` slaves = **`lan0` + `lan1`**. Live state: **`lan0` (bond, `00:21:21:21:00:01`) → G1 e0-2, UP** (the path we use); **`lan1` (`enp9s0f1`, MAC `7c:70:bc:70:d9:83`, PCI `0000:09:00.1`, driver i40e) → NO CARRIER, dropped out of the bond.** Its intended peer is **G3** (a switch on the islanded arm). CCU side is admin-UP + `balance-xor`/`miimon 100` → **if `lan1` gets carrier, bond0 auto-adds it and the CCU gets a DIRECT L2 path into the islanded arm via G3**, bypassing both broken entry-points. `ethtool lan1` = `Link detected: no`, forcing up + `-r` renegotiate did not raise carrier → the link is dead at the **G3 end / cable** (a live-but-wedged G3 would still present PHY carrier, so this is deeper than mgmt-wedge: G3's CCU-facing port down, cable unplugged/mis-patched, or SFP fault). **Highest-value physical action = check/reseat the CCU `lan1` (enp9s0f1) cable to G3.**
+
+**B3 is the SECOND cold-bypassed dead switch (not just A1).** "Why can't I see B3?" — B3 (bridges B2↔B1 per the diagram) has **no lease, no LLDP, is not DHCP-discovering** = powered-down/dead, relay welding B2↔B1 through it. Signature: B2 e0-0 & B1 e0-0 both `description "Switch B3"`, B2 e0-0 shows no LLDP neighbour, and B1 e0-0 carried the tell-tale high cost. So the consist has **TWO** cold-bypassed dead switches: **A1 and B3** — together they welded the ring closed = the original storm ([[project_vds_cold_bypass]]).
+
+**RSTP port-cost normalised (housekeeping).** B1 e0-0 had `spanning-tree port-cost 400100` — a **multi-traction test override** that doesn't belong on the bench (link is actually 10G Full, so real default = **2000**, not 20000). Removed via `no configure interface e0-0 spanning-tree port-cost` → fell back to auto **2000**, config line gone (defaults aren't listed), **persisted** (`save running-config force`). Scanned all 5 reachable switches → all now clean/default. ⚠️ The 5 islanded switches were unreachable — if the 400100 override is per-consist it likely also sits on their bypass-adjacent ports; clean once recovered.
+
+**Consist inventory (18-switch nv4):** ✅ reachable+7.4.8+loop-guard+default-cost: **G1, E2, E3, B2, B1** (5). ⏳ islanded, alive-but-mgmt-wedged, 7.4.2: **A3, A2, G3, G2, E1** (5). ❌ cold-bypassed/dead: **A1, B3** (2). (Balance = other coaches not enumerated this session.)
+
+**End state left recoverable:** B1 e0-1 re-enabled (arm reconnected at L2, loop-guard-protected), `always-broadcast on`, CCU `lan1` admin-up + ready. The instant someone (a) reseats the CCU `lan1`→G3 cable, or (b) physically power-cycles/console-reboots an arm switch (E1 or A3 = the gateway-adjacent ones), or (c) restores A1+B3 — the arm re-DHCPs and comes back reachable, then flashes via the proven recipe ([[project_vds_sysadmin_load_blocked_by_ttcmp_critical]]). Reversible cuts to undo on recovery: A3 e0-0 (our storm-fix), B1 e0-1 (if reverting). CCU runtime fixes (conntrack helper, tftp ipset, always-broadcast) are NOT reboot-persistent.
+
+### 2026-07-05 — AR — Storm KILLED + all 5 reachable switches flashed 7.4.2→7.4.8 + loop-guard armed. **Overturns the 2026-07-04 "can't flash / firmware won't help" conclusion.**
+
+**Outcome:** the 2026-07-04 entry below was wrong on three counts — all corrected by field work today:
+1. The storm **is** a plain RSTP ring loop (not just a "TTCMP-critical" fabric state), and it **can** be broken from the CCU by opening the ring at one port.
+2. Switches **can** be flashed manually while the consist is imperfect — the busy-lock is NOT fabric-level TTCMP-critical; it's a transient per-switch post-boot lock + a TFTP transport gap.
+3. 7.4.8 **does** help: its per-interface `loop-guard` is the durable fix, now armed on every backbone port.
+
+**Root cause of the storm (confirmed, corrects the "STP-invisible bypass" claim):** the consist is a **closed ring** (G1–A1–A3–A2–G3–G2–E1–B1–B3–B2–E3–E2–G1). **Two switches are cold-bypassed: A1 and B3** — their relays *weld* their ports into wires, keeping the ring electrically **closed**. RSTP had blocked **zero** ports fabric-wide (verified every reachable switch: all e0-0/e0-1 = ROOT/DESG/FWD, no ALTN/BLOCK) → permanent L2 forwarding loop → the 800M-multicast / Malformed-KON / coldStart storm. RSTP fails to block because BPDUs don't propagate cleanly across the welded bypass, so neither neighbour sees the loop. See [[project_rstp_splitbrain_mixed_config_storm]], [[project_bench_4122_multicast_storm_e0_0]], [[project_vds_cold_bypass]].
+
+**Storm fix (reversible, CCU-side):** `no configure interface e0-0 enable` on **A3 (.197)** — opens the ring at the dead A1-bypass segment. Multicast froze instantly, Malformed-KON stopped, coldStarts stopped. (G1 e0-0 was also disabled+persisted earlier as redundant containment.) The B/E side recovered; the A/G arm (A3/A2/G3/G2/E1) went **islanded** (management-dead — E1 forwards data but not reliably, so that arm is only reachable via the flaky long path).
+
+**The busy-lock was NOT TTCMP-critical (corrects 2026-07-04's central finding).** Systematically falsified: CPU load, TTCMP subsystem state, TTCMP extensions, ring e0-0 membership, diagnostics collector — all ruled out (G1 and E3 had *identical* state; G1 flashed, E3 didn't). The real blockers were a **stack of fixable gates**:
+1. **TFTP conntrack helper missing** — CCU firewall dropped the switch's RRQ. Fix: `sudo modprobe nf_conntrack_tftp` + `sudo iptables -t raw -A PREROUTING -i vlan100 -p udp --dport 69 -j CT --helper tftp`.
+2. **`tftp_allowed` ipset EMPTY** — the CCU only serves TFTP to switches in this ipset (OBN normally adds each switch just-in-time). Fix: `sudo ipset add tftp_allowed 10.179.122.<n>` per switch. **This was the silent RRQ-drop cause.**
+3. **Wrong artifact** — `sysadmin load` wants the **`.kad`** (`ipart-ng.kad`), NOT the `.ksi` bigbang. Loading the `.ksi` returns `WARNING: Operation aborted. Not a KAD file`.
+4. **Transient post-boot critical-op lock** — a freshly-rebooted switch has a short clean window before an internal "critical operation" re-arms; fire the load *instantly* on SSH-up.
+5. **Transfer stability vs path length** — deep-chain switches stall mid-transfer (`read(ack): Connection refused` / `Connection trouble`) over the degraded fabric. Flash **outward from the gateway** (G1→E2→E3→B2→B1) so each flashed switch stabilizes the path for the next.
+
+**The proven recipe (5/5 switches):**
+```
+# CCU prep (once): helper + ipset + stage .kad in /data/auto-topology/
+sudo modprobe nf_conntrack_tftp
+sudo iptables -t raw -A PREROUTING -i vlan100 -p udp --dport 69 -j CT --helper tftp
+sudo ipset add tftp_allowed 10.179.122.<n>
+sudo cp ipart-ng.kad /data/auto-topology/sw-std-ng-fw-7.4.8.kad
+# per switch, gateway-outward:
+sysadmin reboot                                              # clean CPU + clean lock window
+# INSTANTLY on SSH-up:
+sysadmin load tftp://10.179.122.129/sw-std-ng-fw-7.4.8.kad   # wait for "System Firmware image loaded"
+sysadmin set default image sw-std-ng_7.4.8-87248.ksi         # hammer-retry if it busy-locks (caught a gap on ~8th try on B1)
+sysadmin reboot
+```
+Reboot command is **`sysadmin reboot`** (confirms with `y`) — resolves the earlier "reboot command unconfirmed" note; plain `reboot`/`reload` are rejected.
+
+**Result — all 5 reachable switches on 7.4.8 (build 87248):** G1(.200), E2(.201), E3(.202), B2(.179), B1(.196). Post-upgrade L2 health = **PASS**: load 0.00–0.20 (was 2.5–2.9), single agreed RSTP root G1 (was split-brain), Malformed-KON **0** (was 4500–5400), coldStart **1** (boot only, was 24–92), backbone ports **0 CRC / 0 carrier / 0 RX-err**, multicast flat (~5 pkt/6s, was ~52k pps).
+
+**Durable guard armed:** `configure interface e0-0/e0-1 spanning-tree loop-guard force-block` on all 5 switches (persisted). Ports show `loopGuardBlock` capability + FWD (armed, not tripped). `force-block` chosen over `error-disable` = self-recovering when a loop clears (fits cold-bypasses that come and go). This is the real answer to "one cold bypass shouldn't take down L2" — a future welded ring will now be auto-opened by loop-guard instead of storming.
+
+**Current end state / still open:**
+- 5 flashed switches healthy, reachable, loop-guard-armed. Ring held open at A3 e0-0 (islanded, persisted state on A3 is `no enable`) + G1 e0-0 persisted-down. B1 e0-1 disabled (earlier BPDU-leak cut).
+- **Islanded arm A3/A2/G3/G2/E1 still management-dead**, and **A1 + B3 still cold-bypassed (physically dead).** Restoring A1 + B3 physically closes the ring properly → loop-guard holds it → islanding clears → the remaining 5 switches (incl. the 2 dead ones once repowered) can be flashed cleanly.
+- CCU runtime state (helper + ipset) is **not reboot-persistent** — re-apply if the CCU reboots. `.kad` staged at `/data/auto-topology/sw-std-ng-fw-7.4.8.kad`.
+
+### 2026-07-04 — AR — Attempted manual 7.4.8 switch-firmware push; BLOCKED by consist TTCMP-critical interlock (fabric-level, not per-switch)  ⚠️ SUPERSEDED by 2026-07-05 above — its "can't flash / firmware won't help / busy-lock is fabric-level" conclusions were disproven.
 
 **Goal:** push switch firmware 7.4.2→7.4.8 (workspace `switch/(NMID1143) VDS 28 port consist_FW_v7.4.8/`) on the bench to test whether it fixes the KON storm. **Outcome: could not flash any switch; the storm root cause (A1 bypass) blocks it, and 7.4.8 wouldn't fix it anyway.**
 
