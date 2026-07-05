@@ -63,8 +63,44 @@ _EXPECTED = {
         },
         "coach_of": {"A": 1, "G": 2, "E": 3, "B": 4},
     },
-    # nv6 / fv5 / fv6 chains to be added (confirm fv5/fv6 first) — until then they
-    # take the legacy walk via _number_coaches_legacy.
+    # nv6 (A-C-D-E-F-B). Validated against real 4736-119/110 live LLDP (2026-07-04):
+    # every switch's e0-0/e0-1 peers match this table exactly.
+    "nv6": {
+        "chain": ["A1", "A2", "A3", "C1", "C2", "C3", "D1", "D2", "D3", "E1", "E2", "E3", "F1", "F2", "F3", "B1", "B2", "B3"],
+        "adj": {
+            "A1": {"e0-0": "A3", "e0-1": "C1"}, "A2": {"e0-0": "A3", "e0-1": "C3"}, "A3": {"e0-0": "A1", "e0-1": "A2"},
+            "C1": {"e0-0": "A1", "e0-1": "D1"}, "C2": {"e0-0": "C3", "e0-1": "D3"}, "C3": {"e0-0": "A2", "e0-1": "C2"},
+            "D1": {"e0-0": "C1", "e0-1": "E2"}, "D2": {"e0-0": "D3", "e0-1": "E1"}, "D3": {"e0-0": "C2", "e0-1": "D2"},
+            "E1": {"e0-0": "F1", "e0-1": "D2"}, "E2": {"e0-0": "E3", "e0-1": "D1"}, "E3": {"e0-0": "F2", "e0-1": "E2"},
+            "F1": {"e0-0": "B1", "e0-1": "E1"}, "F2": {"e0-0": "F3", "e0-1": "E3"}, "F3": {"e0-0": "B2", "e0-1": "F2"},
+            "B1": {"e0-0": "B3", "e0-1": "F1"}, "B2": {"e0-0": "B3", "e0-1": "F3"}, "B3": {"e0-0": "B1", "e0-1": "B2"},
+        },
+        "coach_of": {"A": 1, "C": 2, "D": 3, "E": 4, "F": 5, "B": 6},
+    },
+    # fv5 (A-C-E-F-B, 5-car CAT): DELIBERATELY OMITTED — takes the legacy walk.
+    # The only peer-named source (the IP-Port-Allocation PDF, fv5-topology.md) is
+    # INTERNALLY INCONSISTENT on the C<->E inter-coach boundary: C1->E1 but E1->C2,
+    # E2->C1 but C1->E1, C2->E3 but E3->E2 — the C/E rows don't reciprocate (the PDF
+    # doc itself warns "a both-ends cross-check may show minor PDF inconsistencies").
+    # The topology.yaml uses relative offsets (no peer names) so it can't resolve it.
+    # A reciprocal-adjacency model built on this would make acceptable()/bypass_reciprocal
+    # misfire. fv5 stays on the legacy walk until a REAL fv5 discovery.json confirms the
+    # true C<->E peers via live LLDP. (2026-07-04)
+    #
+    # fv6 (A-C-D-E-F-B, 6-car FV). Adjacency from the IP-Port-Allocation PDF (fv6-topology.md).
+    # NOT yet validated against a real fv6 discovery.json. Same chain shape as nv6.
+    "fv6": {
+        "chain": ["A1", "A2", "A3", "C1", "C2", "C3", "D1", "D2", "D3", "E1", "E2", "E3", "F1", "F2", "F3", "B1", "B2", "B3"],
+        "adj": {
+            "A1": {"e0-0": "A3", "e0-1": "C1"}, "A2": {"e0-0": "A3", "e0-1": "C3"}, "A3": {"e0-0": "A1", "e0-1": "A2"},
+            "C1": {"e0-0": "A1", "e0-1": "D1"}, "C2": {"e0-0": "C3", "e0-1": "D3"}, "C3": {"e0-0": "A2", "e0-1": "C2"},
+            "D1": {"e0-0": "C1", "e0-1": "E2"}, "D2": {"e0-0": "D3", "e0-1": "E1"}, "D3": {"e0-0": "C2", "e0-1": "D2"},
+            "E1": {"e0-0": "F1", "e0-1": "D2"}, "E2": {"e0-0": "E3", "e0-1": "D1"}, "E3": {"e0-0": "F2", "e0-1": "E2"},
+            "F1": {"e0-0": "B1", "e0-1": "E1"}, "F2": {"e0-0": "F3", "e0-1": "E3"}, "F3": {"e0-0": "B2", "e0-1": "F2"},
+            "B1": {"e0-0": "B3", "e0-1": "F1"}, "B2": {"e0-0": "B3", "e0-1": "F3"}, "B3": {"e0-0": "B1", "e0-1": "B2"},
+        },
+        "coach_of": {"A": 1, "C": 2, "D": 3, "E": 4, "F": 5, "B": 6},
+    },
 }
 
 

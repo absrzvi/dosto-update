@@ -122,5 +122,74 @@ unpl = [x for x in ph if x.get("status") == "UNPLACED" and "G2" in x["config"]]
 ck(g2r is None, "miswired G2 NOT numbered")
 ck(bool(unpl), "G2 surfaced as UNPLACED (not mis-numbered, not DOWN)")
 
+
+# ── ALL-FLEET-TYPE COVERAGE ───────────────────────────────────────────────────
+NV6_119 = f"{FIND}/obn_numbering_repro_4736-119_2026-06-24/discovery_live_119.json"  # broken B3<->B2 cable
+NV6_110 = f"{FIND}/obn_numbering_repro_4736-119_2026-06-24/discovery_live_110.json"  # healthy
+COACH_OF = {"nv4": {"A":1,"G":2,"E":3,"B":4}, "nv6": {"A":1,"C":2,"D":3,"E":4,"F":5,"B":6},
+            "fv6": {"A":1,"C":2,"D":3,"E":4,"F":5,"B":6}}
+
+# MODEL SELF-VALIDATION — every shipped _EXPECTED model must be reciprocal-consistent.
+print("MODEL self-validation (all shipped _EXPECTED):")
+for tt, m in rdn._EXPECTED.items():
+    adj = m["adj"]
+    errs = [f"{p}->{t}" for p, d in adj.items() for t in d.values() if p not in adj[t].values()]
+    ck(not errs, f"{tt} adjacency reciprocal-consistent ({len(m['chain'])} sw)" + (f" ISSUES={errs[:3]}" if errs else ""))
+ck("fv5" not in rdn._EXPECTED, "fv5 correctly ABSENT (PDF C<->E adjacency inconsistent -> legacy walk)")
+
+# nv6 HEALTHY (real 4736-110): all 18 numbered, none down/unplaced.
+print("nv6 HEALTHY (real 4736-110):")
+r, ph = runr("nv6", load(NV6_110), 18)
+sw = [d for d in r.device_instances.values() if d.type == "SW" and not d.mac.startswith("DOWN:")]
+bad = sum(1 for d in sw if not (d.coach_number == COACH_OF["nv6"].get(cp(d)[0]) and d.device_number == int(cp(d)[1])))
+ck(len(sw) == 18 and bad == 0, f"all 18 correctly numbered ({len(sw)} numbered, {bad} wrong)")
+
+# nv6 BROKEN CABLE (real 4736-119, B3<->B2 down — MASTER dropped 5 switches here).
+print("nv6 BROKEN-CABLE (real 4736-119, B3<->B2 down):")
+r, ph = runr("nv6", load(NV6_119), 18)
+sw = [d for d in r.device_instances.values() if d.type == "SW" and not d.mac.startswith("DOWN:")]
+bad = sum(1 for d in sw if not (d.coach_number == COACH_OF["nv6"].get(cp(d)[0]) and d.device_number == int(cp(d)[1])))
+ck(len(sw) == 18 and bad == 0, f"all 18 recovered + correctly numbered ({len(sw)}, {bad} wrong) — master dropped 5")
+
+
+def synth(tt, fzg=189, absent=()):
+    """Synthetic healthy discovery for tt from its _EXPECTED model (no real fixture exists
+    for fv6). Structural/crash coverage + numbering-from-model correctness only."""
+    m = rdn._EXPECTED[tt]; adj = m["adj"]; coach_of = m["coach_of"]
+    mac_of = {pos: f"a0:59:3a:00:00:{i:02x}" for i, pos in enumerate(adj)}
+    ccu_coach = {"nv4":2,"nv6":3,"fv5":2,"fv6":3}[tt]
+    ccu_letter = [k for k, v in coach_of.items() if v == ccu_coach][0]
+    box_mac = "7c:70:bc:00:00:99"; devs = []
+    for pos, ports in adj.items():
+        if pos in absent: continue
+        nbs = [{"mac": mac_of[peer], "port": {"e0-0":3,"e0-1":4}[port]}
+               for port, peer in ports.items() if peer not in absent]
+        if pos in (ccu_letter+"1", ccu_letter+"3"):
+            nbs.append({"mac": box_mac, "port": 1 if pos.endswith("1") else 2})
+        devs.append(Device(mac=mac_of[pos], ip=f"10.0.0.{list(adj).index(pos)+10}",
+                           config=f"{tt}-{pos}-v8-{fzg}", neighbours=nbs))
+    devs.append(Device(mac=box_mac, ip="10.0.0.1", serial="box1-t99.dostoneu",
+                       neighbours=[{"mac": mac_of[ccu_letter+"1"], "port": 1},
+                                   {"mac": mac_of[ccu_letter+"3"], "port": 2}]))
+    return devs
+
+# fv6 (no real fixture) — synthetic healthy + bypass. Structural + model-numbering only.
+print("fv6 SYNTHETIC (no real fixture — structural + model-numbering):")
+devs = synth("fv6")
+r = rdn.DostoNeuReport("fv6", devs); r._leased_switch_count = lambda: 18; r._write_placeholders = lambda p: None
+crashed = False
+try: r.number_coaches()
+except Exception as e: crashed = True; print("  CRASH:", type(e).__name__, e)
+sw = [d for d in r.device_instances.values() if d.type == "SW" and not d.mac.startswith("DOWN:")]
+bad = sum(1 for d in sw if not (d.coach_number == COACH_OF["fv6"].get(cp(d)[0]) and d.device_number == int(cp(d)[1])))
+ck(not crashed and len(sw) == 18 and bad == 0, f"fv6 healthy: 18/18 numbered, {bad} wrong, no crash")
+devs = synth("fv6", absent={"D2"})
+r = rdn.DostoNeuReport("fv6", devs); r._leased_switch_count = lambda: 18
+cap = {}; r._write_placeholders = lambda p: cap.setdefault("p", p)
+try: r.number_coaches(); crashed = False
+except Exception: crashed = True
+downs = [d for d in r.device_instances.values() if d.mac.startswith("DOWN:")]
+ck(not crashed and any(d.mac == "DOWN:D2" for d in downs), "fv6 bypass (D2 absent) -> DOWN:D2 emitted, no crash")
+
 print(f"\n==== {P[0]} passed / {F[0]} failed ====")
 sys.exit(1 if F[0] else 0)

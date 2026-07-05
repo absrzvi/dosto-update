@@ -105,9 +105,36 @@ runs offline) — **7/7 checks pass**, one per your three conditions:
    (both ends must LLDP-see each other) — matches the DOWN reciprocal test. This is what
    makes the miswire vs off-expected-wiring distinction correct.
 
-Caveat: only nv4 is exercised (the only `_EXPECTED` model in the prototype). nv6/fv5/fv6
-take the legacy walk until their chains are added — no regression, but their bypass/A
-behaviour is NOT yet covered. Productionising must add those models + fixtures.
+### All-fleet-type coverage (2026-07-05 update) — 15/15 checks pass
+
+Extended to every DOSTO fleet type. `_EXPECTED` models added for nv6 and fv6; fv5 deliberately
+NOT modelled (see finding below). Full matrix in `coach_numbering_harness_2026-07-04.py`:
+
+| Fleet | Coverage | Result |
+|---|---|---|
+| **nv4** | real bench fixture — bypass + off-expected-wiring + miswire | 7/7 |
+| **nv6** | **real 4736-110 (healthy) + 4736-119 (broken B3↔B2 cable)** | all 18 correctly numbered on BOTH — incl. the exact fixture where master dropped 5 rear switches |
+| **fv6** | synthetic-from-model (no real fixture) — healthy + D2 bypass | 18/18 numbered, DOWN:D2 emitted, no crash |
+| **fv5** | — | correctly EXCLUDED → legacy walk |
+| all models | reciprocal-consistency self-check | nv4/nv6/fv6 consistent |
+
+**nv6 is field-validated:** the nv6 `_EXPECTED` adjacency was cross-checked against real 4736-119
+live LLDP (every switch's e0-0/e0-1 peers match the topology reference exactly), and the 119
+fixture is the real broken-cable case — so nv6 is proven on real field data, not just synthetic.
+
+**Two findings from the all-fleet pass:**
+1. 🔴 **fv5 topology source is self-contradictory** — the IP-Port-Allocation PDF (fv5-topology.md)
+   C↔E inter-coach rows don't reciprocate (C1→E1 but E1→C2, E2→C1 but C1→E1). The topology.yaml
+   uses relative offsets (no peer names) so it can't resolve it. A reciprocal-adjacency model on
+   this data would make `acceptable()`/`bypass_reciprocal()` misfire. **fv5 stays on the legacy
+   walk** (no bypass/off-expected recovery) until a real fv5 `discovery.json` confirms the true
+   C↔E peers via live LLDP. Capturing that from a live fv5 CCU (box1-t41/42/43) is a TODO.
+2. **fv6 has no real fixture** — modelled from the PDF and structurally verified (numbers correctly
+   from the model, handles bypass, no crash), but the adjacency is NOT field-validated like nv6.
+   Confirm against a real 4706 discovery before relying on fv6 bypass/DOWN in production.
+
+Remaining productionisation: load `_EXPECTED` from templates/schema (not hardcoded), capture the
+fv5/fv6 real fixtures, and add all these as CI test cases.
 
 ## What is NOT in this MR (deferred, documented)
 - CCUContext / CCU2 anchor (feature C) — current hardcode is correct; per-type config fix has a per-hostname-key trap. Separate engine MR when DOSTO gets a 2nd CCU.
