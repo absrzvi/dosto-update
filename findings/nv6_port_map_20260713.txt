@@ -1,0 +1,504 @@
+A1|e0-0|1|Switch A3
+A1|e0-1|1|Switch C1
+A1|e0-2|1|Frontkupplung A1
+A1|e0-3|0|
+A1|e0-4|1|AP A1
+A1|e0-5|1|Service FIS/ CCTV
+A1|e1-0|1|Interior Camera A7
+A1|e1-1|1|Interior Camera A2
+A1|e1-2|1|Interior Camera A1
+A1|e1-3|1|Interior Camera A5
+A1|e1-4|1|Interior Camera A9
+A1|e1-5|1|AFZ A1
+A1|e1-6|1|AFZ A2
+A1|e1-7|0|
+A1|e1-8|1|Sprechstelle A1
+A1|e1-9|0|
+A1|e1-10|0|
+A1|e1-11|0|
+A1|e1-12|0|Funksensor A5
+A1|e1-13|0|Funksensor A6
+A1|e1-14|1|Seitenanzeige A1
+A1|e1-15|1|Seitenanzeige A3
+A1|e2-0|1|Bildschirm A7
+A1|e2-1|1|Bildschirm A5
+A1|e2-2|1|Bildschirm A1
+A1|e2-3|1|Bildschirm A3
+A1|e2-4|1|ADU A
+A1|e2-5|1|Audio Amp. A1
+A2|e0-0|1|Switch A3
+A2|e0-1|1|Switch C3
+A2|e0-2|0|
+A2|e0-3|0|
+A2|e0-4|1|AP A2
+A2|e0-5|0|Reserved
+A2|e1-0|1|Interior Camera A8
+A2|e1-1|1|Interior Camera A4
+A2|e1-2|1|Interior Camera A3
+A2|e1-3|1|Interior Camera A6
+A2|e1-4|1|Interior Camera A10
+A2|e1-5|1|AFZ A3
+A2|e1-6|1|AFZ A4
+A2|e1-7|1|NVR A
+A2|e1-8|1|Sprechstelle A2
+A2|e1-9|1|Sprechstelle A1R
+A2|e1-10|0|
+A2|e1-11|0|
+A2|e1-12|0|Funksensor A2
+A2|e1-13|0|Funksensor A4
+A2|e1-14|1|Seitenanzeige A2
+A2|e1-15|1|Seitenanzeige A4
+A2|e2-0|1|Bildschirm A8
+A2|e2-1|1|Bildschirm A6
+A2|e2-2|1|Bildschirm A2
+A2|e2-3|1|Bildschirm A4
+A2|e2-4|0|
+A2|e2-5|1|Audio Amp. A2
+A3|e0-0|1|Switch A1
+A3|e0-1|1|Switch A2
+A3|e0-2|1|Frontkupplung A3
+A3|e0-3|0|
+A3|e0-4|1|AP A3
+A3|e0-5|0|reserved
+A3|e1-0|1|Exterior Camera A1
+A3|e1-1|1|Exterior Camera A2
+A3|e1-2|1|AP A4
+A3|e1-3|0|
+A3|e1-4|1|Firewall
+A3|e1-5|0|
+A3|e1-6|0|
+A3|e1-7|0|
+A3|e1-8|0|
+A3|e1-9|1|Sprechstelle A2R
+A3|e1-10|0|
+A3|e1-11|0|
+A3|e1-12|0|Funksensor A1
+A3|e1-13|0|Funksensor A3
+A3|e1-14|1|Frontanzeige A
+A3|e1-15|0|
+A3|e2-0|0|
+A3|e2-1|0|
+A3|e2-2|0|
+A3|e2-3|0|
+A3|e2-4|1|ADU AR
+A3|e2-5|0|Service VLAN PWLAN
+C1|e0-0|1|Switch A1
+C1|e0-1|1|Switch D1
+C1|e0-2|0|
+C1|e0-3|0|
+C1|e0-4|1|AP C1
+C1|e0-5|1|Service FIS/ CCTV
+C1|e1-0|1|Interior Camera C7
+C1|e1-1|1|Interior Camera C2
+C1|e1-2|1|Interior Camera C1
+C1|e1-3|1|Interior Camera C5
+C1|e1-4|1|Interior Camera C9
+C1|e1-5|1|AFZ C1
+C1|e1-6|1|AFZ C2
+C1|e1-7|1|AFZ C5
+C1|e1-8|1|Sprechstelle C1
+C1|e1-9|0|
+C1|e1-10|0|
+C1|e1-11|0|
+C1|e1-12|0|Funksensor C5
+C1|e1-13|0|Funksensor C6
+C1|e1-14|1|Seitenanzeige C1
+C1|e1-15|1|Seitenanzeige C3
+C1|e2-0|1|Bildschirm C7
+C1|e2-1|1|Bildschirm C5
+C1|e2-2|1|Bildschirm C1
+C1|e2-3|1|Bildschirm C3
+C1|e2-4|1|Bildschirm C
+C1|e2-5|1|Audio Amp. C1
+C2|e0-0|1|Switch C3
+C2|e0-1|1|Switch D3
+C2|e0-2|0|
+C2|e0-3|0|
+C2|e0-4|1|AP C2
+C2|e0-5|0|Reserved
+C2|e1-0|1|Interior Camera C8
+C2|e1-1|1|Interior Camera C4
+C2|e1-2|1|Interior Camera C3
+C2|e1-3|1|Interior Camera C6
+C2|e1-4|1|Interior Camera C10
+C2|e1-5|1|AFZ C3
+C2|e1-6|1|AFZ C4
+C2|e1-7|0|
+C2|e1-8|1|Sprechstelle C2
+C2|e1-9|1|Sprechstelle C1R
+C2|e1-10|0|
+C2|e1-11|0|
+C2|e1-12|0|Funksensor C2
+C2|e1-13|0|Funksensor C4
+C2|e1-14|1|Seitenanzeige C2
+C2|e1-15|1|Seitenanzeige C4
+C2|e2-0|1|Bildschirm C8
+C2|e2-1|1|Bildschirm C6
+C2|e2-2|1|Bildschirm C2
+C2|e2-3|1|Bildschirm C4
+C2|e2-4|1|Bildschirm C11
+C2|e2-5|1|Audio Amp. C2
+C3|e0-0|1|Switch A2
+C3|e0-1|1|Switch C2
+C3|e0-2|0|
+C3|e0-3|0|
+C3|e0-4|1|AP C3
+C3|e0-5|0|Reserved
+C3|e1-0|1|Exterior Camera C3
+C3|e1-1|1|Exterior Camera C2
+C3|e1-2|1|AP C4
+C3|e1-3|0|
+C3|e1-4|0|
+C3|e1-5|0|
+C3|e1-6|0|
+C3|e1-7|0|
+C3|e1-8|0|
+C3|e1-9|1|Sprechstelle C2R
+C3|e1-10|0|
+C3|e1-11|0|
+C3|e1-12|0|Funksensor C1
+C3|e1-13|0|Funksensor C3
+C3|e1-14|0|
+C3|e1-15|0|
+C3|e2-0|0|
+C3|e2-1|0|
+C3|e2-2|0|
+C3|e2-3|0|
+C3|e2-4|0|
+C3|e2-5|0|
+D1|e0-0|1|Switch C1
+D1|e0-1|1|Switch E2
+D1|e0-2|1|OBS D1
+D1|e0-3|1|RDC D1
+D1|e0-4|1|AP D1
+D1|e0-5|1|Service FIS/ CCTV
+D1|e1-0|1|Interior Camera D7
+D1|e1-1|1|Interior Camera D2
+D1|e1-2|1|Interior Camera D1
+D1|e1-3|1|Interior Camera D5
+D1|e1-4|1|Interior Camera D9
+D1|e1-5|1|AFZ D1
+D1|e1-6|1|AFZ D2
+D1|e1-7|1|AFZ D5
+D1|e1-8|1|Sprechstelle D1
+D1|e1-9|0|
+D1|e1-10|0|
+D1|e1-11|0|
+D1|e1-12|0|Funksensor D5
+D1|e1-13|0|Funksensor D6
+D1|e1-14|1|Seitenanzeige D1
+D1|e1-15|1|Seitenanzeige D3
+D1|e2-0|1|Bildschirm D7
+D1|e2-1|1|Bildschirm D5
+D1|e2-2|1|Bildschirm D1
+D1|e2-3|1|Bildschirm D3
+D1|e2-4|1|Bildschirm D
+D1|e2-5|1|Audio Amp. D1
+D2|e0-0|1|Switch D3
+D2|e0-1|1|Switch E1
+D2|e0-2|0|OBS D2 Reserved
+D2|e0-3|0|RDC D2 Reserved
+D2|e0-4|1|AP D2
+D2|e0-5|0|Reserved
+D2|e1-0|1|Interior Camera D8
+D2|e1-1|1|Interior Camera D4
+D2|e1-2|1|Interior Camera D3
+D2|e1-3|1|Interior Camera D6
+D2|e1-4|1|Interior Camera D10
+D2|e1-5|1|AFZ D3
+D2|e1-6|1|AFZ D4
+D2|e1-7|0|
+D2|e1-8|1|Sprechstelle D2
+D2|e1-9|1|Sprechstelle D1R
+D2|e1-10|0|
+D2|e1-11|0|
+D2|e1-12|0|Funksensor D2
+D2|e1-13|0|Funksensor D4
+D2|e1-14|1|Seitenanzeige D2
+D2|e1-15|1|Seitenanzeige D4
+D2|e2-0|1|Bildschirm D8
+D2|e2-1|1|Bildschirm D6
+D2|e2-2|1|Bildschirm D2
+D2|e2-3|1|Bildschirm D4
+D2|e2-4|1|Bildschirm D11
+D2|e2-5|1|Audio Amp. D2
+D3|e0-0|1|Switch C2
+D3|e0-1|1|Switch D2
+D3|e0-2|1|OBS D3
+D3|e0-3|1|RDC D3
+D3|e0-4|1|AP D3
+D3|e0-5|0|Reserved
+D3|e1-0|1|Exterior Camera D1
+D3|e1-1|1|Interior Camera D2
+D3|e1-2|1|AP D4
+D3|e1-3|0|
+D3|e1-4|0|
+D3|e1-5|0|
+D3|e1-6|0|
+D3|e1-7|0|
+D3|e1-8|0|
+D3|e1-9|1|Sprechstelle D2R
+D3|e1-10|0|OBS D3 Reserved
+D3|e1-11|0|RDC D3 Reserved
+D3|e1-12|0|Funksensor D1
+D3|e1-13|0|Funksensor D3
+D3|e1-14|0|
+D3|e1-15|0|
+D3|e2-0|0|
+D3|e2-1|0|
+D3|e2-2|0|
+D3|e2-3|0|
+D3|e2-4|0|
+D3|e2-5|0|
+E1|e0-0|1|Switch F1
+E1|e0-1|1|Switch D2
+E1|e0-2|0|
+E1|e0-3|0|
+E1|e0-4|1|AP E1
+E1|e0-5|1|Service FIS / CCTV
+E1|e1-0|1|Interior Camera E7
+E1|e1-1|1|Interior Camera E2
+E1|e1-2|1|Interior Camera E1
+E1|e1-3|1|Interior Camera E5
+E1|e1-4|1|Interior Camera E9
+E1|e1-5|1|AFZ E1
+E1|e1-6|1|AFZ E2
+E1|e1-7|1|AFZ E5
+E1|e1-8|1|Sprechstelle E1
+E1|e1-9|0|
+E1|e1-10|1|Sprechstelle PRM E1
+E1|e1-11|1|Sprechstelle PRM WCR
+E1|e1-12|0|Funksensor E5
+E1|e1-13|0|Funksensor E7
+E1|e1-14|1|Seitenanzeige E1
+E1|e1-15|1|Seitenanzeige E3
+E1|e2-0|1|Bildschirm E7
+E1|e2-1|1|Bildschirm E5
+E1|e2-2|1|Bildschirm E1
+E1|e2-3|1|Bildschirm E3
+E1|e2-4|1|Bildschirm E
+E1|e2-5|1|Audio Amp. E1
+E2|e0-0|1|Switch E3
+E2|e0-1|1|Switch D1
+E2|e0-2|0|
+E2|e0-3|0|
+E2|e0-4|1|AP E2
+E2|e0-5|0|Reserved
+E2|e1-0|1|Interior Camera E8
+E2|e1-1|1|Interior Camera E4
+E2|e1-2|1|Interior Camera E3
+E2|e1-3|1|Interior Camera E6
+E2|e1-4|0|
+E2|e1-5|1|AFZ E3
+E2|e1-6|1|AFZ E4
+E2|e1-7|1|AFZ E6
+E2|e1-8|1|Sprechstelle E2
+E2|e1-9|1|Sprechstelle E1R
+E2|e1-10|1|Sprechstelle PRM E2
+E2|e1-11|1|Sprechstelle PRM E1R
+E2|e1-12|0|Funksensor E2
+E2|e1-13|0|Funksensor E4
+E2|e1-14|1|Seitenanzeige E2
+E2|e1-15|1|Seitenanzeige E4
+E2|e2-0|1|Bildschirm E8
+E2|e2-1|1|Bildschirm E6
+E2|e2-2|1|Bildschirm E2
+E2|e2-3|1|Bildschirm E4
+E2|e2-4|1|Bildschirm E11
+E2|e2-5|1|Audio Amp. E2
+E3|e0-0|1|Switch F2
+E3|e0-1|1|Switch E2
+E3|e0-2|0|
+E3|e0-3|0|
+E3|e0-4|1|AP E3
+E3|e0-5|0|Reserved
+E3|e1-0|1|Exterior Camera E1
+E3|e1-1|1|Exterior Camera E2
+E3|e1-2|1|AP E4
+E3|e1-3|0|
+E3|e1-4|0|
+E3|e1-5|0|
+E3|e1-6|0|
+E3|e1-7|0|
+E3|e1-8|0|
+E3|e1-9|1|Sprechstelle E2R
+E3|e1-10|1|Sprechstelle PRM WC
+E3|e1-11|1|Sprechstelle PRM E2R
+E3|e1-12|0|Funksensor E1
+E3|e1-13|0|Funksensor E3
+E3|e1-14|0|
+E3|e1-15|0|
+E3|e2-0|1|Energiezaehler E
+E3|e2-1|0|
+E3|e2-2|0|
+E3|e2-3|0|
+E3|e2-4|0|
+E3|e2-5|0|
+F1|e0-0|1|Switch B1
+F1|e0-1|1|Switch E1
+F1|e0-2|0|
+F1|e0-3|0|
+F1|e0-4|1|AP F1
+F1|e0-5|1|Service FIS/ CCTV
+F1|e1-0|1|Interior Camera F7
+F1|e1-1|1|Interior Camera F2
+F1|e1-2|1|Interior Camera F1
+F1|e1-3|1|Interior Camera F5
+F1|e1-4|1|Interior Camera F9
+F1|e1-5|1|AFZ F1
+F1|e1-6|1|AFZ F2
+F1|e1-7|1|AFZ F5
+F1|e1-8|1|Sprechstelle F1
+F1|e1-9|0|
+F1|e1-10|0|
+F1|e1-11|0|
+F1|e1-12|0|Funksensor F5
+F1|e1-13|0|Funksensor F6
+F1|e1-14|1|Seitenanzeige F1
+F1|e1-15|1|Seitenanzeige F3
+F1|e2-0|1|Bildschirm F7
+F1|e2-1|1|Bildschirm F5
+F1|e2-2|1|Bildschirm F1
+F1|e2-3|1|Bildschirm F3
+F1|e2-4|1|Bildschirm F
+F1|e2-5|1|Audio Amp. F1
+F2|e0-0|1|Switch F3
+F2|e0-1|1|Switch E3
+F2|e0-2|0|
+F2|e0-3|0|
+F2|e0-4|1|AP F2
+F2|e0-5|1|Reserved
+F2|e1-0|1|Interior Camera F8
+F2|e1-1|1|Interior Camera F4
+F2|e1-2|1|Interior Camera F3
+F2|e1-3|1|Interior Camera F6
+F2|e1-4|1|Interior Camera F10
+F2|e1-5|1|AFZ F3
+F2|e1-6|1|AFZ F4
+F2|e1-7|0|
+F2|e1-8|1|Sprechstelle F2
+F2|e1-9|1|Sprechstelle F1R
+F2|e1-10|0|
+F2|e1-11|0|
+F2|e1-12|0|Funksensor F2
+F2|e1-13|0|Funksensor F4
+F2|e1-14|1|Seitenanzeige F2
+F2|e1-15|1|Seitenanzeige F4
+F2|e2-0|1|Bildschirm F8
+F2|e2-1|1|Bildschirm F6
+F2|e2-2|1|Bildschirm F2
+F2|e2-3|1|Bildschirm F
+F2|e2-4|1|Bildschirm F11
+F2|e2-5|1|Audio Amp. F2
+F3|e0-0|1|Switch B2
+F3|e0-1|1|Switch F2
+F3|e0-2|0|
+F3|e0-3|0|
+F3|e0-4|1|AP F3
+F3|e0-5|0|Reserved
+F3|e1-0|1|Exterior Camera F1
+F3|e1-1|1|Exterior Camera F2
+F3|e1-2|1|AP F4
+F3|e1-3|0|
+F3|e1-4|0|
+F3|e1-5|0|
+F3|e1-6|0|
+F3|e1-7|0|
+F3|e1-8|0|
+F3|e1-9|1|Sprechstelle F2R
+F3|e1-10|0|
+F3|e1-11|0|
+F3|e1-12|0|Funksensor F1
+F3|e1-13|0|Funksensor F3
+F3|e1-14|0|
+F3|e1-15|0|
+F3|e2-0|0|
+F3|e2-1|0|
+F3|e2-2|0|
+F3|e2-3|0|
+F3|e2-4|0|
+F3|e2-5|0|
+B1|e0-0|1|Switch B3
+B1|e0-1|1|Switch F1
+B1|e0-2|1|Frontkupplung B1
+B1|e0-3|0|
+B1|e0-4|1|AP B1
+B1|e0-5|1|Service FIS/CCTV
+B1|e1-0|1|Interior Camera B7
+B1|e1-1|1|Interior Camera B2
+B1|e1-2|1|Interior Camera B1
+B1|e1-3|1|Interior Camera B5
+B1|e1-4|1|Interior Camera B9
+B1|e1-5|1|AFZ B1
+B1|e1-6|1|AFZ B2
+B1|e1-7|0|
+B1|e1-8|1|Sprechstelle B1
+B1|e1-9|0|
+B1|e1-10|0|
+B1|e1-11|1|ZFR R
+B1|e1-12|0|Funksensor E5
+B1|e1-13|0|Funksensor E6
+B1|e1-14|1|Seitenanzeige B1
+B1|e1-15|1|Seitenanzeige B3
+B1|e2-0|1|Bildschirm B7
+B1|e2-1|1|Bildschirm B5
+B1|e2-2|1|Bildschirm B1
+B1|e2-3|1|Bildschirm B3
+B1|e2-4|1|ADU B
+B1|e2-5|1|Audio Amp. B1
+B2|e0-0|1|Switch B3
+B2|e0-1|1|Switch F3
+B2|e0-2|0|
+B2|e0-3|0|
+B2|e0-4|1|AP B2
+B2|e0-5|0|Reserved
+B2|e1-0|1|Interior Camera B8
+B2|e1-1|1|Interior Camera B4
+B2|e1-2|1|Interior Camera B3
+B2|e1-3|1|Interior Camera B6
+B2|e1-4|1|Interior Camera B10
+B2|e1-5|1|AFZ B3
+B2|e1-6|1|AFZ B4
+B2|e1-7|1|NVR B
+B2|e1-8|1|Sprechstelle B2
+B2|e1-9|1|Sprechstelle B1R
+B2|e1-10|0|
+B2|e1-11|0|
+B2|e1-12|0|Funksensor B2
+B2|e1-13|0|Funksensor B4
+B2|e1-14|1|Seitenanzeige B2
+B2|e1-15|1|Seitenanzeige B4
+B2|e2-0|1|Bildschirm B8
+B2|e2-1|1|Bildschirm B6
+B2|e2-2|1|Bildschirm B2
+B2|e2-3|1|Bildschirm B4
+B2|e2-4|0|
+B2|e2-5|1|Audio Amp. B2
+B3|e0-0|1|Switch B1
+B3|e0-1|1|Switch B2
+B3|e0-2|1|Frontkupplung B3
+B3|e0-3|0|
+B3|e0-4|1|AP B3
+B3|e0-5|0|Reserved
+B3|e1-0|1|Exterior Camera B1
+B3|e1-1|1|Exterior Camera B2
+B3|e1-2|1|AP B4
+B3|e1-3|0|
+B3|e1-4|0|
+B3|e1-5|0|
+B3|e1-6|0|
+B3|e1-7|0|
+B3|e1-8|0|
+B3|e1-9|1|Sprechstelle B2R
+B3|e1-10|0|
+B3|e1-11|1|ZFR
+B3|e1-12|0|Funksensor B1
+B3|e1-13|0|Funksensor B3
+B3|e1-14|1|Frontanzeige B
+B3|e1-15|0|
+B3|e2-0|0|
+B3|e2-1|0|
+B3|e2-2|0|
+B3|e2-3|0|
+B3|e2-4|1|ADU BR
+B3|e2-5|0|Service VLAN PWLAN
