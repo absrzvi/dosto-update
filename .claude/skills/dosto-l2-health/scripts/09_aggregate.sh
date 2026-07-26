@@ -1,13 +1,16 @@
 #!/bin/bash
 # Step 9 — aggregate all measurements into findings.json.
 # This is the structured output the dosto-l2-report skill consumes.
-# Usage: ./09_aggregate.sh <CCU_IP> [output_path]
+# Usage: ./09_aggregate.sh <CCU_IP> [output_path] [FW_IP, default 172.19.196.1]
+# ALWAYS pass FW_IP explicitly: 172.19.<128+Fzg//2>.<128*(Fzg%2)+1>
+# (even Fzg -> .1, odd Fzg -> .129; field-verified 2026-07-09 on Fzg 231/box1-t41).
 set -uo pipefail
 source "$(dirname "$0")/_lib.sh"
 
-CCU_IP="${1:?usage: $0 <CCU_IP> [output_path]}"
+CCU_IP="${1:?usage: $0 <CCU_IP> [output_path] [FW_IP]}"
 DEFAULT_OUT="C:/Users/AbbasRizvi/Documents/dosto-troubleshooting/findings_${CCU_IP}_$(date +%Y%m%d_%H%M%S).json"
 OUTPUT="${2:-$DEFAULT_OUT}"
+FW_IP="${3:-172.19.196.1}"
 
 section "Step 9 — Aggregate findings → $OUTPUT"
 
@@ -65,9 +68,9 @@ done
 # Stadler FW e2e probe.
 fw_tcp80="unknown"; fw_tcp22="unknown"; fw_arp="unknown"; vlan7_errors="unknown"
 probe_out=$(ccu_run "$CCU_IP" "
-  ip neigh show dev vlan7 | grep 172.19.196.1 || echo no-arp
+  ip neigh show dev vlan7 | grep $FW_IP || echo no-arp
   for port in 22 80; do
-    if timeout 3 bash -c \"echo > /dev/tcp/172.19.196.1/\$port\" 2>/dev/null; then echo tcp\$port=OPEN; else echo tcp\$port=closed; fi
+    if timeout 3 bash -c \"echo > /dev/tcp/$FW_IP/\$port\" 2>/dev/null; then echo tcp\$port=OPEN; else echo tcp\$port=closed; fi
   done
   ip -s link show vlan7 | awk '/RX:/ {getline; print \"vlan7_rx_errors=\"\$3\" vlan7_rx_drops=\"\$4}'
 " 2>/dev/null || true)

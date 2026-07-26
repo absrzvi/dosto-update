@@ -129,7 +129,9 @@ basis of a TCP-OPEN result without an ICMP test needs re-verification.
    *incomplete*, not complete.
 4. **Assuming the FW is always host `.1`.** True only for even Fzg. **Odd Fzg puts the FW at
    `.129`** (device 1 + 128 odd-offset), and the CCU at `.130`. Probing `.1` on an odd-Fzg train
-   gives a false path_broken. (Verified: Fzg 147 FW = `172.19.201.129`, not `.1`.)
+   gives a false path_broken. (Verified: Fzg 147 FW = `172.19.201.129`, not `.1`. Re-verified
+   2026-07-09 on box1-t41 / 4705-103 / Fzg 231: FW at `172.19.243.129` ARP REACHABLE
+   (`00:90:e8:d7:18:15`); probes to `172.19.243.1` INCOMPLETE/no-route.)
 5. **Letting the l2-health probe use its hardcoded default FW IP.** The `08_e2e_probe.sh` script
    defaults the FW IP to `172.19.196.1`. For any train not at that address it reports a false
    `path_broken`. Always pass the FW IP explicitly:
@@ -142,6 +144,7 @@ basis of a TCP-OPEN result without an ICMP test needs re-verification.
   Example Fzg 132 → CCU `172.19.194.2`, FW `172.19.194.1`.
 - **Odd Fzg:** CCU `172.19.<128+(Fzg-1)//2>.130`, FW `…​.129`.
   Example Fzg 147 → CCU `172.19.201.130`, FW `172.19.201.129` (live-verified 2026-06-12).
+  Example Fzg 231 → CCU `172.19.243.130`, FW `172.19.243.129` (live-verified 2026-07-09, box1-t41 / 4705-103).
 - Stadler FW MAC OUI `00:90:e8:…` (Westermo). Verified 2026-05-12 on Fzg 130 (FW `172.19.193.1`)
   where the `08_e2e_probe.sh` default (`172.19.196.1`) produced a false path_broken.
 

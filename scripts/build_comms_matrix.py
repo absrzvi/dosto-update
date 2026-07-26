@@ -256,7 +256,7 @@ ccu_if = [
     ("vlan150", "150", "Catering gateway", "10.251.1.0/24", ".1", "DHCP+DNS", "Pay/order services"),
     ("vlan200", "200", "RDC management gateway", "10.200.0.0/24", ".1", "DHCP+DNS", "Rail Data Centre mgmt"),
     ("vlan202", "202", "RDC interconnect", "10.202.0.0/24", ".1", "—", "RDC↔backend; NAT via CCU"),
-    ("vlan7",   "7",   "Stadler transit interface (Fremdnetz)", "172.19.<128+Fzg//2>.<dev>/17", "FW = host .1 of /17", "NTP relay only", "Worked example Fzg 133: CCU 172.19.194.130/17, Stadler FW 172.19.194.129. Even Fzg→host .2, odd Fzg→host .130 (device 2). See Tab 8."),
+    ("vlan7",   "7",   "Stadler transit interface (Fremdnetz)", "172.19.<128+Fzg//2>.<dev>/17", "FW = 128*(Fzg%2)+1 (.1 even / .129 odd)", "NTP relay only", "Worked example Fzg 133: CCU 172.19.194.130/17, Stadler FW 172.19.194.129. Even Fzg→host .2, odd Fzg→host .130 (device 2); FW device 1 carries the same odd bit. See Tab 8."),
 ]
 r = data_rows(ws, r, ccu_if, mono_cols=(4,5))
 for rr in range(8, r):

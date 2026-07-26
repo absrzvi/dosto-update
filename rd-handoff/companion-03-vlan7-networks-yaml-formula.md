@@ -38,7 +38,7 @@ For DOSTO NEU CCUs:
 - octet 4: `(128 if Fzg is odd else 0) + 2`
 - prefix: `/17`
 
-So Fzg 132 → `172.19.194.2/17`; Fzg 133 → `172.19.194.130/17`. Stadler FW is always `.1` on the same `/17`.
+So Fzg 132 → `172.19.194.2/17`; Fzg 133 → `172.19.194.130/17`. Stadler FW is device 1 on the same `/17` and carries the same odd-Fzg +128 bit: octet 4 = `(128 if Fzg is odd else 0) + 1` — even Fzg → FW `.1`, odd Fzg → FW `.129` (field-verified 2026-07-09 on Fzg 231 / box1-t41: FW = `172.19.243.129`).
 
 ## Test evidence
 

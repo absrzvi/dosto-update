@@ -131,19 +131,19 @@ bash scripts/07_throughput.sh <CCU_IP> [interval_seconds]
 
 Three orthogonal checks per [CLAUDE.md Phase 6](../../../CLAUDE.md) (rewritten 2026-05-11 per audit finding F9):
 
-- **Q1 path health:** ARP REACHABLE on vlan7 to `172.19.X.1`, link counters clean
+- **Q1 path health:** ARP REACHABLE on vlan7 to the FW peer — `172.19.X.1` for even Fzg, `172.19.X.129` for odd Fzg (`FW octet4 = 128*(Fzg%2)+1`; probing `.1` on an odd-Fzg train false-classifies as path_broken — field-verified 2026-07-09 on Fzg 231 / box1-t41, FW at `172.19.243.129`) — link counters clean
 - **Q2 FW commission state:** ICMP — **0 replies = commissioned (Stadler policy dropping ping), replies received = NOT commissioned (bare Westermo defaults).** This is the deciding test, not TCP.
 - **Q3 service availability:** TCP probes — informational only; CANNOT classify commission state by themselves (a default-config Westermo also has 80/22 OPEN).
 
 ```bash
-bash scripts/08_e2e_probe.sh <CCU_IP>
+bash scripts/08_e2e_probe.sh <CCU_IP> <FW_IP>   # ALWAYS pass FW_IP — the script's default (172.19.196.1) is wrong for most trains
 ```
 
 Step 8's `findings.json` block MUST include the derived `fw_commission_state`:
 
 ```json
 "fw_reach": {
-  "fw_peer_ip": "172.19.X.1",
+  "fw_peer_ip": "172.19.X.1",              // even Fzg → .1, odd Fzg → .129 (FW octet4 = 128*(Fzg%2)+1)
   "arp_state": "reachable|stale|failed|none",
   "fw_peer_mac": "00:90:e8:...",          // Westermo OUI if present
   "icmp_sent": 5,

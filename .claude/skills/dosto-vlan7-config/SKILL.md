@@ -7,7 +7,7 @@ description: Verify and (manually) fix the CCU's vlan7 IP on a DOSTO train. Comp
 
 This skill is the canonical procedure for verifying and fixing the **CCU's vlan7 IP** on a DOSTO NEU train.
 
-The CCU has a vlan7 interface (the OBS / Stadler-firewall transit VLAN). The IP is set in two places that must agree, and must match what the IP-Port-Allocation PDF defines for the train. Getting this wrong silently breaks Stadler-side reachability — the L2 fabric looks healthy but TCP probes to `172.19.X.1` fail.
+The CCU has a vlan7 interface (the OBS / Stadler-firewall transit VLAN). The IP is set in two places that must agree, and must match what the IP-Port-Allocation PDF defines for the train. Getting this wrong silently breaks Stadler-side reachability — the L2 fabric looks healthy but TCP probes to the Stadler FW peer (`172.19.X.1` even Fzg / `172.19.X.129` odd Fzg) fail.
 
 ## When to use
 
@@ -96,7 +96,7 @@ bits 18-25 : Fzg ID    (8 bits, range 1-255; the customer-side train ID)
 bits 26-32 : Device    (7 bits, range 1-127; per-device offset within the train)
 ```
 
-For the **CCU vlan7 interface, device = 2** (always — the firewall is `.1`, the CCU is `.2`).
+For the **CCU vlan7 interface, device = 2**; the Stadler firewall is **device = 1**. Both carry the odd-Fzg +128 bit in octet 4: even Fzg → FW `.1` / CCU `.2`, odd Fzg → FW `.129` / CCU `.130`. (Odd-Fzg FW `.129` field-verified 2026-07-09 on box1-t41 / 4705-103 / Fzg 231: FW at `172.19.243.129`, while `.1` was INCOMPLETE/no-route.)
 
 That packing produces this formula for the CCU vlan7 IP:
 
@@ -121,7 +121,7 @@ IP      = 172.19.<octet3>.<octet4>/17
 | 4736-110 | 138 | 172.19.197.2 | ✓ from PDF |
 | Bench (encoded Fzg=250) | 250 | 172.19.253.2 | ✓ from live CCU |
 
-The "odd vs even" pattern: each octet-3 value covers 2 consecutive Fzg IDs — **even Fzg → host .2, odd Fzg → host .130**.
+The "odd vs even" pattern: each octet-3 value covers 2 consecutive Fzg IDs — **even Fzg → host .2, odd Fzg → host .130**. The same rule applies to the FW peer (device 1): **even Fzg → FW `.1`, odd Fzg → FW `.129`** — i.e. `FW octet4 = 128*(Fzg%2) + 1`, or simply `expected_vlan7_ip(fzg, device=1)`.
 
 ## Fzg ID lookup
 
@@ -253,8 +253,10 @@ After reboot, the engineer (or `dosto-commission-train` stage 10 `post_reboot_ve
 |---|---|---|
 | **A. Input file unchanged from intent** | `sudo cat /etc/NetworkManager/system-connections/ndrd-vlan-vlan7.nmconnection \| grep "^address1="` | Single line: `address1=<EXPECTED_IP>` |
 | **B. Live interface matches expected** | `ip -br addr show vlan7` | Shows `<EXPECTED_IP>` exactly (post-NetworkManager apply) |
-| **C. Path to FW peer healthy (Q1)** | `ip neigh show dev vlan7 \| grep 172.19.<octet3>.1` | State is `REACHABLE` (or `STALE` is also OK), MAC has Westermo OUI `00:90:e8:` |
-| **D. FW commission state (Q2)** | `ping -c 5 172.19.<octet3>.1` | See decision table below |
+| **C. Path to FW peer healthy (Q1)** | `ip neigh show dev vlan7 \| grep <fw-ip>` | State is `REACHABLE` (or `STALE` is also OK), MAC has Westermo OUI `00:90:e8:` |
+| **D. FW commission state (Q2)** | `ping -c 5 <fw-ip>` | See decision table below |
+
+`<fw-ip>` = `expected_vlan7_ip(fzg, device=1)` without the `/17` — i.e. `172.19.<octet3>.1` for even Fzg, `172.19.<octet3>.129` for odd Fzg. Probing `.1` on an odd-Fzg train false-classifies as `path_broken` (field-verified 2026-07-09, Fzg 231).
 
 **Q2 interpretation (the F9 correction — read carefully):**
 
@@ -307,7 +309,7 @@ TCP `nc -zv` to port 80 / 22 tells you only whether *something* responds on that
 `verdict` semantics (post-F9 update):
 - `all_match` — A + B + C pass, D = `commissioned`. ✅ Fully done from our scope.
 - `ccu_ok_fw_uncommissioned` — A + B + C pass, D = `uncommissioned`. ✅ for our scope; flag Stadler-action item in fleet-status (they haven't finished FW config for this train).
-- `ccu_ok_path_broken` — A + B pass, C fails. 🔴 vlan7 nmconnection / live IP correct but the path to .1 is broken (vlan trunk, FW absent, etc.).
+- `ccu_ok_path_broken` — A + B pass, C fails. 🔴 vlan7 nmconnection / live IP correct but the path to the FW peer is broken (vlan trunk, FW absent, etc.). Before concluding this, double-check you probed the correct FW host (`.1` even Fzg / `.129` odd Fzg).
 - `input_only` — A passes, B fails. 🟡 NetworkManager didn't reapply (transient).
 - `live_only` — B passes, A fails. 🔴 nmconnection file divergent from live.
 - `both_mismatch` — A and B both wrong. 🔴 fix did not land.
@@ -334,7 +336,7 @@ The last thing the skill does (or asks the engineer to do as part of Step 11) is
 ## Edge cases / gotchas
 
 - **DOSTO NEU `train_id` ≠ Fzg ID.** OBN's `train_id` (in `/etc/obn/template/nv6-*.cfg`) is decoupled from the Fzg ID by design (mar5 migration workaround). The vlan7 IP is computed from **Fzg ID** (from the PDF header), never from `train_id`.
-- **The `.1` host is the Stadler firewall, the `.2` host is the CCU.** Don't mix them up in the diff/recipe.
+- **The Stadler firewall is device 1, the CCU is device 2 — both carry the odd-Fzg +128 bit.** Even Fzg: FW `.1`, CCU `.2`. Odd Fzg: FW `.129`, CCU `.130`. Don't mix them up in the diff/recipe, and never assume the FW is `.1` (odd-Fzg trap, field-verified 2026-07-09 on Fzg 231).
 - **Even Fzg → host octet starts with 0 (e.g. .2); odd Fzg → host octet starts with 128 (e.g. .130).** Sanity-check: if you're computing for an even Fzg and getting `.130`, your math is wrong.
 - **The bench (`box1-t122`, train_id 122) has an encoded Fzg of 250** in its `.nmconnection`, not 122. The `train_id` value used by OBN does not feed into the vlan7 IP encoding. If you ever need to *decode* an existing IP back to its Fzg ID, that's the formula:
   ```

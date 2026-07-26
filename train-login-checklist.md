@@ -96,7 +96,7 @@ octet 4 = (128 if Fzg is odd else 0) + 2
 IP      = 172.19.<octet3>.<octet4>/17
 ```
 
-Even Fzg → host `.2`. Odd Fzg → host `.130`.
+Even Fzg → host `.2`. Odd Fzg → host `.130`. The Stadler FW peer is device 1 with the same odd-Fzg +128 bit: even Fzg → FW `.1`, odd Fzg → FW `.129` (`FW octet4 = 128*(Fzg%2)+1`; field-verified 2026-07-09 on Fzg 231 / box1-t41).
 
 If the skill reports 🔴 mismatch: run the printed recipe inside `sudo /usr/sbin/nd-systemupdate.sh shell`, then `sudo /usr/local/sbin/safe_reboot`. After reboot, re-run the skill in verify mode. **Don't proceed to Step 5 until vlan7 is right** — Step 7's FW reachability check will give misleading results otherwise.
 
