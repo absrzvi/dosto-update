@@ -1,0 +1,5664 @@
+[
+ {
+  "path": "/alarm/{projectId}",
+  "tag": "Alarms",
+  "summary": "Get all of the alarms for a given Project ID.",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/alarm/{projectId}/active",
+  "tag": "Alarms",
+  "summary": "Get all of the current active alarms for a given Project ID.",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "state",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "The state of the alarm. 1 for an active alarm, 0 for a resolved alarm"
+   }
+  ],
+  "broken": false,
+  "verdict": "OTHER"
+ },
+ {
+  "path": "/alarm/{projectId}/url",
+  "tag": "Alarms",
+  "summary": "Get all of the alarms for a given monitoring section. Using the Project ID and the url of from the monitoring section configuration.",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "url",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "",
+    "desc": "The url of the monitoring section to retrieve alarms for"
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/alarm/{projectId}/url/active",
+  "tag": "Alarms",
+  "summary": "Get all of the current active alarms for a given monitoring section. Using the Project ID and the url of from the monitoring section configuration.",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "url",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "",
+    "desc": "The url of the monitoring section to retrieve alarms for"
+   },
+   {
+    "name": "state",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "The state of the alarm. 1 for an active alarm, 0 for a resolved alarm"
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/alarm/{projectId}/{alarmId}",
+  "tag": "Alarms",
+  "summary": "Get a specific alarm based on it's ID.",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "alarmId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/alarm/{projectId}/{trainId}",
+  "tag": "Alarms",
+  "summary": "Get all of the alarms for a given train. Using the Project ID and the Train relative ID.",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "trainId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OTHER"
+ },
+ {
+  "path": "/alarm/{projectId}/{trainId}/active",
+  "tag": "Alarms",
+  "summary": "Get all of the current active alarms for a given train. Using the Project ID and the Train relative ID.",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "trainId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "state",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "The state of the alarm. 1 for an active alarm, 0 for a resolved alarm"
+   }
+  ],
+  "broken": false,
+  "verdict": "OTHER"
+ },
+ {
+  "path": "/user/authenticateUser",
+  "tag": "Authentication",
+  "summary": "",
+  "params": [
+   {
+    "name": "authToken",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/config/box/discriptors/{projectId}/{tripId}",
+  "tag": "Configuration",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "tripId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int64",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/config/consist/latest",
+  "tag": "Configuration",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/config/noc/all/{projectId}",
+  "tag": "Configuration",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/config/noc/all/{projectId}/traintypes",
+  "tag": "Configuration",
+  "summary": "GET names of train types",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/config/noc/all/{projectId}/traintypes/{trainTypeId}",
+  "tag": "Configuration",
+  "summary": "Get Train Type Configuration From File",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "trainTypeId",
+    "in": "path",
+    "req": true,
+    "type": "string",
+    "fmt": "",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/config/noc/sqi/{projectId}",
+  "tag": "Configuration",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/config/noc/version",
+  "tag": "Configuration",
+  "summary": "",
+  "params": [],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/configurations/{projectId}/project",
+  "tag": "Configuration",
+  "summary": "Get All Project Configurations",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/configurations/{projectId}/traintypes",
+  "tag": "Configuration",
+  "summary": "GET train types for a given project",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/configurations/{projectId}/traintypes/{trainTypeId}",
+  "tag": "Configuration",
+  "summary": "Get configurations for a given train type",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "trainTypeId",
+    "in": "path",
+    "req": true,
+    "type": "string",
+    "fmt": "",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/consist/actualConsist/project/{projectId}",
+  "tag": "Consist",
+  "summary": "Get all of the actual consist information reported from the CCU for a given Project ID within two time periods.",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "Start date of period"
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "End date of period"
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/consist/actualConsist/project/{projectId}/train/{trainId}",
+  "tag": "Consist",
+  "summary": "Get all of the actual consist information reported from the CCU for a given train within two time periods.",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "trainId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "Start date of period"
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "End date of period"
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/consist/expectedConsist/project/{projectId}",
+  "tag": "Consist",
+  "summary": "Get all of the expected consist information for a given Project ID within two time periods.",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "Start date of period"
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "End date of period"
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/consist/expectedConsist/project/{projectId}/service/{serviceId}",
+  "tag": "Consist",
+  "summary": "Get all of the expected consist information for a given schedule ",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "serviceId",
+    "in": "path",
+    "req": true,
+    "type": "string",
+    "fmt": "",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/consist/expectedConsist/project/{projectId}/train/{trainId}",
+  "tag": "Consist",
+  "summary": "Get all of the expected consist information for a given train within two time periods.",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "trainId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "Start date of period"
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "End date of period"
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/newtrainremark/{projectId}",
+  "tag": "Deprecated",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/overviewtemplate",
+  "tag": "Deprecated",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/trainremark/{id}",
+  "tag": "Deprecated",
+  "summary": "",
+  "params": [
+   {
+    "name": "id",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int64",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/trainremarks/date/{projectId}",
+  "tag": "Deprecated",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "date",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/trainremarks/{projectId}",
+  "tag": "Deprecated",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/incidents/getincidents",
+  "tag": "Escalation",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": true,
+  "verdict": "NOTFOUND"
+ },
+ {
+  "path": "/incidents/getrfassets",
+  "tag": "Escalation",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "projectName",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "",
+    "desc": ""
+   },
+   {
+    "name": "trains",
+    "in": "query",
+    "req": true,
+    "type": "array",
+    "fmt": "",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/incidents/gettrainincidents",
+  "tag": "Escalation",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": true,
+  "verdict": "NOTFOUND"
+ },
+ {
+  "path": "/csv/period",
+  "tag": "Export",
+  "summary": "",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "message",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "token",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/csv/{projectId}",
+  "tag": "Export",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "tripId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int64",
+    "desc": ""
+   },
+   {
+    "name": "message",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "",
+    "desc": ""
+   },
+   {
+    "name": "token",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/gpsData",
+  "tag": "Metrics",
+  "summary": "",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/mar3/box/discriptors",
+  "tag": "Metrics",
+  "summary": "",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/mar3/box/gps",
+  "tag": "Metrics",
+  "summary": "",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "rate",
+    "in": "query",
+    "req": false,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "NEEDPARAM"
+ },
+ {
+  "path": "/mar3/capacitytest",
+  "tag": "Metrics",
+  "summary": "Get metrics on the capacity of the network",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "The relative ID of the train"
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "ID of the project"
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "Start date of period"
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "End date of period"
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/mar3/chart/linkstatistic",
+  "tag": "Metrics",
+  "summary": "",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "aggregate",
+    "in": "query",
+    "req": false,
+    "type": "boolean",
+    "fmt": "",
+    "desc": ""
+   },
+   {
+    "name": "rate",
+    "in": "query",
+    "req": false,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "NEEDPARAM"
+ },
+ {
+  "path": "/mar3/congestion",
+  "tag": "Metrics",
+  "summary": "",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "rate",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/mar3/gps",
+  "tag": "Metrics",
+  "summary": "Get the GPS messages for a given period",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "The relative ID of the train"
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "ID of the project"
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "Start date of period"
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "End date of period"
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/mar3/gsmstatistic",
+  "tag": "Metrics",
+  "summary": "Get GSM metrics (only for cellular modems)",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "The relative ID of the train"
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "ID of the project"
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "Start date of period"
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "End date of period"
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/mar3/link/combined",
+  "tag": "Metrics",
+  "summary": "Get summarised statistics for a given period",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "The relative ID of the train"
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "ID of the project"
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "Start date of period"
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "End date of period"
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/mar3/linksession",
+  "tag": "Metrics",
+  "summary": "",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "rate",
+    "in": "query",
+    "req": false,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "NEEDPARAM"
+ },
+ {
+  "path": "/mar3/linksession/combined",
+  "tag": "Metrics",
+  "summary": "",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "rate",
+    "in": "query",
+    "req": false,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "NEEDPARAM"
+ },
+ {
+  "path": "/mar3/linkstatistic",
+  "tag": "Metrics",
+  "summary": "Get general link metrics for a given period",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "The relative ID of the train"
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "ID of the project"
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "Start date of period"
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "End date of period"
+   },
+   {
+    "name": "rate",
+    "in": "query",
+    "req": false,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "Rate (this field is DEPRECATED)"
+   },
+   {
+    "name": "aggregate",
+    "in": "query",
+    "req": false,
+    "type": "boolean",
+    "fmt": "",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/mar3/ltestatistic",
+  "tag": "Metrics",
+  "summary": "Get LTE metrics (only for cellular modems)",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "The relative ID of the train"
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "ID of the project"
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "Start date of period"
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "End date of period"
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/mar3/wcdmastatistic",
+  "tag": "Metrics",
+  "summary": "Get WCDMA metrics (only for cellular modems)",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "The relative ID of the train"
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "ID of the project"
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "Start date of period"
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "End date of period"
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/nc/cellstatistics",
+  "tag": "Metrics",
+  "summary": "Get the Cell Statistics messages for a given period",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "The relative ID of the train"
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "ID of the project"
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "Start date of period"
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "End date of period"
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/portal/consumption",
+  "tag": "Metrics",
+  "summary": "Get session information per user for a given period",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "The relative ID of the train"
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "ID of the project"
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "Start date of period"
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "End date of period"
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/portal/consumption/all",
+  "tag": "Metrics",
+  "summary": "",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/portal/consumption/combined",
+  "tag": "Metrics",
+  "summary": "",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/portal/consumption/sessionusage",
+  "tag": "Metrics",
+  "summary": "",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/portal/consumption/sessionusage/all",
+  "tag": "Metrics",
+  "summary": "",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/portal/sync/entity/latest",
+  "tag": "Metrics",
+  "summary": "",
+  "params": [
+   {
+    "name": "entity",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "date",
+    "in": "query",
+    "req": false,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/portal/sync/train/latest",
+  "tag": "Metrics",
+  "summary": "",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "boxId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "date",
+    "in": "query",
+    "req": false,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "includeErrors",
+    "in": "query",
+    "req": false,
+    "type": "boolean",
+    "fmt": "",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/portal/sync/train/overview",
+  "tag": "Metrics",
+  "summary": "",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/positionData",
+  "tag": "Metrics",
+  "summary": "",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "rate",
+    "in": "query",
+    "req": false,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/positionDataComposite",
+  "tag": "Metrics",
+  "summary": "",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "rate",
+    "in": "query",
+    "req": false,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/radioUserCount",
+  "tag": "Metrics",
+  "summary": "Get amount of users connected per radio of access point",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "The relative ID of the train"
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "ID of the project"
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "Start date of period"
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "End date of period"
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/radioUserCount/period/discriptors",
+  "tag": "Metrics",
+  "summary": "",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/radioUserCount/trip/discriptors/{projectId}/{tripId}",
+  "tag": "Metrics",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "tripId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/trainuser",
+  "tag": "Metrics",
+  "summary": "Get amount of users connected to on-board system",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "The relative ID of the train"
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "ID of the project"
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "Start date of period"
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "End date of period"
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/trainuser/combined",
+  "tag": "Metrics",
+  "summary": "",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "rate",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/vu",
+  "tag": "Metrics",
+  "summary": "Get metrics on Virtual User",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "The relative ID of the train"
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "ID of the project"
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "Start date of period"
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "End date of period"
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/monitoring/alarmEvents/{trainId}",
+  "tag": "Monitoring & Alarms",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "trainId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/monitoring/alarms",
+  "tag": "Monitoring & Alarms",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/monitoring/alarms/{trainId}",
+  "tag": "Monitoring & Alarms",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "trainId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/monitoring/context/{trainId}",
+  "tag": "Monitoring & Alarms",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "trainId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/monitoring/links/{trainId}",
+  "tag": "Monitoring & Alarms",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "trainId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/monitoring/project/{projectId}/trainstatus",
+  "tag": "Monitoring & Alarms",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "maintainer",
+    "in": "query",
+    "req": false,
+    "type": "string",
+    "fmt": "",
+    "desc": ""
+   },
+   {
+    "name": "train",
+    "in": "query",
+    "req": false,
+    "type": "string",
+    "fmt": "",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/monitoring/project/{projectId}/trainstatus/all",
+  "tag": "Monitoring & Alarms",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/monitoring/table",
+  "tag": "Monitoring & Alarms",
+  "summary": "Get a complete overview of the state of the fleet",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "ID of the project"
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/monitoring/trains",
+  "tag": "Monitoring & Alarms",
+  "summary": "Get a list of monitored trains for a given project",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "ID of the project"
+   },
+   {
+    "name": "include",
+    "in": "query",
+    "req": false,
+    "type": "string",
+    "fmt": "",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/monitoring/trains/{trainId}",
+  "tag": "Monitoring & Alarms",
+  "summary": "Get a monitored train for a given project",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "trainId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/monitoring/zabbix/alarms",
+  "tag": "Monitoring & Alarms",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "monitoringType",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/monitoring/zabbix/hosts",
+  "tag": "Monitoring & Alarms",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "monitoringType",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/train/period",
+  "tag": "Monitoring & Alarms",
+  "summary": "",
+  "params": [
+   {
+    "name": "relativeId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/traindata",
+  "tag": "Monitoring & Alarms",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "threshold",
+    "in": "query",
+    "req": false,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/traindata/{trainId}",
+  "tag": "Monitoring & Alarms",
+  "summary": "",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "threshold",
+    "in": "query",
+    "req": false,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/traingeo",
+  "tag": "Monitoring & Alarms",
+  "summary": "Get a GPS overview on entire fleet",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "ID of the project"
+   },
+   {
+    "name": "threshold",
+    "in": "query",
+    "req": false,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "Threshold value"
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/traingeo/box/gps",
+  "tag": "Monitoring & Alarms",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/obis/assignedjourney",
+  "tag": "OBIS",
+  "summary": "Get metrics on the OBIS Assigned Journey statistics",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "The relative ID of the train"
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "ID of the project"
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "Start date of period"
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "End date of period"
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/obis/degraded",
+  "tag": "OBIS",
+  "summary": "Get metrics on the OBIS Degraded (Global OK) statistics",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "The relative ID of the train"
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "ID of the project"
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "Start date of period"
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "End date of period"
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/obis/discriptors/period",
+  "tag": "OBIS",
+  "summary": "",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "The relative ID of the train"
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "ID of the project"
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "Start date of period"
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "End date of period"
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/obis/discriptors/trip/{projectId}/{tripId}",
+  "tag": "OBIS",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "tripId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/obis/lifesign",
+  "tag": "OBIS",
+  "summary": "Get metrics on the OBIS LifeSign statistics",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "The relative ID of the train"
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "ID of the project"
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "Start date of period"
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "End date of period"
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/obis/line",
+  "tag": "OBIS",
+  "summary": "Get metrics on the OBIS Line statistics",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "The relative ID of the train"
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "ID of the project"
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "Start date of period"
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "End date of period"
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/obis/loopstatus",
+  "tag": "OBIS",
+  "summary": "Get metrics on the OBIS LoopStatus statistics",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "The relative ID of the train"
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "ID of the project"
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "Start date of period"
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "End date of period"
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/obis/mmdbacklight",
+  "tag": "OBIS",
+  "summary": "Get metrics on the OBIS MMD Backlight statistics",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "The relative ID of the train"
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "ID of the project"
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "Start date of period"
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "End date of period"
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/obis/mtsdownloadstatus",
+  "tag": "OBIS",
+  "summary": "Get metrics on the OBIS MTS Download Status statistics",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "The relative ID of the train"
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "ID of the project"
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "Start date of period"
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "End date of period"
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/obis/operationhours",
+  "tag": "OBIS",
+  "summary": "Get metrics on the OBIS Operation Hours statistics",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "The relative ID of the train"
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "ID of the project"
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "Start date of period"
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "End date of period"
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/obis/psudetails",
+  "tag": "OBIS",
+  "summary": "Get metrics on the OBIS PSUDetails statistics",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "The relative ID of the train"
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "ID of the project"
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "Start date of period"
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "End date of period"
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/obis/psudetailssummary",
+  "tag": "OBIS",
+  "summary": "Get metrics on the OBIS PSUDetailsSummary statistics",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "The relative ID of the train"
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "ID of the project"
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "Start date of period"
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "End date of period"
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/obis/swplatformstatus",
+  "tag": "OBIS",
+  "summary": "Get metrics on the OBIS SWPlatformStatus statistics",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "The relative ID of the train"
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "ID of the project"
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "Start date of period"
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "End date of period"
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/obis/temperature",
+  "tag": "OBIS",
+  "summary": "Get metrics on the OBIS Temperature statistics",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "The relative ID of the train"
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "ID of the project"
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "Start date of period"
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "End date of period"
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/obis/trainposition",
+  "tag": "OBIS",
+  "summary": "Get metrics on the OBIS Train Position statistics",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "The relative ID of the train"
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "ID of the project"
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "Start date of period"
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "End date of period"
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/commandlist",
+  "tag": "Onboard Management",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/commandresponse",
+  "tag": "Onboard Management",
+  "summary": "",
+  "params": [
+   {
+    "name": "trainIds",
+    "in": "query",
+    "req": true,
+    "type": "array",
+    "fmt": "",
+    "desc": ""
+   },
+   {
+    "name": "boxIds",
+    "in": "query",
+    "req": true,
+    "type": "array",
+    "fmt": "",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "commands",
+    "in": "query",
+    "req": true,
+    "type": "array",
+    "fmt": "",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/commandresponse/uuid",
+  "tag": "Onboard Management",
+  "summary": "",
+  "params": [
+   {
+    "name": "uuids",
+    "in": "query",
+    "req": true,
+    "type": "array",
+    "fmt": "",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/project/box",
+  "tag": "Onboard Management",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/maintenance/project/{projectId}",
+  "tag": "Other",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/puppet/configByTrainId",
+  "tag": "Other",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/static/doc",
+  "tag": "Other",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "documentationFile",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/traincon/{id}",
+  "tag": "Other",
+  "summary": "",
+  "params": [
+   {
+    "name": "id",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int64",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/trainconnectivities",
+  "tag": "Other",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "date",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/trainconnectivity",
+  "tag": "Other",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "date",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/advanced/filter",
+  "tag": "Performance",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/advanced/filter/favorite/{id}",
+  "tag": "Performance",
+  "summary": "",
+  "params": [
+   {
+    "name": "id",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int64",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/advanced/services",
+  "tag": "Performance",
+  "summary": "Return all serviceIds for given project",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "trainIds",
+    "in": "query",
+    "req": true,
+    "type": "array",
+    "fmt": "",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/advanced/sqis",
+  "tag": "Performance",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/advanced/trips",
+  "tag": "Performance",
+  "summary": "",
+  "params": [
+   {
+    "name": "trainIds",
+    "in": "query",
+    "req": true,
+    "type": "array",
+    "fmt": "",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "query",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "",
+    "desc": ""
+   },
+   {
+    "name": "type",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/advanced/trips/dashboard/ids",
+  "tag": "Performance",
+  "summary": "",
+  "params": [
+   {
+    "name": "trainIds",
+    "in": "query",
+    "req": true,
+    "type": "array",
+    "fmt": "",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "type",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "",
+    "desc": ""
+   },
+   {
+    "name": "query",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/export/dashboard/trips",
+  "tag": "Performance",
+  "summary": "",
+  "params": [
+   {
+    "name": "trainIds",
+    "in": "query",
+    "req": true,
+    "type": "array",
+    "fmt": "",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "query",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "",
+    "desc": ""
+   },
+   {
+    "name": "type",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/trip/sqis/fleet",
+  "tag": "Performance",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/trip/sqis/train",
+  "tag": "Performance",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/trip/trend",
+  "tag": "Performance",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/trip/{projectId}/{tripId}",
+  "tag": "Performance",
+  "summary": "Get all the KPIs for a given trip",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "ID of the project"
+   },
+   {
+    "name": "tripId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int64",
+    "desc": "Id of the train trip"
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/trips",
+  "tag": "Performance",
+  "summary": "Get all trips for a given list of trains",
+  "params": [
+   {
+    "name": "trainIds",
+    "in": "query",
+    "req": true,
+    "type": "array",
+    "fmt": "",
+    "desc": "list of ids of the train"
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "ID of the project"
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "Start date of period"
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "End date of period"
+   },
+   {
+    "name": "main",
+    "in": "query",
+    "req": true,
+    "type": "boolean",
+    "fmt": "",
+    "desc": "Trip type is main"
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/trips/percentile",
+  "tag": "Performance",
+  "summary": "",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/customreferencearea",
+  "tag": "Polygons",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/depots",
+  "tag": "Polygons",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/shadowzone",
+  "tag": "Polygons",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/waypoint",
+  "tag": "Polygons",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/waypoints",
+  "tag": "Polygons",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/referenceAreas",
+  "tag": "PolygonsV2",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/referenceAreas/{id}",
+  "tag": "PolygonsV2",
+  "summary": "",
+  "params": [
+   {
+    "name": "id",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int64",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "type",
+    "in": "query",
+    "req": false,
+    "type": "string",
+    "fmt": "",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/portal/project/{projectId}/data",
+  "tag": "Portal Satisfaction Survey",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "message",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "",
+    "desc": ""
+   },
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": false,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/portal/project/{projectId}/info",
+  "tag": "Portal Satisfaction Survey",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "message",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "",
+    "desc": ""
+   },
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": false,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/portal/project/{projectId}/satisfaction",
+  "tag": "Portal Satisfaction Survey",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": false,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/project",
+  "tag": "Project",
+  "summary": "Return the list of project IDs",
+  "params": [],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/project/expert",
+  "tag": "Project",
+  "summary": "",
+  "params": [],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/project/{id}",
+  "tag": "Project",
+  "summary": "",
+  "params": [
+   {
+    "name": "id",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/export/sim-consumption",
+  "tag": "SIM Management",
+  "summary": "",
+  "params": [
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "token",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/operators",
+  "tag": "SIM Management",
+  "summary": "Return the list of operators",
+  "params": [],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/sim",
+  "tag": "SIM Management",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": false,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/sim/fleet/consumption",
+  "tag": "SIM Management",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/sim/pool/{id}",
+  "tag": "SIM Management",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "id",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/sim/train/{trainId}",
+  "tag": "SIM Management",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "trainId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/sim/usage",
+  "tag": "SIM Management",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/sim/{iccid}",
+  "tag": "SIM Management",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "iccid",
+    "in": "path",
+    "req": true,
+    "type": "string",
+    "fmt": "",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/sim/{iccid}/details",
+  "tag": "SIM Management",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "iccid",
+    "in": "path",
+    "req": true,
+    "type": "string",
+    "fmt": "",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/sim/{iccid}/total",
+  "tag": "SIM Management",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "iccid",
+    "in": "path",
+    "req": true,
+    "type": "string",
+    "fmt": "",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/sims/data/period/{iccid}",
+  "tag": "SIM Management",
+  "summary": "",
+  "params": [
+   {
+    "name": "iccid",
+    "in": "path",
+    "req": true,
+    "type": "string",
+    "fmt": "",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/sims/data/{iccid}",
+  "tag": "SIM Management",
+  "summary": "",
+  "params": [
+   {
+    "name": "iccid",
+    "in": "path",
+    "req": true,
+    "type": "string",
+    "fmt": "",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/sims/pool",
+  "tag": "SIM Management",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/sims/pool/data/{id}",
+  "tag": "SIM Management",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "id",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/sims/pool/usage/{id}",
+  "tag": "SIM Management",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "id",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/sims/pool/usagedata/{iccid}",
+  "tag": "SIM Management",
+  "summary": "",
+  "params": [
+   {
+    "name": "iccid",
+    "in": "path",
+    "req": true,
+    "type": "string",
+    "fmt": "",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/sims/pool/{id}",
+  "tag": "SIM Management",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "id",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/sims/usage/{iccid}",
+  "tag": "SIM Management",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "iccid",
+    "in": "path",
+    "req": true,
+    "type": "string",
+    "fmt": "",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/security/all/usergroup",
+  "tag": "Security",
+  "summary": "",
+  "params": [],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/sessionpoller/{userId}",
+  "tag": "Site Statistics",
+  "summary": "",
+  "params": [
+   {
+    "name": "userId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int64",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/useractivities/period",
+  "tag": "Site Statistics",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/useractivities/user",
+  "tag": "Site Statistics",
+  "summary": "",
+  "params": [
+   {
+    "name": "userId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int64",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/useractivity/user/details",
+  "tag": "Site Statistics",
+  "summary": "",
+  "params": [
+   {
+    "name": "userId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/userlogin/daily",
+  "tag": "Site Statistics",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/userlogin/users/now",
+  "tag": "Site Statistics",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/userlogin/{userId}",
+  "tag": "Site Statistics",
+  "summary": "",
+  "params": [
+   {
+    "name": "userId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/userlogins/period",
+  "tag": "Site Statistics",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/userlogins/{userId}",
+  "tag": "Site Statistics",
+  "summary": "",
+  "params": [
+   {
+    "name": "userId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int64",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/userrequest/count",
+  "tag": "Site Statistics",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/userrequest/period",
+  "tag": "Site Statistics",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/userrequest/user/period",
+  "tag": "Site Statistics",
+  "summary": "",
+  "params": [
+   {
+    "name": "userId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int64",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/chart/template",
+  "tag": "Templates",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/chart/template/{id}",
+  "tag": "Templates",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "id",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int64",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/trainEvents/{trainId}",
+  "tag": "Train Events",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "trainId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/project/{projectId}/trains/{trainId}/configuration",
+  "tag": "Train Management",
+  "summary": "Get Train Type Configuration By TrainId",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "trainId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/train/project/{projectId}",
+  "tag": "Train Management",
+  "summary": "Return the list of train IDs for a given project",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "ID of the project"
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/train/{trainId}",
+  "tag": "Train Management",
+  "summary": "Retrieve information for a specific train ID",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int64",
+    "desc": "The relative ID of the train"
+   }
+  ],
+  "broken": false,
+  "verdict": "NEEDPARAM"
+ },
+ {
+  "path": "/trainconfig/traintypes",
+  "tag": "Train Management",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/trainconfig/{trainId}",
+  "tag": "Train Management",
+  "summary": "",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/trainschedule/current",
+  "tag": "Train Scheduling",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/trainschedule/current/train/{trainId}",
+  "tag": "Train Scheduling",
+  "summary": "",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/trainschedule/date",
+  "tag": "Train Scheduling",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "date",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/trainschedule/timetable",
+  "tag": "Train Scheduling",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ },
+ {
+  "path": "/convertToBcrypt",
+  "tag": "User Management",
+  "summary": "",
+  "params": [],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/logout/{id}",
+  "tag": "User Management",
+  "summary": "",
+  "params": [
+   {
+    "name": "id",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int64",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/reset",
+  "tag": "User Management",
+  "summary": "",
+  "params": [
+   {
+    "name": "email",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/resetpassword/{userId}",
+  "tag": "User Management",
+  "summary": "",
+  "params": [
+   {
+    "name": "userId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int64",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/user",
+  "tag": "User Management",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/user/{id}",
+  "tag": "User Management",
+  "summary": "",
+  "params": [
+   {
+    "name": "id",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int64",
+    "desc": ""
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "SKIP"
+ },
+ {
+  "path": "/usercomposites",
+  "tag": "User Management",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/zabbix/custom/config/{trainId}",
+  "tag": "Zabbix",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "trainId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/zabbix/structure",
+  "tag": "Zabbix",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/zabbix/structure/{trainId}",
+  "tag": "Zabbix",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "trainId",
+    "in": "path",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/zabbix/token",
+  "tag": "Zabbix",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   },
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/zabbix/trainmappings",
+  "tag": "Zabbix",
+  "summary": "",
+  "params": [
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": ""
+   }
+  ],
+  "broken": false,
+  "verdict": "OK"
+ },
+ {
+  "path": "/vlan/vlanmonitor",
+  "tag": "vlan monitor",
+  "summary": "Get all vlan monitor",
+  "params": [
+   {
+    "name": "trainId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "The relative ID of the train"
+   },
+   {
+    "name": "projectId",
+    "in": "query",
+    "req": true,
+    "type": "integer",
+    "fmt": "int32",
+    "desc": "ID of the project"
+   },
+   {
+    "name": "from",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "Start date of period"
+   },
+   {
+    "name": "to",
+    "in": "query",
+    "req": true,
+    "type": "string",
+    "fmt": "date-time",
+    "desc": "End date of period"
+   }
+  ],
+  "broken": false,
+  "verdict": "EMPTY"
+ }
+]

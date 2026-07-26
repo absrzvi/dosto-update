@@ -1,0 +1,54 @@
+# /etc/systemd/system/vign-logger.service
+[Unit]
+Description=DOSTO CCU ignition/supply (Vin/Vign) logger via CMM I2C
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/data/ignition-log/vign_poll.sh
+Restart=always
+RestartSec=5
+Nice=10
+
+[Install]
+WantedBy=multi-user.target
+
+# /etc/systemd/system/vign-shutdown-marker.service
+[Unit]
+Description=DOSTO CCU graceful-shutdown breadcrumb to /data (hard-cut vs clean-stop discriminator)
+DefaultDependencies=no
+Before=shutdown.target umount.target final.target
+Conflicts=reboot.target
+# Run as late as possible so the marker reflects a real shutdown transaction.
+After=network.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+# Nothing to do on start; the breadcrumb is written on stop (i.e. at shutdown).
+ExecStart=/bin/true
+ExecStop=/data/ignition-log/shutdown_marker.sh
+
+[Install]
+WantedBy=multi-user.target
+
+# /etc/systemd/system/nd-logtail.timer
+[Unit]
+Description=DOSTO CCU volatile-log tail flush timer (60s)
+
+[Timer]
+OnBootSec=60
+OnUnitActiveSec=60
+AccuracySec=5s
+Persistent=false
+
+[Install]
+WantedBy=timers.target
+
+# /etc/systemd/system/nd-logtail.service
+[Unit]
+Description=DOSTO CCU volatile-log tail flush to persistent /data
+
+[Service]
+Type=oneshot
+ExecStart=/data/ignition-log/logtail.sh

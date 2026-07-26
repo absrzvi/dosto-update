@@ -1,0 +1,72 @@
+######## 4736-106 / Fzg134 / box1-t19 — post-reboot baseline 2026-07-24 ########
+captured: 2026-07-24T09:01:43Z  boot: 2026-07-24 08:33:05 UTC  uptime: up 28 minutes
+
+======== dmesg: errors/warnings this boot (usb, hang, watchdog, oom, panic) ========
+[    1.104820] usb: port power management may be unreliable
+[    3.591792] i915 0000:00:02.0: Direct firmware load for i915/tgl_dmc_ver2_12.bin failed with error -2
+
+======== USB / modem device tree ========
+Bus 012 Device 002: ID 1bc7:1070 Telit Wireless Solutions FN990
+Bus 012 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 011 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 009 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 010 Device 002: ID 1bc7:1070 Telit Wireless Solutions FN990
+Bus 010 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 008 Device 002: ID 1bc7:1070 Telit Wireless Solutions FN990
+Bus 008 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 007 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 006 Device 002: ID 1bc7:1070 Telit Wireless Solutions FN990
+Bus 006 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 005 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+--- ModemManager modems ---
+    /org/freedesktop/ModemManager1/Modem/5 [Telit] FN990A28
+    /org/freedesktop/ModemManager1/Modem/7 [Telit] FN990A28
+    /org/freedesktop/ModemManager1/Modem/12 [Telit] FN990A28
+    /org/freedesktop/ModemManager1/Modem/10 [Telit] FN990A28
+--- ttyUSB present ---
+22
+ttyUSB ports
+
+======== load / memory / top procs now ========
+ 09:01:43 up 28 min,  2 users,  load average: 0.81, 0.73, 0.68
+               total        used        free      shared  buff/cache   available
+Mem:            62Gi       5.4Gi        56Gi       1.1Gi       2.4Gi        57Gi
+
+======== watchdog status ========
+Identity:      wdat_wdt [version 0]
+Timeout:       30 seconds
+Pre-timeout:    0 seconds
+FLAG           DESCRIPTION               STATUS BOOT-STATUS
+PRETIMEOUT     Pretimeout (in seconds)        1           0
+SETTIMEOUT     Set timeout (in seconds)       0           0
+
+======== journal: any errors since boot ========
+Jul 24 08:33:12 box1-t19 ntpd[1547]: IO: unable to create socket on vlan10 (19) for fe80::221:21ff:fe21:101%20#123
+Jul 24 08:33:12 box1-t19 ntpd[1547]: statistics directory /var/log/ntpsec/ does not exist or is unwriteable, error No such file or directory
+Jul 24 08:34:10 box1-t19 systemd[1]: Failed to start NetworkManager-wait-online.service - Network Manager Wait Online.
+Jul 24 08:34:12 box1-t19 dhcpd[4950]: Abandoning IP address 10.179.19.178: pinged before offer
+Jul 24 08:34:12 box1-t19 dhcpd[4950]: Abandoning IP address 10.179.19.179: pinged before offer
+Jul 24 08:34:12 box1-t19 dhcpd[4950]: Abandoning IP address 10.179.19.180: pinged before offer
+Jul 24 08:34:13 box1-t19 dhcpd[4950]: Abandoning IP address 10.179.19.181: pinged before offer
+Jul 24 08:34:13 box1-t19 ntpd[1547]: IO: bind(45) AF_INET6 fe80::42:acff:fe73:94a3%22#123 flags 0x1 failed: Cannot assign requested address
+Jul 24 08:34:13 box1-t19 ntpd[1547]: IO: unable to create socket on docker0 (36) for fe80::42:acff:fe73:94a3%22#123
+Jul 24 08:34:13 box1-t19 ntpd[1547]: IO: bind(45) AF_INET6 fe80::40ec:79ff:fe3c:99c2%24#123 flags 0x1 failed: Cannot assign requested address
+Jul 24 08:34:13 box1-t19 ntpd[1547]: IO: unable to create socket on veth8a1b4cd (37) for fe80::40ec:79ff:fe3c:99c2%24#123
+Jul 24 08:34:13 box1-t19 dhcpd[4950]: Abandoning IP address 10.179.19.182: pinged before offer
+Jul 24 08:34:14 box1-t19 dhcpd[4950]: Abandoning IP address 10.179.19.183: pinged before offer
+Jul 24 08:34:14 box1-t19 dhcpd[4950]: Abandoning IP address 10.179.19.184: pinged before offer
+Jul 24 08:34:16 box1-t19 dhcpd[4950]: Abandoning IP address 10.179.19.185: pinged before offer
+Jul 24 08:34:18 box1-t19 dhcpd[4950]: Abandoning IP address 10.179.19.186: pinged before offer
+Jul 24 08:34:20 box1-t19 dhcpd[6842]: Abandoning IP address 10.179.19.187: pinged before offer
+Jul 24 08:34:20 box1-t19 dhcpd[6842]: Abandoning IP address 10.179.19.188: pinged before offer
+Jul 24 08:34:24 box1-t19 dhcpd[6842]: Abandoning IP address 10.179.19.189: pinged before offer
+Jul 24 08:34:25 box1-t19 dhcpd[6842]: Abandoning IP address 10.179.19.190: pinged before offer
+Jul 24 08:34:25 box1-t19 dhcpd[6842]: Abandoning IP address 10.179.19.191: pinged before offer
+Jul 24 08:34:27 box1-t19 dhcpd[6842]: Abandoning IP address 10.179.19.192: pinged before offer
+Jul 24 08:34:27 box1-t19 dhcpd[6842]: Abandoning IP address 10.179.19.193: pinged before offer
+Jul 24 08:34:27 box1-t19 dhcpd[6842]: Abandoning IP address 10.179.19.194: pinged before offer
+Jul 24 08:34:28 box1-t19 dhcpd[6842]: Abandoning IP address 10.179.19.195: pinged before offer

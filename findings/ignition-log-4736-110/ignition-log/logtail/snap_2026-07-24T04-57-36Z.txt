@@ -1,0 +1,86 @@
+##### LOGTAIL SNAPSHOT 2026-07-24T04-57-36Z (boot=62a905d0-8660-4826-9684-770d392aca42) #####
+----- uptime / loadavg -----
+7017.53 79444.77
+0.47 0.37 0.44 3/984 667302
+----- dmesg tail (last 40) -----
+[ 3919.089128] ndktun: t23 u1 l2: Link address updated: IPv4: 10.214.49.95:53060, IPv6: NONE
+[ 3983.227456] ndktun: t23 u1 l3: Link address updated: IPv4: 10.10.160.127:39554, IPv6: NONE
+[ 3995.743810] ndktun: t23 u1 l2: Link address updated: IPv4: 10.214.49.95:39889, IPv6: NONE
+[ 3996.094521] ndktun: t23 u1 l1: Link address updated: IPv4: 10.10.170.1:59926, IPv6: NONE
+[ 3997.794544] ndktun: t23 u1 l1: Link address updated: IPv4: 10.10.170.1:58571, IPv6: NONE
+[ 4002.557915] ndktun: t23 u1 l2: Link address updated: IPv4: 10.214.49.95:49163, IPv6: NONE
+[ 4003.794509] ndktun: t23 u1 l1: Link address updated: IPv4: 10.10.170.1:46413, IPv6: NONE
+[ 4005.494509] ndktun: t23 u1 l1: Link address updated: IPv4: 10.10.170.1:37198, IPv6: NONE
+[ 4005.958692] ndktun: t23 u1 l3: Link address updated: IPv4: 10.10.160.127:46264, IPv6: NONE
+[ 4008.089763] ndktun: t23 u1 l3: Link address updated: IPv4: 10.10.160.127:50018, IPv6: NONE
+[ 4021.573567] ndktun: t23 u1 l2: Link address updated: IPv4: 10.214.49.95:52360, IPv6: NONE
+[ 4122.226978] ndktun: t23 u1 l3: Link address updated: IPv4: 10.10.160.127:47948, IPv6: NONE
+[ 4137.226895] ndktun: t23 u1 l3: Link address updated: IPv4: 10.10.160.127:54045, IPv6: NONE
+[ 4137.693957] ndktun: t23 u1 l1: Link address updated: IPv4: 10.10.170.1:38826, IPv6: NONE
+[ 4178.391248] ath10k_pci 0000:10:00.0: pdev param 0 not supported by firmware
+[ 4214.326566] ndktun: t23 u1 l3: Link address updated: IPv4: 10.10.160.127:57870, IPv6: NONE
+[ 4225.504661] ndktun: t23 u1 l3: Link address updated: IPv4: 10.10.160.127:34884, IPv6: NONE
+[ 4232.803033] ndktun: t23 u1 l3: Link address updated: IPv4: 10.10.160.127:43786, IPv6: NONE
+[ 4234.770784] ndktun: t23 u1 l1: Link address updated: IPv4: 10.10.170.1:39403, IPv6: NONE
+[ 4235.166474] ndktun: t23 u1 l3: Link address updated: IPv4: 10.10.160.127:35326, IPv6: NONE
+[ 4474.990893] ndktun: t23 u1 l3: Link endpoint is not up
+[ 4475.025506] ndktun: t23 u1 l3: Link address updated: IPv4: 10.10.160.127:59369, IPv6: NONE
+[ 4511.709278] ndktun: t23 u1 l1: Link address updated: IPv4: 10.10.170.1:55465, IPv6: NONE
+[ 4522.349936] ndktun: t23 u1 l1: Link address updated: IPv4: 10.10.170.1:33137, IPv6: NONE
+[ 4535.639991] ndktun: t23 u1 l1: Link address updated: IPv4: 10.10.170.1:36199, IPv6: NONE
+[ 4537.864886] ndktun: t23 u1 l3: Link address updated: IPv4: 10.10.160.127:33802, IPv6: NONE
+[ 4538.692384] ndktun: t23 u1 l1: Link address updated: IPv4: 10.10.170.1:60111, IPv6: NONE
+[ 4565.334782] ndktun: t23 u1 l3: Link address updated: IPv4: 10.10.160.127:60041, IPv6: NONE
+[ 4566.374762] ndktun: t23 u1 l1: Link address updated: IPv4: 10.10.170.1:33488, IPv6: NONE
+[ 4594.221291] ndktun: t23 u1 l2: Link address updated: IPv4: 10.214.49.95:53792, IPv6: NONE
+[ 4595.405565] ath10k_pci 0000:10:00.0: pdev param 0 not supported by firmware
+[ 5013.382556] ath10k_pci 0000:10:00.0: pdev param 0 not supported by firmware
+[ 5201.651070] ndktun: t23 u1 l2: Link address updated: IPv4: 10.214.49.95:60631, IPv6: NONE
+[ 5211.750975] ndktun: t23 u1 l2: Link address updated: IPv4: 10.214.49.95:54214, IPv6: NONE
+[ 5318.150814] ndktun: t23 u1 l3: Link address updated: IPv4: 10.10.160.127:39333, IPv6: NONE
+[ 5430.391909] ath10k_pci 0000:10:00.0: pdev param 0 not supported by firmware
+[ 5848.401384] ath10k_pci 0000:10:00.0: pdev param 0 not supported by firmware
+[ 6266.358763] ath10k_pci 0000:10:00.0: pdev param 0 not supported by firmware
+[ 6276.913947] ndktun: t23 u1 l3: Link address updated: IPv4: 10.10.160.127:44795, IPv6: NONE
+[ 6684.380167] ath10k_pci 0000:10:00.0: pdev param 0 not supported by firmware
+----- journal priority<=4 (warn+), last 40 this boot -----
+Jul 24 04:39:50 box1-t23 NetworkManager[891]: <warn>  [1784867990.2621] device (enp19s0f0): Activation: failed for connection 'Wired connection 2'
+Jul 24 04:39:50 box1-t23 NetworkManager[891]: <warn>  [1784867990.2627] device (enp19s0f1): Activation: failed for connection 'Wired connection 3'
+Jul 24 04:39:50 box1-t23 NetworkManager[891]: <warn>  [1784867990.2632] device (enp19s0f2): Activation: failed for connection 'Wired connection 4'
+Jul 24 04:39:50 box1-t23 NetworkManager[891]: <warn>  [1784867990.2637] device (enp19s0f3): Activation: failed for connection 'Wired connection 5'
+Jul 24 04:45:05 box1-t23 kernel: ath10k_pci 0000:10:00.0: pdev param 0 not supported by firmware
+Jul 24 04:45:35 box1-t23 NetworkManager[891]: <warn>  [1784868335.2626] device (enp19s0f0): Activation: failed for connection 'Wired connection 2'
+Jul 24 04:45:35 box1-t23 NetworkManager[891]: <warn>  [1784868335.2630] device (enp19s0f1): Activation: failed for connection 'Wired connection 3'
+Jul 24 04:45:35 box1-t23 NetworkManager[891]: <warn>  [1784868335.2634] device (enp19s0f2): Activation: failed for connection 'Wired connection 4'
+Jul 24 04:45:35 box1-t23 NetworkManager[891]: <warn>  [1784868335.2638] device (enp19s0f3): Activation: failed for connection 'Wired connection 5'
+Jul 24 04:46:20 box1-t23 NetworkManager[891]: <warn>  [1784868380.2649] device (enp19s0f0): Activation: failed for connection 'Wired connection 2'
+Jul 24 04:46:20 box1-t23 NetworkManager[891]: <warn>  [1784868380.2657] device (enp19s0f1): Activation: failed for connection 'Wired connection 3'
+Jul 24 04:46:20 box1-t23 NetworkManager[891]: <warn>  [1784868380.2664] device (enp19s0f2): Activation: failed for connection 'Wired connection 4'
+Jul 24 04:46:20 box1-t23 NetworkManager[891]: <warn>  [1784868380.2670] device (enp19s0f3): Activation: failed for connection 'Wired connection 5'
+Jul 24 04:47:05 box1-t23 NetworkManager[891]: <warn>  [1784868425.2634] device (enp19s0f0): Activation: failed for connection 'Wired connection 2'
+Jul 24 04:47:05 box1-t23 NetworkManager[891]: <warn>  [1784868425.2639] device (enp19s0f1): Activation: failed for connection 'Wired connection 3'
+Jul 24 04:47:05 box1-t23 NetworkManager[891]: <warn>  [1784868425.2644] device (enp19s0f2): Activation: failed for connection 'Wired connection 4'
+Jul 24 04:47:05 box1-t23 NetworkManager[891]: <warn>  [1784868425.2649] device (enp19s0f3): Activation: failed for connection 'Wired connection 5'
+Jul 24 04:47:50 box1-t23 NetworkManager[891]: <warn>  [1784868470.2653] device (enp19s0f0): Activation: failed for connection 'Wired connection 2'
+Jul 24 04:47:50 box1-t23 NetworkManager[891]: <warn>  [1784868470.2657] device (enp19s0f1): Activation: failed for connection 'Wired connection 3'
+Jul 24 04:47:50 box1-t23 NetworkManager[891]: <warn>  [1784868470.2662] device (enp19s0f2): Activation: failed for connection 'Wired connection 4'
+Jul 24 04:47:50 box1-t23 NetworkManager[891]: <warn>  [1784868470.2666] device (enp19s0f3): Activation: failed for connection 'Wired connection 5'
+Jul 24 04:52:03 box1-t23 kernel: ath10k_pci 0000:10:00.0: pdev param 0 not supported by firmware
+Jul 24 04:53:35 box1-t23 NetworkManager[891]: <warn>  [1784868815.2638] device (enp19s0f0): Activation: failed for connection 'Wired connection 2'
+Jul 24 04:53:35 box1-t23 NetworkManager[891]: <warn>  [1784868815.2641] device (enp19s0f1): Activation: failed for connection 'Wired connection 3'
+Jul 24 04:53:35 box1-t23 NetworkManager[891]: <warn>  [1784868815.2644] device (enp19s0f2): Activation: failed for connection 'Wired connection 4'
+Jul 24 04:53:35 box1-t23 NetworkManager[891]: <warn>  [1784868815.2646] device (enp19s0f3): Activation: failed for connection 'Wired connection 5'
+Jul 24 04:54:20 box1-t23 NetworkManager[891]: <warn>  [1784868860.2630] device (enp19s0f0): Activation: failed for connection 'Wired connection 2'
+Jul 24 04:54:20 box1-t23 NetworkManager[891]: <warn>  [1784868860.2637] device (enp19s0f1): Activation: failed for connection 'Wired connection 3'
+Jul 24 04:54:20 box1-t23 NetworkManager[891]: <warn>  [1784868860.2645] device (enp19s0f2): Activation: failed for connection 'Wired connection 4'
+Jul 24 04:54:20 box1-t23 NetworkManager[891]: <warn>  [1784868860.2652] device (enp19s0f3): Activation: failed for connection 'Wired connection 5'
+Jul 24 04:55:05 box1-t23 NetworkManager[891]: <warn>  [1784868905.2632] device (enp19s0f0): Activation: failed for connection 'Wired connection 2'
+Jul 24 04:55:05 box1-t23 NetworkManager[891]: <warn>  [1784868905.2636] device (enp19s0f1): Activation: failed for connection 'Wired connection 3'
+Jul 24 04:55:05 box1-t23 NetworkManager[891]: <warn>  [1784868905.2640] device (enp19s0f2): Activation: failed for connection 'Wired connection 4'
+Jul 24 04:55:05 box1-t23 NetworkManager[891]: <warn>  [1784868905.2643] device (enp19s0f3): Activation: failed for connection 'Wired connection 5'
+Jul 24 04:55:50 box1-t23 NetworkManager[891]: <warn>  [1784868950.2641] device (enp19s0f0): Activation: failed for connection 'Wired connection 2'
+Jul 24 04:55:50 box1-t23 NetworkManager[891]: <warn>  [1784868950.2647] device (enp19s0f1): Activation: failed for connection 'Wired connection 3'
+Jul 24 04:55:50 box1-t23 NetworkManager[891]: <warn>  [1784868950.2654] device (enp19s0f2): Activation: failed for connection 'Wired connection 4'
+Jul 24 04:55:50 box1-t23 NetworkManager[891]: <warn>  [1784868950.2659] device (enp19s0f3): Activation: failed for connection 'Wired connection 5'
+Jul 24 04:57:04 box1-t23 (pdate.sh)[664662]: nd-auto-system-update.service: Failed at step EXEC spawning /usr/sbin/nd-systemupdate.sh: No such file or directory
+Jul 24 04:57:04 box1-t23 systemd[1]: nd-auto-system-update.service: Failed with result 'exit-code'.

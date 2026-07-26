@@ -1,0 +1,3069 @@
+{
+  "A1": {
+    "e0-0": {
+      "usage": "FIS Switch A3",
+      "vlan": "All (except OBS Intercon)",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-1": {
+      "usage": "FIS Switch C1",
+      "vlan": "All (except OBS Intercon)",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-2": {
+      "usage": "Frontkupplung A1",
+      "vlan": "100, 2, 3, 5, 6, 7, 8, 9, 12",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-3": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e0-4": {
+      "usage": "Access point A1",
+      "vlan": "100, 10, 20, 30, 31, 131, 150",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-5": {
+      "usage": "Service FIS / CCTV",
+      "vlan": "2",
+      "type": "Access",
+      "ip": "172.17.115.248",
+      "ipid": "120"
+    },
+    "e1-0": {
+      "usage": "Überw. Kamera A7",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.138",
+      "ipid": "10"
+    },
+    "e1-1": {
+      "usage": "Überw. Kamera A2",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.139",
+      "ipid": "11"
+    },
+    "e1-2": {
+      "usage": "Überw. Kamera A1",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.140",
+      "ipid": "12"
+    },
+    "e1-3": {
+      "usage": "Überw. Kamera A5",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.141",
+      "ipid": "13"
+    },
+    "e1-4": {
+      "usage": "Überw. Kamera A9",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.142",
+      "ipid": "14"
+    },
+    "e1-5": {
+      "usage": "AFZ A1",
+      "vlan": "8",
+      "type": "Access",
+      "ip": "172.20.115.133",
+      "ipid": "5"
+    },
+    "e1-6": {
+      "usage": "AFZ A2",
+      "vlan": "8",
+      "type": "Access",
+      "ip": "172.20.115.134",
+      "ipid": "6"
+    },
+    "e1-7": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-8": {
+      "usage": "Sprechstelle A1",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.133",
+      "ipid": "5"
+    },
+    "e1-9": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-10": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-11": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-12": {
+      "usage": "Future use box A5",
+      "vlan": "90",
+      "type": "Access",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-13": {
+      "usage": "Future use box A6",
+      "vlan": "90",
+      "type": "Access",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-14": {
+      "usage": "Seitenanzeige A1",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.153",
+      "ipid": "25"
+    },
+    "e1-15": {
+      "usage": "Seitenanzeige A3",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.154",
+      "ipid": "26"
+    },
+    "e2-0": {
+      "usage": "Bildschirm A3",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.178",
+      "ipid": "50"
+    },
+    "e2-1": {
+      "usage": "Bildschirm Werbung A1",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.179",
+      "ipid": "51"
+    },
+    "e2-2": {
+      "usage": "Bildschirm Werbung A5",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.180",
+      "ipid": "52"
+    },
+    "e2-3": {
+      "usage": "Bildschirm A1",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.181",
+      "ipid": "53"
+    },
+    "e2-4": {
+      "usage": "ADU A",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.131",
+      "ipid": "3"
+    },
+    "e2-5": {
+      "usage": "Audio Amp. A1",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.149",
+      "ipid": "21"
+    }
+  },
+  "A2": {
+    "e0-0": {
+      "usage": "FIS Switch A3",
+      "vlan": "All (except OBS Intercon)",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-1": {
+      "usage": "FIS Switch C3",
+      "vlan": "All (except OBS Intercon)",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-2": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e0-3": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e0-4": {
+      "usage": "Access point A2",
+      "vlan": "100, 10, 20, 30, 31, 131, 150",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-5": {
+      "usage": "reserved",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-0": {
+      "usage": "Überw. Kamera A8",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.143",
+      "ipid": "15"
+    },
+    "e1-1": {
+      "usage": "Überw. Kamera A4",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.144",
+      "ipid": "16"
+    },
+    "e1-2": {
+      "usage": "Überw. Kamera A3",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.145",
+      "ipid": "17"
+    },
+    "e1-3": {
+      "usage": "Überw. Kamera A6",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.146",
+      "ipid": "18"
+    },
+    "e1-4": {
+      "usage": "Überw. Kamera A10",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.147",
+      "ipid": "19"
+    },
+    "e1-5": {
+      "usage": "AFZ A3",
+      "vlan": "8",
+      "type": "Access",
+      "ip": "172.20.115.135",
+      "ipid": "7"
+    },
+    "e1-6": {
+      "usage": "AFZ A4",
+      "vlan": "8",
+      "type": "Access",
+      "ip": "172.20.115.136",
+      "ipid": "8"
+    },
+    "e1-7": {
+      "usage": "NVR A",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.133",
+      "ipid": "5"
+    },
+    "e1-8": {
+      "usage": "Sprechstelle A2",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.134",
+      "ipid": "6"
+    },
+    "e1-9": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "",
+      "role": "unused"
+    },
+    "e1-10": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-11": {
+      "usage": "Bildschirm Werbung A4",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.228",
+      "ipid": "100"
+    },
+    "e1-12": {
+      "usage": "Future use box A2",
+      "vlan": "90",
+      "type": "Access",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-13": {
+      "usage": "Future use box A4",
+      "vlan": "90",
+      "type": "Access",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-14": {
+      "usage": "Seitenanzeige A2",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.155",
+      "ipid": "27"
+    },
+    "e1-15": {
+      "usage": "Seitenanzeige A4",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.156",
+      "ipid": "28"
+    },
+    "e2-0": {
+      "usage": "Bildschirm A4",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.182",
+      "ipid": "54"
+    },
+    "e2-1": {
+      "usage": "Bildschirm Werbung A8",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.183",
+      "ipid": "55"
+    },
+    "e2-2": {
+      "usage": "Bildschirm Werbung A6",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.184",
+      "ipid": "56"
+    },
+    "e2-3": {
+      "usage": "Bildschirm A2",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.185",
+      "ipid": "57"
+    },
+    "e2-4": {
+      "usage": "Bildschirm Werbung A2",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.247",
+      "ipid": "119"
+    },
+    "e2-5": {
+      "usage": "Audio Amp. A2",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.150",
+      "ipid": "22"
+    }
+  },
+  "A3": {
+    "e0-0": {
+      "usage": "FIS Switch A1",
+      "vlan": "All (except OBS Intercon)",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-1": {
+      "usage": "FIS Switch A2",
+      "vlan": "All (except OBS Intercon)",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-2": {
+      "usage": "Frontkupplung A2",
+      "vlan": "100, 2, 3, 5, 6, 7, 8, 9, 12",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-3": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e0-4": {
+      "usage": "Access point A3",
+      "vlan": "100, 10, 20, 30, 31, 131, 150",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-5": {
+      "usage": "reserved",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-0": {
+      "usage": "Rücksehkamera A1",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.208",
+      "ipid": "80"
+    },
+    "e1-1": {
+      "usage": "Rücksehkamera A2",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.209",
+      "ipid": "81"
+    },
+    "e1-2": {
+      "usage": "Access point A4",
+      "vlan": "100, 10, 20, 30, 31, 131, 150",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-3": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-4": {
+      "usage": "Firewall",
+      "vlan": "2",
+      "type": "Trunk",
+      "ip": "172.17.115.129",
+      "ipid": "1"
+    },
+    "e1-5": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-6": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-7": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-8": {
+      "usage": "Sprechstelle A1R",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.133",
+      "ipid": "5"
+    },
+    "e1-9": {
+      "usage": "Sprechstelle A2R",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.134",
+      "ipid": "6"
+    },
+    "e1-10": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-11": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-12": {
+      "usage": "Future use box A1",
+      "vlan": "90",
+      "type": "Access",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-13": {
+      "usage": "Future use box A3",
+      "vlan": "90",
+      "type": "Access",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-14": {
+      "usage": "Frontanzeige A",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.151",
+      "ipid": "23"
+    },
+    "e1-15": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e2-0": {
+      "usage": "Bildschirm Werbung A3",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.235",
+      "ipid": "107"
+    },
+    "e2-1": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e2-2": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e2-3": {
+      "usage": "Sitzplatzreservierung A",
+      "vlan": "6",
+      "type": "Access",
+      "ip": "172.19.115.138",
+      "ipid": "10"
+    },
+    "e2-4": {
+      "usage": "ADU AR",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.131",
+      "ipid": "3"
+    },
+    "e2-5": {
+      "usage": "Service VLAN PWLAN",
+      "vlan": "100, 10, 20, 30, 31, 131, 150",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "127"
+    }
+  },
+  "C1": {
+    "e0-0": {
+      "usage": "FIS Switch A1",
+      "vlan": "All (except OBS Intercon)",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-1": {
+      "usage": "FIS Switch E1",
+      "vlan": "All (except OBS Intercon)",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-2": {
+      "usage": "OBS D1",
+      "vlan": "100, 10, 20, 21, 22, 23, 24, 30, 31, 46, 48, 90, 131, 150, 200, 202",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-3": {
+      "usage": "RDC D1",
+      "vlan": "200, 202",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-4": {
+      "usage": "Access point C1",
+      "vlan": "100, 10, 20, 30, 31, 131, 150",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-5": {
+      "usage": "Service FIS / CCTV",
+      "vlan": "2",
+      "type": "Access",
+      "ip": "172.17.115.249",
+      "ipid": "121"
+    },
+    "e1-0": {
+      "usage": "Überw. Kamera C7",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.148",
+      "ipid": "20"
+    },
+    "e1-1": {
+      "usage": "Überw. Kamera C2",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.149",
+      "ipid": "21"
+    },
+    "e1-2": {
+      "usage": "Überw. Kamera C1",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.150",
+      "ipid": "22"
+    },
+    "e1-3": {
+      "usage": "Überw. Kamera C5",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.151",
+      "ipid": "23"
+    },
+    "e1-4": {
+      "usage": "Überw. Kamera C9",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.152",
+      "ipid": "24"
+    },
+    "e1-5": {
+      "usage": "AFZ C1",
+      "vlan": "8",
+      "type": "Access",
+      "ip": "172.20.115.137",
+      "ipid": "9"
+    },
+    "e1-6": {
+      "usage": "AFZ C2",
+      "vlan": "8",
+      "type": "Access",
+      "ip": "172.20.115.138",
+      "ipid": "10"
+    },
+    "e1-7": {
+      "usage": "AFZ C5",
+      "vlan": "8",
+      "type": "Access",
+      "ip": "172.20.115.139",
+      "ipid": "11"
+    },
+    "e1-8": {
+      "usage": "Sprechstelle C1",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.135",
+      "ipid": "7"
+    },
+    "e1-9": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-10": {
+      "usage": "Bildschirm Werbung C1",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.236",
+      "ipid": "108"
+    },
+    "e1-11": {
+      "usage": "Bildschirm C5",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.190",
+      "ipid": "62"
+    },
+    "e1-12": {
+      "usage": "Future use box C5",
+      "vlan": "90",
+      "type": "Access",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-13": {
+      "usage": "Future use box C6",
+      "vlan": "90",
+      "type": "Access",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-14": {
+      "usage": "Seitenanzeige C1",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.157",
+      "ipid": "29"
+    },
+    "e1-15": {
+      "usage": "Seitenanzeige C3",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.158",
+      "ipid": "30"
+    },
+    "e2-0": {
+      "usage": "Bildschirm C3",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.186",
+      "ipid": "58"
+    },
+    "e2-1": {
+      "usage": "Bildschirm Werbung C7",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.187",
+      "ipid": "59"
+    },
+    "e2-2": {
+      "usage": "Bildschirm Werbung C5",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.188",
+      "ipid": "60"
+    },
+    "e2-3": {
+      "usage": "Bildschirm C1",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.189",
+      "ipid": "61"
+    },
+    "e2-4": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e2-5": {
+      "usage": "Audio Amp. C1",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.151",
+      "ipid": "23"
+    }
+  },
+  "C2": {
+    "e0-0": {
+      "usage": "FIS Switch C3",
+      "vlan": "All (except OBS Intercon)",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-1": {
+      "usage": "FIS Switch E3",
+      "vlan": "All (except OBS Intercon)",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-2": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e0-3": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e0-4": {
+      "usage": "Access point C2",
+      "vlan": "100, 10, 20, 30, 31, 131, 150",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-5": {
+      "usage": "reserved",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-0": {
+      "usage": "Überw. Kamera C8",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.153",
+      "ipid": "25"
+    },
+    "e1-1": {
+      "usage": "Überw. Kamera C4",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.154",
+      "ipid": "26"
+    },
+    "e1-2": {
+      "usage": "Überw. Kamera C3",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.155",
+      "ipid": "27"
+    },
+    "e1-3": {
+      "usage": "Überw. Kamera C6",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.156",
+      "ipid": "28"
+    },
+    "e1-4": {
+      "usage": "Überw. Kamera C10",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.157",
+      "ipid": "29"
+    },
+    "e1-5": {
+      "usage": "AFZ C3",
+      "vlan": "8",
+      "type": "Access",
+      "ip": "172.20.115.140",
+      "ipid": "12"
+    },
+    "e1-6": {
+      "usage": "AFZ C4",
+      "vlan": "8",
+      "type": "Access",
+      "ip": "172.20.115.141",
+      "ipid": "13"
+    },
+    "e1-7": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-8": {
+      "usage": "Sprechstelle C2",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.136",
+      "ipid": "8"
+    },
+    "e1-9": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "",
+      "role": "unused"
+    },
+    "e1-10": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-11": {
+      "usage": "Bildschirm Werbung C2",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.237",
+      "ipid": "109"
+    },
+    "e1-12": {
+      "usage": "Future use box C2",
+      "vlan": "90",
+      "type": "Access",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-13": {
+      "usage": "Future use box C4",
+      "vlan": "90",
+      "type": "Access",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-14": {
+      "usage": "Seitenanzeige C2",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.159",
+      "ipid": "31"
+    },
+    "e1-15": {
+      "usage": "Seitenanzeige C4",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.160",
+      "ipid": "32"
+    },
+    "e2-0": {
+      "usage": "Bildschirm C4",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.191",
+      "ipid": "63"
+    },
+    "e2-1": {
+      "usage": "Bildschirm Werbung C8",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.192",
+      "ipid": "64"
+    },
+    "e2-2": {
+      "usage": "Bildschirm Werbung C6",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.193",
+      "ipid": "65"
+    },
+    "e2-3": {
+      "usage": "Bildschirm C2",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.194",
+      "ipid": "66"
+    },
+    "e2-4": {
+      "usage": "Bildschirm C6",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.195",
+      "ipid": "67"
+    },
+    "e2-5": {
+      "usage": "Audio Amp. C2",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.152",
+      "ipid": "24"
+    }
+  },
+  "C3": {
+    "e0-0": {
+      "usage": "FIS Switch A2",
+      "vlan": "All (except OBS Intercon)",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-1": {
+      "usage": "FIS Switch C2",
+      "vlan": "All (except OBS Intercon)",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-2": {
+      "usage": "OBS D1",
+      "vlan": "100, 10, 20, 21, 22, 23, 24, 30, 31, 46, 48, 90, 131, 150, 200, 202",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-3": {
+      "usage": "RDC D1",
+      "vlan": "200, 202",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-4": {
+      "usage": "Access point C3",
+      "vlan": "100, 10, 20, 30, 31, 131, 150",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-5": {
+      "usage": "reserved",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-0": {
+      "usage": "Rücksehkamera C1",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.210",
+      "ipid": "82"
+    },
+    "e1-1": {
+      "usage": "Rücksehkamera C2",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.211",
+      "ipid": "83"
+    },
+    "e1-2": {
+      "usage": "Access point C4",
+      "vlan": "100, 10, 20, 30, 31, 131, 150",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-3": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-4": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-5": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-6": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-7": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-8": {
+      "usage": "Sprechstelle C1R",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.135",
+      "ipid": "7"
+    },
+    "e1-9": {
+      "usage": "Sprechstelle C2R",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.136",
+      "ipid": "8"
+    },
+    "e1-10": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-11": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-12": {
+      "usage": "Future use box C1",
+      "vlan": "90",
+      "type": "Access",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-13": {
+      "usage": "Future use box C3",
+      "vlan": "90",
+      "type": "Access",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-14": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-15": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e2-0": {
+      "usage": "Bildschirm Werbung C3",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.238",
+      "ipid": "110"
+    },
+    "e2-1": {
+      "usage": "Bildschirm Werbung C4",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.239",
+      "ipid": "111"
+    },
+    "e2-2": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e2-3": {
+      "usage": "Sitzplatzreservierung C",
+      "vlan": "6",
+      "type": "Access",
+      "ip": "172.19.115.139",
+      "ipid": "11"
+    },
+    "e2-4": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e2-5": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    }
+  },
+  "E1": {
+    "e0-0": {
+      "usage": "FIS Switch F1",
+      "vlan": "All (except OBS Intercon)",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-1": {
+      "usage": "FIS Switch C2",
+      "vlan": "All (except OBS Intercon)",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-2": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e0-3": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e0-4": {
+      "usage": "Access point E1",
+      "vlan": "100, 10, 20, 30, 31, 131, 150",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-5": {
+      "usage": "Service FIS / CCTV",
+      "vlan": "2",
+      "type": "Access",
+      "ip": "172.17.115.251",
+      "ipid": "123"
+    },
+    "e1-0": {
+      "usage": "Überw. Kamera E7",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.168",
+      "ipid": "40"
+    },
+    "e1-1": {
+      "usage": "Überw. Kamera E2",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.169",
+      "ipid": "41"
+    },
+    "e1-2": {
+      "usage": "Überw. Kamera E1",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.170",
+      "ipid": "42"
+    },
+    "e1-3": {
+      "usage": "Überw. Kamera E5",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.171",
+      "ipid": "43"
+    },
+    "e1-4": {
+      "usage": "Überw. Kamera E9",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.172",
+      "ipid": "44"
+    },
+    "e1-5": {
+      "usage": "AFZ E1",
+      "vlan": "8",
+      "type": "Access",
+      "ip": "172.20.115.147",
+      "ipid": "19"
+    },
+    "e1-6": {
+      "usage": "AFZ E2",
+      "vlan": "8",
+      "type": "Access",
+      "ip": "172.20.115.148",
+      "ipid": "20"
+    },
+    "e1-7": {
+      "usage": "AFZ E5",
+      "vlan": "8",
+      "type": "Access",
+      "ip": "172.20.115.149",
+      "ipid": "21"
+    },
+    "e1-8": {
+      "usage": "Sprechstelle E1",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.140",
+      "ipid": "12"
+    },
+    "e1-9": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-10": {
+      "usage": "Sprechstelle PRM E1",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.141",
+      "ipid": "13"
+    },
+    "e1-11": {
+      "usage": "Sprechstelle PRM WCR",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.144",
+      "ipid": "16"
+    },
+    "e1-12": {
+      "usage": "Future use box E5",
+      "vlan": "90",
+      "type": "Access",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-13": {
+      "usage": "Future use box E7",
+      "vlan": "90",
+      "type": "Access",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-14": {
+      "usage": "Seitenanzeige E1",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.165",
+      "ipid": "37"
+    },
+    "e1-15": {
+      "usage": "Seitenanzeige E3",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.166",
+      "ipid": "38"
+    },
+    "e2-0": {
+      "usage": "Bildschirm E3",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.206",
+      "ipid": "78"
+    },
+    "e2-1": {
+      "usage": "Bildschirm Werbung E7",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.207",
+      "ipid": "79"
+    },
+    "e2-2": {
+      "usage": "Bildschirm Werbung E5",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.208",
+      "ipid": "80"
+    },
+    "e2-3": {
+      "usage": "Bildschirm E1",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.209",
+      "ipid": "81"
+    },
+    "e2-4": {
+      "usage": "ADU E",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.130",
+      "ipid": "2"
+    },
+    "e2-5": {
+      "usage": "Audio Amp. E1",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.155",
+      "ipid": "27"
+    }
+  },
+  "E2": {
+    "e0-0": {
+      "usage": "FIS Switch E3",
+      "vlan": "All (except OBS Intercon)",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-1": {
+      "usage": "FIS Switch C1",
+      "vlan": "All (except OBS Intercon)",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-2": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e0-3": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e0-4": {
+      "usage": "Access point E2",
+      "vlan": "100, 10, 20, 30, 31, 131, 150",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-5": {
+      "usage": "reserved",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-0": {
+      "usage": "Überw. Kamera E8",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.173",
+      "ipid": "45"
+    },
+    "e1-1": {
+      "usage": "Überw. Kamera E4",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.174",
+      "ipid": "46"
+    },
+    "e1-2": {
+      "usage": "Überw. Kamera E3",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.175",
+      "ipid": "47"
+    },
+    "e1-3": {
+      "usage": "Überw. Kamera E6",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.176",
+      "ipid": "48"
+    },
+    "e1-4": {
+      "usage": "Überw. Kamera E10",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.198",
+      "ipid": "70"
+    },
+    "e1-5": {
+      "usage": "AFZ E3",
+      "vlan": "8",
+      "type": "Access",
+      "ip": "172.20.115.150",
+      "ipid": "22"
+    },
+    "e1-6": {
+      "usage": "AFZ E4",
+      "vlan": "8",
+      "type": "Access",
+      "ip": "172.20.115.151",
+      "ipid": "23"
+    },
+    "e1-7": {
+      "usage": "AFZ E6",
+      "vlan": "8",
+      "type": "Access",
+      "ip": "172.20.115.152",
+      "ipid": "24"
+    },
+    "e1-8": {
+      "usage": "Sprechstelle E2",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.142",
+      "ipid": "14"
+    },
+    "e1-9": {
+      "usage": "Sprechstelle E1R",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.140",
+      "ipid": "12"
+    },
+    "e1-10": {
+      "usage": "Sprechstelle PRM E2",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.143",
+      "ipid": "15"
+    },
+    "e1-11": {
+      "usage": "Sprechstelle PRM E1R",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.141",
+      "ipid": "13"
+    },
+    "e1-12": {
+      "usage": "Future use box E2",
+      "vlan": "90",
+      "type": "Access",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-13": {
+      "usage": "Future use box E4",
+      "vlan": "90",
+      "type": "Access",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-14": {
+      "usage": "Seitenanzeige E2",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.167",
+      "ipid": "39"
+    },
+    "e1-15": {
+      "usage": "Seitenanzeige E4",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.168",
+      "ipid": "40"
+    },
+    "e2-0": {
+      "usage": "Bildschirm E4",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.211",
+      "ipid": "83"
+    },
+    "e2-1": {
+      "usage": "Bildschirm Werbung E8",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.212",
+      "ipid": "84"
+    },
+    "e2-2": {
+      "usage": "Bildschirm Werbung E6",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.213",
+      "ipid": "85"
+    },
+    "e2-3": {
+      "usage": "Bildschirm E2",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.214",
+      "ipid": "86"
+    },
+    "e2-4": {
+      "usage": "Bildschirm E6",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.215",
+      "ipid": "87"
+    },
+    "e2-5": {
+      "usage": "Audio Amp. E2",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.156",
+      "ipid": "28"
+    }
+  },
+  "E3": {
+    "e0-0": {
+      "usage": "FIS Switch F2",
+      "vlan": "All (except OBS Intercon)",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-1": {
+      "usage": "FIS Switch E2",
+      "vlan": "All (except OBS Intercon)",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-2": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e0-3": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e0-4": {
+      "usage": "Access point E3",
+      "vlan": "100, 10, 20, 30, 31, 131, 150",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-5": {
+      "usage": "reserved",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-0": {
+      "usage": "Rücksehkamera E1",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.214",
+      "ipid": "86"
+    },
+    "e1-1": {
+      "usage": "Rücksehkamera E2",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.215",
+      "ipid": "87"
+    },
+    "e1-2": {
+      "usage": "Access point E4",
+      "vlan": "100, 10, 20, 30, 31, 131, 150",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-3": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-4": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-5": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-6": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-7": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-8": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-9": {
+      "usage": "Sprechstelle E2R",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.142",
+      "ipid": "14"
+    },
+    "e1-10": {
+      "usage": "Sprechstelle PRM WC",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.144",
+      "ipid": "16"
+    },
+    "e1-11": {
+      "usage": "Sprechstelle PRM E2R",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.143",
+      "ipid": "15"
+    },
+    "e1-12": {
+      "usage": "Future use box E1",
+      "vlan": "90",
+      "type": "Access",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-13": {
+      "usage": "Future use box E3",
+      "vlan": "90",
+      "type": "Access",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-14": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-15": {
+      "usage": "Bildschirm Werbung E1",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.210",
+      "ipid": "82"
+    },
+    "e2-0": {
+      "usage": "Bildschirm Werbung E3",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.240",
+      "ipid": "112"
+    },
+    "e2-1": {
+      "usage": "Bildschirm Werbung E4",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.241",
+      "ipid": "113"
+    },
+    "e2-2": {
+      "usage": "Fahrausweiseinrichtung",
+      "vlan": "",
+      "type": "Access",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e2-3": {
+      "usage": "Sitzplatzreservierung E",
+      "vlan": "6",
+      "type": "Access",
+      "ip": "172.19.115.141",
+      "ipid": "13"
+    },
+    "e2-4": {
+      "usage": "ADU ER",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.130",
+      "ipid": "2"
+    },
+    "e2-5": {
+      "usage": "Energiezahler E",
+      "vlan": "12",
+      "type": "Access",
+      "ip": "172.22.115.131",
+      "ipid": "3"
+    }
+  },
+  "F1": {
+    "e0-0": {
+      "usage": "FIS Switch B1",
+      "vlan": "All (except OBS Intercon)",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-1": {
+      "usage": "FIS Switch E1",
+      "vlan": "All (except OBS Intercon)",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-2": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e0-3": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e0-4": {
+      "usage": "Access point F1",
+      "vlan": "100, 10, 20, 30, 31, 131, 150",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-5": {
+      "usage": "Service FIS / CCTV",
+      "vlan": "2",
+      "type": "Access",
+      "ip": "172.17.115.252",
+      "ipid": "124"
+    },
+    "e1-0": {
+      "usage": "Überw. Kamera F7",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.177",
+      "ipid": "49"
+    },
+    "e1-1": {
+      "usage": "Überw. Kamera F2",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.178",
+      "ipid": "50"
+    },
+    "e1-2": {
+      "usage": "Überw. Kamera F1",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.179",
+      "ipid": "51"
+    },
+    "e1-3": {
+      "usage": "Überw. Kamera F5",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.180",
+      "ipid": "52"
+    },
+    "e1-4": {
+      "usage": "Überw. Kamera F9",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.181",
+      "ipid": "53"
+    },
+    "e1-5": {
+      "usage": "AFZ F1",
+      "vlan": "8",
+      "type": "Access",
+      "ip": "172.20.115.153",
+      "ipid": "25"
+    },
+    "e1-6": {
+      "usage": "AFZ F2",
+      "vlan": "8",
+      "type": "Access",
+      "ip": "172.20.115.154",
+      "ipid": "26"
+    },
+    "e1-7": {
+      "usage": "AFZ F5",
+      "vlan": "8",
+      "type": "Access",
+      "ip": "172.20.115.155",
+      "ipid": "27"
+    },
+    "e1-8": {
+      "usage": "Sprechstelle F1",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.145",
+      "ipid": "17"
+    },
+    "e1-9": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-10": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-11": {
+      "usage": "Bildschirm F5",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.242",
+      "ipid": "114"
+    },
+    "e1-12": {
+      "usage": "Future use box F5",
+      "vlan": "90",
+      "type": "Access",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-13": {
+      "usage": "Future use box F6",
+      "vlan": "90",
+      "type": "Access",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-14": {
+      "usage": "Seitenanzeige F1",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.169",
+      "ipid": "41"
+    },
+    "e1-15": {
+      "usage": "Seitenanzeige F3",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.170",
+      "ipid": "42"
+    },
+    "e2-0": {
+      "usage": "Bildschirm F3",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.216",
+      "ipid": "88"
+    },
+    "e2-1": {
+      "usage": "Bildschirm Werbung F7",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.217",
+      "ipid": "89"
+    },
+    "e2-2": {
+      "usage": "Bildschirm Werbung F5",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.218",
+      "ipid": "90"
+    },
+    "e2-3": {
+      "usage": "Bildschirm F1",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.219",
+      "ipid": "91"
+    },
+    "e2-4": {
+      "usage": "Bildschirm Werbung F1",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.220",
+      "ipid": "92"
+    },
+    "e2-5": {
+      "usage": "Audio Amp. F1",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.157",
+      "ipid": "29"
+    }
+  },
+  "F2": {
+    "e0-0": {
+      "usage": "FIS Switch F3",
+      "vlan": "All (except OBS Intercon)",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-1": {
+      "usage": "FIS Switch E3",
+      "vlan": "All (except OBS Intercon)",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-2": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e0-3": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e0-4": {
+      "usage": "Access point F2",
+      "vlan": "100, 10, 20, 30, 31, 131, 150",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-5": {
+      "usage": "reserved",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-0": {
+      "usage": "Überw. Kamera F8",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.182",
+      "ipid": "54"
+    },
+    "e1-1": {
+      "usage": "Überw. Kamera F4",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.183",
+      "ipid": "55"
+    },
+    "e1-2": {
+      "usage": "Überw. Kamera F3",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.184",
+      "ipid": "56"
+    },
+    "e1-3": {
+      "usage": "Überw. Kamera F6",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.185",
+      "ipid": "57"
+    },
+    "e1-4": {
+      "usage": "Überw. Kamera F10",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.186",
+      "ipid": "58"
+    },
+    "e1-5": {
+      "usage": "AFZ F3",
+      "vlan": "8",
+      "type": "Access",
+      "ip": "172.20.115.156",
+      "ipid": "28"
+    },
+    "e1-6": {
+      "usage": "AFZ F4",
+      "vlan": "8",
+      "type": "Access",
+      "ip": "172.20.115.157",
+      "ipid": "29"
+    },
+    "e1-7": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-8": {
+      "usage": "Sprechstelle F2",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.146",
+      "ipid": "18"
+    },
+    "e1-9": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "",
+      "role": "unused"
+    },
+    "e1-10": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-11": {
+      "usage": "Bildschirm Werbung F2",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.243",
+      "ipid": "115"
+    },
+    "e1-12": {
+      "usage": "Future use box F2",
+      "vlan": "90",
+      "type": "Access",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-13": {
+      "usage": "Future use box F4",
+      "vlan": "90",
+      "type": "Access",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-14": {
+      "usage": "Seitenanzeige F2",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.171",
+      "ipid": "43"
+    },
+    "e1-15": {
+      "usage": "Seitenanzeige F4",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.172",
+      "ipid": "44"
+    },
+    "e2-0": {
+      "usage": "Bildschirm F4",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.221",
+      "ipid": "93"
+    },
+    "e2-1": {
+      "usage": "Bildschirm Werbung F8",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.222",
+      "ipid": "94"
+    },
+    "e2-2": {
+      "usage": "Bildschirm Werbung F6",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.223",
+      "ipid": "95"
+    },
+    "e2-3": {
+      "usage": "Bildschirm F2",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.224",
+      "ipid": "96"
+    },
+    "e2-4": {
+      "usage": "Bildschirm F6",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.225",
+      "ipid": "97"
+    },
+    "e2-5": {
+      "usage": "Audio Amp. F2",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.158",
+      "ipid": "30"
+    }
+  },
+  "F3": {
+    "e0-0": {
+      "usage": "FIS Switch B2",
+      "vlan": "All (except OBS Intercon)",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-1": {
+      "usage": "FIS Switch F2",
+      "vlan": "All (except OBS Intercon)",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-2": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e0-3": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e0-4": {
+      "usage": "Access point F3",
+      "vlan": "100, 10, 20, 30, 31, 131, 150",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-5": {
+      "usage": "reserved",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-0": {
+      "usage": "Rücksehkamera F1",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.216",
+      "ipid": "88"
+    },
+    "e1-1": {
+      "usage": "Rücksehkamera F2",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.217",
+      "ipid": "89"
+    },
+    "e1-2": {
+      "usage": "Access point F4",
+      "vlan": "100, 10, 20, 30, 31, 131, 150",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-3": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-4": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-5": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-6": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-7": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-8": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-9": {
+      "usage": "Sprechstelle F2R",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.146",
+      "ipid": "18"
+    },
+    "e1-10": {
+      "usage": "Sprechstelle F1R",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.145",
+      "ipid": "17"
+    },
+    "e1-11": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-12": {
+      "usage": "Future use box F1",
+      "vlan": "90",
+      "type": "Access",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-13": {
+      "usage": "Future use box F3",
+      "vlan": "90",
+      "type": "Access",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-14": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-15": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e2-0": {
+      "usage": "Bildschirm Werbung F3",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.244",
+      "ipid": "116"
+    },
+    "e2-1": {
+      "usage": "Bildschirm Werbung F4",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.245",
+      "ipid": "117"
+    },
+    "e2-2": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e2-3": {
+      "usage": "Sitzplatzreservierung F",
+      "vlan": "6",
+      "type": "Access",
+      "ip": "172.19.115.142",
+      "ipid": "14"
+    },
+    "e2-4": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e2-5": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    }
+  },
+  "B1": {
+    "e0-0": {
+      "usage": "FIS Switch B3",
+      "vlan": "All (except OBS Intercon)",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-1": {
+      "usage": "FIS Switch F1",
+      "vlan": "All (except OBS Intercon)",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-2": {
+      "usage": "Frontkupplung B1",
+      "vlan": "100, 2, 3, 5, 6, 7, 8, 9, 12",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-3": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e0-4": {
+      "usage": "Access point B1",
+      "vlan": "100, 10, 20, 30, 31, 131, 150",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-5": {
+      "usage": "Service FIS / CCTV",
+      "vlan": "2",
+      "type": "Access",
+      "ip": "172.17.115.253",
+      "ipid": "125"
+    },
+    "e1-0": {
+      "usage": "Überw. Kamera B5",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.190",
+      "ipid": "62"
+    },
+    "e1-1": {
+      "usage": "Überw. Kamera B2",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.188",
+      "ipid": "60"
+    },
+    "e1-2": {
+      "usage": "Überw. Kamera B1",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.189",
+      "ipid": "61"
+    },
+    "e1-3": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-4": {
+      "usage": "Überw. Kamera B9",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.191",
+      "ipid": "63"
+    },
+    "e1-5": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "",
+      "role": "unused"
+    },
+    "e1-6": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "",
+      "role": "unused"
+    },
+    "e1-7": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-8": {
+      "usage": "Sprechstelle B1",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.147",
+      "ipid": "19"
+    },
+    "e1-9": {
+      "usage": "Sprechstelle B3R",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.168",
+      "ipid": "40"
+    },
+    "e1-10": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-11": {
+      "usage": "ZFR R",
+      "vlan": "2",
+      "type": "Access",
+      "ip": "172.17.115.130",
+      "ipid": "2"
+    },
+    "e1-12": {
+      "usage": "Future use box B5",
+      "vlan": "90",
+      "type": "Access",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-13": {
+      "usage": "Future use box B6",
+      "vlan": "90",
+      "type": "Access",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-14": {
+      "usage": "Seitenanzeige B1",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.173",
+      "ipid": "45"
+    },
+    "e1-15": {
+      "usage": "Seitenanzeige B3",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.174",
+      "ipid": "46"
+    },
+    "e2-0": {
+      "usage": "Bildschirm B3",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.226",
+      "ipid": "98"
+    },
+    "e2-1": {
+      "usage": "Bildschirm Werbung B3",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.227",
+      "ipid": "99"
+    },
+    "e2-2": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "",
+      "role": "unused"
+    },
+    "e2-3": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "",
+      "role": "unused"
+    },
+    "e2-4": {
+      "usage": "ADU B",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.132",
+      "ipid": "4"
+    },
+    "e2-5": {
+      "usage": "Audio Amp. B1",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.159",
+      "ipid": "31"
+    }
+  },
+  "B2": {
+    "e0-0": {
+      "usage": "FIS Switch B3",
+      "vlan": "All (except OBS Intercon)",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-1": {
+      "usage": "FIS Switch F3",
+      "vlan": "All (except OBS Intercon)",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-2": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e0-3": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e0-4": {
+      "usage": "Access point B2",
+      "vlan": "100, 10, 20, 30, 31, 131, 150",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-5": {
+      "usage": "reserved",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-0": {
+      "usage": "Überw. Kamera B8",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.192",
+      "ipid": "64"
+    },
+    "e1-1": {
+      "usage": "Überw. Kamera B4",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.193",
+      "ipid": "65"
+    },
+    "e1-2": {
+      "usage": "Überw. Kamera B3",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.194",
+      "ipid": "66"
+    },
+    "e1-3": {
+      "usage": "Überw. Kamera B6",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.195",
+      "ipid": "67"
+    },
+    "e1-4": {
+      "usage": "Überw. Kamera B10",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.196",
+      "ipid": "68"
+    },
+    "e1-5": {
+      "usage": "AFZ B3",
+      "vlan": "8",
+      "type": "Access",
+      "ip": "172.20.115.160",
+      "ipid": "32"
+    },
+    "e1-6": {
+      "usage": "AFZ B4",
+      "vlan": "8",
+      "type": "Access",
+      "ip": "172.20.115.161",
+      "ipid": "33"
+    },
+    "e1-7": {
+      "usage": "NVR B",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.134",
+      "ipid": "6"
+    },
+    "e1-8": {
+      "usage": "Sprechstelle B2",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.148",
+      "ipid": "20"
+    },
+    "e1-9": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "",
+      "role": "unused"
+    },
+    "e1-10": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-11": {
+      "usage": "Bildschirm B1",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.246",
+      "ipid": "118"
+    },
+    "e1-12": {
+      "usage": "Future use box B2",
+      "vlan": "90",
+      "type": "Access",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-13": {
+      "usage": "Future use box B4",
+      "vlan": "90",
+      "type": "Access",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-14": {
+      "usage": "Seitenanzeige B2",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.175",
+      "ipid": "47"
+    },
+    "e1-15": {
+      "usage": "Seitenanzeige B4",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.176",
+      "ipid": "48"
+    },
+    "e2-0": {
+      "usage": "Bildschirm B4",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.230",
+      "ipid": "102"
+    },
+    "e2-1": {
+      "usage": "Bildschirm Werbung B8",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.231",
+      "ipid": "103"
+    },
+    "e2-2": {
+      "usage": "Bildschirm Werbung B6",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.232",
+      "ipid": "104"
+    },
+    "e2-3": {
+      "usage": "Bildschirm Werbung B2",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.233",
+      "ipid": "105"
+    },
+    "e2-4": {
+      "usage": "Bildschirm Werbung B4",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.234",
+      "ipid": "106"
+    },
+    "e2-5": {
+      "usage": "Audio Amp. B2",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.160",
+      "ipid": "32"
+    }
+  },
+  "B3": {
+    "e0-0": {
+      "usage": "FIS Switch B1",
+      "vlan": "All (except OBS Intercon)",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-1": {
+      "usage": "FIS Switch B2",
+      "vlan": "All (except OBS Intercon)",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-2": {
+      "usage": "Frontkupplung B2",
+      "vlan": "100, 2, 3, 5, 6, 7, 8, 9, 12",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-3": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e0-4": {
+      "usage": "Access point B3",
+      "vlan": "100, 10, 20, 30, 31, 131, 150",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e0-5": {
+      "usage": "reserved",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-0": {
+      "usage": "Rücksehkamera B1",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.218",
+      "ipid": "90"
+    },
+    "e1-1": {
+      "usage": "Rücksehkamera B2",
+      "vlan": "5",
+      "type": "Access",
+      "ip": "172.18.243.219",
+      "ipid": "91"
+    },
+    "e1-2": {
+      "usage": "Access point B4",
+      "vlan": "100, 10, 20, 30, 31, 131, 150",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-3": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-4": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-5": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-6": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-7": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e1-8": {
+      "usage": "Sprechstelle B3",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.168",
+      "ipid": "40"
+    },
+    "e1-9": {
+      "usage": "Sprechstelle B2R",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.148",
+      "ipid": "20"
+    },
+    "e1-10": {
+      "usage": "Sprechstelle B1R",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.147",
+      "ipid": "19"
+    },
+    "e1-11": {
+      "usage": "ZFR",
+      "vlan": "2",
+      "type": "Access",
+      "ip": "172.17.115.130",
+      "ipid": "2"
+    },
+    "e1-12": {
+      "usage": "Future use box B1",
+      "vlan": "90",
+      "type": "Access",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-13": {
+      "usage": "Future use box B3",
+      "vlan": "90",
+      "type": "Access",
+      "ip": null,
+      "ipid": "-"
+    },
+    "e1-14": {
+      "usage": "Frontanzeige B",
+      "vlan": "3",
+      "type": "Access",
+      "ip": "172.17.243.152",
+      "ipid": "24"
+    },
+    "e1-15": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e2-0": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e2-1": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e2-2": {
+      "usage": "",
+      "vlan": "",
+      "type": "",
+      "ip": null,
+      "ipid": "-",
+      "role": "unused"
+    },
+    "e2-3": {
+      "usage": "Sitzplatzreservierung B",
+      "vlan": "6",
+      "type": "Access",
+      "ip": "172.19.115.143",
+      "ipid": "15"
+    },
+    "e2-4": {
+      "usage": "ADU BR",
+      "vlan": "9",
+      "type": "Access",
+      "ip": "172.20.243.132",
+      "ipid": "4"
+    },
+    "e2-5": {
+      "usage": "Service VLAN PWLAN",
+      "vlan": "100, 10, 20, 30, 31, 131, 150",
+      "type": "Trunk",
+      "ip": null,
+      "ipid": "127"
+    }
+  }
+}

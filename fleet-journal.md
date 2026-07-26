@@ -130,6 +130,20 @@ CCU `10.179.11.1` unreachable (ping + ssh timeout) at attempt time. Fzg 130 on t
 
 ## 4734 series
 
+### Fleet-wide — 2026-07-09 — AR — portal container update sweep (5× 4734 CCUs 2023Q4 → 2025Q4)
+
+**Trigger.** In-service trains must run the current portal container. Check = `https://<ccu>/version.txt`; fleet-current is `NDE-2025Q4-12.3.6` (nothing reports "2025Q3"; treat Q4 as target). Swept all 26 reachable CCUs: only five stale, all 4734s: **t37 (4734-112), t39 (4734-111), t46 (4734-113), t54 (4734-190), t50 (4734-121)**. t50 was the only *in-service* one (KAD 03.07). All other reachable trains — including every reachable in-service train — already Q4.
+
+**Procedure that worked** (per CCU): capture pre-state (Form-1 count, vlan7, nd-obn, `.dont`) → detached `sudo nd-systemupdate.sh.dont up` (stages new snapshot, sets default boot subvol) → **plain `systemctl reboot`** → verify portal + drift-check. Two gotchas:
+- **`nd-systemupdate.sh.dont reboot` standalone is a NO-OP** — it prints usage help. Use `systemctl reboot` after `up` completes.
+- A staged-but-not-rebooted CCU (t37 dropped offline mid-batch) **activates the update on its own next power-cycle** — t37 came back on Q4 with no action.
+
+**Post-update drift is fis_id-dependent.** t46/t54/t50 came back with the whole manual layer intact (Form-1, vlan7, `.dont`, timer inactive). t37/t39 came back with **vlan7 re-rendered from the box-id formula** (t39 `172.19.147.130`, t37 `172.19.146.130`) → both restored via ro-toggle + nmconnection edit + `nmcli con up vlan7` (NM profile `id=vlan7`, not the filename). Conclusion: **t37 and t39 lack `fis_id` in Puppet hieradata** — their vlan7 will regress on any future re-render until fis_id is set ([[project_fis_id_feeds_only_networks_epp]]). t39 additionally never had Form-1 → added `train_id = 11` to 12/12 nv4-*.cfg.
+
+**FW ARP post-update:** t37 Q1 pass (FW `172.19.134.1` REACHABLE). t39 (`172.19.133.1`) and t50 (`172.19.138.1`) FAILED/INCOMPLETE — vlan7 links clean, switches all up; likely Stadler FW unpowered — recheck next visit.
+
+**Same day, 4706-102 (box1-t15):** the 4 coupler switches (A1/A3/B1/B3) that rejected config on 2026-07-06 were the **fv6 instance of the fv5 `#`-comment bug** — `#`-strip manual push (`manual_sw_config_push.sh`, B3→B1→A3→A1-last) loaded all 4 first-try → **18/18 `fv6-*-v8-190`**. fv5 finding doc updated with the fv6 confirmation; durable repo fix must cover `nomad-obn-template-fv6` too.
+
 ### Fzg 1 — 4734-101
 
 *(Journal entries to be migrated. Current state: BLOCKED on cable register #1.)*
@@ -215,6 +229,20 @@ Same investigation as Fzg 19 (see entry above). AP→switch-port mapping on Fzg 
 **Notable.** Switches already render `-v8-023` correctly (train_id resolves to 23), yet the nv4 `.cfg` templates are **Form-2** (formula-based train_id, no `{%- set train_id = 23 -%}` directive). Couldn't confirm fact-7 form before the drop — open question whether it's Form-1-with-directive or sourced elsewhere. Commissioning will likely need the Form-1 directive added to all 12 nv4-*.cfg (cf. [feedback_nv4_form1_directive_required](../.claude/projects/C--Users-AbbasRizvi-Documents-dosto-troubleshooting/memory/feedback_nv4_form1_directive_required.md)).
 
 **Next.** Re-run `/dosto-state-inventory 10.179.67.1 4734-123` when online to finish the 12-fact baseline; drop the IP-Port-Allocation PDF into `train-ip-allocation-commission/4734-xxx/4734-123/`. Train stays `⚪ UNKNOWN`.
+
+---
+
+## 4705 series
+
+### Fzg 231 — 4705-103 (CCU box1-t41 @ 10.179.41.1, fv5)
+
+### 2026-07-09 — AR — vlan7 persistent fix via chroot; release subvol did NOT hold the day's ro-toggle edits
+
+**What changed.** vlan7 found wrong again in the evening: live + nmconnection both `172.19.212.130/17` — the broken formula rendered with train_id=41 (box-id → encoded Fzg 169). The morning's NDSU `up` (template 0.0.21 install) had regenerated it. Fixed persistently: `nd-systemupdate.sh.dont shell` (piped heredoc) → patched `ndrd-vlan-vlan7.nmconnection` to `172.19.243.130/17` (Fzg 231, odd → .130) → promote → `safe_reboot` into run2. Post-reboot: nmconnection + live both correct.
+
+**What we learned.** Inside the chroot, **all 15** fv5-*.cfg were missing the Form-1 `train_id = 231` line — the release subvol never had the afternoon's ro-toggle fix, so a promote+reboot without re-applying in-chroot would have silently wiped it (confirms [[project_chroot_release_fork_stale_puppet_files]] on live hardware). Re-added all 15 in the same chroot session; 15/15 present post-reboot. Rule of thumb for t41 (and any fv5 until the fzg_id redesign lands): **every chroot session must re-assert (1) vlan7 nmconnection, (2) Form-1 lines ×15; every reboot must re-arm the TFTP CT helper** (re-armed this session, still runtime-only).
+
+**FW verified.** First probes to `172.19.243.1` came back INCOMPLETE/no-route and looked like `path_broken` — wrong peer. On odd-Fzg trains the FW (device 1) carries the +128 bit too: FW = **`172.19.243.129`**, not `.1` (the playbook's ".1 always" example only holds for even Fzg). Against `.129`: Q1 ARP REACHABLE (`00:90:e8:d7:18:15`), Q2 ICMP 100% loss = **commissioned**, Q3 80/22 open. vlan7 verified end-to-end; matches the 2026-07-07 pre-wipe observation.
 
 ---
 

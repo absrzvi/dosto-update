@@ -39,3 +39,7 @@ design freeze/
 
 # VDS switch firmware bundles (large vendor binaries, staged manually to CCU)
 switch/
+scripts/build/
+scripts/dist/
+scripts/__pycache__/
+*.spec

@@ -1,0 +1,66 @@
+#!/bin/bash
+# Vign/Vin ignition + supply logger for ADLINK R5001C CMM (I2C 0x2D, bus 2).
+# Read-only against the CMM. Change-only logging + 5-min heartbeat.
+# Distinguishes ignition-input drop (Vign collapses, Vin holds) from
+# supply removal (both collapse) at the moment of a power-down.
+LOG=/data/ignition-log/vign.csv
+BUS=2; ADDR=0x2d
+INTERVAL=3            # seconds between samples
+HB=30                # heartbeat: force a line every 30s (was 300; tightened 2026-06-18 for fresher pre-cut sample)
+DV_THRESH=2.0        # log if Vin or Vign moves more than this many volts
+MAXBYTES=$((50*1024*1024))   # self-cap log at 50MB
+
+mkdir -p "$(dirname "$LOG")"
+if [ ! -f "$LOG" ]; then
+  echo "iso_utc,vin_v,vign_v,vign_pct_of_vin,v12_v,v5stb_v,curr_a,bp_mode,status1_faults,reason" > "$LOG"
+fi
+
+prev_vin=""; prev_vign=""; prev_mode=""; prev_s1=""; last_hb=0
+
+decode() {  # $1=MSB $2=LSB -> volts (raw/100), prints with 2 decimals
+  awk "BEGIN{printf \"%.2f\", (($1*256)+$2)/100.0}"
+}
+
+while true; do
+  now=$(date -u +%s)
+  iso=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+  # 0x04 -> 12V,5VSTB,Vin,Vign (9 bytes incl PEC)
+  V=$(i2ctransfer -y $BUS w1@$ADDR 0x04 r9 2>/dev/null)
+  S=$(i2ctransfer -y $BUS w1@$ADDR 0x01 r3 2>/dev/null)
+  C=$(i2ctransfer -y $BUS w1@$ADDR 0x05 r3 2>/dev/null)
+  if [ -z "$V" ] || [ -z "$S" ]; then sleep $INTERVAL; continue; fi
+  read -r b0 b1 b2 b3 b4 b5 b6 b7 b8 <<< "$V"
+  v12=$(decode $((b0)) $((b1)))
+  v5=$(decode $((b2)) $((b3)))
+  vin=$(decode $((b4)) $((b5)))
+  vign=$(decode $((b6)) $((b7)))
+  read -r s1 s2 s2pec <<< "$S"
+  read -r cm cl cpec <<< "$C"
+  curr=$(awk "BEGIN{printf \"%.2f\", ((($cm)*256)+($cl))/100.0}")
+  pct=$(awk "BEGIN{ if($vin>0) printf \"%.1f\", $vign/$vin*100; else print \"NA\"}")
+  modebits=$(( ( $((s2)) >> 6) & 3 ))
+  case $modebits in
+    0) mode="BP_OFF/ign";; 1) mode="IGN_mode";; 2) mode="MANUAL_on";; 3) mode="reserved";; esac
+  s1faults=$(printf "0x%02x" $((s1)))
+
+  reason=""
+  if [ -z "$prev_vin" ]; then reason="start"; fi
+  if [ -n "$prev_vin" ]; then
+    dv=$(awk "BEGIN{d=$vin-$prev_vin; if(d<0)d=-d; g=$vign-$prev_vign; if(g<0)g=-g; print (d>$DV_THRESH||g>$DV_THRESH)?1:0}")
+    [ "$dv" = "1" ] && reason="delta"
+    [ "$mode" != "$prev_mode" ] && reason="${reason}+modechg"
+    [ "$s1faults" != "$prev_s1" ] && reason="${reason}+faultchg"
+  fi
+  if [ $((now-last_hb)) -ge $HB ] && [ -z "$reason" ]; then reason="hb"; fi
+
+  if [ -n "$reason" ]; then
+    # size guard
+    sz=$(stat -c%s "$LOG" 2>/dev/null || echo 0)
+    if [ "$sz" -lt "$MAXBYTES" ]; then
+      echo "$iso,$vin,$vign,$pct,$v12,$v5,$curr,$mode,$s1faults,$reason" >> "$LOG"
+    fi
+    last_hb=$now
+    prev_vin=$vin; prev_vign=$vign; prev_mode=$mode; prev_s1=$s1faults
+  fi
+  sleep $INTERVAL
+done

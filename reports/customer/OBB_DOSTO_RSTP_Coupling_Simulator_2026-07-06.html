@@ -1,0 +1,770 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🚆</text></svg>">
+<title>DOSTO RSTP Coupling Simulator</title>
+</head>
+<body>
+<style>
+  :root{
+    --bg:#0F151D; --panel:#171F2A; --panel2:#1D2836; --line:#2A3646;
+    --ink:#E9EEF4; --muted:#8DA0B5; --accent:#6FB7E8;
+    --fwd:#46C07A; --blk:#E85D5D; --warn:#E8B84B;
+    --mono:"Cascadia Mono","Cascadia Code",Consolas,ui-monospace,monospace;
+    --sans:"Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);margin:0;padding:22px 26px 40px;font-size:14px;line-height:1.45}
+  h1,h2,h3{margin:0;text-wrap:balance}
+  .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:18px}
+  header h1{font-size:22px;font-weight:650;letter-spacing:-.01em}
+  header .sub{color:var(--muted);font-size:12.5px;max-width:62ch;margin-top:4px}
+  .globalbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+  .field{display:flex;flex-direction:column;gap:3px}
+  .field label{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  input[type=number],select{background:#0C1218;border:1px solid var(--line);color:var(--ink);border-radius:6px;
+    padding:5px 8px;font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums;width:9em}
+  input[type=number]:focus-visible,select:focus-visible,button:focus-visible,input[type=checkbox]:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+  select{width:auto}
+  button{background:transparent;border:1px solid var(--accent);color:var(--accent);border-radius:6px;
+    padding:5px 11px;font-family:var(--sans);font-size:12.5px;font-weight:600;cursor:pointer}
+  button:hover{background:rgba(111,183,232,.12)}
+  button.ghost{border-color:var(--line);color:var(--muted)}
+  button.ghost:hover{background:rgba(141,160,181,.08)}
+  button.active,button.ghost.active{background:var(--accent);color:#0B1016;border-color:var(--accent);font-weight:700}
+  button.active:hover{background:var(--accent)}
+  .guide{margin-bottom:14px}
+  .guide summary{cursor:pointer;font-size:12.5px;font-weight:650;color:var(--accent);letter-spacing:.04em;user-select:none}
+  .guide summary:hover{color:var(--ink)}
+  .gcols{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:16px;margin-top:12px}
+  .gcols h4{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin:0 0 5px;font-weight:700}
+  .gcols p{margin:0 0 6px;font-size:12px;color:var(--muted);line-height:1.55}
+  .gcols b{color:var(--ink);font-weight:600}
+  .gcols code{font-family:var(--mono);font-size:11px;color:var(--warn)}
+  .configrow{display:flex;gap:12px;align-items:stretch;overflow-x:auto;padding-bottom:6px;margin-bottom:14px}
+  .traincard{min-width:290px}
+  .traincard .thead{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+  .traincard .thead b{font-size:13.5px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .grid3{display:grid;grid-template-columns:auto auto auto;gap:8px;margin-bottom:9px}
+  .junccard{min-width:172px;display:flex;flex-direction:column;gap:8px}
+  .junccard .jtitle{font-size:12px;font-weight:650;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+  .chk{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink)}
+  .chk input{accent-color:var(--accent)}
+  .diagramwrap{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px 6px;margin-bottom:14px}
+  .diagramscroll{overflow-x:auto}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;align-items:center;padding:6px 4px 8px;color:var(--muted);font-size:11.5px}
+  .legend .li{display:flex;align-items:center;gap:6px}
+  .sw{width:22px;height:0;border-top:2.5px solid var(--fwd);display:inline-block}
+  .sw.blk{border-top:2.5px dashed var(--blk)}
+  .sw.ghost{border-top:2px dotted var(--line)}
+  .dotR{width:13px;height:13px;border-radius:50%;background:var(--accent);color:#0B1016;font:700 9px/13px var(--mono);text-align:center;display:inline-block}
+  .sqA{width:13px;height:13px;background:var(--blk);color:#0B1016;font:700 9px/13px var(--mono);text-align:center;display:inline-block;border-radius:2px}
+  #clearOv{padding:2px 9px;font-size:11px;display:none;margin-left:auto}
+  #linkEditor{display:none;border-color:var(--accent);margin-bottom:10px}
+  .editorrow{display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap}
+  .editorrow .lname{font-family:var(--mono);font-size:12.5px;min-width:190px;line-height:1.5}
+  .editorrow .lname .tagE{color:var(--accent);font-weight:700;font-size:10.5px;letter-spacing:.1em}
+  .editorrow .note{color:var(--muted);font-size:11px}
+  .qbtns{display:flex;gap:6px}
+  .results{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:12px}
+  .results h3{font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:9px;font-weight:650}
+  .kv{display:flex;justify-content:space-between;gap:12px;padding:3px 0;font-size:13px}
+  .kv .v{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .rootline{font-family:var(--mono);font-size:13px;color:var(--accent);font-weight:600}
+  table{border-collapse:collapse;width:100%;font-size:12.5px}
+  th{text-align:left;color:var(--muted);font-weight:600;font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;padding:3px 8px 5px 0}
+  td{font-family:var(--mono);font-variant-numeric:tabular-nums;padding:3px 8px 3px 0;border-top:1px solid var(--line)}
+  .tag{display:inline-block;padding:1px 7px;border-radius:99px;font:600 10.5px var(--mono);letter-spacing:.03em}
+  .tag.fwd{background:rgba(70,192,122,.15);color:var(--fwd)}
+  .tag.blk{background:rgba(232,93,93,.16);color:var(--blk)}
+  .tag.off{background:rgba(141,160,181,.12);color:var(--muted)}
+  .warnitem{display:flex;gap:9px;align-items:flex-start;padding:7px 0;border-top:1px solid var(--line);font-size:13px}
+  .warnitem:first-of-type{border-top:none}
+  .sev{flex:none;margin-top:3px;width:9px;height:9px;border-radius:50%}
+  .sev.red{background:var(--blk)} .sev.amber{background:var(--warn)} .sev.blue{background:var(--accent)} .sev.green{background:var(--fwd)}
+  .warnitem b{font-weight:650}
+  .warnitem .why{color:var(--muted);font-size:12px;margin-top:2px}
+  .foot{color:var(--muted);font-size:11.5px;margin-top:18px;max-width:92ch}
+  .foot code{font-family:var(--mono);font-size:11px;color:var(--ink)}
+  svg text{font-family:var(--mono)}
+  svg [data-ek]{cursor:pointer}
+  @media (prefers-reduced-motion:no-preference){ .diagramwrap svg line,.diagramwrap svg path{transition:stroke .15s} }
+</style>
+
+<header>
+  <div>
+    <div class="eyebrow">Nomad Digital · DOSTO / Stadler · L2 fabric</div>
+    <h1>Coupled-Consist RSTP Simulator</h1>
+    <div class="sub">Engine port of <b>rstp_sim2.py</b> — full 802.1D priority-vector tiebreak, validated against the
+      2026-06-12 and 2026-06-30 live coupling harvests. Set costs, couple up to three 6-Teiler, read the tree.</div>
+  </div>
+  <div class="globalbar card">
+    <div class="field"><label>Consists</label>
+      <select id="trainCount"><option value="1">1 (solo)</option><option value="2" selected>2 coupled</option><option value="3">3 coupled</option></select></div>
+    <div class="field"><label>Backbone trunk</label><input type="number" id="trunkCost" value="2000" min="1"></div>
+    <div class="field"><label>B1–B3 chord</label><input type="number" id="chordCost" value="400100" min="1"></div>
+    <div class="field"><label>Max age (s)</label><input type="number" id="maxAge" value="38" min="6" max="40" style="width:5.5em"></div>
+    <div class="field"><label>Coupler preset</label>
+      <div style="display:flex;gap:6px">
+        <button id="presetV9" title="Flat symmetric 20000 on all coupler e0-2 (v9 M1)">v9 · 20000</button>
+        <button id="presetV8" class="ghost" title="Field-harvested v8: A1/B3 = Fzg×1,000,000−1; A3/B1 default 2000">v8 formula</button>
+      </div></div>
+  </div>
+</header>
+
+<details class="card guide">
+  <summary>Guide — what each option does</summary>
+  <div class="gcols">
+    <div>
+      <h4>Global bar</h4>
+      <p><b>Consists</b> — how many 6-Teiler are coupled (1–3). <b>Backbone trunk</b> — RSTP port cost of every internal
+        e0-0/e0-1 hop; VDS long path-cost table: 10G=2000 · 1G=20000 · 100M FE=200000. <b>B1–B3 chord</b> — the deliberately
+        high cost (template 400100) on the B-car ring chord so the solo train's ring always breaks there, predictably.
+        <b>Max age</b> — BPDU lifetime: a BPDU dies after (max-age − 1) hops from root; template default was 20, v9 raises it to 38.</p>
+      <p><b>v9 · 20000 preset</b> — flat symmetric cost on all coupler e0-2 ports, both trains. The storm-safe fix, field-validated 2026-06-30.</p>
+      <p><b>v8 formula preset</b> — the old template rule: <code>A1 &amp; B3 e0-2 cost = Fzg × 1,000,000 − 1</code>
+        (Fzg 145 → 144,999,999) while A3 &amp; B1 stay at the trunk default. Each train computes the value from its <i>own</i>
+        Fzg, so when two trains couple, the two ends of the live cable carry different costs → a never-settling
+        designated-role duel → ~2 s fleet-wide TC/FDB-flush storm (field-proven 2026-06-12; cold coupled boot with this
+        config failed to converge at all on 2026-06-30).</p>
+    </div>
+    <div>
+      <h4>Train cards</h4>
+      <p><b>Fzg</b> — customer train number; only feeds the v8 preset formula. <b>D1 priority</b> — RSTP bridge priority of
+        that train's D1 (the root candidate). Lower wins root; equal priorities fall through to lowest MAC — in this sim
+        MAC order is T1 &lt; T2 &lt; T3, so set one D1 lower to pin the root deliberately. <b>A ⟶ B</b> — turns the train
+        around so the other end faces the Kupplung; use it to build all four orientations (A-A, B-B, A-B, B-A).
+        <b>Coupler e0-2 costs</b> — per-port cost of the four Frontkupplung ports.</p>
+      <h4>Kupplung cards</h4>
+      <p>Each junction has <b>two redundant cables</b>. Untick one to model a missing/failed cable (the 2026-06-30 field
+        test coupled with only one live). <b>Pairing</b> — straight (port 1↔1, 3↔3) vs crossed (1↔3) models how the
+        physical cables landed.</p>
+    </div>
+    <div>
+      <h4>Diagram</h4>
+      <p>Each train is its real 18-switch ring: two backbone rails, the A-end vertical, and the B-car chord. Green =
+        forwarding, red dashed = blocked. <b>R</b> = root port (that switch's path toward the root bridge), <b>A</b> =
+        ALTR/BLK — RSTP blocks here. Unmarked ends are designated. <b>Click any link</b> to edit its per-end costs —
+        an amber <code>✎</code> label marks an override. Set one leg to FE 200000 to reproduce a degraded backbone link
+        (the 147 field case). Edits apply on <b>Calculate ▸</b> or Enter.</p>
+      <h4>Results</h4>
+      <p><b>Root election &amp; fabric</b> — who won root, loop accounting, and worst tree depth vs the BPDU hop budget.
+        <b>Blocked links &amp; coupler verdicts</b> — every blocked link with its blocking end; per Kupplung, whether one
+        cable is the standby or <i>both</i> forward (loop broken internally — the determinism gap). <b>Warnings</b> —
+        storm risk (asymmetric same-cable cost), the 40-node RSTP ceiling, the message-age wall, fabric partition, and
+        the MAC-lottery root note.</p>
+    </div>
+  </div>
+</details>
+
+<div class="configrow" id="configrow"></div>
+
+<div class="diagramwrap">
+  <div id="linkEditor" class="card"></div>
+  <div class="legend">
+    <span class="li"><span class="sw"></span> forwarding (in tree)</span>
+    <span class="li"><span class="sw blk"></span> blocked link</span>
+    <span class="li"><span class="sw ghost"></span> cable present, no link</span>
+    <span class="li"><span class="dotR">R</span> root port</span>
+    <span class="li"><span class="sqA">A</span> ALTR / BLK port</span>
+    <span class="li">unmarked ends = designated · <b style="color:var(--ink)">click any link to edit its cost</b> · amber label = override</span>
+    <button id="clearOv" class="ghost"></button>
+  </div>
+  <div class="diagramscroll" id="diagram"></div>
+</div>
+
+<div class="results">
+  <div class="card" id="cardElection"></div>
+  <div class="card" id="cardLinks"></div>
+  <div class="card" id="cardWarn"></div>
+</div>
+
+<details class="card guide" id="findings" style="margin-top:14px" open>
+  <summary>Verdict — can one redundant coupler cable be deterministically blocked?</summary>
+  <p style="font-size:12.5px;color:var(--ink);margin:10px 0 4px;max-width:100ch">
+    Yes, the meeting is right that symmetric coupler cost does not deterministically block one redundant coupler cable —
+    but the validated simulation (ground-truthed against the 2026-06-12 and 2026-06-30 live harvests, then
+    adversarially attacked) sharpened <i>why</i>, and that changes what to do about it:</p>
+  <div class="warnitem"><span class="sev amber"></span><div>
+    <b>1 · It's not a coin-flip — it's deterministic per case, but the case depends on orientation AND root position.</b>
+    <div class="why">Driven by each train's fixed backbone distances from D1 to its coupler ports (A1/A3/B1/B3 =
+      4000/6000/22000/12000) plus cost-tie resolution by bridge MAC. Sim-verified across all 8 orientation × root
+      combinations (both cables live): a standby coupler exists in only <b style="color:var(--warn)">3 of 8</b> —
+      everywhere else both cables forward and the loop breaks on internal links instead.
+      <button class="ghost" data-demo="orientation" style="margin-left:8px;padding:2px 9px;font-size:11px">▸ show me (B-B, v9)</button>
+      <table style="margin-top:7px;max-width:430px"><tr><th>Orientation</th><th>Root on 105</th><th>Root on 117</th></tr>
+        <tr><td>A-A</td><td style="color:var(--fwd)">standby = 117:A3</td><td style="color:var(--warn)">both forward</td></tr>
+        <tr><td>A-B</td><td style="color:var(--fwd)">standby = 117:A1</td><td style="color:var(--warn)">both forward</td></tr>
+        <tr><td>B-B</td><td style="color:var(--warn)">both forward</td><td style="color:var(--warn)">both forward</td></tr>
+        <tr><td>B-A</td><td style="color:var(--warn)">both forward</td><td style="color:var(--fwd)">standby = 105:A1</td></tr></table>
+      <span style="display:block;margin-top:5px">And since root election is itself a MAC lottery today (equal priority-0 D1s),
+      the "working" orientations cannot even be enumerated absolutely — the same physical coupling flips outcome class
+      when the other train wins root. Fleet limitation: treat "standby coupler exists" as <b>not guaranteed</b> under v9.</span></div></div></div>
+  <div class="warnitem"><span class="sev red"></span><div>
+    <b>2 · The implied fix — asymmetric coupler cost — is doubly wrong.</b>
+    <div class="why">Sim-proven it cannot deliver orientation-invariance (3 distinct outcome classes across 4 orientations),
+      and it reintroduces the storm: the designated-role duel was proven twice on live trains, and a cold coupled boot with
+      asymmetric costs failed to converge at all (2026-06-30).
+      <button class="ghost" data-demo="storm" style="margin-left:8px;padding:2px 9px;font-size:11px">▸ show me (v8, B-B)</button></div></div></div>
+  <div class="warnitem"><span class="sev blue"></span><div>
+    <b>3 · No static config knob can fix it.</b>
+    <div class="why">root_path_cost dominates the RSTP priority vector with wide margins at every coupler comparison, so
+      port-priority is structurally never even read; bridge-priority only breaks ties, not costs. Candidates A (asymmetric
+      cost), B (port-priority), C (bridge-priority) and static-D all produced <b>byte-identical</b> sim output across all
+      four orientations — a value fixed at commission time cannot know the orientation that will occur in the field.</div></div></div>
+  <div class="warnitem"><span class="sev green"></span><div>
+    <b>4 · The solution is a control-plane action, not an RSTP knob.</b>
+    <div class="why"><b style="color:var(--fwd)">Solution:</b> a CCU application that reads the multitraction state from
+      the <b>Stadler DXS</b> (the train control system knows coupled state and master/slave role) and deterministically
+      admin-disables the designated spare Frontkupplung switch port — equivalent to unplugging the spare before RSTP
+      computes, which sidesteps the cost arithmetic entirely. Static config cannot do this: OBN templates render once at
+      commission time, before any coupling event.
+      <span style="display:block;margin-top:5px">Design requirements (adversarially verified in the sim):
+      <b>failback</b> — continuous link monitoring with re-enable, so a later fault on the surviving cable fails over to
+      the spare instead of severing the consists; <b>root alignment</b> — tie bridge priority / root election to the same
+      DXS master/slave signal so the kept cable is also the best path; <b>per-junction scope</b> — "disable my spare"
+      must mean "per facing neighbour", so a middle consist in triple traction disables one spare per junction, not
+      every coupler port but one.</span></div></div></div>
+  <p style="font-size:11px;color:var(--muted);margin:8px 0 0">Sources: <code>rstp_sim2.py</code> (ground-truth-validated engine) ·
+    <code>rstp_sim2_d2_candidates.py</code> (candidates A–D*) · <code>attack_d2_candidate.py</code> (7-attack adversarial pass) —
+    findings/coupling_test_4736-117_105_2026-06-30/scripts/, 2026-07-06.</p>
+</details>
+
+<div class="foot">
+  Intra-consist ring and coupler pairing are byte-identical to the validated engine
+  (<code>findings/coupling_test_4736-117_105_2026-06-30/scripts/rstp_sim2.py</code>): TEST 1 asym B-B → 119:B3 ALTR/BLK ·
+  TEST 2 v9 B-A single-cable → no coupler block. Per-link overrides let you reproduce degraded legs
+  (e.g. 147's ~200&thinsp;000 FE backbone link that pushed B3-147's root path onto the chord in the field).
+  Ties between equal-priority D1s resolve by lowest MAC; here MAC order is T1 &lt; T2 &lt; T3 — set D1 priorities to pin the root instead.
+</div>
+
+<script>
+"use strict";
+/* ---------- topology constants (verbatim from rstp_sim2.py) ---------- */
+const TOP = ["A1","C1","D1","E2","E3","F2","F3","B2","B3"];
+const BOT = ["A3","A2","C3","C2","D3","D2","E1","F1","B1"];
+const ORD = {D1:0,D3:1,D2:2,E1:3,E2:4,E3:5,F1:6,F2:7,F3:8,C1:9,C2:10,C3:11,A1:12,A2:13,A3:14,B1:15,B2:16,B3:17};
+const INTRA = [["A1","A3"],["A1","C1"],["A2","A3"],["A2","C3"],["C1","D1"],["C2","C3"],["C2","D3"],
+  ["D1","E2"],["D2","D3"],["D2","E1"],["E1","F1"],["E2","E3"],["E3","F2"],["F1","B1"],["F3","B2"],
+  ["F2","F3"],["B1","B3","chord"],["B2","B3"]];
+
+/* ---------- state ---------- */
+const state = {
+  trainCount: 2, trunkCost: 2000, chordCost: 400100, maxAge: 38,
+  trains: [
+    {fzg:145, flip:false, d1prio:0, coupler:{A1:20000,A3:20000,B1:20000,B3:20000}},
+    {fzg:133, flip:false, d1prio:0, coupler:{A1:20000,A3:20000,B1:20000,B3:20000}},
+    {fzg:147, flip:false, d1prio:0, coupler:{A1:20000,A3:20000,B1:20000,B3:20000}},
+  ],
+  junctions: [ {c1:true,c2:true,crossed:false}, {c1:true,c2:true,crossed:false} ],
+  overrides: {},        // key "t|a|b" -> {cu,cv} per-end path-cost override
+  selected: null,       // edge key selected for editing
+};
+
+/* ---------- graph build ---------- */
+function junctionPorts(j){
+  const L=state.trains[j], R=state.trains[j+1], jc=state.junctions[j];
+  const pa = L.flip ? ["A1","A3"] : ["B1","B3"];
+  let  pb = R.flip ? ["B1","B3"] : ["A1","A3"];
+  if(jc.crossed) pb = [pb[1],pb[0]];
+  return {pa,pb};
+}
+function buildGraph(){
+  const nodes=[], bids={}, edges=[];
+  for(let t=0;t<state.trainCount;t++){
+    const tn = "T"+(t+1);
+    for(const sw in ORD){
+      const name = tn+":"+sw;
+      nodes.push(name);
+      bids[name] = [ sw==="D1" ? state.trains[t].d1prio : 32768, (t+1)*1000 + ORD[sw] ];
+    }
+    for(const [a,b,kind] of INTRA){
+      const key = t+"|"+a+"|"+b;
+      const base = kind==="chord" ? state.chordCost : state.trunkCost;
+      const o = state.overrides[key];
+      edges.push({u:tn+":"+a, v:tn+":"+b, cu:o?num(o.cu):base, cv:o?num(o.cv):base,
+        type:kind==="chord"?"chord":"trunk", train:t, key, ov:!!o});
+    }
+  }
+  for(let j=0;j<state.trainCount-1;j++){
+    const {pa,pb}=junctionPorts(j), jc=state.junctions[j];
+    const lives=[jc.c1, jc.c2];
+    for(let k=0;k<2;k++){
+      edges.push({u:"T"+(j+1)+":"+pa[k], v:"T"+(j+2)+":"+pb[k],
+        cu:num(state.trains[j].coupler[pa[k]]), cv:num(state.trains[j+1].coupler[pb[k]]),
+        type:"coupler", junction:j, cable:k, live:lives[k], key:"J"+j+"|"+k});
+    }
+  }
+  return {nodes,bids,edges:edges.filter(e=>e.type!=="coupler"||e.live), allCouplers:edges.filter(e=>e.type==="coupler")};
+}
+function num(x){ const n=Number(x); return Number.isFinite(n)&&n>0 ? n : 1; }
+
+/* ---------- RSTP engine (port of active_topology) ---------- */
+function lt(a,b){ for(let i=0;i<a.length;i++){ if(a[i]<b[i])return true; if(a[i]>b[i])return false; } return false; }
+function solve(g){
+  const adj={}; g.nodes.forEach(n=>adj[n]=[]);
+  g.edges.forEach((e,i)=>{ e.id=i;
+    adj[e.u].push({to:e.v, costAtTo:e.cv, e, pnum:adj[e.u].length});
+    adj[e.v].push({to:e.u, costAtTo:e.cu, e, pnum:adj[e.v].length});
+  });
+  const comp={}, comps=[];
+  for(const s of g.nodes){ if(comp[s]!==undefined) continue;
+    const id=comps.length, q=[s], members=[]; comp[s]=id;
+    while(q.length){ const x=q.pop(); members.push(x);
+      for(const nb of adj[x]) if(comp[nb.to]===undefined){ comp[nb.to]=id; q.push(nb.to); } }
+    comps.push(members);
+  }
+  const roles={}, best={}, roots=[], treeIds=new Set(), diamPer=[];
+  for(const members of comps){
+    let root=members[0];
+    for(const n of members) if(lt(g.bids[n],g.bids[root])) root=n;
+    roots.push(root);
+    const done={}, rootEdge={};
+    members.forEach(n=>best[n]=null);
+    best[root]=[0, g.bids[root][0], g.bids[root][1], 0, 0];
+    for(let k=0;k<members.length;k++){
+      let x=null;
+      for(const n of members){ if(done[n]||!best[n])continue; if(x===null||lt(best[n],best[x]))x=n; }
+      if(x===null)break; done[x]=true;
+      for(const nb of adj[x]){ if(done[nb.to])continue;
+        const cand=[best[x][0]+nb.costAtTo, g.bids[x][0], g.bids[x][1], 128, nb.pnum];
+        if(!best[nb.to]||lt(cand,best[nb.to])){ best[nb.to]=cand; rootEdge[nb.to]=nb.e; }
+      }
+    }
+    for(const n of members) if(rootEdge[n]) treeIds.add(rootEdge[n].id);
+    for(const n of members) roles[n]={};
+    for(const e of g.edges){ if(comp[e.u]!==comp[root])continue;
+      if(treeIds.has(e.id)){
+        const child = (rootEdge[e.u]===e) ? e.u : e.v;
+        roles[child][e.id]="R"; roles[child===e.u?e.v:e.u][e.id]="D";
+      }
+    }
+    const hop={[root]:0}; let q=[root], maxHop=0, far=root;
+    while(q.length){ const x=q.shift();
+      for(const nb of adj[x]) if(treeIds.has(nb.e.id) && hop[nb.to]===undefined){
+        hop[nb.to]=hop[x]+1; if(hop[nb.to]>maxHop){maxHop=hop[nb.to];far=nb.to;}
+        q.push(nb.to); }
+    }
+    diamPer.push({root, members:members.length, edges:g.edges.filter(e=>comp[e.u]===comp[root]).length, maxHop, far});
+  }
+  const blocked=[];
+  for(const e of g.edges){ if(treeIds.has(e.id))continue;
+    const wu=[best[e.u][0], ...g.bids[e.u]], wv=[best[e.v][0], ...g.bids[e.v]];
+    const altEnd = lt(wu,wv) ? e.v : e.u;
+    roles[altEnd][e.id]="A"; roles[altEnd===e.u?e.v:e.u][e.id]="D";
+    blocked.push({e, altEnd});
+  }
+  return {adj, comp, comps, roots, best, treeIds, blocked, roles, diamPer};
+}
+
+/* ---------- layout & drawing ---------- */
+const NW=42,NH=24,CG=84,PAD=18,TOPY=72,BOTY=176,JW=150,MX=16;
+function trainX(t){ return MX + t*( (8*CG+NW+2*PAD) + JW ); }
+function nodePos(t,sw){
+  const flip=state.trains[t].flip;
+  let row,col;
+  let i=TOP.indexOf(sw); if(i>=0){row=0;col=i;} else {row=1;col=BOT.indexOf(sw);}
+  if(flip)col=8-col;
+  return {x: trainX(t)+PAD+col*CG, y: row===0?TOPY:BOTY};
+}
+function anchor(p,side){
+  if(side==='l')return[p.x,p.y+NH/2]; if(side==='r')return[p.x+NW,p.y+NH/2];
+  if(side==='t')return[p.x+NW/2,p.y]; if(side==='b')return[p.x+NW/2,p.y+NH];
+  return [p.x+NW/2,p.y+NH/2];
+}
+function bez(p0,p3,t){ const dx=(p3[0]-p0[0])*0.42;
+  const p1=[p0[0]+dx,p0[1]], p2=[p3[0]-dx,p3[1]];
+  const u=1-t;
+  return [ u*u*u*p0[0]+3*u*u*t*p1[0]+3*u*t*t*p2[0]+t*t*t*p3[0],
+           u*u*u*p0[1]+3*u*u*t*p1[1]+3*u*t*t*p2[1]+t*t*t*p3[1] ];
+}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");}
+function fmtVec(v){ return v?`RPC ${v[0].toLocaleString("en")}`:"unreached"; }
+function fmt(n){ return Number(n).toLocaleString("en"); }
+
+/* geometry for one edge: {kind:'bez'|'line', a:[x,y] at u-end, b:[x,y] at v-end, d:pathD} */
+function edgeGeom(e){
+  const [tu,su]=e.u.split(":"), [tv,sv]=e.v.split(":");
+  const pu=nodePos(+tu.slice(1)-1,su), pv=nodePos(+tv.slice(1)-1,sv);
+  let a,b,kind;
+  if(e.type==="coupler"){
+    kind="bez";
+    a=anchor(pu, pu.x<pv.x?'r':'l'); b=anchor(pv, pu.x<pv.x?'l':'r');
+  } else if(pu.y!==pv.y){
+    kind="line";
+    a = pu.y<pv.y ? anchor(pu,'b') : anchor(pu,'t');
+    b = pu.y<pv.y ? anchor(pv,'t') : anchor(pv,'b');
+  } else {
+    kind="line";
+    a = pu.x<pv.x ? anchor(pu,'r') : anchor(pu,'l');
+    b = pu.x<pv.x ? anchor(pv,'l') : anchor(pv,'r');
+  }
+  const d = kind==="bez"
+    ? `M ${a[0]} ${a[1]} C ${a[0]+(b[0]-a[0])*0.42} ${a[1]}, ${b[0]-(b[0]-a[0])*0.42} ${b[1]}, ${b[0]} ${b[1]}`
+    : `M ${a[0]} ${a[1]} L ${b[0]} ${b[1]}`;
+  return {kind,a,b,d, vertical: kind==="line" && a[0]===b[0]};
+}
+
+function draw(g,sol){
+  const W = trainX(state.trainCount-1) + (8*CG+NW+2*PAD) + MX;
+  const H = 236;
+  let s=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="RSTP topology diagram">`;
+  for(let t=0;t<state.trainCount;t++){
+    const x=trainX(t), w=8*CG+NW+2*PAD;
+    s+=`<rect x="${x-6}" y="${TOPY-30}" width="${w+12}" height="${BOTY-TOPY+NH+44}" rx="10" fill="var(--panel2)" stroke="var(--line)"/>`;
+    const tr=state.trains[t];
+    s+=`<text x="${x+4}" y="${TOPY-38}" font-size="12" fill="var(--ink)" font-weight="600">T${t+1} · Fzg ${esc(tr.fzg)}</text>`;
+    const endL = tr.flip?"B":"A", endR = tr.flip?"A":"B";
+    s+=`<text x="${x+2}" y="${BOTY+NH+9}" font-size="10" fill="var(--muted)">${endL}-end</text>`;
+    s+=`<text x="${x+w-36}" y="${BOTY+NH+9}" font-size="10" fill="var(--muted)">${endR}-end</text>`;
+  }
+  for(let j=0;j<state.trainCount-1;j++){
+    const gx = trainX(j)+(8*CG+NW+2*PAD)+6;
+    s+=`<text x="${gx+JW/2-6}" y="${TOPY-38}" font-size="10" letter-spacing="1" fill="var(--accent)" text-anchor="middle">KUPPLUNG ${j+1}</text>`;
+  }
+  const marks=[];
+  /* ghost cables (present but no link) */
+  for(const e of g.allCouplers){ if(e.live)continue;
+    const geo=edgeGeom(e);
+    s+=`<path d="${geo.d}" fill="none" stroke="var(--line)" stroke-width="2" stroke-dasharray="2 6"><title>${esc(e.u)} ↔ ${esc(e.v)} — cable present, no link (enable in Kupplung ${e.junction+1})</title></path>`;
+    const m=bez(geo.a,geo.b,0.5);
+    s+=`<text x="${m[0]}" y="${m[1]-6}" font-size="9" text-anchor="middle" fill="var(--muted)">no link</text>`;
+  }
+  /* live edges */
+  for(const e of g.edges){
+    const geo=edgeGeom(e);
+    const isBlk = !sol.treeIds.has(e.id);
+    const stroke = isBlk?"var(--blk)":"var(--fwd)";
+    const dash = isBlk?` stroke-dasharray="6 4"`:"";
+    const wgt = e.type==="trunk"&&!e.ov?2:2.6;
+    if(state.selected===e.key)
+      s+=`<path d="${geo.d}" fill="none" stroke="var(--accent)" stroke-width="10" opacity="0.28"/>`;
+    s+=`<path d="${geo.d}" fill="none" stroke="${stroke}" stroke-width="${wgt}"${dash}><title>${esc(e.u)} (cost ${fmt(e.cu)}) ↔ ${esc(e.v)} (cost ${fmt(e.cv)}) — click to edit</title></path>`;
+    s+=`<path d="${geo.d}" fill="none" stroke="transparent" stroke-width="14" data-ek="${e.key}"><title>${esc(e.u)} ↔ ${esc(e.v)} — click to edit cost</title></path>`;
+    /* cost labels: couplers always; chord always; overridden trunks */
+    if(e.type==="coupler"){
+      const m=bez(geo.a,geo.b,0.5);
+      const asym = e.cu!==e.cv;
+      const lbl = asym ? fmt(e.cu)+" / "+fmt(e.cv) : fmt(e.cu);
+      s+=`<text x="${m[0]}" y="${m[1]-7}" font-size="10" text-anchor="middle" fill="${asym?'var(--warn)':'var(--muted)'}">${lbl}${asym?' ⚠':''}</text>`;
+    } else if(e.type==="chord"||e.ov){
+      const asym = e.cu!==e.cv;
+      const lbl = (asym ? fmt(e.cu)+"/"+fmt(e.cv) : fmt(e.cu)) + (e.ov?" ✎":"");
+      const fill = e.ov ? "var(--warn)" : "var(--muted)";
+      if(geo.vertical)
+        s+=`<text x="${geo.a[0]+8}" y="${(geo.a[1]+geo.b[1])/2+3}" font-size="10" fill="${fill}">${lbl}</text>`;
+      else
+        s+=`<text x="${(geo.a[0]+geo.b[0])/2}" y="${geo.a[1]-7}" font-size="10" text-anchor="middle" fill="${fill}">${lbl}</text>`;
+    }
+    for(const [node,endPt] of [[e.u,geo.a],[e.v,geo.b]]){
+      const role = sol.roles[node] && sol.roles[node][e.id];
+      if(role==="R"||role==="A"){
+        let p;
+        if(geo.kind==="bez"){ p = bez(geo.a,geo.b, endPt===geo.a?0.13:0.87); }
+        else { const t=endPt===geo.a?0.32:0.68; p=[geo.a[0]+(geo.b[0]-geo.a[0])*t, geo.a[1]+(geo.b[1]-geo.a[1])*t]; }
+        marks.push({p,role});
+      }
+    }
+  }
+  /* nodes */
+  for(let t=0;t<state.trainCount;t++){
+    const tn="T"+(t+1);
+    for(const sw in ORD){
+      const name=tn+":"+sw, p=nodePos(t,sw);
+      const isRoot = sol.roots.includes(name);
+      const fill = isRoot?"var(--accent)":"#0C1218";
+      const txt  = isRoot?"#0B1016":"var(--ink)";
+      const bstroke = sw==="D1"?"var(--accent)":"var(--line)";
+      s+=`<g><rect x="${p.x}" y="${p.y}" width="${NW}" height="${NH}" rx="5" fill="${fill}" stroke="${bstroke}"/>`;
+      s+=`<text x="${p.x+NW/2}" y="${p.y+NH/2+4}" font-size="11" text-anchor="middle" fill="${txt}" font-weight="600">${sw}</text>`;
+      s+=`<title>${esc(name)} · bridge (${sw==="D1"?state.trains[t].d1prio:32768}, mac ${((t+1)*1000+ORD[sw])}) · ${fmtVec(sol.best[name])}</title></g>`;
+      if(isRoot)
+        s+=`<text x="${p.x+NW/2}" y="${p.y-6}" font-size="9" letter-spacing="1.5" text-anchor="middle" fill="var(--accent)" font-weight="700">ROOT</text>`;
+    }
+  }
+  for(const m of marks){
+    if(m.role==="R")
+      s+=`<g><circle cx="${m.p[0]}" cy="${m.p[1]}" r="7" fill="var(--accent)"/><text x="${m.p[0]}" y="${m.p[1]+3.2}" font-size="9" text-anchor="middle" fill="#0B1016" font-weight="700">R</text></g>`;
+    else
+      s+=`<g><rect x="${m.p[0]-6.5}" y="${m.p[1]-6.5}" width="13" height="13" rx="2.5" fill="var(--blk)"/><text x="${m.p[0]}" y="${m.p[1]+3.2}" font-size="9" text-anchor="middle" fill="#0B1016" font-weight="700">A</text></g>`;
+  }
+  s+="</svg>";
+  document.getElementById("diagram").innerHTML=s;
+}
+
+/* ---------- link editor ---------- */
+function describeSelected(){
+  const k=state.selected; if(!k)return null;
+  if(k.startsWith("J")){
+    const [js,ks]=k.slice(1).split("|"); const j=+js, kk=+ks;
+    if(j>=state.trainCount-1)return null;
+    const {pa,pb}=junctionPorts(j);
+    const uName="T"+(j+1)+":"+pa[kk], vName="T"+(j+2)+":"+pb[kk];
+    return {kind:"coupler", j, kk, pa:pa[kk], pb:pb[kk], uName, vName,
+      cu:state.trains[j].coupler[pa[kk]], cv:state.trains[j+1].coupler[pb[kk]],
+      note:"coupler e0-2 — writes back into the train cards · reset = v9 20000"};
+  }
+  const [ts,a,b]=k.split("|"); const t=+ts;
+  if(t>=state.trainCount)return null;
+  const isChord = a==="B1"&&b==="B3";
+  const base = isChord?state.chordCost:state.trunkCost;
+  const o=state.overrides[k];
+  return {kind:"intra", key:k, uName:"T"+(t+1)+":"+a, vName:"T"+(t+1)+":"+b,
+    cu:o?o.cu:base, cv:o?o.cv:base,
+    note:(isChord?`overrides the global chord (${fmt(state.chordCost)}) for T${t+1} only`
+                 :`default = backbone trunk ${fmt(state.trunkCost)}`)+" · VDS long path-cost: 10G=2000 · 1G=20000 · 100M FE=200000"};
+}
+function renderEditor(){
+  const ed=document.getElementById("linkEditor");
+  const info=describeSelected();
+  if(!info){ state.selected=null; ed.style.display="none"; ed.innerHTML=""; return; }
+  ed.style.display="block";
+  ed.innerHTML=`<div class="editorrow">
+    <div class="lname"><span class="tagE">EDIT LINK</span><br>${esc(info.uName)} ↔ ${esc(info.vName)}<br><span class="note">${info.note}</span></div>
+    <div class="field"><label>cost @ ${esc(info.uName)}</label><input id="le_u" type="number" min="1" value="${info.cu}"></div>
+    <div class="field"><label>cost @ ${esc(info.vName)}</label><input id="le_v" type="number" min="1" value="${info.cv}"></div>
+    <button id="le_apply" title="apply the two costs and re-run RSTP (or press Enter)">Calculate ▸</button>
+    <div class="field"><label>quick set · both ends</label><div class="qbtns">
+      <button class="ghost" data-q="2000">10G</button>
+      <button class="ghost" data-q="20000">1G</button>
+      <button class="ghost" data-q="200000" title="degraded 100M FE leg — the 147 field case">FE</button></div></div>
+    <button id="le_reset" class="ghost" title="back to default">reset</button>
+    <button id="le_close" class="ghost">close ✕</button>
+  </div>`;
+}
+function applyEditor(cu,cv){
+  const info=describeSelected(); if(!info)return;
+  if(info.kind==="coupler"){
+    state.trains[info.j].coupler[info.pa]=num(cu);
+    state.trains[info.j+1].coupler[info.pb]=num(cv);
+    renderConfig();
+  } else {
+    const isChord=info.key.endsWith("|B1|B3");
+    const base=isChord?state.chordCost:state.trunkCost;
+    if(num(cu)===base&&num(cv)===base) delete state.overrides[info.key];
+    else state.overrides[info.key]={cu:num(cu),cv:num(cv)};
+  }
+  recompute();
+}
+function applyFromInputs(){
+  applyEditor(document.getElementById("le_u").value, document.getElementById("le_v").value);
+}
+document.getElementById("linkEditor").addEventListener("keydown",ev=>{
+  if(ev.key==="Enter"&&(ev.target.id==="le_u"||ev.target.id==="le_v")){ ev.preventDefault(); applyFromInputs(); }
+});
+document.getElementById("linkEditor").addEventListener("click",ev=>{
+  if(ev.target.id==="le_apply"){ applyFromInputs(); return; }
+  const q=ev.target.closest("button[data-q]");
+  if(q){ document.getElementById("le_u").value=q.dataset.q; document.getElementById("le_v").value=q.dataset.q;
+    applyEditor(q.dataset.q,q.dataset.q); return; }
+  if(ev.target.id==="le_reset"){
+    const info=describeSelected(); if(!info)return;
+    if(info.kind==="coupler") applyEditor(20000,20000);
+    else { delete state.overrides[info.key]; recompute(); }
+    renderEditor(); return;
+  }
+  if(ev.target.id==="le_close"){ state.selected=null; renderEditor(); recompute(); }
+});
+document.addEventListener("keydown",ev=>{
+  if(ev.key==="Escape"&&state.selected){ state.selected=null; renderEditor(); recompute(); }
+});
+document.getElementById("diagram").addEventListener("click",ev=>{
+  const t=ev.target.closest("[data-ek]");
+  if(!t){ if(state.selected){ state.selected=null; renderEditor(); recompute(); } return; }
+  state.selected=t.dataset.ek; renderEditor(); recompute();
+});
+document.getElementById("clearOv").addEventListener("click",()=>{
+  state.overrides={};
+  if(state.selected&&!state.selected.startsWith("J")) renderEditor();
+  recompute();
+});
+function updateOvChip(g){
+  const n=Object.keys(state.overrides).filter(k=>g.edges.some(e=>e.key===k)).length;
+  const btn=document.getElementById("clearOv");
+  btn.style.display = n? "inline-block":"none";
+  btn.textContent = `✎ clear ${n} override${n===1?"":"s"}`;
+}
+
+/* ---------- results panels ---------- */
+function renderResults(g,sol){
+  const el=document.getElementById("cardElection");
+  let h=`<h3>Root election &amp; fabric</h3>`;
+  sol.diamPer.forEach((d,i)=>{
+    h+=`<div class="rootline">${sol.comps.length>1?`Segment ${i+1}: `:""}root = ${esc(d.root)}</div>`;
+    h+=`<div class="kv"><span>Switches / links / blocked</span><span class="v">${d.members} / ${d.edges} / ${d.edges-(d.members-1)}</span></div>`;
+    h+=`<div class="kv"><span>Physical loops broken</span><span class="v">${d.edges-d.members+1} ✓</span></div>`;
+    h+=`<div class="kv"><span>Tree depth (worst hop)</span><span class="v">${d.maxHop} hops → ${esc(d.far)}</span></div>`;
+  });
+  const prios = state.trains.slice(0,state.trainCount).map((t,i)=>`T${i+1}:D1=${t.d1prio}`).join(" · ");
+  h+=`<div class="kv"><span>D1 priorities</span><span class="v">${prios}</span></div>`;
+  el.innerHTML=h;
+
+  const lk=document.getElementById("cardLinks");
+  let h2=`<h3>Blocked links &amp; coupler verdicts</h3>`;
+  if(sol.blocked.length){
+    h2+=`<table><tr><th>Link</th><th>Cost u/v</th><th>ALTR / BLK end</th></tr>`;
+    for(const b of sol.blocked)
+      h2+=`<tr><td>${esc(b.e.u)} ↔ ${esc(b.e.v)}</td><td>${fmt(b.e.cu)} / ${fmt(b.e.cv)}</td><td style="color:var(--blk)">${esc(b.altEnd)}</td></tr>`;
+    h2+=`</table>`;
+  } else h2+=`<div style="color:var(--muted)">No blocked links — the active fabric is a pure tree.</div>`;
+  for(let j=0;j<state.trainCount-1;j++){
+    const cabs=g.allCouplers.filter(e=>e.junction===j);
+    h2+=`<div style="margin-top:10px;font-weight:650;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--accent)">Kupplung ${j+1}</div><table>`;
+    let fwdCount=0;
+    for(const e of cabs){
+      let st;
+      if(!e.live) st=`<span class="tag off">no link</span>`;
+      else if(sol.treeIds.has(e.id)){ st=`<span class="tag fwd">FORWARDING</span>`; fwdCount++; }
+      else { const b=sol.blocked.find(x=>x.e===e); st=`<span class="tag blk">BLK @ ${esc(b?b.altEnd:"?")}</span>`; if(!b)fwdCount++; }
+      h2+=`<tr><td>${esc(e.u)} ↔ ${esc(e.v)}</td><td>${st}</td></tr>`;
+    }
+    h2+=`</table>`;
+    const liveN=cabs.filter(e=>e.live).length;
+    if(liveN===2 && fwdCount===2)
+      h2+=`<div style="color:var(--warn);font-size:12px;margin-top:4px">Both cables forwarding — RSTP broke the loop on an internal link instead (the D2 finding). No coupler is the standby.</div>`;
+  }
+  lk.innerHTML=h2;
+
+  const w=document.getElementById("cardWarn");
+  const items=[];
+  for(const e of g.edges) if(e.type==="coupler" && e.cu!==e.cv)
+    items.push({sev:"red", t:`Storm risk — asymmetric cost on one cable`,
+      why:`${e.u} (${fmt(e.cu)}) vs ${e.v} (${fmt(e.cv)}). End-to-end cost asymmetry on the same live coupler drove the designated-role duel → ~2 s fleet-wide FDB flush (field-proven 2026-06-12), and a cold coupled boot failed to converge (2026-06-30).`});
+  for(const e of g.edges) if(e.type!=="coupler" && e.cu!==e.cv)
+    items.push({sev:"amber", t:`Asymmetric per-end cost on internal link`,
+      why:`${e.u} (${fmt(e.cu)}) vs ${e.v} (${fmt(e.cv)}). Legal in RSTP, but same-link end asymmetry is the storm precursor class — verify it is intended (a real degraded link usually costs the same at both ends).`});
+  for(const d of sol.diamPer){
+    if(d.members>40) items.push({sev:"red", t:`${d.members} switches in one RSTP domain — over the 40-node ceiling`,
+      why:`VDS-confirmed protocol limit. 3×6-Teiler = 54 switches is not RSTP-viable regardless of timers; needs an L3 / terminate-at-coupler boundary.`});
+    const wall=state.maxAge-1;
+    if(d.maxHop>=wall) items.push({sev:"red", t:`BPDU message-age wall exceeded (${d.maxHop} ≥ ${wall} hops)`,
+      why:`BPDUs die before reaching ${d.far}. Switches beyond the horizon cannot hold the tree — loop / count-to-infinity risk. Raise max-age (needs forward-delay ≥ (maxAge+2)/2 first) or shrink the domain.`});
+    else if(d.maxHop>=wall-3) items.push({sev:"amber", t:`Thin message-age margin (${d.maxHop} of ${wall} hops used)`,
+      why:`Worst leaf ${d.far} is within 3 hops of the BPDU age wall at max-age ${state.maxAge}.`});
+  }
+  if(sol.comps.length>1) items.push({sev:"amber", t:`Fabric is partitioned into ${sol.comps.length} segments`,
+    why:`A Kupplung has no live cables — each segment elects its own root bridge (shown per segment).`});
+  if(state.trainCount>1 && sol.comps.length===1 && state.trains.slice(0,state.trainCount).every(t=>t.d1prio===state.trains[0].d1prio))
+    items.push({sev:"blue", t:`Root decided by MAC tiebreak, not by design`,
+      why:`All D1 bridges share priority ${state.trains[0].d1prio}; the coupled root falls to the lowest MAC (a per-pairing lottery on real hardware). Set one train's D1 priority lower to pin the root deliberately.`});
+  if(!items.length) items.push({sev:"green", t:`No red flags`, why:`Single stable root, loops broken, diameter within the message-age budget, no coupler cost asymmetry.`});
+  w.innerHTML = `<h3>Warnings</h3>` + items.map(i=>
+    `<div class="warnitem"><span class="sev ${i.sev}"></span><div><b>${i.t}</b><div class="why">${i.why}</div></div></div>`).join("");
+}
+
+/* ---------- config cards ---------- */
+function renderConfig(){
+  const row=document.getElementById("configrow");
+  let h="";
+  for(let t=0;t<state.trainCount;t++){
+    const tr=state.trains[t];
+    h+=`<div class="card traincard">
+      <div class="thead"><b>Train ${t+1}</b>
+        <button class="ghost" data-flip="${t}" title="Swap which end faces the coupling">${tr.flip?"B ⟶ A":"A ⟶ B"}</button></div>
+      <div class="grid3">
+        <div class="field"><label>Fzg</label><input type="number" data-t="${t}" data-k="fzg" value="${tr.fzg}" style="width:5.5em"></div>
+        <div class="field"><label>D1 priority</label><input type="number" data-t="${t}" data-k="d1prio" value="${tr.d1prio}" step="4096" min="0" max="61440" style="width:6.5em"></div>
+        <div class="field"><label>&nbsp;</label><span style="font-size:11px;color:var(--muted)">coupler e0-2 costs ↓</span></div>
+      </div>
+      <div class="grid2">
+        ${["A1","A3","B1","B3"].map(p=>`<div class="field"><label>${p} e0-2</label>
+          <input type="number" data-t="${t}" data-c="${p}" value="${tr.coupler[p]}"></div>`).join("")}
+      </div>
+    </div>`;
+    if(t<state.trainCount-1){
+      const j=state.junctions[t];
+      h+=`<div class="card junccard">
+        <div class="jtitle">Kupplung ${t+1}</div>
+        <label class="chk"><input type="checkbox" data-j="${t}" data-k="c1" ${j.c1?"checked":""}> cable 1 live</label>
+        <label class="chk"><input type="checkbox" data-j="${t}" data-k="c2" ${j.c2?"checked":""}> cable 2 live</label>
+        <div class="field"><label>Pairing</label>
+          <select data-j="${t}" data-k="crossed"><option value="0"${j.crossed?"":" selected"}>straight 1↔1</option><option value="1"${j.crossed?" selected":""}>crossed 1↔3</option></select></div>
+      </div>`;
+    }
+  }
+  row.innerHTML=h;
+}
+
+/* ---------- wiring ---------- */
+function readGlobals(){
+  state.trainCount=+document.getElementById("trainCount").value;
+  state.trunkCost=num(document.getElementById("trunkCost").value);
+  state.chordCost=num(document.getElementById("chordCost").value);
+  state.maxAge=Math.max(6,Math.min(40, +document.getElementById("maxAge").value||38));
+}
+function detectPreset(){
+  const ts=state.trains.slice(0,state.trainCount);
+  const isV9=ts.every(t=>["A1","A3","B1","B3"].every(p=>num(t.coupler[p])===20000));
+  const isV8=!isV9 && ts.every(t=>{const huge=t.fzg*1000000-1;
+    return num(t.coupler.A1)===huge && num(t.coupler.B3)===huge
+        && num(t.coupler.A3)===state.trunkCost && num(t.coupler.B1)===state.trunkCost;});
+  document.getElementById("presetV9").classList.toggle("active",isV9);
+  document.getElementById("presetV8").classList.toggle("active",isV8);
+}
+function recompute(){
+  const g=buildGraph();
+  if(state.selected && !g.edges.some(e=>e.key===state.selected)){ state.selected=null; renderEditor(); }
+  const sol=solve(g);
+  draw(g,sol); renderResults(g,sol); updateOvChip(g); detectPreset();
+}
+document.querySelector(".globalbar").addEventListener("change",()=>{ readGlobals(); renderConfig();
+  if(state.selected&&!state.selected.startsWith("J")) renderEditor();   // chord/trunk defaults may have changed
+  recompute(); });
+document.getElementById("configrow").addEventListener("change",ev=>{
+  const el=ev.target;
+  if(el.dataset.t!==undefined && el.dataset.k) state.trains[+el.dataset.t][el.dataset.k]= +el.value||0;
+  if(el.dataset.t!==undefined && el.dataset.c) state.trains[+el.dataset.t].coupler[el.dataset.c]= num(el.value);
+  if(el.dataset.j!==undefined){
+    const j=state.junctions[+el.dataset.j];
+    if(el.dataset.k==="crossed") j.crossed = el.value==="1";
+    else j[el.dataset.k]=el.checked;
+  }
+  if(state.selected&&state.selected.startsWith("J")) renderEditor();     // coupler names/costs may have changed
+  recompute();
+});
+document.getElementById("configrow").addEventListener("click",ev=>{
+  const b=ev.target.closest("button[data-flip]"); if(!b)return;
+  const t=+b.dataset.flip; state.trains[t].flip=!state.trains[t].flip;
+  renderConfig(); if(state.selected&&state.selected.startsWith("J")) renderEditor(); recompute();
+});
+document.getElementById("presetV9").addEventListener("click",()=>{
+  for(const tr of state.trains) tr.coupler={A1:20000,A3:20000,B1:20000,B3:20000};
+  renderConfig(); if(state.selected&&state.selected.startsWith("J")) renderEditor(); recompute();
+});
+document.getElementById("presetV8").addEventListener("click",()=>{
+  for(const tr of state.trains){
+    const huge=tr.fzg*1000000-1;
+    tr.coupler={A1:huge, A3:state.trunkCost, B1:state.trunkCost, B3:huge};
+  }
+  renderConfig(); if(state.selected&&state.selected.startsWith("J")) renderEditor(); recompute();
+});
+
+/* findings demo buttons — configure the sim into the proving scenario */
+document.getElementById("findings").addEventListener("click",ev=>{
+  const b=ev.target.closest("button[data-demo]"); if(!b)return;
+  ev.preventDefault();
+  state.trainCount=2;
+  document.getElementById("trainCount").value="2";
+  state.trains[0].flip=false; state.trains[1].flip=true;      // B-end meets B-end
+  state.trains[0].d1prio=0;   state.trains[1].d1prio=0;
+  state.junctions[0]={c1:true,c2:true,crossed:false};
+  if(b.dataset.demo==="storm"){
+    for(const tr of state.trains){ const huge=tr.fzg*1000000-1;
+      tr.coupler={A1:huge, A3:state.trunkCost, B1:state.trunkCost, B3:huge}; }
+  } else {
+    for(const tr of state.trains) tr.coupler={A1:20000,A3:20000,B1:20000,B3:20000};
+  }
+  state.selected=null; renderEditor();
+  renderConfig(); recompute();
+  document.querySelector(".diagramwrap").scrollIntoView({behavior:"smooth",block:"start"});
+});
+
+readGlobals(); renderConfig(); recompute();
+</script>
+</body>
+</html>

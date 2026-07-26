@@ -1,0 +1,48 @@
+zabbix_host,train,ip,mac,serial,config_version
+50_2123_MAR3-B1,2123,10.179.123.1,7C:70:BC:70:D4:F4,box1-t123.dostoneu-bench.21net.com,2026.1.3 - 85a7fd76 - _
+50_4003_MAR3-B1,4003,10.179.3.1,,box1-train-4003,
+50_4004_MAR3-B1,4004,10.179.4.1,,box1-train-4004,
+50_4005_MAR3-B1,4005,10.179.5.1,,box1-train-4005,
+50_4014_MAR3-B1,4014,10.179.14.1,,box1-train-4014,
+50_4029_MAR3-B1,4029,10.179.29.1,7C:70:BC:70:D9:9F,box1-t29.dostoneu-nv4.21net.com,2025.2.1 - d79f96d8 - _
+50_4030_MAR3-B1,4030,10.179.30.1,7C:70:BC:70:D9:D0,box1-t30.dostoneu-nv4.21net.com,2025.2.1 - d79f96d8 - _
+50_4031_MAR3-B1,4031,10.179.31.1,7C:70:BC:70:D9:AD,box1-t31.dostoneu-nv4.21net.com,2025.2.1 - b0d6e087 - _
+50_4035_MAR3-B1,4035,10.179.35.1,,box1-train-4035,
+50_4036_MAR3-B1,4036,10.179.36.1,7C:70:BC:70:D9:75,box1-t36.dostoneu-nv4.21net.com,2025.2.1 - e6063e7f - _
+50_4037_MAR3-B1,4037,10.179.37.1,7C:70:BC:70:D9:20,box1-t37.dostoneu-nv4.21net.com,2025.2.1 - ceef952f - _
+50_4038_MAR3-B1,4038,10.179.38.1,,box1-train-4038,
+50_4039_MAR3-B1,4039,10.179.39.1,UNKNOWN,box1-t39.dostoneu-nv4.21net.com,2025.2.1 - ceef952f - _
+50_4044_MAR3-B1,4044,10.179.44.1,7C:70:BC:70:E2:7F,box1-t44.dostoneu-nv4.21net.com,2025.2.1 - d79f96d8 - _
+50_4045_MAR3-B1,4045,10.179.45.1,7C:70:BC:70:E0:86,box1-t45.dostoneu-nv4.21net.com,2025.2.1 - d79f96d8 - _
+50_4046_MAR3-B1,4046,10.179.46.1,,box1-train-4046,
+50_4048_MAR3-B1,4048,10.179.48.1,,box1-train-4048,
+50_4049_MAR3-B1,4049,10.179.49.1,,box1-train-4049,
+50_4050_MAR3-B1,4050,10.179.50.1,7C:70:BC:70:E3:B7,box1-t50.dostoneu-nv4.21net.com,2025.2.1 - c857b4e4 - _
+50_4054_MAR3-B1,4054,10.179.54.1,,box1-train-4054,
+50_4061_MAR3-B1,4061,10.179.61.1,,box1-train-4061,
+50_4067_MAR3-B1,4067,10.179.67.1,,box1-train-4067,
+50_4122_MAR3-B1,4122,10.179.122.1,7C:70:BC:70:D9:83,box1-t122.dostoneu-bench.21net.com,2026.1.3 - 85a7fd76 - _
+50_4124_MAR3-B1,4124,10.179.124.1,7C:70:BC:70:D2:A3,box1-t124.dostoneu-bench.21net.com,2026.1.3 - 85a7fd76 - _
+50_5041_MAR3-B1,5041,10.179.41.1,7C:70:BC:70:E0:8D,box1-t41.dostoneu-fv5.21net.com,2025.2.1 - 8cc76f14 - _
+50_6001_MAR3-B1,6001,10.179.1.1,,box1-train-6001,
+50_6002_MAR3-B1,6002,10.179.2.1,7C:70:BC:70:D2:73,box1-t2.dostoneu-nv6.21net.com,2025.2.1 - d79f96d8 - _
+50_6007_MAR3-B1,6007,10.179.7.1,7C:70:BC:70:D2:93,box1-t7.dostoneu-nv6.21net.com,2025.2.1 - d79f96d8 - _
+50_6008_MAR3-B1,6008,10.179.8.1,7C:70:BC:70:D7:21,box1-t8.dostoneu-nv6.21net.com,2025.2.1 - d79f96d8 - _
+50_6010_MAR3-B1,6010,10.179.10.1,7C:70:BC:70:D6:83,box1-t10.dostoneu-nv6.21net.com,2025.2.1 - d79f96d8 - _
+50_6011_MAR3-B1,6011,10.179.11.1,,box1-train-6011,
+50_6012_MAR3-B1,6012,10.179.12.1,7C:70:BC:70:D6:8B,box1-t12.dostoneu-nv6.21net.com,2025.2.1 - d79f96d8 - _
+50_6015_MAR3-B1,6015,10.179.15.1,7C:70:BC:70:D7:19,box1-t15.dostoneu-fv6.21net.com,2025.2.1 - b0d6e087 - _
+50_6016_MAR3-B1,6016,10.179.16.1,,box1-train-6016,
+50_6017_MAR3-B1,6017,10.179.17.1,,box1-train-6017,
+50_6018_MAR3-B1,6018,10.179.18.1,7C:70:BC:70:D5:DF,box1-t18.dostoneu-nv6.21net.com,2025.2.1 - d79f96d8 - _
+50_6019_MAR3-B1,6019,10.179.19.1,7C:70:BC:70:D5:CF,box1-t19.dostoneu-nv6.21net.com,2025.2.1 - d79f96d8 - _
+50_6021_MAR3-B1,6021,10.179.21.1,7C:70:BC:70:D5:E7,box1-t21.dostoneu-nv6.21net.com,2025.2.1 - d79f96d8 - _
+50_6022_MAR3-B1,6022,10.179.22.1,7C:70:BC:70:D7:09,box1-t22.dostoneu-nv6.21net.com,2025.2.1 - b0d6e087 - _
+50_6023_MAR3-B1,6023,10.179.23.1,7C:70:BC:70:D5:D7,box1-t23.dostoneu-nv6.21net.com,2025.2.1 - d79f96d8 - _
+50_6024_MAR3-B1,6024,10.179.24.1,7C:70:BC:70:D6:4E,box1-t24.dostoneu-nv6.21net.com,2025.2.1 - d79f96d8 - _
+50_6025_MAR3-B1,6025,10.179.25.1,7C:70:BC:70:E8:FD,box1-t25.dostoneu-nv6.21net.com,2025.2.1 - d79f96d8 - _
+50_6027_MAR3-B1,6027,10.179.27.1,,box1-train-6027,
+50_6028_MAR3-B1,6028,10.179.28.1,7C:70:BC:70:D6:CB,box1-t28.dostoneu-nv6.21net.com,2025.2.1 - d79f96d8 - _
+50_6032_MAR3-B1,6032,10.179.32.1,7C:70:BC:70:D9:35,box1-t32.dostoneu-nv6.21net.com,2025.2.1 - b0d6e087 - _
+50_6040_MAR3-B1,6040,10.179.40.1,7C:70:BC:70:D2:9B,box1-t40.dostoneu-nv6.21net.com,2025.2.1 - d79f96d8 - _
+50_6047_MAR3-B1,6047,10.179.47.1,7C:70:BC:70:E2:15,box1-t47.dostoneu-nv6.21net.com,2025.2.1 - d79f96d8 - _

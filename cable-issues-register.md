@@ -35,6 +35,7 @@ This register uses **generic switch IDs only** (A1, A2, A3, B1…B3, C1…C3, D1
 | 11 | 4736-114  | 14× e2-* (FIS displays + 1 energy meter, all coaches) | end-device not connected | 🔴 OPEN |
 | 12 | 4736-120  | A2 e1-9 (redundant Sprechstelle) | PoE port fault | 🔴 OPEN |
 | 13 | 4736-109  | E2 (whole switch)  | cold bypass (power/health, NOT cabling) | 🔴 OPEN (⚠️ not in Zabbix) |
+| 14 | 4734-125  | E1 e0-4 (Coach E AP) | physical-layer (RX CRC storm) | 🔴 OPEN |
 
 ---
 
@@ -328,6 +329,25 @@ VLAN 3 (FIS) is a Stadler-side device VLAN with no CCU visibility, so whether ea
 **Zabbix coverage (2026-07-04):** ⚠️ **monitoring blind spot** — because E2 never entered the OBN report (coach-numbering walk drops the bypassed position), NMS never provisioned a host for it, so **nothing can alarm on E2 being down.** The dashboard reads 16/18 as green. This is the field confirmation of the OBN coach-numbering false-negative — see [findings/RD_obn_coach_numbering_bypass_downstate_2026-07-04.md](findings/RD_obn_coach_numbering_bypass_downstate_2026-07-04.md). Engine fix (surface bypassed switches as DOWN rows so NMS can alarm) is the durable close.
 
 **Note:** C3 on the same train is ALSO absent from monitoring (no lease) but is a **different** root cause — C3 is present, healthy, and forwarding heavily (C2 e0-0→C3 UP 10G, RX 9.9GB/TX 280GB, 0 CRC); it simply never got a mgmt IP. That is a Nomad-side DHCP/mgmt-VLAN fault on C3, not a cabling fault, so it is tracked in the fleet-journal, not here.
+
+**Status:** 🔴 OPEN
+
+---
+
+### #14 — 4734-125 (4-car, Fzg 25) — E1 e0-4 AP link RX-CRC storm (uncommissionable factory AP)
+
+**What we see:** The Coach-E AP (Westermo `00:14:5a:04:e6:59`) is the missing 16th AP — it never pulled a Nomad vlan100 lease and sits stuck on factory default `192.168.1.12`. It is the ONLY AP of 16 not on `-v1-` Nomad config; the other 15 APs and all 12 switches are healthy on v8 (`nv4-*-v8-025`). The AP's switch port **E1 (10.179.62.181) e0-4 is link-UP at 1000/Full**, so no port-down trigger fires. But the port shows **RX crc errors: 1593 against only 340 RX packets**, plus jabber 76 / RX errors 6 (carrier-false 0, TX-CRC 0). From the CCU (temp `192.168.1.2/24` on vlan100): ICMP is **60% loss** on small frames and **100% loss on any frame ≥1400 bytes**; TCP ports 22/80/443 accept SYN but every application handshake (SSH banner, TLS ClientHello) times out — because those are large frames the link corrupts.
+
+**Diagnosis:** **physical-layer corruption on the E1 e0-4 ↔ Coach-E AP link.** Small frames intermittently pass; large frames are dropped 100%. This is a bad cable / dirty or damaged connector / EMI signature (RX CRC on the switch's receive side = the AP→switch direction is corrupting). It is NOT a config or commissioning problem — the AP is stuck in factory config *because* it cannot be commissioned: OBN's SNMP push and any LuCI config import are large payloads that never complete across a link that drops everything ≥1400 bytes. Attempting a config push here is futile and could half-write the AP.
+
+**Required action — in order, simplest first:**
+1. Replace the patch cable between the Coach-E AP and switch E1 e0-4 (RX-CRC storm points at the AP→switch pairs / connector).
+2. If cable replacement doesn't clear the CRC counter, swap the AP with a known-good unit.
+3. Once the link is clean (E1 e0-4 RX CRC = 0, large-frame ping passes), re-run `dosto-ap-factory-recover` — the AP will then commission normally over LuCI and pull a `-v1-` lease.
+
+**Zabbix coverage:** likely a blind spot in the same shape as #8/#13 — the AP is on a factory `192.168.1.x` address OBN never discovered, so any NMS ping alarm points at an unroutable/stale target while the port-up state suppresses a link alarm. Confirm on next NMS pass.
+
+**Discovered:** 2026-07-08 (AR), box1-t62 / 10.179.62.1, during a factory-AP recovery request. Temp interface removed after diagnosis; no config pushed.
 
 **Status:** 🔴 OPEN
 

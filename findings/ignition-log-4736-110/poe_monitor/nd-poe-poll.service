@@ -1,0 +1,9 @@
+[Unit]
+Description=Poll VDS switches for PoE status (PoE-failure vs link-down discriminator)
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/data/poe-monitor/poe_poll.sh
+Nice=15
+TimeoutStartSec=300

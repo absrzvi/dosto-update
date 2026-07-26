@@ -1,0 +1,15 @@
+[Unit]
+Description=Classify the just-ended outage as hard-cut vs clean (maintains /data hard-cut counter)
+After=vign-logger.service
+Wants=vign-logger.service
+ConditionPathExists=/data/ignition-log/vign.csv
+
+[Service]
+Type=oneshot
+# small delay so vign-logger has written its 'start' row for this boot
+ExecStartPre=/bin/sleep 20
+ExecStart=/data/ignition-log/hardcut_classify.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

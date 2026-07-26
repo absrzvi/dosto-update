@@ -1,0 +1,411 @@
+<title>Why the TER didn't catch the fleet issues</title>
+<style>
+  :root {
+    --ground: #f5f6f7;
+    --surface: #ffffff;
+    --ink: #1b2127;
+    --neutral: #5b6570;
+    --neutral-soft: #8a929b;
+    --rule: #dde1e5;
+    --rule-strong: #c4cad0;
+    --accent: #1e5a8a;
+    --accent-soft: #eaf1f7;
+    --gap: #b0472e;
+    --gap-soft: #f6ebe7;
+    --ok: #2e6e4e;
+    --ok-soft: #e8f1eb;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", Consolas, "Liberation Mono", monospace;
+    --serif: Georgia, "Times New Roman", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 4rem 1.5rem 6rem;
+  }
+
+  /* ---- Masthead ---- */
+  .masthead {
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 1rem;
+  }
+  h1 {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: clamp(1.9rem, 4.5vw, 2.9rem);
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    margin: 0 0 1rem;
+    max-width: 20ch;
+  }
+  .dek {
+    font-size: 1.08rem;
+    color: var(--neutral);
+    max-width: 68ch;
+    margin: 0;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    margin-top: 1.5rem;
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    color: var(--neutral-soft);
+  }
+  .meta span { white-space: nowrap; }
+  .meta b { color: var(--ink); font-weight: 500; }
+
+  /* ---- Verdict callout ---- */
+  .verdict {
+    background: var(--surface);
+    border: 1px solid var(--rule-strong);
+    border-left: 4px solid var(--accent);
+    border-radius: 3px;
+    padding: 1.6rem 1.8rem;
+    margin: 0 0 3rem;
+  }
+  .verdict .label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 0.6rem;
+  }
+  .verdict p {
+    margin: 0;
+    font-size: 1.12rem;
+    line-height: 1.55;
+  }
+  .verdict p + p { margin-top: 0.8rem; }
+  .verdict strong { font-weight: 600; }
+
+  /* ---- Section headings ---- */
+  h2 {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: -0.01em;
+    margin: 3.5rem 0 0.4rem;
+    padding-top: 1.6rem;
+    border-top: 1px solid var(--rule);
+  }
+  h2 .n {
+    font-family: var(--mono);
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--accent);
+    margin-right: 0.7rem;
+    vertical-align: 0.15em;
+  }
+  .sub {
+    color: var(--neutral);
+    margin: 0 0 1.4rem;
+    max-width: 70ch;
+  }
+
+  p { max-width: 72ch; }
+
+  /* ---- Pull quotes from TER ---- */
+  blockquote {
+    margin: 1.6rem 0;
+    padding: 0.2rem 0 0.2rem 1.4rem;
+    border-left: 3px solid var(--rule-strong);
+    color: var(--ink);
+  }
+  blockquote p {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.08rem;
+    line-height: 1.5;
+    margin: 0;
+  }
+  blockquote cite {
+    display: block;
+    font-family: var(--mono);
+    font-style: normal;
+    font-size: 0.74rem;
+    letter-spacing: 0.04em;
+    color: var(--neutral-soft);
+    margin-top: 0.7rem;
+  }
+
+  /* ---- Fact strip ---- */
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    margin: 2rem 0;
+    overflow: hidden;
+  }
+  .fact {
+    background: var(--surface);
+    padding: 1.2rem 1.3rem;
+  }
+  .fact .k {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--neutral-soft);
+    margin: 0 0 0.4rem;
+  }
+  .fact .v {
+    font-family: var(--serif);
+    font-size: 1.55rem;
+    font-weight: 700;
+    line-height: 1.05;
+    font-variant-numeric: tabular-nums;
+  }
+  .fact .v small {
+    display: block;
+    font-family: var(--sans);
+    font-size: 0.82rem;
+    font-weight: 400;
+    color: var(--neutral);
+    margin-top: 0.35rem;
+    line-height: 1.35;
+  }
+
+  /* ---- Comparison table ---- */
+  .table-scroll {
+    overflow-x: auto;
+    border: 1px solid var(--rule-strong);
+    border-radius: 3px;
+    margin: 1.6rem 0 1rem;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+    min-width: 640px;
+  }
+  thead th {
+    text-align: left;
+    background: var(--ink);
+    color: #eef0f2;
+    font-family: var(--mono);
+    font-weight: 500;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.85rem 1rem;
+    vertical-align: middle;
+  }
+  tbody td {
+    padding: 0.95rem 1rem;
+    border-top: 1px solid var(--rule);
+    vertical-align: top;
+    line-height: 1.45;
+  }
+  tbody tr:nth-child(even) td { background: #fafbfc; }
+  td.issue { font-weight: 600; width: 34%; }
+  td.issue .ref {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 400;
+    color: var(--neutral-soft);
+    margin-top: 0.25rem;
+  }
+  .tag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.15rem 0.5rem;
+    border-radius: 2px;
+    margin-bottom: 0.5rem;
+    white-space: nowrap;
+  }
+  .tag.gap { background: var(--gap-soft); color: var(--gap); }
+  .tag.scope { background: var(--ok-soft); color: var(--ok); }
+
+  /* ---- Bottom line ---- */
+  .bottomline {
+    background: var(--ink);
+    color: #eef0f2;
+    border-radius: 3px;
+    padding: 2.2rem 2rem;
+    margin-top: 3.5rem;
+  }
+  .bottomline .label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #7fb0d4;
+    margin: 0 0 0.9rem;
+  }
+  .bottomline p {
+    margin: 0;
+    font-size: 1.14rem;
+    line-height: 1.55;
+    max-width: 68ch;
+  }
+  .bottomline p + p { margin-top: 0.9rem; color: #c4cad0; font-size: 1rem; }
+  .bottomline strong { color: #fff; font-weight: 600; }
+
+  code, .m { font-family: var(--mono); font-size: 0.86em; }
+  .m { color: var(--accent); }
+
+  footer {
+    margin-top: 3rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--neutral-soft);
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Internal analysis · DEL-OBB-035</p>
+    <h1>Why the TER didn't catch the issues we're now seeing on the fleet</h1>
+    <p class="dek">A read of the latest Test Exit Report against the live known-issues list. Short version: the trains were never validated the way the question assumes — the TER is a software functional test on a 4-car bench, and it says so itself.</p>
+    <div class="meta">
+      <span>Source: <b>ND-DEVOPS-OBB-TER-026-04</b> (v4, 16 Apr 2026)</span>
+      <span>Build: <b>Nomad Connect 2025.2.1</b></span>
+      <span>Bench: <b>Newcastle T112</b></span>
+    </div>
+  </header>
+
+  <div class="verdict">
+    <p class="label">In one line</p>
+    <p>The TER proves the <strong>2025.2.1 software build is functionally sound on a representative bench</strong>. It was never a per-train, per-platform, at-scale commissioning sign-off — and it explicitly disclaims the exact conditions where our issues live.</p>
+    <p>Every problem we're hitting now sits in the <strong>6-car / multi-device-batch / non-nv4 / physical-cabling</strong> space that a clean 4-car nv4 bench structurally could not reach.</p>
+  </div>
+
+  <h2><span class="n">01</span>What the TER actually is</h2>
+  <p class="sub">It is a functional test of a software release, run on one bench — not a commissioning report for 50+ trains.</p>
+  <p>The document validates Nomad Connect 2025.2.1 against the Newcastle bench (T112) to clear it for fleetwide release. That is a real and useful thing — but its shape matters. The bench is a fixed, clean, 4-car nv4 setup, and the report caveats its own reach in plain language.</p>
+
+  <div class="facts">
+    <div class="fact">
+      <p class="k">Bench consist</p>
+      <p class="v">4-car<small>6-car explicitly not tested</small></p>
+    </div>
+    <div class="fact">
+      <p class="k">Switches / APs</p>
+      <p class="v">12 / 3<small>vs. 18 / 24 on a 6-car</small></p>
+    </div>
+    <div class="fact">
+      <p class="k">Platform</p>
+      <p class="v">nv4 only<small>template 0.0.2 · no fv5/fv6</small></p>
+    </div>
+    <div class="fact">
+      <p class="k">OBN update test</p>
+      <p class="v">1 + 1<small>one switch, one AP</small></p>
+    </div>
+  </div>
+
+  <blockquote>
+    <p>"The project provided enough equipment to build a 4-car consist… Dev-Ops cannot guarantee that the six-car configuration will work with no noticeable issues."</p>
+    <cite>TER §2.4 — Limitations of testing</cite>
+  </blockquote>
+
+  <blockquote>
+    <p>"The Newcastle bench replicated the 4-coach train setup, the 6-coach set up was not tested."</p>
+    <cite>TER §7 — Test Completion Overview &amp; Recommendations (p.111)</cite>
+  </blockquote>
+
+  <p>The OBN config and firmware updates (§6.3.2.3–6.3.2.4) passed against a single switch (<span class="m">G1</span>) and a single AP. The firmware test's own evidence tells the story: it was a no-op recorded as a pass.</p>
+
+  <blockquote>
+    <p>"AP FW ran, but no change… SW is already up to date."</p>
+    <cite>TER §6.3.2.4 — evidence field for OBN firmware update</cite>
+  </blockquote>
+
+  <h2><span class="n">02</span>Issue by issue: why the bench couldn't reach it</h2>
+  <p class="sub">Each row maps a live fleet issue to the structural reason the TER didn't — and couldn't — surface it. <span class="tag gap" style="margin:0">Gap</span> = the bench structurally couldn't reach it. <span class="tag scope" style="margin:0">In scope</span> = correctly outside Nomad / the TER.</p>
+
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>Fleet issue we're hitting</th>
+          <th>Why the TER didn't surface it</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="issue">AP firmware stages but doesn't activate<span class="ref">known-issue #1 · bug 11 · TRIAG-8585</span></td>
+          <td><span class="tag gap">Gap</span>The FW test was a no-op ("ran, but no change") on one AP. No real version-change flash and no post-activation verify — the exact failure mode was never exercised.</td>
+        </tr>
+        <tr>
+          <td class="issue"><code>obn update f ap</code> batch silently fails<span class="ref">known-issue #2 · TFTP conntrack helper gap</span></td>
+          <td><span class="tag gap">Gap</span>The TER only ever ran single-device updates, never a batch. The conntrack race only appears at batch/scale. Not mentioned anywhere in 111 pages.</td>
+        </tr>
+        <tr>
+          <td class="issue">OBN coach-numbering drops bypassed switches<span class="ref">known-issue #3 · monitoring false-negative</span></td>
+          <td><span class="tag gap">Gap</span>Requires a multi-switch consist with a bypassed switch to trigger. The bench ran a clean 12-switch line with no gap — the condition never existed.</td>
+        </tr>
+        <tr>
+          <td class="issue">6-car RSTP / topology behaviour<span class="ref">40-node limit, coupler cost, TC storms</span></td>
+          <td><span class="tag gap">Gap</span>6-car was explicitly not tested — the bench is 4-car. R&D "checks taken" is the only stated basis.</td>
+        </tr>
+        <tr>
+          <td class="issue">fv5 / fv6 empty <code>obn report</code><span class="ref">known-issue #4 · backbone-discovery drift</span></td>
+          <td><span class="tag gap">Gap</span>The bench ran nv4 only (<span class="m">template 0.0.2</span>). The fv5/fv6 platforms were never on the bench, so their config path was never tested.</td>
+        </tr>
+        <tr>
+          <td class="issue">box=Fzg / &gt;127 octet limit on 6-car/CAT/FV<span class="ref">known-issue #7 · addressing constraint</span></td>
+          <td><span class="tag gap">Gap</span>A commissioning/addressing constraint specific to 6-car fleets (Fzg 129–231) — outside a 4-car nv4 functional bench entirely.</td>
+        </tr>
+        <tr>
+          <td class="issue">~22 open Stadler-side cabling faults<span class="ref">known-issue #5 · cable-issues register</span></td>
+          <td><span class="tag scope">In scope</span>Physical, per-train, Stadler-side. Bench cabling is fixed and clean (§4.2 notes benches don't replicate train cabling). Correctly out of Nomad's scope.</td>
+        </tr>
+        <tr>
+          <td class="issue">vlan7 firewall not yet commissioned<span class="ref">known-issue #6 · Stadler activity</span></td>
+          <td><span class="tag scope">In scope</span>FW commissioning is a Stadler activity, out of Nomad's scope. Does not affect the onboard-network L2 baseline.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2><span class="n">03</span>So why now, and not earlier?</h2>
+  <p>Because in-country commissioning is the <em>first</em> point at which these conditions exist together: real 6-car consists, real per-train cabling, multi-device batch operations, and the non-nv4 platforms. None of that was — or could be — present on a single clean 4-car nv4 bench. The TER did its job for what it covers; it was simply never positioned to cover this.</p>
+  <p>That's also consistent with the report's own recommendation: functional bench testing first, then <strong>in-country testing to be completed at a later date</strong>. We are in that later phase, and it is doing exactly what it's meant to — surfacing the fleet-scale and platform-specific issues the bench can't.</p>
+
+  <div class="bottomline">
+    <p class="label">Bottom line for the thread</p>
+    <p>The TER validated the <strong>software build</strong>, not the <strong>fleet rollout</strong>. It covered a 4-car nv4 bench with single-device OBN operations, and disclaimed 6-car, batch, non-nv4, and physical cabling in its own text.</p>
+    <p>The issues we're finding are precisely in those un-reachable areas — which is why in-country commissioning is where they were always going to appear first, and where they're appearing now.</p>
+  </div>
+
+  <footer>
+    Prepared from ND-DEVOPS-OBB-TER-026-04.pdf and ND-DEL-OBB-035_DOSTO_Neu_Release_Note_INTERNAL_known_issues.md · internal · Nomad Digital
+  </footer>
+
+</div>

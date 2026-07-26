@@ -1,0 +1,66 @@
+{
+  "generated_at": "2026-07-24T12:45:00Z",
+  "ccu_ip": "10.179.23.1",
+  "train_number": "4736-110",
+  "fzg_id": 138,
+  "ccu_hostname": "box1-t23",
+  "note": "Assembled from Steps 1-8 captured live before CCU dropped offline during the Step 9 re-sweep. Step 9 auto-aggregator re-reads every switch and returned zeros because the CCU had gone unreachable mid-run; this file is hand-assembled from the completed step outputs, which are complete and consistent.",
+  "vds_switches": {
+    "count": 18,
+    "ips": ["10.179.23.139", "10.179.23.140", "10.179.23.141", "10.179.23.185", "10.179.23.192", "10.179.23.196", "10.179.23.197", "10.179.23.198", "10.179.23.199", "10.179.23.200", "10.179.23.201", "10.179.23.202", "10.179.23.203", "10.179.23.204", "10.179.23.205", "10.179.23.206", "10.179.23.207", "10.179.23.208"],
+    "consist_size": "6-car",
+    "special_switches": {
+      "A3_stadler_fw": "10.179.23.199",
+      "B1_zfr": "10.179.23.185",
+      "B3_zfr": "10.179.23.196",
+      "D_class_obs_rdc": ["10.179.23.201", "10.179.23.208"]
+    }
+  },
+  "westermo_radio_count": 24,
+  "stp": {
+    "root": "0/a0:59:3a:d0:59:20",
+    "agreement": "18/18",
+    "consistent": true
+  },
+  "trunks_up": {
+    "note": "All inter-coach trunks e0-0/e0-1 UP and forwarding across all 18 switches. e0-4 (Wi-Fi/PWLAN) UP, near-idle. Front couplers e0-2 down on A1/A3/B1/B3 (train solo, expected).",
+    "stadler_facing": [
+      {"role": "A3 e1-4 (Stadler FW trunk)", "switch": "10.179.23.199", "port": "e1-4", "state": "up", "speed": "1000 Mb/s Full", "rx_crc": 0, "tx_crc": 0, "carrier_false": 0},
+      {"role": "B1 e1-11 (ZFR-R, active)", "switch": "10.179.23.185", "port": "e1-11", "state": "up", "speed": "1000 Mb/s Full", "rx_crc": 0, "tx_crc": 0, "carrier_false": 0},
+      {"role": "B3 e1-11 (ZFR, standby - RX=0 expected)", "switch": "10.179.23.196", "port": "e1-11", "state": "up", "speed": "1000 Mb/s Full", "rx_crc": 0, "tx_crc": 0, "carrier_false": 0, "rx_packets": 0},
+      {"role": "D1 e0-2 (OBS)", "switch": "10.179.23.201", "port": "e0-2", "state": "up", "speed": "10000 Mb/s Full", "rx_crc": 0, "tx_crc": 0, "carrier_false": 0},
+      {"role": "D1 e0-3 (RDC)", "switch": "10.179.23.201", "port": "e0-3", "state": "up", "speed": "10000 Mb/s Full", "rx_crc": 0, "tx_crc": 0, "carrier_false": 0},
+      {"role": "D3 e0-2 (OBS)", "switch": "10.179.23.208", "port": "e0-2", "state": "up", "speed": "10000 Mb/s Full", "rx_crc": 0, "tx_crc": 0, "carrier_false": 0, "rx_errors": 264, "rx_errors_note": "264 RX errors over ~3.6M packets = 0.007%, CRC=0, carrier=0 -> noise band, not actionable"},
+      {"role": "D3 e0-3 (RDC)", "switch": "10.179.23.208", "port": "e0-3", "state": "up", "speed": "10000 Mb/s Full", "rx_crc": 0, "tx_crc": 0, "carrier_false": 0}
+    ]
+  },
+  "port_anomalies": [
+    {"switch": "10.179.23.198", "port": "e0-0", "rx_errors": 1, "crc": 0, "carrier_false": 0, "classification": "noise"},
+    {"switch": "10.179.23.204", "port": "e0-0", "rx_errors": 2, "crc": 0, "carrier_false": 0, "classification": "noise"},
+    {"switch": "10.179.23.208", "port": "e0-2", "rx_errors": 264, "crc": 0, "carrier_false": 0, "classification": "noise"}
+  ],
+  "throughput": {
+    "sample_window_s": 157,
+    "note": "Inter-coach trunks peak ~150 Mbps on 10G links (~1.5% util). Consistent with Fzg 146 baseline. e0-4 near-idle (train empty).",
+    "peak_active_trunk_mbps": 153.9
+  },
+  "fw_reach": {
+    "fw_peer_ip": "172.19.197.1",
+    "arp_state": "reachable",
+    "fw_peer_mac": "00:90:e8:c5:3d:9d",
+    "icmp_sent": 100,
+    "icmp_replies": 0,
+    "tcp80": "open",
+    "tcp22": "open",
+    "vlan7_rx_errors": 0,
+    "vlan7_tx_errors": 0,
+    "fw_commission_state": "commissioned",
+    "note": "Q1 ARP REACHABLE (Westermo OUI 00:90:e8), vlan7 link counters clean. Q2 ICMP 100/100 loss with ARP reachable -> FW commissioned by Stadler (policy dropping echo). Q3 TCP 22/80 OPEN is informational only; the ICMP result is authoritative per Phase 6 framework."
+  },
+  "verdict": {
+    "overall": "HEALTHY",
+    "port_anomaly_count": 3,
+    "port_anomaly_classification": "all noise-band (single/double-digit RX over millions of packets, zero CRC, zero carrier-false)",
+    "notes": "18/18 switches reachable, all inter-coach + Stadler-facing trunks UP at expected speed, zero CRC and zero carrier-false fabric-wide, single stable STP root (18/18 agree), FW commissioned. No actionable faults."
+  }
+}

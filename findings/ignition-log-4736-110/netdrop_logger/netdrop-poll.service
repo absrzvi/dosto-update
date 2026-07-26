@@ -1,0 +1,14 @@
+[Unit]
+Description=Nomad tunnel/uplink drop logger (non-power VPN-drop evidence)
+After=network.target ModemManager.service
+Wants=ModemManager.service
+
+[Service]
+Type=simple
+ExecStart=/data/netdrop-log/netdrop_poll.sh
+Restart=always
+RestartSec=10
+Nice=10
+
+[Install]
+WantedBy=multi-user.target

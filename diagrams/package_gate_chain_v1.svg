@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 588" width="980" height="588" font-family="Calibri, Segoe UI, sans-serif" role="img" aria-labelledby="ttl dsc">
+  <title id="ttl">DOSTO Neu package gate chain</title>
+  <desc id="dsc">Two packages, each gated by its own design freeze. Package 1 delivers the V9 interim workaround, switch firmware 7.4.8 and Nomad Connect 2025.3, gated by the current SDD-002/003 design freeze which is near complete. Package 2 delivers V10 full multi-traction including 3x6-car, gated by a separate multi-traction design freeze which has not started and requires Stadler and VDS Rail input. Each package runs the same chain: design freeze, then FAT, then OEBB bench testing, then a rollout window.</desc>
+
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5A6B7D"/>
+    </marker>
+    <marker id="arD" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9AA7B4"/>
+    </marker>
+  </defs>
+
+  <style>
+    .lane   { font-size: 13.5px; font-weight: 700; fill: #1F3B5C; }
+    .lanesub{ font-size: 11px;  fill: #5A6B7D; }
+    .bx     { font-size: 12.5px; font-weight: 600; }
+    .sub    { font-size: 10.5px; }
+    .badge  { font-size: 9.5px; font-weight: 700; letter-spacing: .3px; }
+    .note   { font-size: 10.5px; fill: #5A6B7D; font-style: italic; }
+    .keyt   { font-size: 10.5px; fill: #3D4C5A; }
+  </style>
+
+  <!-- ============ PACKAGE 1 ============ -->
+  <rect x="14" y="14" width="952" height="240" rx="8" fill="#F5F8FB" stroke="#D3DEE8"/>
+  <text class="lane" x="32" y="41">PACKAGE 1</text>
+  <text class="lanesub" x="112" y="41">V9 interim workaround  ·  switch fw 7.4.8  ·  NC 2025.3</text>
+  <rect x="32" y="53" width="150" height="17" rx="8.5" fill="#DCF0E2" stroke="#7FB894"/>
+  <text class="badge" x="107" y="65.5" text-anchor="middle" fill="#276B42">GATE NEAR COMPLETE</text>
+
+  <!-- P1 boxes -->
+  <g>
+    <rect x="32" y="86" width="196" height="90" rx="6" fill="#FFFFFF" stroke="#2E7D4F" stroke-width="2"/>
+    <rect x="32" y="86" width="196" height="4" rx="2" fill="#2E7D4F"/>
+    <text class="bx" x="130" y="112" text-anchor="middle" fill="#1F3B5C">Design Freeze</text>
+    <text class="sub" x="130" y="130" text-anchor="middle" fill="#5A6B7D">SDD-002 / SDD-003</text>
+    <text class="sub" x="130" y="147" text-anchor="middle" fill="#2E7D4F" font-weight="700">≈ COMPLETE</text>
+    <text class="sub" x="130" y="164" text-anchor="middle" fill="#8A98A6">awaiting ÖBB approval</text>
+  </g>
+  <line x1="234" y1="131" x2="266" y2="131" stroke="#5A6B7D" stroke-width="1.6" marker-end="url(#ar)"/>
+
+  <g>
+    <rect x="272" y="86" width="170" height="90" rx="6" fill="#FFFFFF" stroke="#B6C4D2"/>
+    <text class="bx" x="357" y="112" text-anchor="middle" fill="#1F3B5C">FAT</text>
+    <text class="sub" x="357" y="130" text-anchor="middle" fill="#5A6B7D">Nomad validates</text>
+    <text class="sub" x="357" y="145" text-anchor="middle" fill="#5A6B7D">the package</text>
+    <text class="sub" x="357" y="164" text-anchor="middle" fill="#8A98A6">→ Test Exit Report</text>
+  </g>
+  <line x1="448" y1="131" x2="480" y2="131" stroke="#5A6B7D" stroke-width="1.6" marker-end="url(#ar)"/>
+
+  <g>
+    <rect x="486" y="86" width="188" height="90" rx="6" fill="#FFFFFF" stroke="#B6C4D2"/>
+    <text class="bx" x="580" y="112" text-anchor="middle" fill="#1F3B5C">ÖBB Bench Testing</text>
+    <text class="sub" x="580" y="130" text-anchor="middle" fill="#5A6B7D">Customer validates</text>
+    <text class="sub" x="580" y="145" text-anchor="middle" fill="#5A6B7D">and approves</text>
+    <text class="sub" x="580" y="164" text-anchor="middle" fill="#B5651D" font-weight="700">fw 7.4.8 + V9 approved here</text>
+  </g>
+  <line x1="680" y1="131" x2="712" y2="131" stroke="#5A6B7D" stroke-width="1.6" marker-end="url(#ar)"/>
+
+  <g>
+    <rect x="718" y="86" width="230" height="90" rx="6" fill="#EEF4FA" stroke="#1F3B5C" stroke-width="2"/>
+    <text class="bx" x="833" y="112" text-anchor="middle" fill="#1F3B5C">ROLLOUT WINDOW 1</text>
+    <text class="sub" x="833" y="130" text-anchor="middle" fill="#5A6B7D">Installed remotely from the CCU</text>
+    <text class="sub" x="833" y="145" text-anchor="middle" fill="#5A6B7D">— when not in passenger service</text>
+    <text class="sub" x="833" y="164" text-anchor="middle" fill="#8A98A6">51 trainsets · no attendance</text>
+  </g>
+
+  <text class="note" x="32" y="196">Gates are cumulative: all must pass, in order. Contents freeze before FAT — anything not ready waits for the next window.</text>
+  <text class="note" x="32" y="210">Envelope: 2 × 6-car coupled operation (interim). Access-point firmware and configuration unchanged.</text>
+  <text class="note" x="32" y="224">Installed remotely — but switch restarts are unavoidable, so installing only when the vehicle is out of passenger service is what protects passengers.</text>
+  <text class="note" x="32" y="238">No fixed maintenance window: availability is established per vehicle — Stadler / ÖBB notification, or confirmed from CCU telemetry.</text>
+
+  <!-- fleet baseline connector -->
+  <line x1="833" y1="254" x2="833" y2="278" stroke="#9AA7B4" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#arD)"/>
+  <rect x="700" y="278" width="266" height="26" rx="13" fill="#EEF4FA" stroke="#B6C4D2"/>
+  <text class="keyt" x="833" y="295.5" text-anchor="middle" font-weight="700">Fleet reaches the V9 baseline</text>
+
+  <!-- ============ PACKAGE 2 ============ -->
+  <rect x="14" y="316" width="952" height="212" rx="8" fill="#FCFAF7" stroke="#E4D9C8"/>
+  <text class="lane" x="32" y="343">PACKAGE 2</text>
+  <text class="lanesub" x="112" y="343">V10 — full multi-traction, including 3 × 6-car</text>
+  <rect x="32" y="355" width="146" height="17" rx="8.5" fill="#FBE6DC" stroke="#D9A188"/>
+  <text class="badge" x="105" y="367.5" text-anchor="middle" fill="#A5502A">GATE NOT STARTED</text>
+
+  <g>
+    <rect x="32" y="388" width="196" height="90" rx="6" fill="#FFFFFF" stroke="#C4622D" stroke-width="2" stroke-dasharray="5 3"/>
+    <rect x="32" y="388" width="196" height="4" rx="2" fill="#C4622D"/>
+    <text class="bx" x="130" y="414" text-anchor="middle" fill="#1F3B5C">Multi-traction</text>
+    <text class="bx" x="130" y="430" text-anchor="middle" fill="#1F3B5C">Design Freeze</text>
+    <text class="sub" x="130" y="449" text-anchor="middle" fill="#C4622D" font-weight="700">NOT STARTED</text>
+    <text class="sub" x="130" y="466" text-anchor="middle" fill="#8A98A6">needs Stadler + VDS Rail</text>
+  </g>
+  <line x1="234" y1="433" x2="266" y2="433" stroke="#9AA7B4" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#arD)"/>
+
+  <g>
+    <rect x="272" y="388" width="170" height="90" rx="6" fill="#FFFFFF" stroke="#DCE4EC" stroke-dasharray="5 3"/>
+    <text class="bx" x="357" y="414" text-anchor="middle" fill="#8A98A6">FAT</text>
+    <text class="sub" x="357" y="432" text-anchor="middle" fill="#9AA7B4">Nomad validates</text>
+    <text class="sub" x="357" y="447" text-anchor="middle" fill="#9AA7B4">the package</text>
+  </g>
+  <line x1="448" y1="433" x2="480" y2="433" stroke="#9AA7B4" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#arD)"/>
+
+  <g>
+    <rect x="486" y="388" width="188" height="90" rx="6" fill="#FFFFFF" stroke="#DCE4EC" stroke-dasharray="5 3"/>
+    <text class="bx" x="580" y="414" text-anchor="middle" fill="#8A98A6">ÖBB Bench Testing</text>
+    <text class="sub" x="580" y="432" text-anchor="middle" fill="#9AA7B4">Customer validates</text>
+    <text class="sub" x="580" y="447" text-anchor="middle" fill="#9AA7B4">and approves</text>
+  </g>
+  <line x1="680" y1="433" x2="712" y2="433" stroke="#9AA7B4" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#arD)"/>
+
+  <g>
+    <rect x="718" y="388" width="230" height="90" rx="6" fill="#FFFFFF" stroke="#DCE4EC" stroke-dasharray="5 3"/>
+    <text class="bx" x="833" y="414" text-anchor="middle" fill="#8A98A6">ROLLOUT WINDOW 2</text>
+    <text class="sub" x="833" y="432" text-anchor="middle" fill="#9AA7B4">Installed remotely per vehicle</text>
+    <text class="sub" x="833" y="451" text-anchor="middle" fill="#C4622D" font-weight="700">not scheduled</text>
+  </g>
+
+  <text class="note" x="32" y="501">3 × 6-car = 54 switches, exceeding the 40-node spanning-tree limit — a protocol limit no configuration value can raise.</text>
+  <text class="note" x="32" y="517">V10 routes between consists so each train stays its own bounded domain. This is an architecture change, hence its own design freeze.</text>
+
+  <!-- key -->
+  <g transform="translate(32,544)">
+    <rect x="0" y="0" width="14" height="10" rx="2" fill="#FFFFFF" stroke="#2E7D4F" stroke-width="2"/>
+    <text class="keyt" x="21" y="9">gate passed / near complete</text>
+    <rect x="196" y="0" width="14" height="10" rx="2" fill="#FFFFFF" stroke="#C4622D" stroke-width="2" stroke-dasharray="4 2"/>
+    <text class="keyt" x="217" y="9">gate open — blocks everything downstream</text>
+    <rect x="490" y="0" width="14" height="10" rx="2" fill="#FFFFFF" stroke="#DCE4EC" stroke-dasharray="4 2"/>
+    <text class="keyt" x="511" y="9">not started — gated upstream</text>
+  </g>
+</svg>
